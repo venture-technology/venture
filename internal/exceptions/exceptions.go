@@ -23,3 +23,15 @@ func TypeServerResponseError(msg string) gin.H {
 		"error": fmt.Sprintf("type error: %s", msg),
 	}
 }
+
+func NotParamErrorResponse(param string) gin.H {
+	return gin.H{
+		"error": fmt.Sprintf("The param '%s' not found", param),
+	}
+}
+
+func NotFoundObjectErrorResponse(obj string) gin.H {
+	return gin.H{
+		"error": fmt.Sprintf("%s not found", obj),
+	}
+}
