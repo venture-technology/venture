@@ -51,6 +51,11 @@ type Messaging struct {
 	Partition int    `yaml:"partition"`
 }
 
+type GoogleCloudSecret struct {
+	ApiKey                 string `yaml:"apikey"`
+	EndpointMatrixDistance string `yaml:"endpoint-matrix-distance"`
+}
+
 type StripeEnv struct {
 	PublicKey string `yaml:"stripe_publickey"`
 	SecretKey string `yaml:"stripe_secretkey"`
