@@ -1,0 +1,17 @@
+- falta criar testes
+    [ ] responsible
+
+- features faltando
+    [ ] falta validar cpf do responsible
+
+- falta implementar email
+    [ ] responsible
+
+# avisos
+
+em todo retorno json, nao pode ter um campo vazio, por exemplo
+    {
+        password: ""
+    }
+
+    isso tem que ser anotado e avisado
