@@ -1,5 +1,6 @@
 - falta criar testes
     [ ] responsible
+    [ ] invites
 
 - features faltando
     [ ] falta validar cpf do responsible
@@ -14,4 +15,15 @@ em todo retorno json, nao pode ter um campo vazio, por exemplo
         password: ""
     }
 
-    isso tem que ser anotado e avisado
+    isso tem que ser anotado e avisado para os engenheiros
+
+# fazer por agora (gustavo)
+
+    - [ ] criar querys do invites
+    - [ ] alterar rotas de todos os controllers e padronizar
+
+    - [ ] refazer partners
+    
+# features encontradas faltando
+
+    - [ ] realizar update de contract (atualizar metodo de pagamento)
