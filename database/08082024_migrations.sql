@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS schools (
     id SERIAL,
     name VARCHAR(100) NOT NULL,
     password VARCHAR(100) NOT NULL,
-    cnpj VARCHAR(14) PRIMARY KEY,
+    cnpj VARCHAR(14) PRIMARY KEY NOT NULL,
     street VARCHAR(100) NOT NULL,
     number VARCHAR(10) NOT NULL,
     zip VARCHAR(8) NOT NULL,
@@ -64,5 +64,32 @@ CREATE TABLE IF NOT EXISTS invites (
     guest VARCHAR(14), -- driver
     driver VARCHAR(100) NOT NULL, --name_driver
     email_driver VARCHAR(100) NOT NULL,
+    status TEXT NOT NULL
+);
+
+-- Table partners
+CREATE TABLE IF NOT EXISTS partners (
+    record SERIAL PRIMARY KEY,
+    driver_id VARCHAR(20) NOT NULL,
+    school_id VARCHAR(14) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    FOREIGN KEY (driver_id) REFERENCES drivers(cnh) ON DELETE CASCADE,
+    FOREIGN KEY (school_Id) REFERENCES schools(cnpj) ON DELETE CASCADE
+);
+
+-- Table contracts
+CREATE TABLE IF NOT EXISTS contracts (
+    record UUID PRIMARY KEY,
+    title_stripe_subscription TEXT NOT NULL,
+    description_stripe_subscription TEXT NOT NULL,
+    id_stripe_subscription TEXT NOT NULL,
+    id_price_subscription TEXT NOT NULL,
+    id_product_subscription TEXT NOT NULL,
+    school_id VARCHAR(14) NOT NULL,
+    driver_id VARCHAR(20) NOT NULL,
+    responsible_id VARCHAR(11) NOT NULL,
+    rg VARCHAR(9) PRIMARY KEY NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expire_at TIMESTAMP NOT NULL,
     status TEXT NOT NULL
 );
