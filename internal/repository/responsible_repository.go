@@ -48,7 +48,7 @@ func (rer *ResponsibleRepository) GetResponsible(ctx context.Context, cpf *strin
 		&responsible.Status,
 		&responsible.Complement,
 		&responsible.CreditCard.CardToken,
-		&responsible.PaymentMethod,
+		&responsible.PaymentMethodId,
 		&responsible.CustomerId,
 		&responsible.Phone,
 	)
@@ -127,7 +127,7 @@ func (rer *ResponsibleRepository) AuthResponsible(ctx context.Context, responsib
 		&responsibleData.Status,
 		&responsibleData.Complement,
 		&responsibleData.CreditCard.CardToken,
-		&responsibleData.PaymentMethod,
+		&responsibleData.PaymentMethodId,
 		&responsibleData.CustomerId,
 		&responsibleData.Phone,
 		&responsibleData.Password,
