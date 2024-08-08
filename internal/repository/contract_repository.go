@@ -121,6 +121,10 @@ func (cr *ContractRepository) FindContractsByCpf(ctx context.Context, cpf, statu
 
 }
 
+func (cr *ContractRepository) GetContract(ctx context.Context, record uuid.UUID) (*models.Contract, error) {
+	return nil, nil
+}
+
 func (cr *ContractRepository) UpdateStatusContract(ctx context.Context, record uuid.UUID, status string) error {
 
 	sqlQuery := `UPDATE contracts SET status = $1 WHERE record = $2`

@@ -33,14 +33,14 @@ func (pr *PartnerRepository) CreatePartners(ctx context.Context, partner *models
 	return nil
 }
 
-func (pr *PartnerRepository) GetPartnersByDriver(ctx context.Context) {
-
+func (pr *PartnerRepository) GetPartnersByDriver(ctx context.Context) ([]models.Partner, error) {
+	return nil, nil
 }
 
-func (pr *PartnerRepository) GetPartnersBySchool(ctx context.Context) {
-
+func (pr *PartnerRepository) GetPartnersBySchool(ctx context.Context) ([]models.Partner, error) {
+	return nil, nil
 }
 
-func (pr *PartnerRepository) DeletePartner(ctx context.Context) {
-
+func (pr *PartnerRepository) DeletePartner(ctx context.Context) error {
+	return nil
 }
