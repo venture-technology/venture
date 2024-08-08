@@ -18,6 +18,7 @@ type Driver struct {
 	Number     string  `json:"number"`
 	ZIP        string  `json:"zip"`
 	Complement string  `json:"complement"`
+	Price      float64 `json:"price"`
 }
 
 func (d *Driver) ValidateCnh() bool {
