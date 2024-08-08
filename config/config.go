@@ -7,13 +7,14 @@ import (
 )
 
 type Config struct {
-	Name      string `yaml:"name"`
-	Database  Database
-	Server    Server `yaml:"server-responsible"`
-	Cloud     Cloud
-	Cache     Cache
-	Messaging Messaging
-	StripeEnv StripeEnv `yaml:"stripe-env"`
+	Name              string `yaml:"name"`
+	Database          Database
+	Server            Server `yaml:"server-responsible"`
+	Cloud             Cloud
+	Cache             Cache
+	Messaging         Messaging
+	GoogleCloudSecret GoogleCloudSecret `yaml:"google-cloud-secret"`
+	StripeEnv         StripeEnv         `yaml:"stripe-env"`
 }
 
 type Server struct {
