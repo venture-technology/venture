@@ -9,7 +9,7 @@ import (
 type Config struct {
 	Name              string `yaml:"name"`
 	Database          Database
-	Server            Server `yaml:"server-responsible"`
+	Server            Server `yaml:"server"`
 	Cloud             Cloud
 	Cache             Cache
 	Messaging         Messaging
@@ -18,9 +18,9 @@ type Config struct {
 }
 
 type Server struct {
-	Host   string `yaml:"host-vtx-responsible"`
-	Port   int    `yaml:"port-vtx-responsible"`
-	Secret string `yaml:"string-vtx-responsible"`
+	Host   string `yaml:"host"`
+	Port   int    `yaml:"port"`
+	Secret string `yaml:"string"`
 }
 
 type Database struct {
@@ -58,8 +58,8 @@ type GoogleCloudSecret struct {
 }
 
 type StripeEnv struct {
-	PublicKey string `yaml:"stripe_publickey"`
-	SecretKey string `yaml:"stripe_secretkey"`
+	PublicKey string `yaml:"publickey"`
+	SecretKey string `yaml:"secretkey"`
 }
 
 var config *Config
