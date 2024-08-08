@@ -12,12 +12,14 @@ import (
 )
 
 type InviteController struct {
-	inviteservice *service.InviteService
+	inviteservice  *service.InviteService
+	partnerservice *service.PartnerService
 }
 
-func NewInviteController(inviteservice *service.InviteService) *InviteController {
+func NewInviteController(inviteservice *service.InviteService, partnerservice *service.PartnerService) *InviteController {
 	return &InviteController{
-		inviteservice: inviteservice,
+		inviteservice:  inviteservice,
+		partnerservice: partnerservice,
 	}
 }
 
@@ -43,7 +45,12 @@ func (ct *InviteController) CreateInvite(c *gin.Context) {
 		return
 	}
 
-	employee, err := ct.inviteservice.IsPartner(c, &input)
+	partner := models.Partner{
+		Driver: input.Driver,
+		School: input.School,
+	}
+
+	employee, err := ct.partnerservice.IsPartner(c, &partner)
 
 	if err != nil {
 		log.Printf("error while verify employee: %s", err.Error())
