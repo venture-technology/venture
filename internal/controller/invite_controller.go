@@ -25,13 +25,13 @@ func NewInviteController(inviteservice *service.InviteService, partnerservice *s
 
 func (ct *InviteController) RegisterRoutes(router *gin.Engine) {
 
-	api := router.Group("vtx-invite/api/v1")
+	api := router.Group("api/v1/invite")
 
-	api.POST("/invite", ct.CreateInvite)                    // criando um convite para o motorista
-	api.GET("/invite/:cnh", ct.FindAllInvitesDriverAccount) // verificar todos os convites feitos por escolas
-	api.GET("/invite/:cnh/:id", ct.ReadInvite)              // verificar um convite de escola
-	api.PUT("/invite/:cnh/:id", ct.AcceptedInvite)          // aceitar um convite de escola
-	api.DELETE("/invite/:cnh/:id", ct.DeclineInvite)        // recusar um convite de escola
+	api.POST("/", ct.CreateInvite)                   // criando um convite para o motorista
+	api.GET("/:cnh", ct.FindAllInvitesDriverAccount) // verificar todos os convites feitos por escolas
+	api.GET("/:cnh/:id", ct.ReadInvite)              // verificar um convite de escola
+	api.PUT("/:cnh/:id", ct.AcceptedInvite)          // aceitar um convite de escola
+	api.DELETE("/:cnh/:id", ct.DeclineInvite)        // recusar um convite de escola
 
 }
 

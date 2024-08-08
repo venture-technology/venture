@@ -16,7 +16,7 @@ func NewContractService(contractservice *service.ContractService) *ContractContr
 }
 
 func (ct *ContractController) RegisterRoutes(router *gin.Engine) {
-	api := router.Group("/api/v1/contract")
+	api := router.Group("api/v1/contract")
 
 	api.POST("/", ct.CreateContract)
 	api.GET("/:cpf", ct.GetContractByCpf)

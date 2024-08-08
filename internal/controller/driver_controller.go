@@ -21,19 +21,12 @@ func NewDriverController(driverservice *service.DriverService) *DriverController
 }
 
 func (ct *DriverController) RegisterRoutes(router *gin.Engine) {
-	api := router.Group("api/v1")
+	api := router.Group("api/v1/driver")
 
-	api.GET("/ping", ct.Ping)
-	api.POST("/driver", ct.CreateDriver)
-	api.GET("/driver/:cnh", ct.GetDriver)
-	api.PATCH("/driver/:cnh", ct.UpdateDriver)
-	api.DELETE("/driver/:cnh", ct.DeleteDriver)
-}
-
-func (ct *DriverController) Ping(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"ping": "pong",
-	})
+	api.POST("/", ct.CreateDriver)
+	api.GET("/:cnh", ct.GetDriver)
+	api.PATCH("/:cnh", ct.UpdateDriver)
+	api.DELETE("/:cnh", ct.DeleteDriver)
 }
 
 func (ct *DriverController) CreateDriver(c *gin.Context) {

@@ -27,20 +27,13 @@ func NewSchoolController(schoolservice *service.SchoolService) *SchoolController
 
 func (ct *SchoolController) RegisterRoutes(router *gin.Engine) {
 
-	api := router.Group("vtx-school/api/v1")
+	api := router.Group("api/v1/school")
 
-	api.GET("/ping", ct.Ping)                    // pingar rota
-	api.POST("/school", ct.CreateSchool)         // criar uma escola
-	api.GET("/school/:cnpj", ct.ReadSchool)      // buscar uma escola em especifico
-	api.GET("/school", ct.ReadAllSchools)        // buscar todas as escolas
-	api.PATCH("/school/:cnpj", ct.UpdateSchool)  // atualizar algum dado especifico
-	api.DELETE("/school/:cnpj", ct.DeleteSchool) // deletar propria conta
-}
-
-func (ct *SchoolController) Ping(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"ping": "pong",
-	})
+	api.POST("/", ct.CreateSchool)        // criar uma escola
+	api.GET("/:cnpj", ct.ReadSchool)      // buscar uma escola em especifico
+	api.GET("/", ct.ReadAllSchools)       // buscar todas as escolas
+	api.PATCH("/:cnpj", ct.UpdateSchool)  // atualizar algum dado especifico
+	api.DELETE("/:cnpj", ct.DeleteSchool) // deletar propria conta
 }
 
 func (ct *SchoolController) CreateSchool(c *gin.Context) {

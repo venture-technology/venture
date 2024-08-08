@@ -21,20 +21,13 @@ func NewResponsibleController(responsibleservice *service.ResponsibleService) *R
 }
 
 func (ct *ResponsibleController) RegisterRoutes(router *gin.Engine) {
-	api := router.Group("vtx-responsible/api/v1")
+	api := router.Group("api/v1/responsible")
 
-	api.GET("/ping", ct.Ping)
-	api.POST("/responsible", ct.CreateResponsible)
-	api.GET("/responsible/:cpf", ct.GetResponsible)
-	api.PATCH("/responsible/:cpf", ct.UpdateResponsible)
-	api.DELETE("/responsible/:cpf", ct.DeleteResponsible)
-	api.POST("responsible/:cpf/card", ct.RegisterCreditCard)
-}
-
-func (ct *ResponsibleController) Ping(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"ping": "pong",
-	})
+	api.POST("/", ct.CreateResponsible)
+	api.GET("/:cpf", ct.GetResponsible)
+	api.PATCH("/:cpf", ct.UpdateResponsible)
+	api.DELETE("/:cpf", ct.DeleteResponsible)
+	api.POST("/:cpf/card", ct.RegisterCreditCard)
 }
 
 func (ct *ResponsibleController) CreateResponsible(c *gin.Context) {
