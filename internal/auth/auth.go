@@ -13,12 +13,14 @@ import (
 type AuthRequests struct {
 	responsibleservice *service.ResponsibleService
 	schoolservice      *service.SchoolService
+	driverservice      *service.DriverService
 }
 
-func NewAuth(responsibleservice *service.ResponsibleService, schoolservice *service.SchoolService) *AuthRequests {
+func NewAuth(responsibleservice *service.ResponsibleService, schoolservice *service.SchoolService, driverservice *service.DriverService) *AuthRequests {
 	return &AuthRequests{
 		responsibleservice: responsibleservice,
 		schoolservice:      schoolservice,
+		driverservice:      driverservice,
 	}
 }
 
@@ -103,4 +105,37 @@ func (auth *AuthRequests) AuthSchool(c *gin.Context) {
 }
 
 func (auth *AuthRequests) AuthDriver(c *gin.Context) {
+	var input models.Driver
+
+	log.Printf("doing login --> %s", input.Email)
+
+	if err := c.BindJSON(&input); err != nil {
+		log.Printf("error to parsed body: %s", err.Error())
+		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
+
+	driver, err := auth.driverservice.AuthDriver(c, &input)
+	if err != nil {
+		log.Printf("wrong email or password: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "wrong email or password"})
+		return
+	}
+
+	jwt, err := auth.driverservice.CreateTokenJWTDriver(c, driver)
+
+	log.Printf("token returned --> %v", jwt)
+
+	if err != nil {
+		log.Printf("error to create jwt token: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error to create jwt token"})
+		return
+	}
+
+	c.SetCookie("token", jwt, 3600, "/", c.Request.Host, false, true)
+
+	c.JSON(http.StatusAccepted, gin.H{
+		"driver": driver,
+		"token":  jwt,
+	})
 }
