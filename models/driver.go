@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	"github.com/venture-technology/venture/utils"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type Driver struct {

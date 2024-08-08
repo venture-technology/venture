@@ -12,7 +12,7 @@ import (
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/repository"
 	"github.com/venture-technology/venture/models"
-	"github.com/venture-technology/venture/utils"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type DriverService struct {

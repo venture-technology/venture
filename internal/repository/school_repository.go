@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/venture-technology/venture/models"
-	"github.com/venture-technology/venture/utils"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type SchoolRepositoryInterface interface {
