@@ -88,8 +88,12 @@ CREATE TABLE IF NOT EXISTS contracts (
     school_id VARCHAR(14) NOT NULL,
     driver_id VARCHAR(20) NOT NULL,
     responsible_id VARCHAR(11) NOT NULL,
-    rg VARCHAR(9) PRIMARY KEY NOT NULL,
+    child_id VARCHAR(9) PRIMARY KEY NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     expire_at TIMESTAMP NOT NULL,
-    status TEXT NOT NULL
+    status TEXT NOT NULL,
+    FOREIGN KEY (driver_id) REFERENCES drivers(cnh) ON DELETE CASCADE,
+    FOREIGN KEY (school_Id) REFERENCES schools(cnpj) ON DELETE CASCADE,
+    FOREIGN KEY (responsible_id) REFERENCES responsible(cpf) ON DELETE CASCADE
+    FOREIGN KEY (child_id) REFERENCES children(rg) ON DELETE CASCADE
 );
