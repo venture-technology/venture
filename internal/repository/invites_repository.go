@@ -13,8 +13,6 @@ type IInviteRepository interface {
 	FindAllInvitesDriverAccount(ctx context.Context, cnh *string) ([]models.Invite, error)
 	AcceptedInvite(ctx context.Context, invite_id *int) error
 	DeclineInvite(ctx context.Context, invite_id *int) error
-	IsPartner(ctx context.Context, invite *models.Invite) (bool, error)
-	CreatePartner(ctx context.Context, invite *models.Invite) error
 }
 
 type InviteRepository struct {
@@ -102,12 +100,4 @@ func (i *InviteRepository) DeclineInvite(ctx context.Context, invite_id *int) er
 	_, err = tx.Exec("DELETE FROM invites WHERE invite_id = $1", invite_id)
 	return err
 
-}
-
-func (i *InviteRepository) IsPartner(ctx context.Context, invite *models.Invite) (bool, error) {
-	return true, nil
-}
-
-func (i *InviteRepository) CreatePartner(ctx context.Context, invite *models.Invite) error {
-	return nil
 }

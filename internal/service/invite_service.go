@@ -8,12 +8,14 @@ import (
 )
 
 type InviteService struct {
-	inviterepository repository.IInviteRepository
+	inviterepository   repository.IInviteRepository
+	partnersrepository repository.IPartnerRepository
 }
 
-func NewInviteService(repo repository.IInviteRepository) *InviteService {
+func NewInviteService(inviterepository repository.IInviteRepository, partnersrepository repository.IPartnerRepository) *InviteService {
 	return &InviteService{
-		inviterepository: repo,
+		inviterepository:   inviterepository,
+		partnersrepository: partnersrepository,
 	}
 }
 
@@ -31,7 +33,12 @@ func (i *InviteService) FindAllInvitesDriverAccount(ctx context.Context, cnh *st
 
 func (i *InviteService) AcceptedInvite(ctx context.Context, invite *models.Invite) error {
 
-	err := i.CreatePartner(ctx, invite)
+	partner := models.Partner{
+		Driver: invite.Driver,
+		School: invite.School,
+	}
+
+	err := i.partnersrepository.CreatePartners(ctx, &partner)
 
 	if err != nil {
 		return err
@@ -42,14 +49,4 @@ func (i *InviteService) AcceptedInvite(ctx context.Context, invite *models.Invit
 
 func (i *InviteService) DeclineInvite(ctx context.Context, invite_id *int) error {
 	return i.inviterepository.DeclineInvite(ctx, invite_id)
-}
-
-// Request in AccountManager to verify if school have the driver like employee. If they are partners, Employee is true, otherwise false.
-func (i *InviteService) IsPartner(ctx context.Context, invite *models.Invite) (bool, error) {
-	return i.inviterepository.IsPartner(ctx, invite)
-}
-
-// create partner between school and driver, then driver accepted invite, sending request to account manager
-func (i *InviteService) CreatePartner(ctx context.Context, invite *models.Invite) error {
-	return i.inviterepository.CreatePartner(ctx, invite)
 }
