@@ -39,6 +39,15 @@ func (ct *ResponsibleController) CreateResponsible(c *gin.Context) {
 		return
 	}
 
+	_, err := ct.responsibleservice.GetResponsible(c, &input.CPF)
+
+	// verificando se o usuário existe
+	if err == nil {
+		log.Print("error to create responsible, responsible already exists")
+		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "user already exists"))
+		return
+	}
+
 	cust, err := ct.responsibleservice.CreateCustomer(c, &input)
 	if err != nil {
 		log.Printf("error to create customer at stripe: %s", err.Error())
@@ -47,6 +56,26 @@ func (ct *ResponsibleController) CreateResponsible(c *gin.Context) {
 	}
 
 	input.CustomerId = cust.ID
+
+	if !input.IsCreditCardEmpty() {
+		paymentMethod, err := ct.responsibleservice.CreatePaymentMethod(c, &input.CreditCard.CardToken)
+
+		if err != nil {
+			log.Printf("error to create payment method at stripe: %s", err.Error())
+			c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "an error occured when create payment method"))
+			return
+		}
+
+		input.PaymentMethodId = paymentMethod.ID
+
+		_, err = ct.responsibleservice.AttachPaymentMethod(c, &input.CustomerId, &input.PaymentMethodId, input.CreditCard.Default)
+
+		if err != nil {
+			log.Printf("error to create payment method at stripe: %s", err.Error())
+			c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "an error occured when create payment method"))
+			return
+		}
+	}
 
 	err = ct.responsibleservice.CreateResponsible(c, &input)
 	if err != nil {
@@ -175,7 +204,7 @@ func (ct *ResponsibleController) RegisterCreditCard(c *gin.Context) {
 		return
 	}
 
-	_, err = ct.responsibleservice.AttachPaymentMethod(c, &responsible.CustomerId, &paymentMethod.ID)
+	_, err = ct.responsibleservice.AttachPaymentMethod(c, &responsible.CustomerId, &paymentMethod.ID, false) // <- esse false é um mock
 	if err != nil {
 		log.Printf("attach card in customer error: %s", err.Error())
 		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "an error occured when attaching card in customer"))
