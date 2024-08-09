@@ -19,6 +19,7 @@ type Driver struct {
 	ZIP        string  `json:"zip"`
 	Complement string  `json:"complement"`
 	Price      float64 `json:"price"`
+	Phone      string  `json:"phone" validate:"required" example:"+55 11 123456789"`
 }
 
 func (d *Driver) ValidateCnh() bool {

@@ -15,6 +15,7 @@ type School struct {
 	Number     string `json:"number"`
 	Complement string `json:"complement"`
 	ZIP        string `json:"zip"`
+	Phone      string `json:"phone" validate:"required" example:"+55 11 123456789"`
 }
 
 type ClaimsSchool struct {
