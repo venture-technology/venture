@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  venture:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: venture_container
+    networks:
+      - venture-network
+    ports:
+      - "8888:8888"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+    environment:
+      DB_HOST: localhost
+      DB_USER: postgres
+      DB_PASSWORD: 123456
+      DB_NAME: venture_database
+
+  postgres:
+    image: postgres:15
+    container_name: venture_postgres
+    environment:
+      POSTGRES_DB: venture_database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    networks:
+      - venture-network
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d venture_database"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  venture-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
