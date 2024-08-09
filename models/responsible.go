@@ -21,7 +21,6 @@ type Responsible struct {
 
 type CreditCard struct {
 	CardToken string `json:"card_token,omitempty"`
-	CPF       string `json:"cpf,omitempty"`
 	Default   bool   `json:"default,omitempty"`
 }
 
