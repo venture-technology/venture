@@ -89,8 +89,6 @@ func (rs *ResponsibleService) CreateCustomer(ctx context.Context, responsible *m
 
 	conf := config.Get()
 
-	log.Print(conf.StripeEnv.SecretKey)
-
 	stripe.Key = conf.StripeEnv.SecretKey
 
 	params := &stripe.CustomerParams{
@@ -168,7 +166,7 @@ func (rs *ResponsibleService) CreatePaymentMethod(ctx context.Context, cardToken
 
 }
 
-func (rs *ResponsibleService) AttachPaymentMethod(ctx context.Context, customerId, paymentMethodId *string) (*stripe.PaymentMethod, error) {
+func (rs *ResponsibleService) AttachPaymentMethod(ctx context.Context, customerId, paymentMethodId *string, isDefault bool) (*stripe.PaymentMethod, error) {
 
 	conf := config.Get()
 
@@ -180,6 +178,21 @@ func (rs *ResponsibleService) AttachPaymentMethod(ctx context.Context, customerI
 	pm, err := paymentmethod.Attach(*paymentMethodId, params)
 	if err != nil {
 		return nil, err
+	}
+
+	if isDefault {
+
+		updateParams := &stripe.CustomerParams{
+			InvoiceSettings: &stripe.CustomerInvoiceSettingsParams{
+				DefaultPaymentMethod: stripe.String(pm.ID),
+			},
+		}
+
+		_, err := customer.Update(*customerId, updateParams)
+		if err != nil {
+			return nil, err
+		}
+
 	}
 
 	return pm, nil
