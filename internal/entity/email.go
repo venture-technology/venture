@@ -3,9 +3,9 @@ package entity
 import "encoding/json"
 
 type Email struct {
-	Recipient string `json:"recipient"`
-	Subject   string `json:"subject"`
-	Body      string `json:"body"`
+	Recipient string `json:"recipient" validate:"required" example:"example@gmail.com"`
+	Subject   string `json:"subject" validate:"required" example:"subject - create account"`
+	Body      string `json:"body" validate:"required" example:"hello sr...e"`
 }
 
 func (e *Email) EmailStructToJson() (string, error) {
