@@ -27,7 +27,7 @@ func (ct *ResponsibleController) RegisterRoutes(router *gin.Engine) {
 	api.GET("/:cpf", ct.GetResponsible)
 	api.PATCH("/:cpf", ct.UpdateResponsible)
 	api.DELETE("/:cpf", ct.DeleteResponsible)
-	api.POST("/:cpf/card", ct.RegisterCreditCard)
+	api.POST("/card", ct.RegisterCreditCard)
 }
 
 func (ct *ResponsibleController) CreateResponsible(c *gin.Context) {
@@ -90,6 +90,7 @@ func (ct *ResponsibleController) CreateResponsible(c *gin.Context) {
 }
 
 func (ct *ResponsibleController) GetResponsible(c *gin.Context) {
+
 	cpf := c.Param("cpf")
 
 	responsible, err := ct.responsibleservice.GetResponsible(c, &cpf)
@@ -176,9 +177,8 @@ func (ct *ResponsibleController) DeleteResponsible(c *gin.Context) {
 
 func (ct *ResponsibleController) RegisterCreditCard(c *gin.Context) {
 
-	cpf := c.Param("cpf")
-
-	var input models.CreditCard
+	// I'm using responsible to map cpf and card together
+	var input models.Responsible
 
 	if err := c.BindJSON(&input); err != nil {
 		log.Printf("error to parsed body: %s", err.Error())
@@ -186,47 +186,38 @@ func (ct *ResponsibleController) RegisterCreditCard(c *gin.Context) {
 		return
 	}
 
-	input.CPF = cpf
-
-	log.Print(input)
-
-	paymentMethod, err := ct.responsibleservice.CreatePaymentMethod(c, &input.CardToken)
+	paymentMethod, err := ct.responsibleservice.CreatePaymentMethod(c, &input.CreditCard.CardToken)
 	if err != nil {
 		log.Printf("error to create payment method: %s", err.Error())
 		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "an error occured when register payment method in stripe"))
 		return
 	}
 
-	responsible, err := ct.responsibleservice.GetResponsible(c, &cpf)
+	input.PaymentMethodId = paymentMethod.ID
+
+	// get user to get customer id
+	responsible, err := ct.responsibleservice.GetResponsible(c, &input.CPF)
 	if err != nil {
 		log.Printf("error to get customer id: %s", err.Error())
 		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "an error occured when getting customer id"))
 		return
 	}
 
-	_, err = ct.responsibleservice.AttachPaymentMethod(c, &responsible.CustomerId, &paymentMethod.ID, false) // <- esse false é um mock
+	input.CustomerId = responsible.CustomerId
+
+	_, err = ct.responsibleservice.AttachPaymentMethod(c, &input.CustomerId, &input.PaymentMethodId, input.CreditCard.Default)
+
 	if err != nil {
-		log.Printf("attach card in customer error: %s", err.Error())
-		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "an error occured when attaching card in customer"))
+		log.Printf("error to create payment method at stripe: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "an error occured when create payment method"))
 		return
 	}
 
-	if input.Default {
-
-		_, err := ct.responsibleservice.UpdatePaymentMethodDefault(c, &responsible.CustomerId, &paymentMethod.ID)
-		if err != nil {
-			log.Printf("change default card for customer error: %s", err.Error())
-			c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "an error occured when changing default card for customer"))
-			return
-		}
-
-		err = ct.responsibleservice.SaveCreditCard(c, &input.CPF, &input.CardToken, &paymentMethod.ID)
-		if err != nil {
-			log.Printf("error to register card: %s", err.Error())
-			c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "an error occured when register credit card"))
-			return
-		}
-
+	err = ct.responsibleservice.SaveCreditCard(c, &input.CPF, &input.CreditCard.CardToken, &paymentMethod.ID)
+	if err != nil {
+		log.Printf("error to register card: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "an error occured when register credit card"))
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "card attached in customer"})
