@@ -7,14 +7,12 @@ import (
 )
 
 type Config struct {
-	Name              string `yaml:"name"`
-	Database          Database
-	Server            Server `yaml:"server"`
-	Cloud             Cloud
-	Cache             Cache
-	Messaging         Messaging
-	GoogleCloudSecret GoogleCloudSecret `yaml:"google-cloud-secret"`
-	StripeEnv         StripeEnv         `yaml:"stripe-env"`
+	Name      string `yaml:"name"`
+	Database  Database
+	Server    Server
+	Cloud     Cloud
+	Cache     Cache
+	Messaging Messaging
 }
 
 type Server struct {
@@ -50,16 +48,6 @@ type Messaging struct {
 	Brokers   string `yaml:"broker"`
 	Topic     string `yaml:"topic"`
 	Partition int    `yaml:"partition"`
-}
-
-type GoogleCloudSecret struct {
-	ApiKey                 string `yaml:"apikey"`
-	EndpointMatrixDistance string `yaml:"endpoint-matrix-distance"`
-}
-
-type StripeEnv struct {
-	PublicKey string `yaml:"publickey"`
-	SecretKey string `yaml:"secretkey"`
 }
 
 var config *Config

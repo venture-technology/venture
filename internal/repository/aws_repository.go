@@ -8,24 +8,26 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/ses"
 	"github.com/venture-technology/venture/config"
+	"github.com/venture-technology/venture/internal/entity"
 )
 
-type IAWSRepository interface {
-	SaveImageOnAWSBucket(ctx context.Context, image []byte, filename string) (string, error)
+type IAwsRepository interface {
+	SendEmail(ctx context.Context, email *entity.Email) error
 }
 
-type AWSRepository struct {
+type AwsRepository struct {
 	sess *session.Session
 }
 
-func NewAWSRepository(sess *session.Session) *AWSRepository {
-	return &AWSRepository{
+func NewAwsRepository(sess *session.Session) *AwsRepository {
+	return &AwsRepository{
 		sess: sess,
 	}
 }
 
-func (ar *AWSRepository) SaveImageOnAWSBucket(ctx context.Context, image []byte, filename string) (string, error) {
+func (ar *AwsRepository) SaveImageOnAWSBucket(ctx context.Context, image []byte, filename string) (string, error) {
 
 	conf := config.Get()
 
@@ -48,4 +50,37 @@ func (ar *AWSRepository) SaveImageOnAWSBucket(ctx context.Context, image []byte,
 	qrCode := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", conf.Cloud.BucketName, filename)
 
 	return qrCode, nil
+}
+
+func (ar *AwsRepository) SendEmail(ctx context.Context, email *entity.Email) error {
+
+	conf := config.Get()
+
+	svc := ses.New(ar.sess)
+
+	emailInput := &ses.SendEmailInput{
+		Destination: &ses.Destination{
+			ToAddresses: []*string{aws.String(email.Recipient)},
+		},
+		Message: &ses.Message{
+			Body: &ses.Body{
+				Text: &ses.Content{
+					Data: aws.String(email.Body),
+				},
+			},
+			Subject: &ses.Content{
+				Data: aws.String(email.Subject),
+			},
+		},
+		Source: aws.String(conf.Cloud.Source),
+	}
+
+	_, err := svc.SendEmail(emailInput)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }
