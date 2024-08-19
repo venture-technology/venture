@@ -70,6 +70,7 @@ func (g *Gateway) Setup() {
 	}
 
 	g.Responsible()
+	g.Child()
 
 	g.router.Run(fmt.Sprintf(":%d", config.Server.Port))
 
@@ -81,6 +82,14 @@ func (g *Gateway) Responsible() {
 	g.group.GET("/responsible/:cpf", handler.Get)
 	g.group.PATCH("/responsible/:cpf", handler.Update)
 	g.group.DELETE("/responsible/:cpf", handler.Delete)
+}
+
+func (g *Gateway) Child() {
+	handler := handler.NewChildHandler(child.NewChildUseCase(child.NewChildRepository(g.database)))
+	g.group.POST("/child", handler.Create)
+	g.group.GET("/child/:rg", handler.Get)
+	g.group.PATCH("/child/:rg", handler.Update)
+	g.group.DELETE("/child/:rg", handler.Delete)
 }
 
 func postgres(dbconfig config.Database) string {
