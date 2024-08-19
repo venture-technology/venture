@@ -78,9 +78,9 @@ func (g *Gateway) Setup() {
 func (g *Gateway) Responsible() {
 	handler := handler.NewResponsibleHandler(responsible.NewResponsibleUseCase(repository.NewResponsibleRepository(g.database)))
 	g.group.POST("/responsible", handler.Create)
-	g.group.GET("/responsible", handler.Get)
-	g.group.PATCH("/responsible", handler.Update)
-	g.group.DELETE("/responsible", handler.Delete)
+	g.group.GET("/responsible/:cpf", handler.Get)
+	g.group.PATCH("/responsible/:cpf", handler.Update)
+	g.group.DELETE("/responsible/:cpf", handler.Delete)
 }
 
 func postgres(dbconfig config.Database) string {
