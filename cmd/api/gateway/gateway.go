@@ -80,6 +80,7 @@ func (g *Gateway) Setup() {
 func (g *Gateway) Responsible() {
 	handler := handler.NewResponsibleHandler(responsible.NewResponsibleUseCase(repository.NewResponsibleRepository(g.database)))
 	g.group.POST("/responsible", handler.Create)
+	g.group.POST("/responsible/card", handler.SaveCard)
 	g.group.GET("/responsible/:cpf", handler.Get)
 	g.group.PATCH("/responsible/:cpf", handler.Update)
 	g.group.DELETE("/responsible/:cpf", handler.Delete)
