@@ -1,0 +1,50 @@
+POST http://0.0.0.0:8888/api/v1/child
+Content-Type: application/json
+
+{
+    "name": "Otaviano Almeida",
+    "rg": "449381749",
+    "responsible" : {
+        "cpf": "76315286080"
+    },
+    "shift": "matutino"
+}
+
+### 
+
+POST http://0.0.0.0:8888/api/v1/child
+Content-Type: application/json
+
+{
+    "name": "Felipe Fernandes",
+    "rg": "779359221",
+    "responsible" : {
+        "cpf": "76315286080"
+    },
+    "shift": "matutino"
+}
+
+###
+
+GET http://0.0.0.0:8888/api/v1/child/449381749
+Content-Type: application/json
+
+### 
+
+GET http://0.0.0.0:8888/api/v1/76315286080/child
+Content-Type: application/json
+
+### 
+
+DELETE http://0.0.0.0:8888/api/v1/child/449381749
+Content-Type: application/json
+
+{
+    "name": "Otaviano Almeida",
+    "rg": "449381749",
+    "responsible" : {
+        "cpf": "76315286080"
+    },
+    "shift": "matutino"
+}
+
