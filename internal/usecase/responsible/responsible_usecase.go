@@ -25,7 +25,6 @@ func NewResponsibleUseCase(responsiblerepository repository.IResponsibleReposito
 }
 
 func (ru *ResponsibleUseCase) Create(ctx context.Context, responsible *entity.Responsible) error {
-	responsible.Password = utils.HashPassword(responsible.Password)
 	return ru.responsiblerepository.Create(ctx, responsible)
 }
 
