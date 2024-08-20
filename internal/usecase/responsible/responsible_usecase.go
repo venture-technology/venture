@@ -11,7 +11,6 @@ import (
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type ResponsibleUseCase struct {
@@ -46,12 +45,6 @@ func (ru *ResponsibleUseCase) Delete(ctx context.Context, cpf *string) error {
 func (ru *ResponsibleUseCase) SaveCard(ctx context.Context, cpf, cardToken, paymentMethodId *string) error {
 	return ru.responsiblerepository.SaveCard(ctx, cpf, cardToken, paymentMethodId)
 }
-
-func (ru *ResponsibleUseCase) Auth(ctx context.Context, responsible *entity.Responsible) (*entity.Responsible, error) {
-	responsible.Password = utils.HashPassword((responsible.Password))
-	return ru.responsiblerepository.Auth(ctx, responsible)
-}
-
 func (ru *ResponsibleUseCase) UpdatePaymentMethodDefault(ctx context.Context, customerId, paymentMethodId *string) (*stripe.Customer, error) {
 
 	conf := config.Get()
