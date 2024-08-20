@@ -13,10 +13,7 @@ Content-Type: application/json
         "zip": "08120520",
         "complement": "fundos"
     },
-    "card": {
-        "card_token": "tok_visa",
-        "default": true
-    },
+    "card": {},
     "phone": "+55 11 912345678"
 }
 
@@ -54,3 +51,16 @@ Content-Type: application/json
 
 DELETE http://0.0.0.0:8888/api/v1/responsible/76315286080
 Content-Type: application/json
+
+###
+
+POST http://0.0.0.0:8888/api/v1/responsible/card
+Content-Type: application/json
+
+{
+    "cpf": "76315286080",
+    "card": {
+        "card_token": "tok_visa",
+        "default": true
+    }
+}

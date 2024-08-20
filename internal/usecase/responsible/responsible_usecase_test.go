@@ -12,7 +12,7 @@ import (
 func TestCreate(t *testing.T) {
 	mock := mocks.NewIResponsibleRepository(t)
 
-	mock.On("Create", context.Background(), &entity.Responsible{Password: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}).Return(nil)
+	mock.On("Create", context.Background(), &entity.Responsible{}).Return(nil)
 
 	service := NewResponsibleUseCase(mock)
 
@@ -21,6 +21,10 @@ func TestCreate(t *testing.T) {
 	assert.Nil(t, err)
 
 	mock.AssertExpectations(t)
+}
+
+func TestGet(t *testing.T) {
+
 }
 
 func TestUpdate(t *testing.T) {
