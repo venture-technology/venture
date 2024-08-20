@@ -13,6 +13,7 @@ import (
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/handler"
 	"github.com/venture-technology/venture/internal/repository"
+	"github.com/venture-technology/venture/internal/usecase/child"
 	"github.com/venture-technology/venture/internal/usecase/responsible"
 
 	_ "github.com/lib/pq"
@@ -85,7 +86,7 @@ func (g *Gateway) Responsible() {
 }
 
 func (g *Gateway) Child() {
-	handler := handler.NewChildHandler(child.NewChildUseCase(child.NewChildRepository(g.database)))
+	handler := handler.NewChildHandler(child.NewChildUseCase(repository.NewChildRepository(g.database)))
 	g.group.POST("/child", handler.Create)
 	g.group.GET("/child/:rg", handler.Get)
 	g.group.PATCH("/child/:rg", handler.Update)
