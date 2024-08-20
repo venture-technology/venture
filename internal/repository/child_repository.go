@@ -8,11 +8,11 @@ import (
 )
 
 type IChildRepository interface {
-	CreateChild(ctx context.Context, child *entity.Child) error
-	GetChild(ctx context.Context, rg *string) (*entity.Child, error)
-	FindAllChildren(ctx context.Context, cpf *string) ([]entity.Child, error)
-	UpdateChild(ctx context.Context, child *entity.Child) error
-	DeleteChild(ctx context.Context, rg *string) error
+	Create(ctx context.Context, child *entity.Child) error
+	Get(ctx context.Context, rg *string) (*entity.Child, error)
+	FindAll(ctx context.Context, cpf *string) ([]entity.Child, error)
+	Update(ctx context.Context, child *entity.Child) error
+	Delete(ctx context.Context, rg *string) error
 }
 
 type ChildRepository struct {
@@ -25,13 +25,13 @@ func NewChildRepository(conn *sql.DB) *ChildRepository {
 	}
 }
 
-func (cr *ChildRepository) CreateChild(ctx context.Context, child *entity.Child) error {
+func (cr *ChildRepository) Create(ctx context.Context, child *entity.Child) error {
 	sqlQuery := `INSERT INTO children (name, rg, responsible_id,shift) VALUES ($1, $2, $3, $4)`
 	_, err := cr.db.Exec(sqlQuery, child.Name, child.RG, child.Responsible.CPF, child.Shift)
 	return err
 }
 
-func (cr *ChildRepository) GetChild(ctx context.Context, rg *string) (*entity.Child, error) {
+func (cr *ChildRepository) Get(ctx context.Context, rg *string) (*entity.Child, error) {
 	sqlQuery := `SELECT id, name, rg, responsible_id, shift FROM children WHERE rg = $1 LIMIT 1`
 	var child entity.Child
 	err := cr.db.QueryRow(sqlQuery, *rg).Scan(&child.ID, &child.Name, &child.RG, &child.Responsible.CPF, &child.Shift)
@@ -41,7 +41,7 @@ func (cr *ChildRepository) GetChild(ctx context.Context, rg *string) (*entity.Ch
 	return &child, nil
 }
 
-func (cr *ChildRepository) FindAllChildren(ctx context.Context, cpf *string) ([]entity.Child, error) {
+func (cr *ChildRepository) FindAll(ctx context.Context, cpf *string) ([]entity.Child, error) {
 	sqlQuery := `SELECT id, name, rg, responsible_id, shift FROM children WHERE responsible_id = $1`
 	rows, err := cr.db.Query(sqlQuery, cpf)
 	if err != nil {
@@ -70,7 +70,7 @@ func (cr *ChildRepository) FindAllChildren(ctx context.Context, cpf *string) ([]
 	return children, nil
 }
 
-func (cr *ChildRepository) UpdateChild(ctx context.Context, child *entity.Child) error {
+func (cr *ChildRepository) Update(ctx context.Context, child *entity.Child) error {
 	sqlQuery := `SELECT name, shift FROM children WHERE rg = $1 LIMIT 1`
 	var currentChild entity.Child
 	err := cr.db.QueryRow(sqlQuery, child.RG).Scan(&currentChild.Name)
@@ -88,7 +88,7 @@ func (cr *ChildRepository) UpdateChild(ctx context.Context, child *entity.Child)
 	return err
 }
 
-func (cr *ChildRepository) DeleteChild(ctx context.Context, rg *string) error {
+func (cr *ChildRepository) Delete(ctx context.Context, rg *string) error {
 	tx, err := cr.db.Begin()
 	if err != nil {
 		return err
