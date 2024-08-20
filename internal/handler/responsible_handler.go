@@ -8,6 +8,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/usecase/responsible"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type ResponsibleHandler struct {
@@ -29,6 +30,8 @@ func (rh *ResponsibleHandler) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
+
+	input.Password = utils.HashPassword(input.Password)
 
 	// fazendo get para verificar se o usuário existe
 	_, err := rh.responsibleUseCase.Get(c, &input.CPF)
