@@ -215,6 +215,6 @@ func (rh *ResponsibleHandler) SaveCard(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, responsible.CreditCard)
+	c.JSON(http.StatusOK, gin.H{"message": "card attached in responsible"})
 
 }
