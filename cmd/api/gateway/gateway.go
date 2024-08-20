@@ -87,8 +87,9 @@ func (g *Gateway) Responsible() {
 
 func (g *Gateway) Child() {
 	handler := handler.NewChildHandler(child.NewChildUseCase(repository.NewChildRepository(g.database)))
-	g.group.POST("/child", handler.Create)
+	g.group.POST("/:cpf/child", handler.Create)
 	g.group.GET("/child/:rg", handler.Get)
+	g.group.GET("/:cpf/child", handler.FindAll)
 	g.group.PATCH("/child/:rg", handler.Update)
 	g.group.DELETE("/child/:rg", handler.Delete)
 }
