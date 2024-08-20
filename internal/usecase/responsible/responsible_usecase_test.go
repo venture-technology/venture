@@ -9,7 +9,7 @@ import (
 	"github.com/venture-technology/venture/mocks"
 )
 
-func TestCreate(t *testing.T) {
+func TestResponsibleUseCase_Create(t *testing.T) {
 	mock := mocks.NewIResponsibleRepository(t)
 
 	mock.On("Create", context.Background(), &entity.Responsible{}).Return(nil)
@@ -23,46 +23,42 @@ func TestCreate(t *testing.T) {
 	mock.AssertExpectations(t)
 }
 
-func TestGet(t *testing.T) {
+func TestResponsibleUseCase_Get(t *testing.T) {
 
 }
 
-func TestUpdate(t *testing.T) {
+func TestResponsibleUseCase_Upadte(t *testing.T) {
 
 }
 
-func TestDelete(t *testing.T) {
+func TestResponsibleUseCase_Delete(t *testing.T) {
 
 }
 
-func TestSaveCard(t *testing.T) {
+func TestResponsibleUseCase_SaveCard(t *testing.T) {
 
 }
 
-func TestAuth(t *testing.T) {
+func TestResponsibleUseCase_UpdatePaymentMethod(t *testing.T) {
 
 }
 
-func TestUpdatePaymentMethod(t *testing.T) {
+func TestResponsibleUseCase_CreateCustomer(t *testing.T) {
 
 }
 
-func TestCreateCustomer(t *testing.T) {
+func TestResponsibleUseCase_UpdateCustomer(t *testing.T) {
 
 }
 
-func TestUpdateCustomer(t *testing.T) {
+func TestResponsibleUseCase_DeleteCustomer(t *testing.T) {
 
 }
 
-func TestDeleteCustomer(t *testing.T) {
+func TestResponsibleUseCase_CreatePaymentMethod(t *testing.T) {
 
 }
 
-func TestCreatePaymentMethod(t *testing.T) {
-
-}
-
-func TestAttachPaymentMethod(t *testing.T) {
+func TestResponsibleUseCase_AttachPaymentMethod(t *testing.T) {
 
 }
