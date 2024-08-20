@@ -15,7 +15,7 @@ type IChildRepository struct {
 }
 
 // CreateChild provides a mock function with given fields: ctx, child
-func (_m *IChildRepository) CreateChild(ctx context.Context, child *entity.Child) error {
+func (_m *IChildRepository) Create(ctx context.Context, child *entity.Child) error {
 	ret := _m.Called(ctx, child)
 
 	if len(ret) == 0 {
@@ -33,7 +33,7 @@ func (_m *IChildRepository) CreateChild(ctx context.Context, child *entity.Child
 }
 
 // DeleteChild provides a mock function with given fields: ctx, rg
-func (_m *IChildRepository) DeleteChild(ctx context.Context, rg *string) error {
+func (_m *IChildRepository) Delete(ctx context.Context, rg *string) error {
 	ret := _m.Called(ctx, rg)
 
 	if len(ret) == 0 {
@@ -51,7 +51,7 @@ func (_m *IChildRepository) DeleteChild(ctx context.Context, rg *string) error {
 }
 
 // FindAllChildren provides a mock function with given fields: ctx, cpf
-func (_m *IChildRepository) FindAllChildren(ctx context.Context, cpf *string) ([]entity.Child, error) {
+func (_m *IChildRepository) FindAll(ctx context.Context, cpf *string) ([]entity.Child, error) {
 	ret := _m.Called(ctx, cpf)
 
 	if len(ret) == 0 {
@@ -81,7 +81,7 @@ func (_m *IChildRepository) FindAllChildren(ctx context.Context, cpf *string) ([
 }
 
 // GetChild provides a mock function with given fields: ctx, rg
-func (_m *IChildRepository) GetChild(ctx context.Context, rg *string) (*entity.Child, error) {
+func (_m *IChildRepository) Get(ctx context.Context, rg *string) (*entity.Child, error) {
 	ret := _m.Called(ctx, rg)
 
 	if len(ret) == 0 {
@@ -111,7 +111,7 @@ func (_m *IChildRepository) GetChild(ctx context.Context, rg *string) (*entity.C
 }
 
 // UpdateChild provides a mock function with given fields: ctx, child
-func (_m *IChildRepository) UpdateChild(ctx context.Context, child *entity.Child) error {
+func (_m *IChildRepository) Update(ctx context.Context, child *entity.Child) error {
 	ret := _m.Called(ctx, child)
 
 	if len(ret) == 0 {
