@@ -1,0 +1,38 @@
+name: venture
+development: true
+
+server:
+  host: "localhost"
+  port: 8888
+  secret: "venture"
+
+database:
+  dbuser: "postgres"
+  dbport: 5432
+  dbhost: "localhost"
+  dbpassword: "password"
+  dbname: "venture_staging"
+  schema: "../../database/schema.sql"
+
+cloud:
+  region: "your-aws-region"
+  accesskey: "your-access-key"
+  secretkey: "your-secret-key"
+  token: ""
+  source: "your-aws-source-email"
+
+cache:
+  address: "localhost"
+  password: "password"
+
+messaging:
+  broker: "your-broker-ip"
+  topic: "your-topic-name"
+
+google-cloud-secret:
+  apikey: "your-apikey-google"
+  endpoint-matrix-distance: "https://maps.googleapis.com/maps/api/distancematrix/json"
+
+stripe-env:
+  publickey: "your-stripe-public-key"
+  secretkey: "your-stripe-secret-key"
