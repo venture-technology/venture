@@ -15,6 +15,7 @@ import (
 
 type IAwsRepository interface {
 	SendEmail(ctx context.Context, email *entity.Email) error
+	SaveImageS3(ctx context.Context, path, filename string, image []byte)
 }
 
 type AwsRepository struct {
@@ -27,13 +28,14 @@ func NewAwsRepository(sess *session.Session) *AwsRepository {
 	}
 }
 
-func (ar *AwsRepository) SaveImageOnAWSBucket(ctx context.Context, image []byte, filename string) (string, error) {
+// Given path without "/" and filename to create a complete path.
+func (ar *AwsRepository) SaveImageS3(ctx context.Context, path, filename string, image []byte) (string, error) {
 
 	conf := config.Get()
 
 	svc := s3.New(ar.sess)
 
-	filename = fmt.Sprintf("qrcodes/%s.png", filename)
+	filename = fmt.Sprintf("%s/%s.png", path, filename)
 
 	_, err := svc.PutObject(&s3.PutObjectInput{
 		Bucket:      aws.String(conf.Cloud.BucketName),
@@ -47,9 +49,9 @@ func (ar *AwsRepository) SaveImageOnAWSBucket(ctx context.Context, image []byte,
 		return "", err
 	}
 
-	qrCode := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", conf.Cloud.BucketName, filename)
+	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", conf.Cloud.BucketName, filename)
 
-	return qrCode, nil
+	return url, nil
 }
 
 func (ar *AwsRepository) SendEmail(ctx context.Context, email *entity.Email) error {

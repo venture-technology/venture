@@ -3,7 +3,7 @@ package entity
 import "github.com/dgrijalva/jwt-go"
 
 type Responsible struct {
-	ID              int        `json:"id"`
+	ID              int        `json:"id,omitempty"`
 	Name            string     `json:"name" validate:"required"`
 	Email           string     `json:"email" validate:"required"`
 	Password        string     `json:"password,omitempty" validate:"required"`

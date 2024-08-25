@@ -6,11 +6,11 @@ import (
 )
 
 type School struct {
-	ID       int     `json:"id"`
-	Name     string  `json:"name"`
-	CNPJ     string  `json:"cnpj"`
-	Email    string  `json:"email"`
-	Password string  `json:"password"`
+	ID       int     `json:"id,omitempty"`
+	Name     string  `json:"name" validate:"required"`
+	CNPJ     string  `json:"cnpj" validate:"required"`
+	Email    string  `json:"email" validate:"required"`
+	Password string  `json:"password,omitempty" validate:"required"`
 	Address  Address `json:"address" validate:"required"`
 	Phone    string  `json:"phone" validate:"required" example:"+55 11 123456789"`
 }
