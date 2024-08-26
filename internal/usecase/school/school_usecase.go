@@ -29,8 +29,8 @@ func (su *SchoolUseCase) FindAll(ctx context.Context) ([]entity.School, error) {
 	return su.schoolRepository.FindAll(ctx)
 }
 
-func (su *SchoolUseCase) Update(ctx context.Context, currentSchool, school *entity.School) error {
-	return su.schoolRepository.Update(ctx, currentSchool, school)
+func (su *SchoolUseCase) Update(ctx context.Context, school *entity.School) error {
+	return su.schoolRepository.Update(ctx, school)
 }
 
 func (su *SchoolUseCase) Delete(ctx context.Context, cnpj *string) error {
