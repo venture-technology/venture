@@ -15,7 +15,7 @@ import (
 
 type IAwsRepository interface {
 	SendEmail(ctx context.Context, email *entity.Email) error
-	SaveImageS3(ctx context.Context, path, filename string, image []byte)
+	// SaveImageS3(ctx context.Context, path, filename string, image []byte)
 }
 
 type AwsRepository struct {
