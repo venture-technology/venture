@@ -27,13 +27,13 @@ func NewSchoolRepository(db *sql.DB) *SchoolRepository {
 }
 
 func (sr *SchoolRepository) Create(ctx context.Context, school *entity.School) error {
-	sqlQuery := `INSERT INTO schools (name, cnpj, email, password, street, number, zip) VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	_, err := sr.db.Exec(sqlQuery, school.Name, school.CNPJ, school.Email, school.Password, school.Address.Street, school.Address.Number, school.Address.ZIP)
+	sqlQuery := `INSERT INTO schools (name, cnpj, email, password, street, number, zip, phone) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+	_, err := sr.db.Exec(sqlQuery, school.Name, school.CNPJ, school.Email, school.Password, school.Address.Street, school.Address.Number, school.Address.ZIP, school.Phone)
 	return err
 }
 
 func (sr *SchoolRepository) Get(ctx context.Context, cnpj *string) (*entity.School, error) {
-	sqlQuery := `SELECT id, name, cnpj, email, street, number, zip FROM schools WHERE cnpj = $1 LIMIT 1`
+	sqlQuery := `SELECT id, name, cnpj, email, street, number, zip, phone FROM schools WHERE cnpj = $1 LIMIT 1`
 	var school entity.School
 	err := sr.db.QueryRow(sqlQuery, *cnpj).Scan(
 		&school.ID,
@@ -43,6 +43,7 @@ func (sr *SchoolRepository) Get(ctx context.Context, cnpj *string) (*entity.Scho
 		&school.Address.Street,
 		&school.Address.Number,
 		&school.Address.ZIP,
+		&school.Phone,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return nil, err
@@ -51,7 +52,7 @@ func (sr *SchoolRepository) Get(ctx context.Context, cnpj *string) (*entity.Scho
 }
 
 func (sr *SchoolRepository) FindAll(ctx context.Context) ([]entity.School, error) {
-	sqlQuery := `SELECT id, name, cnpj, email, street, number, zip FROM schools`
+	sqlQuery := `SELECT id, name, cnpj, email, street, number, zip, phone FROM schools`
 
 	rows, err := sr.db.Query(sqlQuery)
 	if err != nil {
@@ -63,7 +64,7 @@ func (sr *SchoolRepository) FindAll(ctx context.Context) ([]entity.School, error
 
 	for rows.Next() {
 		var school entity.School
-		err := rows.Scan(&school.ID, &school.Name, &school.CNPJ, &school.Email, &school.Address.Street, &school.Address.Number, &school.Address.ZIP)
+		err := rows.Scan(&school.ID, &school.Name, &school.CNPJ, &school.Email, &school.Address.Street, &school.Address.Number, &school.Address.ZIP, &school.Phone)
 		if err != nil {
 			return nil, err
 		}
@@ -77,7 +78,7 @@ func (sr *SchoolRepository) FindAll(ctx context.Context) ([]entity.School, error
 }
 
 func (sr *SchoolRepository) Update(ctx context.Context, school *entity.School) error {
-	sqlQuery := `SELECT name, email, password, street, number, zip FROM schools WHERE cnpj = $1 LIMIT 1`
+	sqlQuery := `SELECT name, email, password, street, number, zip, phone FROM schools WHERE cnpj = $1 LIMIT 1`
 
 	var currentSchool entity.School
 	err := sr.db.QueryRow(sqlQuery, &school.CNPJ).Scan(
@@ -87,6 +88,7 @@ func (sr *SchoolRepository) Update(ctx context.Context, school *entity.School) e
 		&currentSchool.Address.Street,
 		&currentSchool.Address.Number,
 		&currentSchool.Address.ZIP,
+		&currentSchool.Phone,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return err
@@ -111,9 +113,12 @@ func (sr *SchoolRepository) Update(ctx context.Context, school *entity.School) e
 	if school.Address.ZIP != "" && school.Address.ZIP != currentSchool.Address.ZIP {
 		currentSchool.Address.ZIP = school.Address.ZIP
 	}
+	if school.Phone != "" && school.Phone != currentSchool.Phone {
+		currentSchool.Phone = school.Phone
+	}
 
-	sqlQueryUpdate := `UPDATE schools SET name = $1, email = $2, password = $3, street = $4, number = $5, zip = $6 WHERE cnpj = $7`
-	_, err = sr.db.ExecContext(ctx, sqlQueryUpdate, currentSchool.Name, currentSchool.Email, currentSchool.Password, currentSchool.Address.Street, currentSchool.Address.Number, currentSchool.Address.ZIP, &school.CNPJ)
+	sqlQueryUpdate := `UPDATE schools SET name = $1, email = $2, password = $3, street = $4, number = $5, zip = $6, phone = $7 WHERE cnpj = $8`
+	_, err = sr.db.ExecContext(ctx, sqlQueryUpdate, currentSchool.Name, currentSchool.Email, currentSchool.Password, currentSchool.Address.Street, currentSchool.Address.Number, currentSchool.Address.ZIP, currentSchool.Phone, &school.CNPJ)
 	return err
 }
 
