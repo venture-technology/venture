@@ -33,6 +33,7 @@ func (sh *SchoolHandler) Create(c *gin.Context) {
 	validatecnpj := input.ValidateCnpj()
 	if !validatecnpj {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "cnpj is invalid"})
+		return
 	}
 
 	input.Password = utils.HashPassword(input.Password)
