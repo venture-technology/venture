@@ -14,6 +14,7 @@ import (
 	"github.com/venture-technology/venture/internal/handler"
 	"github.com/venture-technology/venture/internal/repository"
 	"github.com/venture-technology/venture/internal/usecase/responsible"
+	"github.com/venture-technology/venture/internal/usecase/school"
 
 	_ "github.com/lib/pq"
 )
@@ -70,6 +71,7 @@ func (g *Gateway) Setup() {
 	}
 
 	g.Responsible()
+	g.School()
 
 	g.router.Run(fmt.Sprintf(":%d", config.Server.Port))
 
@@ -81,6 +83,15 @@ func (g *Gateway) Responsible() {
 	g.group.GET("/responsible", handler.Get)
 	g.group.PATCH("/responsible", handler.Update)
 	g.group.DELETE("/responsible", handler.Delete)
+}
+
+func (g *Gateway) School() {
+	handler := handler.NewSchoolHandler(school.NewSchoolUseCase(repository.NewSchoolRepository(g.database)))
+	g.group.POST("/school", handler.Create)
+	g.group.GET("/school", handler.FindAll)
+	g.group.GET("/school/:cnpj", handler.Get)
+	g.group.PATCH("/school/:cnpj", handler.Update)
+	g.group.DELETE("/school/:cnpj", handler.Delete)
 }
 
 func postgres(dbconfig config.Database) string {
