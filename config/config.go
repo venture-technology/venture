@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -80,5 +81,15 @@ func Load(filename string) (*Config, error) {
 }
 
 func Get() *Config {
+
+	// if was created to run tests
+	if config == nil {
+		config, err := Load("../../../config/config.yaml")
+		if err != nil {
+			log.Fatalf("failed to load config: %v", err)
+		}
+		return config
+	}
+
 	return config
 }

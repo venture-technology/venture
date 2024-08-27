@@ -11,7 +11,6 @@ import (
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type ResponsibleUseCase struct {
@@ -25,8 +24,7 @@ func NewResponsibleUseCase(responsibleRepository repository.IResponsibleReposito
 }
 
 func (ru *ResponsibleUseCase) Create(ctx context.Context, responsible *entity.Responsible) error {
-	responsible.Password = utils.HashPassword(responsible.Password)
-	return ru.responsibleRepository.Create(ctx, responsible)
+	return ru.responsiblerepository.Create(ctx, responsible)
 }
 
 func (ru *ResponsibleUseCase) Get(ctx context.Context, cpf *string) (*entity.Responsible, error) {
@@ -46,33 +44,6 @@ func (ru *ResponsibleUseCase) Delete(ctx context.Context, cpf *string) error {
 
 func (ru *ResponsibleUseCase) SaveCard(ctx context.Context, cpf, cardToken, paymentMethodId *string) error {
 	return ru.responsibleRepository.SaveCard(ctx, cpf, cardToken, paymentMethodId)
-}
-
-func (ru *ResponsibleUseCase) Auth(ctx context.Context, responsible *entity.Responsible) (*entity.Responsible, error) {
-	responsible.Password = utils.HashPassword((responsible.Password))
-	return ru.responsibleRepository.Auth(ctx, responsible)
-}
-
-func (ru *ResponsibleUseCase) UpdatePaymentMethodDefault(ctx context.Context, customerId, paymentMethodId *string) (*stripe.Customer, error) {
-
-	conf := config.Get()
-
-	stripe.Key = conf.StripeEnv.SecretKey
-
-	params := &stripe.CustomerParams{
-		InvoiceSettings: &stripe.CustomerInvoiceSettingsParams{
-			DefaultPaymentMethod: stripe.String(*paymentMethodId),
-		},
-	}
-
-	updatedCustomer, err := customer.Update(*customerId, params)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return updatedCustomer, nil
-
 }
 
 func (ru *ResponsibleUseCase) CreateCustomer(ctx context.Context, responsible *entity.Responsible) (*stripe.Customer, error) {
