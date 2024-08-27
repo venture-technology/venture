@@ -1,0 +1,44 @@
+POST http://0.0.0.0:8888/api/v1/school
+Content-Type: application/json
+
+{
+    "name":"E.M.E.F Professor Carlos Pasquale",
+    "email": "emefprofcarlospasquale@carlospasquale.com",
+    "password": "123teste",
+    "cnpj": "98088292000160",
+    "address": {
+        "street": "Avenida Barão de Alagoas",
+        "number": "223",
+        "zip": "08120000"
+    },
+    "phone": "+55 11 912345678"
+}
+
+###
+GET http://0.0.0.0:8888/api/v1/school
+Content-Type: application/json
+
+###
+GET http://0.0.0.0:8888/api/v1/school/98088292000160
+Content-Type: application/json
+
+###
+PATCH http://0.0.0.0:8888/api/v1/school/98088292000160
+Content-Type: application/json
+
+{
+    "name":"E.M.E.F Ezequiel Ramos",
+    "email": "emefezequielramos@ezequielramos",
+    "password": "123teste",
+    "cnpj": "98088292000160",
+    "address": {
+        "street": "Avenida Barão de Alagoas",
+        "number": "223",
+        "zip": "08120000"
+    },
+    "phone": "+55 11 912345678"
+}
+
+###
+DELETE http://0.0.0.0:8888/api/v1/school/98088292000160
+Content-Type: application/json

@@ -14,12 +14,12 @@ import (
 )
 
 type ResponsibleUseCase struct {
-	responsiblerepository repository.IResponsibleRepository
+	responsibleRepository repository.IResponsibleRepository
 }
 
-func NewResponsibleUseCase(responsiblerepository repository.IResponsibleRepository) *ResponsibleUseCase {
+func NewResponsibleUseCase(responsibleRepository repository.IResponsibleRepository) *ResponsibleUseCase {
 	return &ResponsibleUseCase{
-		responsiblerepository: responsiblerepository,
+		responsibleRepository: responsibleRepository,
 	}
 }
 
@@ -29,21 +29,21 @@ func (ru *ResponsibleUseCase) Create(ctx context.Context, responsible *entity.Re
 
 func (ru *ResponsibleUseCase) Get(ctx context.Context, cpf *string) (*entity.Responsible, error) {
 	log.Printf("param read school -> cpf: %s", *cpf)
-	return ru.responsiblerepository.Get(ctx, cpf)
+	return ru.responsibleRepository.Get(ctx, cpf)
 }
 
 func (ru *ResponsibleUseCase) Update(ctx context.Context, currentResponsible, responsible *entity.Responsible) error {
 	log.Printf("input received to update school -> name: %s, cpf: %s, email: %s", responsible.Name, responsible.CPF, responsible.Email)
-	return ru.responsiblerepository.Update(ctx, currentResponsible, responsible)
+	return ru.responsibleRepository.Update(ctx, currentResponsible, responsible)
 }
 
 func (ru *ResponsibleUseCase) Delete(ctx context.Context, cpf *string) error {
 	log.Printf("trying delete your infos --> %v", *cpf)
-	return ru.responsiblerepository.Delete(ctx, cpf)
+	return ru.responsibleRepository.Delete(ctx, cpf)
 }
 
 func (ru *ResponsibleUseCase) SaveCard(ctx context.Context, cpf, cardToken, paymentMethodId *string) error {
-	return ru.responsiblerepository.SaveCard(ctx, cpf, cardToken, paymentMethodId)
+	return ru.responsibleRepository.SaveCard(ctx, cpf, cardToken, paymentMethodId)
 }
 
 func (ru *ResponsibleUseCase) CreateCustomer(ctx context.Context, responsible *entity.Responsible) (*stripe.Customer, error) {
