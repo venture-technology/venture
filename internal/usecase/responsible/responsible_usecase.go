@@ -24,7 +24,7 @@ func NewResponsibleUseCase(responsibleRepository repository.IResponsibleReposito
 }
 
 func (ru *ResponsibleUseCase) Create(ctx context.Context, responsible *entity.Responsible) error {
-	return ru.responsiblerepository.Create(ctx, responsible)
+	return ru.responsibleRepository.Create(ctx, responsible)
 }
 
 func (ru *ResponsibleUseCase) Get(ctx context.Context, cpf *string) (*entity.Responsible, error) {
