@@ -56,8 +56,8 @@ CREATE TABLE IF NOT EXISTS drivers (
     zip VARCHAR(8) NOT NULL,
     phone TEXT NOT NULL,
     bank_name TEXT,
-    agency_number TEXT,
-    account_number TEXT,
+    bank_agency TEXT,
+    bank_account TEXT,
     pix_key TEXT
 ); 
 
