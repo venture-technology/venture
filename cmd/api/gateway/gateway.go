@@ -15,6 +15,7 @@ import (
 	"github.com/venture-technology/venture/internal/repository"
 	"github.com/venture-technology/venture/internal/usecase/child"
 	"github.com/venture-technology/venture/internal/usecase/driver"
+	"github.com/venture-technology/venture/internal/usecase/invite"
 	"github.com/venture-technology/venture/internal/usecase/responsible"
 	"github.com/venture-technology/venture/internal/usecase/school"
 
@@ -76,6 +77,7 @@ func (g *Gateway) Setup() {
 	g.Child()
 	g.School()
 	g.Driver()
+	g.Invite()
 
 	g.router.Run(fmt.Sprintf(":%d", config.Server.Port))
 
@@ -116,6 +118,16 @@ func (g *Gateway) Driver() {
 	g.group.POST("/driver/:cnh/pix", handler.SavePix)
 	g.group.POST("/driver/:cnh/bank", handler.SaveBank)
 	g.group.DELETE("/driver/:cnh", handler.Delete)
+}
+
+func (g *Gateway) Invite() {
+	handler := handler.NewInviteHandler(invite.NewInviteUseCase(repository.NewInviteRepository(g.database), repository.NewPartnerRepository(g.database)))
+	g.group.POST("/invite", handler.Create)
+	g.group.GET("/invite/:id", handler.Get)
+	g.group.GET("/driver/invite/:cnh", handler.FindAllByCnh)
+	g.group.GET("/school/invite/:cnpj", handler.FindAllByCnpj)
+	g.group.PATCH("/invite/:id/accept", handler.Accept)
+	g.group.DELETE("/invite/:id/decline", handler.Decline)
 }
 
 func postgres(dbconfig config.Database) string {
