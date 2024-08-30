@@ -19,7 +19,7 @@ type Driver struct {
 	Bank     Bank    `json:"bank,omitempty"`
 	Address  Address `json:"address,omitempty" validate:"required"`
 	Amount   float64 `json:"amount,omitempty" validate:"required"`
-	Phone    string  `json:"phone" validate:"required" example:"+55 11 123456789"`
+	Phone    string  `json:"phone,omitempty" validate:"required" example:"+55 11 123456789"`
 }
 
 // future modality
