@@ -62,27 +62,23 @@ CREATE TABLE IF NOT EXISTS drivers (
 ); 
 
 -- Tabela de Convites
-DROP TABLE invites CASCADE;
 CREATE TABLE IF NOT EXISTS invites (
     id UUID PRIMARY KEY,
     requester VARCHAR(14), -- school
-    guester VARCHAR(20), -- driver
+    guester VARCHAR(14), -- driver
     status TEXT NOT NULL,
     FOREIGN KEY (requester) REFERENCES schools(cnpj),
-    FOREIGN KEY (guester) REFERENCES drivers(cnh),
-    CONSTRAINT unique_invite UNIQUE (requester, guester)
+    FOREIGN KEY (guester) REFERENCES drivers(cnh)
 );
 
 -- Table partners
-DROP TABLE partners CASCADE;
 CREATE TABLE IF NOT EXISTS partners (
     record SERIAL PRIMARY KEY,
     driver_id VARCHAR(20) NOT NULL,
     school_id VARCHAR(14) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (driver_id) REFERENCES drivers(cnh) ON DELETE CASCADE,
     FOREIGN KEY (school_Id) REFERENCES schools(cnpj) ON DELETE CASCADE,
-    CONSTRAINT unique_partner UNIQUE (driver_id, school_id)
+    FOREIGN KEY (driver_id) REFERENCES drivers(cnh) ON DELETE CASCADE
 );
 
 -- Table contracts
