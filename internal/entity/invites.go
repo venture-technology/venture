@@ -1,8 +1,10 @@
 package entity
 
+import "github.com/google/uuid"
+
 type Invite struct {
-	ID     int    `json:"id"`
-	School School `json:"school"`
-	Driver Driver `json:"driver"`
-	Status string `json:"status"`
+	ID     uuid.UUID `json:"id,omitempty"`
+	School School    `json:"school,omitempty"`
+	Driver Driver    `json:"driver,omitempty"`
+	Status string    `json:"status,omitempty"`
 }
