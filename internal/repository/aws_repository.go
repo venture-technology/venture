@@ -15,7 +15,7 @@ import (
 
 type IAwsRepository interface {
 	SendEmail(ctx context.Context, email *entity.Email) error
-	// SaveImageS3(ctx context.Context, path, filename string, image []byte)
+	SaveAtS3(ctx context.Context, path, filename string, file []byte) (string, error)
 }
 
 type AwsRepository struct {
@@ -29,7 +29,7 @@ func NewAwsRepository(sess *session.Session) *AwsRepository {
 }
 
 // Given path without "/" and filename to create a complete path.
-func (ar *AwsRepository) SaveImageS3(ctx context.Context, path, filename string, image []byte) (string, error) {
+func (ar *AwsRepository) SaveAtS3(ctx context.Context, path, filename string, file []byte) (string, error) {
 
 	conf := config.Get()
 
@@ -40,7 +40,7 @@ func (ar *AwsRepository) SaveImageS3(ctx context.Context, path, filename string,
 	_, err := svc.PutObject(&s3.PutObjectInput{
 		Bucket:      aws.String(conf.Cloud.BucketName),
 		Key:         aws.String(filename), // Maintain the same filename in the bucket
-		Body:        bytes.NewReader(image),
+		Body:        bytes.NewReader(file),
 		ACL:         aws.String("public-read"),
 		ContentType: aws.String("image/png"),
 	})

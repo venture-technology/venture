@@ -20,6 +20,7 @@ cloud:
   secretkey: "your-secret-key"
   token: ""
   source: "your-aws-source-email"
+  bucketname: "your-bucket-name"
 
 cache:
   address: "localhost"

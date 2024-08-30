@@ -55,10 +55,10 @@ CREATE TABLE IF NOT EXISTS drivers (
     complement VARCHAR(10),
     zip VARCHAR(8) NOT NULL,
     phone TEXT NOT NULL,
-    bank_name VARCHAR(100),
-    agency_number VARCHAR(4),
-    account_number VARCHAR(20),
-    pix_key VARCHAR(100)
+    bank_name TEXT,
+    bank_agency TEXT,
+    bank_account TEXT,
+    pix_key TEXT
 ); 
 
 -- Tabela de Convites

@@ -14,6 +14,7 @@ import (
 	"github.com/venture-technology/venture/internal/handler"
 	"github.com/venture-technology/venture/internal/repository"
 	"github.com/venture-technology/venture/internal/usecase/child"
+	"github.com/venture-technology/venture/internal/usecase/driver"
 	"github.com/venture-technology/venture/internal/usecase/responsible"
 	"github.com/venture-technology/venture/internal/usecase/school"
 
@@ -73,7 +74,8 @@ func (g *Gateway) Setup() {
 
 	g.Responsible()
 	g.Child()
-  g.School()
+	g.School()
+	g.Driver()
 
 	g.router.Run(fmt.Sprintf(":%d", config.Server.Port))
 
@@ -104,6 +106,16 @@ func (g *Gateway) School() {
 	g.group.GET("/school/:cnpj", handler.Get)
 	g.group.PATCH("/school/:cnpj", handler.Update)
 	g.group.DELETE("/school/:cnpj", handler.Delete)
+}
+
+func (g *Gateway) Driver() {
+	handler := handler.NewDriverHandler(driver.NewDriverUseCase(repository.NewDriverRepository(g.database), repository.NewAwsRepository(g.cloud)))
+	g.group.POST("/driver", handler.Create)
+	g.group.GET("/driver/:cnh", handler.Get)
+	g.group.PATCH("/driver/:cnh", handler.Update)
+	g.group.POST("/driver/:cnh/pix", handler.SavePix)
+	g.group.POST("/driver/:cnh/bank", handler.SaveBank)
+	g.group.DELETE("/driver/:cnh", handler.Delete)
 }
 
 func postgres(dbconfig config.Database) string {
