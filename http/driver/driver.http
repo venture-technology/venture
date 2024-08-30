@@ -1,0 +1,80 @@
+POST http://0.0.0.0:8888/api/v1/driver
+Content-Type: application/json
+
+{
+    "name": "Motorista",
+    "email": "motorista@gmail.com",
+    "password": "123teste",
+    "cpf": "84742491041",
+    "cnh": "87891080365",
+    "address": {
+        "street": "Avenida Barão de Alagoas",
+        "number": "223",
+        "zip": "08120000"
+    },
+    "amount": 100,
+    "phone": "+55 11 912345678"
+}
+
+###
+
+GET http://0.0.0.0:8888/api/v1/driver/87891080365
+Content-Type: application/json
+
+### 
+
+PATCH http://0.0.0.0:8888/api/v1/driver/87891080365
+Content-Type: application/json
+
+{
+    "name": "Motorista",
+    "email": "motorista@gmail.com",
+    "password": "123teste",
+    "cpf": "84742491041",
+    "cnh": "87891080365",
+    "address": {
+        "street": "Avenida Barão de Alagoas",
+        "number": "223",
+        "zip": "08120000"
+    },
+    "amount": 110,
+    "bank" : {
+        "agency_number": "7364",
+        "account_number": "2834",
+        "bank_name": "itau"
+    },
+    "pix" : {
+        "pix_key" : "teste-alterado-chave"
+    },
+    "phone": "+55 11 912345678"
+}
+
+### 
+
+DELETE http://0.0.0.0:8888/api/v1/driver/87891080365
+Content-Type: application/json
+
+
+### 
+
+POST http://0.0.0.0:8888/api/v1/driver/87891080365/bank
+Content-Type: application/json
+
+{
+    "bank" : {
+        "agency_number": "1234",
+        "account_number": "1234",
+        "bank_name": "nubank"
+    }
+}
+
+###
+
+POST http://0.0.0.0:8888/api/v1/driver/87891080365/pix
+Content-Type: application/json
+
+{
+    "pix" : {
+        "pix_key": "teste-chave"
+    }
+}
