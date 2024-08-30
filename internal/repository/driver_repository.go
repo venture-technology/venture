@@ -30,13 +30,13 @@ func NewDriverRepository(db *sql.DB) *DriverRepository {
 }
 
 func (dr *DriverRepository) Create(ctx context.Context, driver *entity.Driver) error {
-	sqlQuery := `INSERT INTO drivers (amount, qrcode, name, email, password, cpf, cnh, street, number, zip, complement) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
-	_, err := dr.db.Exec(sqlQuery, driver.Amount, driver.QrCode, driver.Name, driver.Email, driver.Password, driver.CPF, driver.CNH, driver.Address.Street, driver.Address.Number, driver.Address.ZIP, driver.Address.Complement)
+	sqlQuery := `INSERT INTO drivers (amount, qrcode, name, email, password, cpf, cnh, street, number, zip, complement, phone, bank_name, agency_number, account_number, pix_key) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`
+	_, err := dr.db.Exec(sqlQuery, driver.Amount, driver.QrCode, driver.Name, driver.Email, driver.Password, driver.CPF, driver.CNH, driver.Address.Street, driver.Address.Number, driver.Address.ZIP, driver.Address.Complement, driver.Phone, driver.Bank.Name, driver.Bank.Agency, driver.Bank.Account, driver.Pix.Key)
 	return err
 }
 
 func (dr *DriverRepository) Get(ctx context.Context, cnh *string) (*entity.Driver, error) {
-	sqlQuery := `SELECT id, amount, name, cpf, cnh, qrcode, email, street, number, zip, complement FROM drivers WHERE cnh = $1 LIMIT 1`
+	sqlQuery := `SELECT id, amount, name, cpf, cnh, qrcode, email, street, number, zip, complement, phone, bank_name, agency_number, account_number, pix_key FROM drivers WHERE cnh = $1 LIMIT 1`
 	var driver entity.Driver
 	err := dr.db.QueryRow(sqlQuery, *cnh).Scan(
 		&driver.ID,
@@ -50,6 +50,11 @@ func (dr *DriverRepository) Get(ctx context.Context, cnh *string) (*entity.Drive
 		&driver.Address.Number,
 		&driver.Address.ZIP,
 		&driver.Address.Complement,
+		&driver.Phone,
+		&driver.Bank.Name,
+		&driver.Bank.Agency,
+		&driver.Bank.Account,
+		&driver.Pix.Key,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return nil, err
@@ -58,7 +63,7 @@ func (dr *DriverRepository) Get(ctx context.Context, cnh *string) (*entity.Drive
 }
 
 func (dr *DriverRepository) Update(ctx context.Context, driver *entity.Driver) error {
-	sqlQuery := `SELECT name, amount, email, password, street, number, zip, complement FROM drivers WHERE cnh = $1 LIMIT 1`
+	sqlQuery := `SELECT name, amount, email, password, street, number, zip, complement, phone, bank_name, agency_number, account_number, pix_key FROM drivers WHERE cnh = $1 LIMIT 1`
 	var currentDriver entity.Driver
 	err := dr.db.QueryRow(sqlQuery, driver.CNH).Scan(
 		&currentDriver.Name,
@@ -69,6 +74,11 @@ func (dr *DriverRepository) Update(ctx context.Context, driver *entity.Driver) e
 		&currentDriver.Address.Number,
 		&currentDriver.Address.ZIP,
 		&currentDriver.Address.Complement,
+		&currentDriver.Phone,
+		&currentDriver.Bank.Name,
+		&currentDriver.Bank.Agency,
+		&currentDriver.Bank.Account,
+		&currentDriver.Pix.Key,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return err
@@ -101,9 +111,24 @@ func (dr *DriverRepository) Update(ctx context.Context, driver *entity.Driver) e
 	if driver.Address.Complement != "" && driver.Address.Complement != currentDriver.Address.Complement {
 		currentDriver.Address.Complement = driver.Address.Complement
 	}
+	if driver.Phone != "" && driver.Phone != currentDriver.Phone {
+		currentDriver.Phone = driver.Phone
+	}
+	if driver.Bank.Name != "" && driver.Bank.Name != currentDriver.Bank.Name {
+		currentDriver.Bank.Name = driver.Bank.Name
+	}
+	if driver.Bank.Account != "" && driver.Bank.Account != currentDriver.Bank.Account {
+		currentDriver.Bank.Account = driver.Bank.Account
+	}
+	if driver.Bank.Agency != "" && driver.Bank.Agency != currentDriver.Bank.Agency {
+		currentDriver.Bank.Agency = driver.Bank.Agency
+	}
+	if driver.Pix.Key != "" && driver.Pix.Key != currentDriver.Pix.Key {
+		currentDriver.Pix.Key = driver.Pix.Key
+	}
 
-	sqlQueryUpdate := `UPDATE drivers SET name = $1,  amount = $2, email = $3, password = $4, street = $5, number = $6, zip = $7, complement = $8 WHERE cnh = $9`
-	_, err = dr.db.ExecContext(ctx, sqlQueryUpdate, currentDriver.Name, currentDriver.Amount, currentDriver.Email, currentDriver.Password, currentDriver.Address.Street, currentDriver.Address.Number, currentDriver.Address.ZIP, currentDriver.Address.Complement, driver.CNH)
+	sqlQueryUpdate := `UPDATE drivers SET name = $1,  amount = $2, email = $3, password = $4, street = $5, number = $6, zip = $7, complement = $8, phone = $9, bank_name = $10, agency_number = $11, account_number = $12, pix_key = $13 WHERE cnh = $14`
+	_, err = dr.db.ExecContext(ctx, sqlQueryUpdate, currentDriver.Name, currentDriver.Amount, currentDriver.Email, currentDriver.Password, currentDriver.Address.Street, currentDriver.Address.Number, currentDriver.Address.ZIP, currentDriver.Address.Complement, currentDriver.Phone, currentDriver.Bank.Name, currentDriver.Bank.Agency, currentDriver.Bank.Account, currentDriver.Pix.Key, driver.CNH)
 	return err
 }
 
