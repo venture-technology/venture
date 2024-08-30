@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"fmt"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/venture-technology/venture/pkg/utils"
 )
@@ -31,8 +33,14 @@ type Pix struct {
 	Key string `json:"pix_key,omitempty" validate:"required"`
 }
 
-func (d *Driver) ValidateCnh() bool {
-	return utils.IsCNH(d.CNH)
+func (d *Driver) ValidateCnh() error {
+	status := utils.IsCNH(d.CNH)
+
+	if !status {
+		return fmt.Errorf("invalid cnh")
+	}
+
+	return nil
 }
 
 type ClaimsDriver struct {
