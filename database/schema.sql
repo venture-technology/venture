@@ -62,7 +62,6 @@ CREATE TABLE IF NOT EXISTS drivers (
 ); 
 
 -- Tabela de Convites
-DROP TABLE invites CASCADE;
 CREATE TABLE IF NOT EXISTS invites (
     id UUID PRIMARY KEY,
     requester VARCHAR(14), -- school
@@ -74,7 +73,6 @@ CREATE TABLE IF NOT EXISTS invites (
 );
 
 -- Table partners
-DROP TABLE partners CASCADE;
 CREATE TABLE IF NOT EXISTS partners (
     record SERIAL PRIMARY KEY,
     driver_id VARCHAR(20) NOT NULL,
