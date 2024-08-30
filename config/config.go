@@ -39,7 +39,7 @@ type Cloud struct {
 	SecretKey  string `yaml:"secretkey"`
 	Token      string `yaml:"token"`
 	Source     string `yaml:"source"`
-	BucketName string `yaml:"bucketName"`
+	BucketName string `yaml:"bucketname"`
 }
 
 type Cache struct {
