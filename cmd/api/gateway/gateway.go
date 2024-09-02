@@ -16,6 +16,7 @@ import (
 	"github.com/venture-technology/venture/internal/usecase/child"
 	"github.com/venture-technology/venture/internal/usecase/driver"
 	"github.com/venture-technology/venture/internal/usecase/invite"
+	"github.com/venture-technology/venture/internal/usecase/partner"
 	"github.com/venture-technology/venture/internal/usecase/responsible"
 	"github.com/venture-technology/venture/internal/usecase/school"
 
@@ -78,6 +79,7 @@ func (g *Gateway) Setup() {
 	g.School()
 	g.Driver()
 	g.Invite()
+	g.Partner()
 
 	g.router.Run(fmt.Sprintf(":%d", config.Server.Port))
 
@@ -128,6 +130,14 @@ func (g *Gateway) Invite() {
 	g.group.GET("/school/invite/:cnpj", handler.FindAllByCnpj)
 	g.group.PATCH("/invite/:id/accept", handler.Accept)
 	g.group.DELETE("/invite/:id/decline", handler.Decline)
+}
+
+func (g *Gateway) Partner() {
+	handler := handler.NewPartnerHandler(partner.NewPartnerUseCase(repository.NewPartnerRepository(g.database)))
+	g.group.GET("/partner/:id", handler.Get)
+	g.group.GET("/driver/partner/:cnh", handler.FindAllByCnh)
+	g.group.GET("/school/partner/:cnpj", handler.FindAllByCnpj)
+	g.group.DELETE("/partner/:id", handler.Delete)
 }
 
 func postgres(dbconfig config.Database) string {
