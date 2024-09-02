@@ -1,0 +1,17 @@
+GET http://0.0.0.0:8888/api/v1/driver/partner/87891080365
+Content-Type: application/json
+
+###
+
+GET http://0.0.0.0:8888/api/v1/school/partner/98088292000160
+Content-Type: application/json
+
+###
+
+GET http://0.0.0.0:8888/api/v1/partner/1
+Content-Type: application/json
+
+###
+
+DELETE http://0.0.0.0:8888/api/v1/partner/1
+Content-Type: application/json
