@@ -8,7 +8,7 @@ import (
 type School struct {
 	ID       int     `json:"id,omitempty"`
 	Name     string  `json:"name,omitempty" validate:"required"`
-	CNPJ     string  `json:"cnpj" validate:"required"`
+	CNPJ     string  `json:"cnpj,omitempty" validate:"required"`
 	Email    string  `json:"email,omitempty" validate:"required"`
 	Password string  `json:"password,omitempty" validate:"required"`
 	Address  Address `json:"address,omitempty" validate:"required"`

@@ -13,7 +13,7 @@ type Driver struct {
 	Email    string  `json:"email,omitempty" validate:"required"`
 	Password string  `json:"password,omitempty"`
 	CPF      string  `json:"cpf,omitempty"`
-	CNH      string  `json:"cnh" validate:"required"`
+	CNH      string  `json:"cnh,omitempty" validate:"required"`
 	QrCode   string  `json:"qrcode,omitempty"`
 	Pix      Pix     `json:"pix,omitempty"`
 	Bank     Bank    `json:"bank,omitempty"`
