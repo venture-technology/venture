@@ -8,11 +8,11 @@ import (
 )
 
 type IPartnerRepository interface {
-	// Get()
-	// FindAllByCnpj()
-	// FindAllByCnh()
+	Get(ctx context.Context, id *string) (*entity.Partner, error)
+	FindAllByCnpj(ctx context.Context, cnpj *string) ([]entity.Partner, error)
+	FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Partner, error)
 	IsPartner(ctx context.Context, cnh, cnpj *string) (bool, error)
-	// Delete()
+	Delete(ctx context.Context, id *string) error
 }
 
 type PartnerRepository struct {
@@ -43,4 +43,136 @@ func (pr *PartnerRepository) IsPartner(ctx context.Context, cnh, cnpj *string) (
 	}
 
 	return false, nil
+}
+
+func (pr *PartnerRepository) Get(ctx context.Context, id *string) (*entity.Partner, error) {
+	sqlQuery := `
+        SELECT 
+            p.record, p.created_at,
+            d.name AS driver_name, d.email AS driver_email, d.qrcode AS driver_qrcode, d.phone AS driver_phone,
+            s.name AS school_name, s.email AS school_email
+        FROM 
+            partners p
+        JOIN 
+            drivers d ON p.driver_id = d.cnh
+        JOIN 
+            schools s ON p.school_id = s.cnpj
+        WHERE 
+            p.record = $1
+        LIMIT 1;
+    `
+	var partner entity.Partner
+	err := pr.db.QueryRowContext(ctx, sqlQuery, *id).Scan(
+		&partner.Record,
+		&partner.CreatedAt,
+		&partner.Driver.Name,
+		&partner.Driver.Email,
+		&partner.Driver.QrCode,
+		&partner.Driver.Phone,
+		&partner.School.Name,
+		&partner.School.Email,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &partner, nil
+}
+
+func (pr *PartnerRepository) FindAllByCnpj(ctx context.Context, cnpj *string) ([]entity.Partner, error) {
+	sqlQuery := `
+        SELECT 
+            p.record, p.created_at,
+            d.name AS driver_name, d.email AS driver_email, d.qrcode AS driver_qrcode, d.phone AS driver_phone,
+            s.name AS school_name, s.email AS school_email
+        FROM 
+            partners p
+        JOIN 
+            drivers d ON p.driver_id = d.cnh
+        JOIN 
+            schools s ON p.school_id = s.cnpj
+        WHERE 
+            p.school_id = $1;
+    `
+	rows, err := pr.db.QueryContext(ctx, sqlQuery, *cnpj)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var partners []entity.Partner
+	for rows.Next() {
+		var partner entity.Partner
+		if err := rows.Scan(
+			&partner.Record,
+			&partner.CreatedAt,
+			&partner.Driver.Name,
+			&partner.Driver.Email,
+			&partner.Driver.QrCode,
+			&partner.Driver.Phone,
+			&partner.School.Name,
+			&partner.School.Email,
+		); err != nil {
+			return nil, err
+		}
+		partners = append(partners, partner)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return partners, nil
+}
+
+func (pr *PartnerRepository) FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Partner, error) {
+	sqlQuery := `
+        SELECT 
+            p.record, p.created_at,
+            d.name AS driver_name, d.email AS driver_email, d.qrcode AS driver_qrcode, d.phone AS driver_phone,
+            s.name AS school_name, s.email AS school_email
+        FROM 
+            partners p
+        JOIN 
+            drivers d ON p.driver_id = d.cnh
+        JOIN 
+            schools s ON p.school_id = s.cnpj
+        WHERE 
+            p.driver_id = $1;
+    `
+	rows, err := pr.db.QueryContext(ctx, sqlQuery, *cnh)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var partners []entity.Partner
+	for rows.Next() {
+		var partner entity.Partner
+		if err := rows.Scan(
+			&partner.Record,
+			&partner.CreatedAt,
+			&partner.Driver.Name,
+			&partner.Driver.Email,
+			&partner.Driver.QrCode,
+			&partner.Driver.Phone,
+			&partner.School.Name,
+			&partner.School.Email,
+		); err != nil {
+			return nil, err
+		}
+		partners = append(partners, partner)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return partners, nil
+}
+
+func (pr *PartnerRepository) Delete(ctx context.Context, id *string) error {
+	sqlQuery := `DELETE FROM partners WHERE record = $1;`
+	_, err := pr.db.ExecContext(ctx, sqlQuery, *id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
