@@ -2,10 +2,8 @@ package email
 
 import (
 	"context"
-	"encoding/json"
-	"log"
 
-	"github.com/segmentio/kafka-go"
+	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
 )
@@ -22,22 +20,18 @@ func NewEmailUseCase(emailRepository repository.IEmailRepository, awsRepository 
 	}
 }
 
-func (eu *EmailUseCase) CreateRecord(ctx context.Context, recipient *entity.Email) error {
-	return eu.emailRepository.CreateRecord(ctx, recipient)
+func (eu *EmailUseCase) Record(ctx context.Context, email *entity.Email) error {
+
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+
+	email.ID = id
+
+	return eu.emailRepository.Record(ctx, email)
 }
 
 func (eu *EmailUseCase) SendEmail(ctx context.Context, email *entity.Email) error {
 	return eu.awsRepository.SendEmail(ctx, email)
-}
-
-func (eu *EmailUseCase) UnserializeJsonToEmailDto(ctx context.Context, msg *kafka.Message) (*entity.Email, error) {
-	var email *entity.Email
-
-	err := json.Unmarshal(msg.Value, &email)
-	if err != nil {
-		log.Fatalf("Erro ao desserializar mensagem JSON: %v", err)
-		return nil, err
-	}
-
-	return email, nil
 }

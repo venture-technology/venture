@@ -2,27 +2,27 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/venture-technology/venture/internal/entity"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type IEmailRepository interface {
-	CreateRecord(ctx context.Context, email *entity.Email) error
+	Record(ctx context.Context, email *entity.Email) error
 }
 
 type EmailRepository struct {
-	db *sql.DB
+	collection *mongo.Collection
 }
 
-func NewEmailRepository(db *sql.DB) *EmailRepository {
+func NewEmailRepository(client *mongo.Client, dbName, collectionName string) *EmailRepository {
+	collection := client.Database(dbName).Collection(collectionName)
 	return &EmailRepository{
-		db: db,
+		collection: collection,
 	}
 }
 
-func (er *EmailRepository) CreateRecord(ctx context.Context, email *entity.Email) error {
-	sqlQuery := `INSERT INTO email_records (recipient, subject, body) VALUES ($1, $2, $3)`
-	_, err := er.db.Exec(sqlQuery, email.Recipient, email.Subject, email.Body)
+func (er *EmailRepository) Record(ctx context.Context, email *entity.Email) error {
+	_, err := er.collection.InsertOne(ctx, email)
 	return err
 }
