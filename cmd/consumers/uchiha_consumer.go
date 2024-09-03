@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"log"
 	"os"
 	"os/signal"
@@ -13,8 +12,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/segmentio/kafka-go"
 	"github.com/venture-technology/venture/config"
+	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
 	"github.com/venture-technology/venture/internal/usecase/email"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type consumer struct {
@@ -31,10 +33,9 @@ func (c *consumer) StartConsumer() {
 	conf := config.Get()
 
 	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:   []string{conf.Messaging.Brokers},
-		Topic:     conf.Messaging.Topic,
-		Partition: 1,
-		GroupID:   "reader.kafka.group",
+		Brokers:   []string{conf.Uchiha.Address},
+		Topic:     conf.Uchiha.Queue,
+		Partition: 0,
 		MinBytes:  10e3,
 		MaxBytes:  10e6,
 	})
@@ -47,12 +48,14 @@ func (c *consumer) StartConsumer() {
 	go func() {
 		for {
 
+			var email *entity.Email
+
 			message, err := reader.ReadMessage(context.Background())
 			if err != nil {
 				log.Fatalf("Erro ao ler mensagem do Kafka: %v", err)
 			}
 
-			email, err := c.emailUseCase.UnserializeJsonToEmailDto(context.Background(), &message)
+			email, err = email.Unserialize(&message)
 			if err != nil {
 				log.Fatalf("Erro ao unserializar mensagem do Kafka: %v", err)
 			}
@@ -63,12 +66,12 @@ func (c *consumer) StartConsumer() {
 				log.Fatalf("Erro ao enviar email: %v", err)
 			}
 
-			err = c.emailUseCase.CreateRecord(context.Background(), email)
+			err = c.emailUseCase.Record(context.Background(), email)
 			if err != nil {
 				log.Fatalf("Erro ao gravar record do email: %v", err)
 			}
 
-			log.Println("Venture-Microservice-Email: Message found in Queue, Email sended.")
+			log.Println("Message found in Queue, Email sended.")
 		}
 	}()
 
@@ -77,19 +80,9 @@ func (c *consumer) StartConsumer() {
 
 func main() {
 
-	config, err := config.Load("config/config.yaml")
+	config, err := config.Load("../../config/config.yaml")
 	if err != nil {
 		log.Fatalf("error loading config: %s", err.Error())
-	}
-
-	db, err := sql.Open("postgres", newPostgres(config.Database))
-	if err != nil {
-		log.Fatalf("failed to connect to database: %v", err)
-	}
-
-	err = migrate(db, config.Database.Schema)
-	if err != nil {
-		log.Fatalf("failed to execute migrations: %v", err)
 	}
 
 	sess, err := session.NewSession(&aws.Config{
@@ -100,36 +93,20 @@ func main() {
 		log.Fatalf("failed to create session at aws: %v", err)
 	}
 
+	clientOptions := options.Client().ApplyURI(config.Mongo.Address)
+	client, err := mongo.Connect(context.TODO(), clientOptions)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Disconnect(context.TODO())
+
 	awsRepository := repository.NewAwsRepository(sess)
-	emailRepository := repository.NewEmailRepository(db)
+	emailRepository := repository.NewEmailRepository(client, config.Mongo.Database, config.Mongo.Collection)
 
 	emailUseCase := email.NewEmailUseCase(emailRepository, awsRepository)
 
 	consumer := NewConsumer(emailUseCase)
-	log.Print("initing service: email-venture-service")
+	log.Print("initing service: uchiha")
 	consumer.StartConsumer()
 
-}
-
-func newPostgres(dbconfig config.Database) string {
-	return "user=" + dbconfig.User +
-		" password=" + dbconfig.Password +
-		" dbname=" + dbconfig.Name +
-		" host=" + dbconfig.Host +
-		" port=" + dbconfig.Port +
-		" sslmode=disable"
-}
-
-func migrate(db *sql.DB, filepath string) error {
-	schema, err := os.ReadFile(filepath)
-	if err != nil {
-		return err
-	}
-
-	_, err = db.Exec(string(schema))
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
