@@ -13,7 +13,8 @@ type Config struct {
 	Server            Server `yaml:"server"`
 	Cloud             Cloud
 	Cache             Cache
-	Messaging         Messaging
+	Uchiha            Uchiha            `yaml:"uchiha"`
+	Mongo             Mongo             `yaml:"mongo"`
 	GoogleCloudSecret GoogleCloudSecret `yaml:"google-cloud-secret"`
 	StripeEnv         StripeEnv         `yaml:"stripe-env"`
 }
@@ -47,10 +48,15 @@ type Cache struct {
 	Password string `yaml:"password"`
 }
 
-type Messaging struct {
-	Brokers   string `yaml:"broker"`
-	Topic     string `yaml:"topic"`
-	Partition int    `yaml:"partition"`
+type Uchiha struct {
+	Address string `yaml:"address"`
+	Queue   string `yaml:"queue"`
+}
+
+type Mongo struct {
+	Address    string `yaml:"address"`
+	Database   string `yaml:"dbname"`
+	Collection string `yaml:"collection"`
 }
 
 type GoogleCloudSecret struct {
