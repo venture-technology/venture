@@ -1,6 +1,7 @@
 package contract
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -10,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/stripe/stripe-go/v79"
 	"github.com/stripe/stripe-go/v79/invoice"
 	"github.com/stripe/stripe-go/v79/paymentintent"
@@ -31,28 +33,129 @@ func NewContractUseCase(cr repository.IContractRepository) *ContractUseCase {
 	}
 }
 
-func (cu *ContractUseCase) Create() {
+func (cu *ContractUseCase) Create(ctx context.Context, contract *entity.Contract) error {
+
+	distance, err := GetDistance(fmt.Sprintf("%s,%s,%s", contract.Child.Responsible.Address.Street, contract.Child.Responsible.Address.Number, contract.Child.Responsible.Address.ZIP), fmt.Sprintf("%s,%s,%s", contract.School.Address.Street, contract.School.Address.Number, contract.School.Address.ZIP))
+	if err != nil {
+		return err
+	}
+
+	contract.Amount = CalculateContract(*distance, float64(contract.Amount))
+
+	prodt, err := CreateProduct(contract)
+	if err != nil {
+		return err
+	}
+
+	contract.StripeSubscription.ProductSubscriptionId = prodt.ID
+
+	pr, err := CreatePrice(contract)
+	if err != nil {
+		return err
+	}
+
+	contract.StripeSubscription.PriceSubscriptionId = pr.ID
+
+	subs, err := CreateSubscription(contract)
+	if err != nil {
+		return err
+	}
+
+	contract.StripeSubscription.SubscriptionId = subs.ID
+
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+
+	contract.Record = id
+
+	err = cu.contractRepository.Create(ctx, contract)
+	if err != nil {
+		// cancelo assinatura se registro não funcionar no banco
+		_, err := DeleteSubscription(contract)
+
+		if err != nil {
+			return fmt.Errorf("erro ao criar contrato e ao deletar assinatura: %v", err)
+		}
+
+		return err
+	}
+
+	return nil
 
 }
 
-func (cu *ContractUseCase) Get() {
+func (cu *ContractUseCase) Get(ctx context.Context, id uuid.UUID) (*entity.Contract, error) {
+
+	contract, err := cu.contractRepository.Get(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	invoices, err := ListInvoices(contract)
+	if err != nil {
+		return nil, err
+	}
+
+	contract.Invoices = invoices
+
+	return contract, nil
 
 }
 
-func (cu *ContractUseCase) FindAllByCnh() {
+func (cu *ContractUseCase) FindAllByCnpj(ctx context.Context, cnpj *string) ([]entity.Contract, error) {
+	return cu.contractRepository.FindAllByCnpj(ctx, cnpj)
+}
+
+func (cu *ContractUseCase) FindAllByCpf(ctx context.Context, cpf *string) ([]entity.Contract, error) {
+	return cu.contractRepository.FindAllByCpf(ctx, cpf)
+}
+
+func (cu *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Contract, error) {
+
+	contracts, err := cu.contractRepository.FindAllByCnh(ctx, cnh)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, contract := range contracts {
+
+		invoices, err := ListInvoices(&contract)
+		if err != nil {
+			return nil, err
+		}
+
+		contract.Invoices = invoices
+
+	}
+
+	return contracts, nil
 
 }
 
-func (cu *ContractUseCase) FindAllByCnpj() {
-
+func (cu *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
+	return cu.contractRepository.Cancel(ctx, id)
 }
 
-func (cu *ContractUseCase) FindAllByCpf() {
+func (cu *ContractUseCase) GetInvoice(ctx context.Context, invoice *string) (*entity.InvoiceInfo, error) {
 
+	inv, err := GetInvoice(*invoice)
+	if err != nil {
+		return nil, err
+	}
+
+	return &entity.InvoiceInfo{
+		ID:              inv.ID,
+		Status:          string(inv.Status),
+		AmountDue:       inv.AmountDue,
+		AmountRemaining: inv.AmountRemaining * 100,
+	}, nil
 }
 
-func (cu *ContractUseCase) Cancel() {
-
+func (cu *ContractUseCase) Expired(ctx context.Context, id uuid.UUID) error {
+	return cu.contractRepository.Expired(ctx, id)
 }
 
 func CalculateContract(distance, amount float64) float64 {
@@ -100,7 +203,7 @@ func CreatePrice(contract *entity.Contract) (*stripe.Price, error) {
 		Recurring: &stripe.PriceRecurringParams{
 			Interval: stripe.String("month"),
 		},
-		UnitAmount: stripe.Int64(contract.Amount * 100),
+		UnitAmount: stripe.Int64(int64(contract.Amount) * 100),
 	}
 
 	pr, err := price.New(params)

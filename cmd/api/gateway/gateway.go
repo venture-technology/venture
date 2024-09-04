@@ -140,6 +140,18 @@ func (g *Gateway) Partner() {
 	g.group.DELETE("/partner/:id", handler.Delete)
 }
 
+func (g *Gateway) Contract() {
+	g.group.POST("/contract")                        // handler.Create
+	g.group.GET("/contract/:id")                     // handler.Get
+	g.group.GET("/driver/contract")                  // handler.FindAllByCnh
+	g.group.GET("/school/contract")                  // handler.FindAllByCnpj
+	g.group.GET("/responsible/contract")             // handler.FindAllByCpf
+	g.group.GET("/contract/:id/invoice")             // handler.ListInvoice
+	g.group.GET("/contract/:id/invoice/:invoice_id") // handler.GetInvoice
+	g.group.PATCH("/contract/:id/cancel")            // handler.Cancel
+	g.group.PATCH("/webhook/contract/:id/expired")   // handler.Expired
+}
+
 func postgres(dbconfig config.Database) string {
 	return "user=" + dbconfig.User +
 		" password=" + dbconfig.Password +

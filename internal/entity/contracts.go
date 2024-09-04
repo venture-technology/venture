@@ -23,7 +23,8 @@ type Contract struct {
 	StripeSubscription StripeSubscription `json:"stripe"`
 	CreatedAt          time.Time          `json:"created_at"`
 	ExpireAt           time.Time          `json:"expire_at"`
-	Amount             int64              `json:"amount"`
+	Invoices           []InvoiceInfo      `json:"invoices"`
+	Amount             float64            `json:"amount"`
 	Months             int64              `json:"months,omitempty"`
 }
 
