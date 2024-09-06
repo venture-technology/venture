@@ -81,6 +81,7 @@ func (g *Gateway) Setup() {
 	g.Driver()
 	g.Invite()
 	g.Partner()
+	g.Contract()
 
 	g.router.Run(fmt.Sprintf(":%d", config.Server.Port))
 
@@ -142,7 +143,7 @@ func (g *Gateway) Partner() {
 }
 
 func (g *Gateway) Contract() {
-	handler := handler.NewContractHandler(contract.NewContractUseCase(repository.NewContractRepository(g.database)))
+	handler := handler.NewContractHandler(contract.NewContractUseCase(repository.NewContractRepository(g.database), repository.NewChildRepository(g.database), repository.NewDriverRepository(g.database), repository.NewSchoolRepository(g.database)))
 	g.group.POST("/contract", handler.Create)
 	g.group.GET("/contract/:id", handler.Get)
 	g.group.GET("/driver/contract", handler.FindAllByCnh)
