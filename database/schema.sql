@@ -59,6 +59,9 @@ CREATE TABLE IF NOT EXISTS drivers (
     agency_number VARCHAR(4),
     account_number VARCHAR(20),
     pix_key VARCHAR(100)
+    municipal_record TEXT NOT NULL,
+    car_model VARCHAR(100) NOT NULL,
+    car_year VARCHAR(4) NOT NULL,
 ); 
 
 -- Tabela de Convites
