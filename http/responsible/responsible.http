@@ -1,30 +1,30 @@
-POST http://0.0.0.0:8888/api/v1/responsible
+POST http://0.0.0.0:9999/api/v1/responsible
 Content-Type: application/json
 
 {
-    "name":"José Perlin",
-    "email": "joseperil@gmail.com",
+    "name":"Juliano Rodrigues Martins",
+    "email": "julianoRodriguesMartins@teleworm.us",
     "password": "123teste",
-    "cpf": "76315286080",
+    "cpf": "27325904010",
     "status": "ok",
     "address": {
-        "street": "Rua Itamerendiba",
-        "number": "30",
-        "zip": "08120520",
-        "complement": "fundos"
+        "street": "Rua Masato Sakai",
+        "number": "180",
+        "zip": "08538300",
+        "complement": "Manaca, bloco 1, apto 12"
     },
     "card": {},
-    "phone": "+55 11 912345678"
+    "phone": "+55 11 930577222"
 }
 
 ###
 
-GET http://0.0.0.0:8888/api/v1/responsible/76315286080
+GET http://0.0.0.0:9999/api/v1/responsible/65920117346
 Content-Type: application/json
 
 ###
 
-PATCH http://0.0.0.0:8888/api/v1/responsible/76315286080
+PATCH http://0.0.0.0:9999/api/v1/responsible/65920117346
 Content-Type: application/json
 
 {
@@ -49,16 +49,16 @@ Content-Type: application/json
 
 ### 
 
-DELETE http://0.0.0.0:8888/api/v1/responsible/76315286080
+DELETE http://0.0.0.0:9999/api/v1/responsible/76315286080
 Content-Type: application/json
 
 ###
 
-POST http://0.0.0.0:8888/api/v1/responsible/card
+POST http://0.0.0.0:9999/api/v1/responsible/card
 Content-Type: application/json
 
 {
-    "cpf": "76315286080",
+    "cpf": "27325904010",
     "card": {
         "card_token": "tok_visa",
         "default": true

@@ -104,3 +104,11 @@ CREATE TABLE IF NOT EXISTS contracts (
     FOREIGN KEY (child_id) REFERENCES children(rg) ON DELETE CASCADE,
     UNIQUE (school_id, driver_id, responsible_id, child_id)
 );
+
+-- Table emails
+CREATE TABLE IF NOT EXISTS email_records (
+    id SERIAL PRIMARY KEY,
+    recipient TEXT,
+    subject TEXT, 
+    body TEXT
+);

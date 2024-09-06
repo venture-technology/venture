@@ -25,22 +25,57 @@ import (
 
 type ContractUseCase struct {
 	contractRepository repository.IContractRepository
+	childRepository    repository.IChildRepository
+	driverRepository   repository.IDriverRepository
+	schoolRepository   repository.ISchoolRepository
 }
 
-func NewContractUseCase(cr repository.IContractRepository) *ContractUseCase {
+func NewContractUseCase(cou repository.IContractRepository, cr repository.IChildRepository, dr repository.IDriverRepository, sr repository.ISchoolRepository) *ContractUseCase {
 	return &ContractUseCase{
-		contractRepository: cr,
+		contractRepository: cou,
+		childRepository:    cr,
+		driverRepository:   dr,
+		schoolRepository:   sr,
 	}
 }
 
-func (cu *ContractUseCase) Create(ctx context.Context, contract *entity.Contract) error {
+// we create the contract, checking whether the person responsible has a payment method, calculating the distance between the school and the person responsible's residence, creating the product, the price and the signature on the stripe, and finally, creating the contract in the database
+func (cou *ContractUseCase) Create(ctx context.Context, contract *entity.Contract) error {
+
+	// get responsible data
+	responsible, err := cou.childRepository.FindResponsibleByChild(ctx, &contract.Child.RG)
+	if err != nil {
+		return err
+	}
+
+	if responsible.PaymentMethodId == "" {
+		return fmt.Errorf("responsible %s doesnt have a payment method", responsible.CPF)
+	}
+
+	contract.Child.Responsible = *responsible
+
+	// get driver data
+	driver, err := cou.driverRepository.Get(ctx, &contract.Driver.CNH)
+	if err != nil {
+		return err
+	}
+
+	contract.Driver = *driver
+
+	// get school data
+	school, err := cou.schoolRepository.Get(ctx, &contract.School.CNPJ)
+	if err != nil {
+		return err
+	}
+
+	contract.School = *school
 
 	distance, err := GetDistance(fmt.Sprintf("%s,%s,%s", contract.Child.Responsible.Address.Street, contract.Child.Responsible.Address.Number, contract.Child.Responsible.Address.ZIP), fmt.Sprintf("%s,%s,%s", contract.School.Address.Street, contract.School.Address.Number, contract.School.Address.ZIP))
 	if err != nil {
 		return err
 	}
 
-	contract.Amount = CalculateContract(*distance, float64(contract.Amount))
+	contract.Amount = CalculateContract(*distance, float64(contract.Driver.Amount))
 
 	prodt, err := CreateProduct(contract)
 	if err != nil {
@@ -70,7 +105,7 @@ func (cu *ContractUseCase) Create(ctx context.Context, contract *entity.Contract
 
 	contract.Record = id
 
-	err = cu.contractRepository.Create(ctx, contract)
+	err = cou.contractRepository.Create(ctx, contract)
 	if err != nil {
 		// cancelo assinatura se registro não funcionar no banco
 		_, err := DeleteSubscription(contract)
@@ -86,9 +121,9 @@ func (cu *ContractUseCase) Create(ctx context.Context, contract *entity.Contract
 
 }
 
-func (cu *ContractUseCase) Get(ctx context.Context, id uuid.UUID) (*entity.Contract, error) {
+func (cou *ContractUseCase) Get(ctx context.Context, id uuid.UUID) (*entity.Contract, error) {
 
-	contract, err := cu.contractRepository.Get(ctx, id)
+	contract, err := cou.contractRepository.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -104,17 +139,17 @@ func (cu *ContractUseCase) Get(ctx context.Context, id uuid.UUID) (*entity.Contr
 
 }
 
-func (cu *ContractUseCase) FindAllByCnpj(ctx context.Context, cnpj *string) ([]entity.Contract, error) {
-	return cu.contractRepository.FindAllByCnpj(ctx, cnpj)
+func (cou *ContractUseCase) FindAllByCnpj(ctx context.Context, cnpj *string) ([]entity.Contract, error) {
+	return cou.contractRepository.FindAllByCnpj(ctx, cnpj)
 }
 
-func (cu *ContractUseCase) FindAllByCpf(ctx context.Context, cpf *string) ([]entity.Contract, error) {
-	return cu.contractRepository.FindAllByCpf(ctx, cpf)
+func (cou *ContractUseCase) FindAllByCpf(ctx context.Context, cpf *string) ([]entity.Contract, error) {
+	return cou.contractRepository.FindAllByCpf(ctx, cpf)
 }
 
-func (cu *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Contract, error) {
+func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Contract, error) {
 
-	contracts, err := cu.contractRepository.FindAllByCnh(ctx, cnh)
+	contracts, err := cou.contractRepository.FindAllByCnh(ctx, cnh)
 
 	if err != nil {
 		return nil, err
@@ -135,11 +170,31 @@ func (cu *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]ent
 
 }
 
-func (cu *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
-	return cu.contractRepository.Cancel(ctx, id)
+func (cou *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
+
+	contract, err := cou.contractRepository.Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	err = cou.contractRepository.Cancel(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	values := CalculateRemainingValueSubscription(contract.Invoices)
+
+	_, err = FineResponsible(contract, int64(values.Fines))
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }
 
-func (cu *ContractUseCase) GetInvoice(ctx context.Context, invoice *string) (*entity.InvoiceInfo, error) {
+func (cou *ContractUseCase) GetInvoice(ctx context.Context, invoice *string) (*entity.InvoiceInfo, error) {
 
 	inv, err := GetInvoice(*invoice)
 	if err != nil {
@@ -154,11 +209,13 @@ func (cu *ContractUseCase) GetInvoice(ctx context.Context, invoice *string) (*en
 	}, nil
 }
 
-func (cu *ContractUseCase) Expired(ctx context.Context, id uuid.UUID) error {
-	return cu.contractRepository.Expired(ctx, id)
+func (cou *ContractUseCase) Expired(ctx context.Context, id uuid.UUID) error {
+	return cou.contractRepository.Expired(ctx, id)
 }
 
 func CalculateContract(distance, amount float64) float64 {
+
+	log.Print(distance)
 
 	if distance < 2 {
 		return 200

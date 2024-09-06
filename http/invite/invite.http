@@ -1,9 +1,9 @@
-POST http://0.0.0.0:8888/api/v1/invite
+POST http://0.0.0.0:9999/api/v1/invite
 Content-Type: application/json
 
 {
     "driver": {
-        "cnh": "87891080365"
+        "cnh": "55276739722"
     },
     "school": {
         "cnpj": "98088292000160"
@@ -12,24 +12,24 @@ Content-Type: application/json
 
 ###
 
-GET http://0.0.0.0:8888/api/v1/driver/invite/87891080365
+GET http://0.0.0.0:9999/api/v1/driver/invite/55276739722
 Content-Type: application/json
 
 ###
 
-GET http://0.0.0.0:8888/api/v1/school/invite/98088292000160
+GET http://0.0.0.0:9999/api/v1/school/invite/98088292000160
 Content-Type: application/json
 
 ###
 
-GET http://0.0.0.0:8888/api/v1/invite/0191a408-409e-7f36-8fe6-61a68b3e5991
+GET http://0.0.0.0:9999/api/v1/invite/0191a408-409e-7f36-8fe6-61a68b3e5991
 Content-Type: application/json
 
 ###
 
-DELETE http://0.0.0.0:8888/api/v1/invite/0191a408-409e-7f36-8fe6-61a68b3e5991/decline
+DELETE http://0.0.0.0:9999/api/v1/invite/0191a408-409e-7f36-8fe6-61a68b3e5991/decline
 Content-Type: application/json
 
 ###
-PATCH http://0.0.0.0:8888/api/v1/invite/0191a40c-55e7-7bbb-ac35-25ba5b1e7d9e/accept
+PATCH http://0.0.0.0:9999/api/v1/invite/0191c786-43b7-704e-bbfd-fdde33b26421/accept
 Content-Type: application/json

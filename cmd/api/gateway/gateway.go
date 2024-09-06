@@ -14,6 +14,7 @@ import (
 	"github.com/venture-technology/venture/internal/handler"
 	"github.com/venture-technology/venture/internal/repository"
 	"github.com/venture-technology/venture/internal/usecase/child"
+	"github.com/venture-technology/venture/internal/usecase/contract"
 	"github.com/venture-technology/venture/internal/usecase/driver"
 	"github.com/venture-technology/venture/internal/usecase/invite"
 	"github.com/venture-technology/venture/internal/usecase/partner"
@@ -80,6 +81,7 @@ func (g *Gateway) Setup() {
 	g.Driver()
 	g.Invite()
 	g.Partner()
+	g.Contract()
 
 	g.router.Run(fmt.Sprintf(":%d", config.Server.Port))
 
@@ -141,15 +143,14 @@ func (g *Gateway) Partner() {
 }
 
 func (g *Gateway) Contract() {
-	g.group.POST("/contract")                        // handler.Create
-	g.group.GET("/contract/:id")                     // handler.Get
-	g.group.GET("/driver/contract")                  // handler.FindAllByCnh
-	g.group.GET("/school/contract")                  // handler.FindAllByCnpj
-	g.group.GET("/responsible/contract")             // handler.FindAllByCpf
-	g.group.GET("/contract/:id/invoice")             // handler.ListInvoice
-	g.group.GET("/contract/:id/invoice/:invoice_id") // handler.GetInvoice
-	g.group.PATCH("/contract/:id/cancel")            // handler.Cancel
-	g.group.PATCH("/webhook/contract/:id/expired")   // handler.Expired
+	handler := handler.NewContractHandler(contract.NewContractUseCase(repository.NewContractRepository(g.database), repository.NewChildRepository(g.database), repository.NewDriverRepository(g.database), repository.NewSchoolRepository(g.database)))
+	g.group.POST("/contract", handler.Create)
+	g.group.GET("/contract/:id", handler.Get)
+	g.group.GET("/driver/contract", handler.FindAllByCnh)
+	g.group.GET("/school/contract", handler.FindAllByCnpj)
+	g.group.GET("/responsible/contract", handler.FindAllByCpf)
+	g.group.PATCH("/contract/:id/cancel", handler.Cancel)
+	g.group.PATCH("/webhook/contract/:id/expired", handler.Expired)
 }
 
 func postgres(dbconfig config.Database) string {
