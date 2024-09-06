@@ -14,6 +14,7 @@ import (
 	"github.com/venture-technology/venture/internal/handler"
 	"github.com/venture-technology/venture/internal/repository"
 	"github.com/venture-technology/venture/internal/usecase/child"
+	"github.com/venture-technology/venture/internal/usecase/contract"
 	"github.com/venture-technology/venture/internal/usecase/driver"
 	"github.com/venture-technology/venture/internal/usecase/invite"
 	"github.com/venture-technology/venture/internal/usecase/partner"
@@ -80,6 +81,7 @@ func (g *Gateway) Setup() {
 	g.Driver()
 	g.Invite()
 	g.Partner()
+	g.Contract()
 
 	g.router.Run(fmt.Sprintf(":%d", config.Server.Port))
 
@@ -138,6 +140,17 @@ func (g *Gateway) Partner() {
 	g.group.GET("/driver/partner/:cnh", handler.FindAllByCnh)
 	g.group.GET("/school/partner/:cnpj", handler.FindAllByCnpj)
 	g.group.DELETE("/partner/:id", handler.Delete)
+}
+
+func (g *Gateway) Contract() {
+	handler := handler.NewContractHandler(contract.NewContractUseCase(repository.NewContractRepository(g.database), repository.NewChildRepository(g.database), repository.NewDriverRepository(g.database), repository.NewSchoolRepository(g.database)))
+	g.group.POST("/contract", handler.Create)
+	g.group.GET("/contract/:id", handler.Get)
+	g.group.GET("/driver/contract", handler.FindAllByCnh)
+	g.group.GET("/school/contract", handler.FindAllByCnpj)
+	g.group.GET("/responsible/contract", handler.FindAllByCpf)
+	g.group.PATCH("/contract/:id/cancel", handler.Cancel)
+	g.group.PATCH("/webhook/contract/:id/expired", handler.Expired)
 }
 
 func postgres(dbconfig config.Database) string {

@@ -96,11 +96,18 @@ CREATE TABLE IF NOT EXISTS contracts (
     responsible_id VARCHAR(11) NOT NULL,
     child_id VARCHAR(9) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expire_at TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP + INTERVAL '12 months'),
+    expire_at TIMESTAMP NOT NULL,
     status TEXT NOT NULL,
     FOREIGN KEY (driver_id) REFERENCES drivers(cnh) ON DELETE CASCADE,
     FOREIGN KEY (school_Id) REFERENCES schools(cnpj) ON DELETE CASCADE,
     FOREIGN KEY (responsible_id) REFERENCES responsible(cpf) ON DELETE CASCADE,
-    FOREIGN KEY (child_id) REFERENCES children(rg) ON DELETE CASCADE,
-    UNIQUE (school_id, driver_id, responsible_id, child_id)
+    FOREIGN KEY (child_id) REFERENCES children(rg) ON DELETE CASCADE
+);
+
+-- Table emails
+CREATE TABLE IF NOT EXISTS email_records (
+    id SERIAL PRIMARY KEY,
+    recipient TEXT,
+    subject TEXT, 
+    body TEXT
 );
