@@ -13,6 +13,7 @@ type IChildRepository interface {
 	FindAll(ctx context.Context, cpf *string) ([]entity.Child, error)
 	Update(ctx context.Context, child *entity.Child) error
 	Delete(ctx context.Context, rg *string) error
+	FindResponsibleByChild(ctx context.Context, rg *string) (*entity.Responsible, error)
 }
 
 type ChildRepository struct {
@@ -105,4 +106,8 @@ func (cr *ChildRepository) Delete(ctx context.Context, rg *string) error {
 	}()
 	_, err = tx.Exec("DELETE FROM children WHERE rg = $1", *rg)
 	return err
+}
+
+func (cr *ChildRepository) FindResponsibleByChild(ctx context.Context, rg *string) (*entity.Responsible, error) {
+	return nil, nil
 }
