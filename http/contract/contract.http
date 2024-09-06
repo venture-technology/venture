@@ -1,17 +1,15 @@
-### 
+POST http://0.0.0.0:9999/api/v1/contract
+Content-Type: application/json 
 
 {
     "driver": {
-        "cnh": "87891080365"
+        "cnh": "55276739722"
     },
     "school": {
         "cnpj": "98088292000160"
     },
     "child": {
-        "rg": "449381749",
-        "responsible": {
-            "cpf": "76315286080"
-        }
+        "rg": "350912713"
     },
-    "status": "currently",
+    "status": "currently"
 }
