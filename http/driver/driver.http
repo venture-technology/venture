@@ -18,12 +18,12 @@ Content-Type: application/json
 
 ###
 
-GET http://0.0.0.0:8888/api/v1/driver/87891080365
+GET http://0.0.0.0:9999/api/v1/driver/87891080365
 Content-Type: application/json
 
 ### 
 
-PATCH http://0.0.0.0:8888/api/v1/driver/87891080365
+PATCH http://0.0.0.0:9999/api/v1/driver/87891080365
 Content-Type: application/json
 
 {
@@ -51,13 +51,13 @@ Content-Type: application/json
 
 ### 
 
-DELETE http://0.0.0.0:8888/api/v1/driver/87891080365
+DELETE http://0.0.0.0:9999/api/v1/driver/87891080365
 Content-Type: application/json
 
 
 ### 
 
-POST http://0.0.0.0:8888/api/v1/driver/87891080365/bank
+POST http://0.0.0.0:9999/api/v1/driver/87891080365/bank
 Content-Type: application/json
 
 {
@@ -70,7 +70,7 @@ Content-Type: application/json
 
 ###
 
-POST http://0.0.0.0:8888/api/v1/driver/87891080365/pix
+POST http://0.0.0.0:9999/api/v1/driver/87891080365/pix
 Content-Type: application/json
 
 {
