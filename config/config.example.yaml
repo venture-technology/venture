@@ -12,7 +12,7 @@ database:
   dbhost: "localhost"
   dbpassword: "password"
   dbname: "venture_staging"
-  schema: "../../database/schema.sql"
+  schema: "database/schema.sql"
 
 cloud:
   region: "your-aws-region"
