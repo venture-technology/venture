@@ -11,7 +11,7 @@ import (
 func TestDriverUseCase_GetGallery(t *testing.T) {
 	mock := mocks.NewIAwsRepository(t)
 	cnh := "55276739722"
-	mock.On("ListImagesAtS3", context.Background(), fmt.Sprintf("driver/%s/gallery", cnh)).Return([]string{"image1", "image2"}, nil)
+	mock.On("ListImagesAtS3", context.Background(), fmt.Sprintf("%s/gallery", cnh)).Return([]string{"image1", "image2"}, nil)
 	service := NewDriverUseCase(nil, mock)
 
 	links, err := service.GetGallery(context.Background(), &cnh)
