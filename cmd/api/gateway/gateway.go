@@ -85,6 +85,7 @@ func (g *Gateway) Setup() {
 	g.Contract()
 	g.Maps()
 
+	log.Print("Starting Venture API")
 	g.router.Run(fmt.Sprintf(":%d", config.Server.Port))
 
 }
