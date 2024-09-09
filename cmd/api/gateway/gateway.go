@@ -80,6 +80,10 @@ func (g *Gateway) Setup() {
 		c.JSON(200, gin.H{"ping": "pong"})
 	})
 
+	g.router.GET("/pong", func(c *gin.Context) {
+		c.JSON(200, gin.H{"pong": "ping"})
+	})
+
 	g.Responsible()
 	g.Child()
 	g.School()
