@@ -67,3 +67,10 @@ func (du *DriverUseCase) SavePix(ctx context.Context, driver *entity.Driver) err
 func (du *DriverUseCase) SaveBank(ctx context.Context, driver *entity.Driver) error {
 	return du.driverRepository.SaveBank(ctx, driver)
 }
+
+func (du *DriverUseCase) GetGallery(ctx context.Context, cnh *string) ([]string, error) {
+
+	path := fmt.Sprintf("%s/gallery", *cnh)
+
+	return du.awsRepository.ListImagesAtS3(ctx, path)
+}

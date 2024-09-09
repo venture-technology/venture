@@ -124,6 +124,7 @@ func (g *Gateway) Driver() {
 	g.group.POST("/driver/:cnh/pix", handler.SavePix)
 	g.group.POST("/driver/:cnh/bank", handler.SaveBank)
 	g.group.DELETE("/driver/:cnh", handler.Delete)
+	g.group.GET("/driver/:cnh/gallery", handler.GetGallery)
 }
 
 func (g *Gateway) Invite() {

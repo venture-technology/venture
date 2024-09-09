@@ -153,3 +153,18 @@ func (dh *DriverHandler) SaveBank(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "bank infos created"})
 
 }
+
+func (dh *DriverHandler) GetGallery(c *gin.Context) {
+
+	cnh := c.Param("cnh")
+
+	links, err := dh.driverUseCase.GetGallery(c, &cnh)
+	if err != nil {
+		log.Printf("error to get gallery: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error to get gallery"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"images": links})
+
+}

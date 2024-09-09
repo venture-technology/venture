@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -16,6 +17,7 @@ import (
 type IAwsRepository interface {
 	SendEmail(ctx context.Context, email *entity.Email) error
 	SaveAtS3(ctx context.Context, path, filename string, file []byte) (string, error)
+	ListImagesAtS3(ctx context.Context, path string) ([]string, error)
 }
 
 type AwsRepository struct {
@@ -85,4 +87,35 @@ func (ar *AwsRepository) SendEmail(ctx context.Context, email *entity.Email) err
 
 	return nil
 
+}
+
+func (ar *AwsRepository) ListImagesAtS3(ctx context.Context, path string) ([]string, error) {
+
+	conf := config.Get()
+
+	svc := s3.New(ar.sess)
+
+	log.Print(path)
+
+	input := &s3.ListObjectsV2Input{
+		Bucket: aws.String(conf.Cloud.BucketName),
+		Prefix: aws.String(path), // filter by path
+	}
+
+	var links []string
+
+	err := svc.ListObjectsV2Pages(input, func(page *s3.ListObjectsV2Output, lastPage bool) bool {
+		for _, obj := range page.Contents {
+			publicURL := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", conf.Cloud.BucketName, *obj.Key)
+			links = append(links, publicURL)
+		}
+		return !lastPage
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	// remove the first link from the list, because it is the path itself
+	return links[1:], nil
 }
