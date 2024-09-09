@@ -31,7 +31,7 @@ services:
     networks:
       - venture-network
     ports:
-      - "5432:5432"
+      - "5433:5433" # we selected this port, because the default port 5432 is already in use by the local postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
