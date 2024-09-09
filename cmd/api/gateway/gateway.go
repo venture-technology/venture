@@ -49,7 +49,7 @@ func NewGateway(router *gin.Engine, group *gin.RouterGroup) *Gateway {
 
 func (g *Gateway) Setup() {
 
-	config, err := config.Load("../../config/config.yaml")
+	config, err := config.Load("config/config.yaml")
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
