@@ -76,6 +76,10 @@ func (g *Gateway) Setup() {
 		log.Fatalf("failed to execute migrations: %v", err)
 	}
 
+	g.router.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{"ping": "pong"})
+	})
+
 	g.Responsible()
 	g.Child()
 	g.School()
