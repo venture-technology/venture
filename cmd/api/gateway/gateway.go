@@ -17,6 +17,7 @@ import (
 	"github.com/venture-technology/venture/internal/usecase/contract"
 	"github.com/venture-technology/venture/internal/usecase/driver"
 	"github.com/venture-technology/venture/internal/usecase/invite"
+	"github.com/venture-technology/venture/internal/usecase/maps"
 	"github.com/venture-technology/venture/internal/usecase/partner"
 	"github.com/venture-technology/venture/internal/usecase/responsible"
 	"github.com/venture-technology/venture/internal/usecase/school"
@@ -82,6 +83,7 @@ func (g *Gateway) Setup() {
 	g.Invite()
 	g.Partner()
 	g.Contract()
+	g.Maps()
 
 	g.router.Run(fmt.Sprintf(":%d", config.Server.Port))
 
@@ -151,6 +153,11 @@ func (g *Gateway) Contract() {
 	g.group.GET("/responsible/contract", handler.FindAllByCpf)
 	g.group.PATCH("/contract/:id/cancel", handler.Cancel)
 	g.group.PATCH("/webhook/contract/:id/expired", handler.Expired)
+}
+
+func (g *Gateway) Maps() {
+	handler := handler.NewMapsHandler(*maps.NeWMapsUseCase(repository.NewMapsRepository(g.database)))
+	g.group.POST("/maps/price", handler.CalculatePrice)
 }
 
 func postgres(dbconfig config.Database) string {

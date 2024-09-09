@@ -1,0 +1,16 @@
+POST http://0.0.0.0:9999/api/v1/maps/price
+Content-Type: application/json
+
+{
+    "origin": {
+        "street": "Rua Masato Sakai",
+        "destination": "180",
+        "zip": "008538300"
+    },
+    "destination": {
+        "street": "Avenida Barão de Alagoas",
+        "destination": "223",
+        "zip": "08120000"
+    },
+    "amount": 200
+}

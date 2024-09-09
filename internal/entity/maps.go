@@ -13,3 +13,9 @@ type DistanceMatrixResponse struct {
 	} `json:"rows"`
 	Status string `json:"status"`
 }
+
+type MapPrice struct {
+	Origin      Address `json:"origin"`
+	Destination Address `json:"destination"`
+	Amount      float64 `json:"amount"`
+}
