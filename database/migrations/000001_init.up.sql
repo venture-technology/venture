@@ -54,19 +54,25 @@ CREATE TABLE IF NOT EXISTS drivers (
     number VARCHAR(10) NOT NULL,
     complement VARCHAR(10),
     zip VARCHAR(8) NOT NULL,
-    phone TEXT NOT NULL
+    phone TEXT NOT NULL,
+    bank_name VARCHAR(100),
+    agency_number VARCHAR(4),
+    account_number VARCHAR(20),
+    pix_key VARCHAR(100),
+    municipal_record TEXT NOT NULL,
+    car_model VARCHAR(100) NOT NULL,
+    car_year VARCHAR(4) NOT NULL
 ); 
 
 -- Tabela de Convites
 CREATE TABLE IF NOT EXISTS invites (
-    invite_id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY,
     requester VARCHAR(14), -- school
-    school VARCHAR(100) NOT NULL, --name_school
-    email_school VARCHAR(100) NOT NULL,
-    guest VARCHAR(14), -- driver
-    driver VARCHAR(100) NOT NULL, --name_driver
-    email_driver VARCHAR(100) NOT NULL,
-    status TEXT NOT NULL
+    guester VARCHAR(20), -- driver
+    status TEXT NOT NULL,
+    FOREIGN KEY (requester) REFERENCES schools(cnpj),
+    FOREIGN KEY (guester) REFERENCES drivers(cnh),
+    CONSTRAINT unique_invite UNIQUE (requester, guester)
 );
 
 -- Table partners
@@ -76,7 +82,8 @@ CREATE TABLE IF NOT EXISTS partners (
     school_id VARCHAR(14) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (driver_id) REFERENCES drivers(cnh) ON DELETE CASCADE,
-    FOREIGN KEY (school_Id) REFERENCES schools(cnpj) ON DELETE CASCADE
+    FOREIGN KEY (school_Id) REFERENCES schools(cnpj) ON DELETE CASCADE,
+    CONSTRAINT unique_partner UNIQUE (driver_id, school_id)
 );
 
 -- Table contracts
@@ -92,18 +99,11 @@ CREATE TABLE IF NOT EXISTS contracts (
     responsible_id VARCHAR(11) NOT NULL,
     child_id VARCHAR(9) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expire_at TIMESTAMP NOT NULL,
+    expire_at TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP + INTERVAL '12 months'),
     status TEXT NOT NULL,
     FOREIGN KEY (driver_id) REFERENCES drivers(cnh) ON DELETE CASCADE,
     FOREIGN KEY (school_Id) REFERENCES schools(cnpj) ON DELETE CASCADE,
     FOREIGN KEY (responsible_id) REFERENCES responsible(cpf) ON DELETE CASCADE,
-    FOREIGN KEY (child_id) REFERENCES children(rg) ON DELETE CASCADE
-);
-
--- Table emails
-CREATE TABLE IF NOT EXISTS email_records (
-    id SERIAL PRIMARY KEY,
-    recipient TEXT,
-    subject TEXT, 
-    body TEXT
+    FOREIGN KEY (child_id) REFERENCES children(rg) ON DELETE CASCADE,
+    UNIQUE (school_id, driver_id, responsible_id, child_id)
 );
