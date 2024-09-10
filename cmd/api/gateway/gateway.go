@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -70,11 +69,6 @@ func (g *Gateway) Setup() {
 	}
 
 	g.cloud = sess
-
-	err = migrate(g.database, config.Database.Schema)
-	if err != nil {
-		log.Fatalf("failed to execute migrations: %v", err)
-	}
 
 	g.router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{"ping": "pong"})
@@ -177,18 +171,4 @@ func postgres(dbconfig config.Database) string {
 		" host=" + dbconfig.Host +
 		" port=" + dbconfig.Port +
 		" sslmode=disable"
-}
-
-func migrate(db *sql.DB, filepath string) error {
-	schema, err := os.ReadFile(filepath)
-	if err != nil {
-		return err
-	}
-
-	_, err = db.Exec(string(schema))
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
