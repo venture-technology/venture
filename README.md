@@ -102,4 +102,6 @@ migrate -path=database/migrations -database "postgres://user:password@localhost:
 ```
 
 - Case, for some reason, need run migration from the beginning
-> The same command to run migrations
+```bash
+migrate create -ext=sql -dir=database/migrations -seq init
+```
