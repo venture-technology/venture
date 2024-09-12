@@ -50,6 +50,14 @@ func (d *Driver) ValidateCnh() error {
 	return nil
 }
 
+func (d *Driver) HasPixOrBankAccount() bool {
+	return d.Pix != (Pix{}) || d.Bank != (Bank{})
+}
+
+func (d *Driver) HasCar() bool {
+	return d.Car != (Car{})
+}
+
 type ClaimsDriver struct {
 	CNH string `json:"cnh"`
 	jwt.StandardClaims
