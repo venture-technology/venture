@@ -3,6 +3,7 @@ package contract
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -37,33 +38,36 @@ func NewContractUseCase(cou repository.IContractRepository, cr repository.IChild
 // we create the contract, checking whether the person responsible has a payment method, calculating the distance between the school and the person responsible's residence, creating the product, the price and the signature on the stripe, and finally, creating the contract in the database
 func (cou *ContractUseCase) Create(ctx context.Context, contract *entity.Contract) error {
 
-	// get responsible data
-	responsible, err := cou.childRepository.FindResponsibleByChild(ctx, &contract.Child.RG)
+	contract.StripeSubscription.Title = fmt.Sprintf("%s - %s - %s - %s", contract.Driver.Name, contract.School.Name, contract.Child.Responsible.Name, contract.Child.Name)
+
+	simpleContract, err := cou.contractRepository.GetSimpleContractByTitle(ctx, &contract.StripeSubscription.Title)
 	if err != nil {
 		return err
 	}
 
-	if responsible.PaymentMethodId == "" {
-		return fmt.Errorf("responsible %s doesnt have a payment method", responsible.CPF)
+	if simpleContract.StripeSubscription.Title == contract.StripeSubscription.Title {
+		return fmt.Errorf("contract already exists")
 	}
 
-	contract.Child.Responsible = *responsible
+	hasPaymentMethod := contract.Child.Responsible.HasPaymentMethod()
 
-	// get driver data
-	driver, err := cou.driverRepository.Get(ctx, &contract.Driver.CNH)
-	if err != nil {
-		return err
+	log.Print(hasPaymentMethod, contract.Child.Responsible.PaymentMethodId)
+
+	if !hasPaymentMethod {
+		return fmt.Errorf("responsible %s doesnt have a payment method", contract.Child.Responsible.CPF)
 	}
 
-	contract.Driver = *driver
+	hasPixOrBankAccount := contract.Driver.HasPixOrBankAccount()
 
-	// get school data
-	school, err := cou.schoolRepository.Get(ctx, &contract.School.CNPJ)
-	if err != nil {
-		return err
+	if !hasPixOrBankAccount {
+		return fmt.Errorf("driver %s need pix or bank account register", contract.Driver.CNH)
 	}
 
-	contract.School = *school
+	hasCar := contract.Driver.HasCar()
+
+	if !hasCar {
+		return fmt.Errorf("driver %s need car register", contract.Driver.CNH)
+	}
 
 	distance, err := usecase.GetDistance(fmt.Sprintf("%s,%s,%s", contract.Child.Responsible.Address.Street, contract.Child.Responsible.Address.Number, contract.Child.Responsible.Address.ZIP), fmt.Sprintf("%s,%s,%s", contract.School.Address.Street, contract.School.Address.Number, contract.School.Address.ZIP))
 	if err != nil {
@@ -100,24 +104,18 @@ func (cou *ContractUseCase) Create(ctx context.Context, contract *entity.Contrac
 
 	contract.Record = id
 
+	log.Print(contract)
+
 	err = cou.contractRepository.Create(ctx, contract)
+	log.Print(err)
 	if err != nil {
-		// cancelo assinatura se registro não funcionar no banco
-		_, err := DeleteSubscription(contract)
-
-		if err != nil {
-			return fmt.Errorf("erro ao criar contrato e ao deletar assinatura: %v", err)
-		}
-
 		return err
 	}
 
 	return nil
-
 }
 
 func (cou *ContractUseCase) Get(ctx context.Context, id uuid.UUID) (*entity.Contract, error) {
-
 	contract, err := cou.contractRepository.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -131,7 +129,6 @@ func (cou *ContractUseCase) Get(ctx context.Context, id uuid.UUID) (*entity.Cont
 	contract.Invoices = invoices
 
 	return contract, nil
-
 }
 
 func (cou *ContractUseCase) FindAllByCnpj(ctx context.Context, cnpj *string) ([]entity.Contract, error) {
@@ -143,9 +140,7 @@ func (cou *ContractUseCase) FindAllByCpf(ctx context.Context, cpf *string) ([]en
 }
 
 func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Contract, error) {
-
 	contracts, err := cou.contractRepository.FindAllByCnh(ctx, cnh)
-
 	if err != nil {
 		return nil, err
 	}
@@ -162,11 +157,9 @@ func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]en
 	}
 
 	return contracts, nil
-
 }
 
 func (cou *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
-
 	contract, err := cou.contractRepository.Get(ctx, id)
 	if err != nil {
 		return err
@@ -180,17 +173,14 @@ func (cou *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
 	values := CalculateRemainingValueSubscription(contract.Invoices)
 
 	_, err = FineResponsible(contract, int64(values.Fines))
-
 	if err != nil {
 		return err
 	}
 
 	return nil
-
 }
 
 func (cou *ContractUseCase) GetInvoice(ctx context.Context, invoice *string) (*entity.InvoiceInfo, error) {
-
 	inv, err := GetInvoice(*invoice)
 	if err != nil {
 		return nil, err
@@ -209,7 +199,6 @@ func (cou *ContractUseCase) Expired(ctx context.Context, id uuid.UUID) error {
 }
 
 func CreateProduct(contract *entity.Contract) (*stripe.Product, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -220,17 +209,14 @@ func CreateProduct(contract *entity.Contract) (*stripe.Product, error) {
 	}
 
 	prodt, err := product.New(params)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return prodt, nil
-
 }
 
 func CreatePrice(contract *entity.Contract) (*stripe.Price, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -245,17 +231,14 @@ func CreatePrice(contract *entity.Contract) (*stripe.Price, error) {
 	}
 
 	pr, err := price.New(params)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return pr, nil
-
 }
 
 func CreateSubscription(contract *entity.Contract) (*stripe.Subscription, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -271,17 +254,14 @@ func CreateSubscription(contract *entity.Contract) (*stripe.Subscription, error)
 	}
 
 	subs, err := subscription.New(params)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return subs, err
-
 }
 
 func GetSubscription(subscriptionId string) (*stripe.Subscription, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -291,11 +271,9 @@ func GetSubscription(subscriptionId string) (*stripe.Subscription, error) {
 		return nil, err
 	}
 	return subscription, nil
-
 }
 
 func ListSubscriptions(contract *entity.Contract) ([]entity.SubscriptionInfo, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -322,11 +300,9 @@ func ListSubscriptions(contract *entity.Contract) ([]entity.SubscriptionInfo, er
 	}
 
 	return subscriptions, nil
-
 }
 
 func DeleteSubscription(contract *entity.Contract) (*stripe.Subscription, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -336,11 +312,9 @@ func DeleteSubscription(contract *entity.Contract) (*stripe.Subscription, error)
 		return nil, err
 	}
 	return deletedSub, nil
-
 }
 
 func GetInvoice(invoiceId string) (*stripe.Invoice, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -350,11 +324,9 @@ func GetInvoice(invoiceId string) (*stripe.Invoice, error) {
 		return nil, err
 	}
 	return inv, nil
-
 }
 
 func ListInvoices(contract *entity.Contract) ([]entity.InvoiceInfo, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -384,11 +356,9 @@ func ListInvoices(contract *entity.Contract) ([]entity.InvoiceInfo, error) {
 	}
 
 	return invoices, nil
-
 }
 
 func CalculateRemainingValueSubscription(invoices []entity.InvoiceInfo) *entity.InvoiceRemaining {
-
 	invoice := entity.InvoiceRemaining{
 		InvoiceValue: float64(invoices[0].AmountDue / 100),
 		Quantity:     float64(len(invoices)),
@@ -399,11 +369,9 @@ func CalculateRemainingValueSubscription(invoices []entity.InvoiceInfo) *entity.
 	invoice.Fines = invoice.Remaining * 0.40
 
 	return &invoice
-
 }
 
 func FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -418,11 +386,9 @@ func FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.Payme
 	}
 
 	paym, err := paymentintent.New(params)
-
 	if err != nil {
 		return nil, err
 	}
 
 	return paym, nil
-
 }
