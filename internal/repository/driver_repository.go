@@ -95,7 +95,6 @@ func (dr *DriverRepository) Update(ctx context.Context, driver *entity.Driver) e
 
 	if driver.Amount != 0 && driver.Amount != currentDriver.Amount {
 		currentDriver.Amount = driver.Amount
-
 	}
 	if driver.Email != "" && driver.Email != currentDriver.Email {
 		currentDriver.Email = driver.Email

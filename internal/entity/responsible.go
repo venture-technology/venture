@@ -7,7 +7,7 @@ type Responsible struct {
 	Name            string     `json:"name,omitempty" validate:"required"`
 	Email           string     `json:"email,omitempty" validate:"required"`
 	Password        string     `json:"password,omitempty" validate:"required"`
-	CPF             string     `json:"cpf" validate:"required" example:"44000000000"` // sem pontuação
+	CPF             string     `json:"cpf,omitempty" validate:"required" example:"44000000000"` // sem pontuação
 	Status          string     `json:"status,omitempty" validate:"oneof='ok' 'active' 'blocked' 'banned'"`
 	Address         Address    `json:"address,omitempty" validate:"required"`
 	CreditCard      CreditCard `json:"card,omitempty"`
@@ -23,6 +23,10 @@ type CreditCard struct {
 
 func (r *Responsible) IsCreditCardEmpty() bool {
 	return r.CreditCard == (CreditCard{})
+}
+
+func (r *Responsible) HasPaymentMethod() bool {
+	return r.PaymentMethodId != ""
 }
 
 type ClaimsResponsible struct {

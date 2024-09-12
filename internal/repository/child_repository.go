@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/venture-technology/venture/internal/entity"
 )
@@ -14,7 +13,6 @@ type IChildRepository interface {
 	FindAll(ctx context.Context, cpf *string) ([]entity.Child, error)
 	Update(ctx context.Context, child *entity.Child) error
 	Delete(ctx context.Context, rg *string) error
-	FindResponsibleByChild(ctx context.Context, rg *string) (*entity.Responsible, error)
 }
 
 type ChildRepository struct {
@@ -107,37 +105,4 @@ func (cr *ChildRepository) Delete(ctx context.Context, rg *string) error {
 	}()
 	_, err = tx.Exec("DELETE FROM children WHERE rg = $1", *rg)
 	return err
-}
-
-func (cr *ChildRepository) FindResponsibleByChild(ctx context.Context, rg *string) (*entity.Responsible, error) {
-	query := `
-        SELECT r.id, r.name, r.email, r.street, r.number, r.zip, r.payment_method_id, r.customer_id, r.phone
-        FROM responsible r
-        JOIN children c ON c.responsible_id = r.cpf
-        WHERE c.rg = $1;
-    `
-
-	var responsible entity.Responsible
-
-	row := cr.db.QueryRowContext(ctx, query, rg)
-	err := row.Scan(
-		&responsible.ID,
-		&responsible.Name,
-		&responsible.Email,
-		&responsible.Address.Street,
-		&responsible.Address.Number,
-		&responsible.Address.ZIP,
-		&responsible.PaymentMethodId,
-		&responsible.CustomerId,
-		&responsible.Phone,
-	)
-
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("responsible not found for child with rg: %s", *rg)
-		}
-		return nil, err
-	}
-
-	return &responsible, nil
 }
