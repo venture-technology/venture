@@ -9,6 +9,7 @@ import (
 type StripeSubscription struct {
 	Title                 string `json:"title_subscription"`
 	SubscriptionId        string `json:"subscription_id"`
+	Description           string `json:"description_subscription,omitempty"`
 	PriceSubscriptionId   string `json:"price_id"`
 	ProductSubscriptionId string `json:"product_id"`
 }
@@ -16,7 +17,6 @@ type StripeSubscription struct {
 type Contract struct {
 	Record             uuid.UUID          `json:"record,omitempty"`
 	Status             string             `json:"status" validate:"oneof='currently' 'canceled' 'expired'"`
-	Description        string             `json:"description,omitempty"`
 	Driver             Driver             `json:"driver"`
 	School             School             `json:"school"`
 	Child              Child              `json:"child"`
