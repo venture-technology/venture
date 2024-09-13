@@ -11,10 +11,10 @@ import (
 )
 
 type MapsHandler struct {
-	mapsUseCase maps.MapsUseCase
+	mapsUseCase *maps.MapsUseCase
 }
 
-func NewMapsHandler(mapsUseCase maps.MapsUseCase) *MapsHandler {
+func NewMapsHandler(mapsUseCase *maps.MapsUseCase) *MapsHandler {
 	return &MapsHandler{
 		mapsUseCase: mapsUseCase,
 	}
