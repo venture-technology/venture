@@ -30,6 +30,6 @@ func (r *Responsible) HasPaymentMethod() bool {
 }
 
 type ClaimsResponsible struct {
-	CPF string `json:"cpf"`
+	Responsible Responsible `json:"responsible"`
 	jwt.StandardClaims
 }

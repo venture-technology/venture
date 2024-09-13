@@ -16,7 +16,7 @@ type School struct {
 }
 
 type ClaimsSchool struct {
-	CNPJ string `json:"cnpj"`
+	School School `json:"school"`
 	jwt.StandardClaims
 }
 

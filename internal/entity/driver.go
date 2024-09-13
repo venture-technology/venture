@@ -59,6 +59,6 @@ func (d *Driver) HasCar() bool {
 }
 
 type ClaimsDriver struct {
-	CNH string `json:"cnh"`
+	Driver Driver `json:"driver"`
 	jwt.StandardClaims
 }
