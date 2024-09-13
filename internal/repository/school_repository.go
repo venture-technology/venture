@@ -145,7 +145,7 @@ func (sr *SchoolRepository) Delete(ctx context.Context, cnpj *string) error {
 func (sr *SchoolRepository) FindByEmail(ctx context.Context, email *string) (*entity.School, error) {
 	sqlQuery := `SELECT id, name, cnpj, email, street, number, zip, phone FROM schools WHERE email = $1 LIMIT 1`
 	var school entity.School
-	err := sr.db.QueryRow(sqlQuery, *cnpj).Scan(
+	err := sr.db.QueryRow(sqlQuery, *email).Scan(
 		&school.ID,
 		&school.Name,
 		&school.CNPJ,
