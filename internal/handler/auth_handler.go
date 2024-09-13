@@ -36,7 +36,7 @@ func (ah *AuthHandler) AuthSchool(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, token)
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
 func (ah *AuthHandler) AuthDriver(c *gin.Context) {
@@ -56,7 +56,7 @@ func (ah *AuthHandler) AuthDriver(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, token)
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
 func (ah *AuthHandler) AuthResponsible(c *gin.Context) {
@@ -76,5 +76,5 @@ func (ah *AuthHandler) AuthResponsible(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, token)
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }
