@@ -16,6 +16,7 @@ type IResponsibleRepository interface {
 	Delete(ctx context.Context, cpf *string) error
 	SaveCard(ctx context.Context, cpf, cardToken, paymentMethodId *string) error
 	Auth(ctx context.Context, responsible *entity.Responsible) (*entity.Responsible, error)
+	FindByEmail(ctx context.Context, email *string) (*entity.Responsible, error)
 }
 
 type ResponsibleRepository struct {
@@ -146,4 +147,28 @@ func (rr *ResponsibleRepository) Auth(ctx context.Context, responsible *entity.R
 	}
 	responsibleData.Password = ""
 	return &responsibleData, nil
+}
+
+func (rr *ResponsibleRepository) FindByEmail(ctx context.Context, email *string) (*entity.Responsible, error) {
+	sqlQuery := `SELECT id, name, cpf, email, street, number, zip, status, complement, COALESCE(card_token, '') AS card_token, COALESCE(payment_method_id, '') AS payment_method_id, customer_id, phone FROM responsible WHERE email = $1 LIMIT 1`
+	var responsible entity.Responsible
+	err := rr.db.QueryRow(sqlQuery, *email).Scan(
+		&responsible.ID,
+		&responsible.Name,
+		&responsible.CPF,
+		&responsible.Email,
+		&responsible.Address.Street,
+		&responsible.Address.Number,
+		&responsible.Address.ZIP,
+		&responsible.Status,
+		&responsible.Address.Complement,
+		&responsible.CreditCard.CardToken,
+		&responsible.PaymentMethodId,
+		&responsible.CustomerId,
+		&responsible.Phone,
+	)
+	if err != nil || err == sql.ErrNoRows {
+		return nil, err
+	}
+	return &responsible, nil
 }

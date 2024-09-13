@@ -14,6 +14,7 @@ type ISchoolRepository interface {
 	FindAll(ctx context.Context) ([]entity.School, error)
 	Update(ctx context.Context, school *entity.School) error
 	Delete(ctx context.Context, cnpj *string) error
+	FindByEmail(ctx context.Context, email *string) (*entity.School, error)
 }
 
 type SchoolRepository struct {
@@ -139,4 +140,23 @@ func (sr *SchoolRepository) Delete(ctx context.Context, cnpj *string) error {
 	}()
 	_, err = tx.Exec("DELETE FROM schools WHERE cnpj = $1", cnpj)
 	return err
+}
+
+func (sr *SchoolRepository) FindByEmail(ctx context.Context, email *string) (*entity.School, error) {
+	sqlQuery := `SELECT id, name, cnpj, email, street, number, zip, phone FROM schools WHERE email = $1 LIMIT 1`
+	var school entity.School
+	err := sr.db.QueryRow(sqlQuery, *cnpj).Scan(
+		&school.ID,
+		&school.Name,
+		&school.CNPJ,
+		&school.Email,
+		&school.Address.Street,
+		&school.Address.Number,
+		&school.Address.ZIP,
+		&school.Phone,
+	)
+	if err != nil || err == sql.ErrNoRows {
+		return nil, err
+	}
+	return &school, nil
 }

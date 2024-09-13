@@ -13,6 +13,7 @@ type IDriverRepository interface {
 	Get(ctx context.Context, cnh *string) (*entity.Driver, error)
 	Update(ctx context.Context, driver *entity.Driver) error
 	Delete(ctx context.Context, cnh *string) error
+	FindByEmail(ctx context.Context, email *string) (*entity.Driver, error)
 
 	// podemos ter apenas uma chave pix ou conta de banco registrada, portanto esta ja realiza update
 	SavePix(ctx context.Context, driver *entity.Driver) error
@@ -168,4 +169,34 @@ func (dr *DriverRepository) SaveBank(ctx context.Context, driver *entity.Driver)
 	sqlQuery := `UPDATE drivers SET bank_name = $1, agency_number = $2, account_number = $3 WHERE cnh = $4`
 	_, err := dr.db.ExecContext(ctx, sqlQuery, driver.Bank.Name, driver.Bank.Agency, driver.Bank.Account, driver.CNH)
 	return err
+}
+
+func (dr *DriverRepository) FindByEmail(ctx context.Context, email *string) (*entity.Driver, error) {
+	sqlQuery := `SELECT id, amount, name, cpf, cnh, qrcode, email, street, number, zip, complement, phone, bank_name, agency_number, account_number, pix_key, municipal_record, car_model, car_year FROM drivers WHERE email = $1 LIMIT 1`
+	var driver entity.Driver
+	err := dr.db.QueryRow(sqlQuery, *email).Scan(
+		&driver.ID,
+		&driver.Amount,
+		&driver.Name,
+		&driver.CPF,
+		&driver.CNH,
+		&driver.QrCode,
+		&driver.Email,
+		&driver.Address.Street,
+		&driver.Address.Number,
+		&driver.Address.ZIP,
+		&driver.Address.Complement,
+		&driver.Phone,
+		&driver.Bank.Name,
+		&driver.Bank.Agency,
+		&driver.Bank.Account,
+		&driver.Pix.Key,
+		&driver.MunicipalId,
+		&driver.Car.Model,
+		&driver.Car.Year,
+	)
+	if err != nil || err == sql.ErrNoRows {
+		return nil, err
+	}
+	return &driver, nil
 }
