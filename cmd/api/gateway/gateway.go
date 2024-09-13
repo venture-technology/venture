@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -12,6 +13,7 @@ import (
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/handler"
 	"github.com/venture-technology/venture/internal/repository"
+	"github.com/venture-technology/venture/internal/usecase/auth"
 	"github.com/venture-technology/venture/internal/usecase/child"
 	"github.com/venture-technology/venture/internal/usecase/contract"
 	"github.com/venture-technology/venture/internal/usecase/driver"
@@ -26,8 +28,18 @@ import (
 
 func SetHeaders() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Credentials", "true")
+		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
+		c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, email, account")
+		c.Header("Cross-Origin-Embedder-Policy", "require-corp")
+		c.Header("Cross-Origin-Opener-Policy", "same-origin")
 		c.Header("Content-Type", "application/json")
 		c.Header("charset", "utf-8")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusOK)
+			return
+		}
 		c.Next()
 	}
 }
@@ -86,6 +98,7 @@ func (g *Gateway) Setup() {
 	g.Partner()
 	g.Contract()
 	g.Maps()
+	g.Auth()
 
 	log.Print("Starting Venture API")
 	g.router.Run(fmt.Sprintf(":%d", config.Server.Port))
@@ -160,8 +173,15 @@ func (g *Gateway) Contract() {
 }
 
 func (g *Gateway) Maps() {
-	handler := handler.NewMapsHandler(*maps.NeWMapsUseCase(repository.NewMapsRepository(g.database)))
+	handler := handler.NewMapsHandler(maps.NeWMapsUseCase(repository.NewMapsRepository(g.database)))
 	g.group.POST("/maps/price", handler.CalculatePrice)
+}
+
+func (g *Gateway) Auth() {
+	handler := handler.NewAuthHandler(auth.NewAuthUseCase(repository.NewSchoolRepository(g.database), repository.NewDriverRepository(g.database), repository.NewResponsibleRepository(g.database)))
+	g.group.POST("/school/auth", handler.AuthSchool)
+	g.group.POST("/driver/auth", handler.AuthDriver)
+	g.group.POST("/responsible/auth", handler.AuthResponsible)
 }
 
 func postgres(dbconfig config.Database) string {
