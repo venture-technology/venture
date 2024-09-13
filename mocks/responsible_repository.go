@@ -80,6 +80,36 @@ func (_m *IResponsibleRepository) Delete(ctx context.Context, cpf *string) error
 	return r0
 }
 
+// FindByEmail provides a mock function with given fields: ctx, email
+func (_m *IResponsibleRepository) FindByEmail(ctx context.Context, email *string) (*entity.Responsible, error) {
+	ret := _m.Called(ctx, email)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FindByEmail")
+	}
+
+	var r0 *entity.Responsible
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *string) (*entity.Responsible, error)); ok {
+		return rf(ctx, email)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *string) *entity.Responsible); ok {
+		r0 = rf(ctx, email)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*entity.Responsible)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *string) error); ok {
+		r1 = rf(ctx, email)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Get provides a mock function with given fields: ctx, cpf
 func (_m *IResponsibleRepository) Get(ctx context.Context, cpf *string) (*entity.Responsible, error) {
 	ret := _m.Called(ctx, cpf)
