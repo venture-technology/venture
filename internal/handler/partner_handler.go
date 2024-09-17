@@ -26,7 +26,7 @@ func (ph *PartnerHandler) Get(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error while found partner: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "partner not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "parceiro não encontrado"})
 		return
 	}
 
@@ -42,7 +42,7 @@ func (ph *PartnerHandler) FindAllByCnh(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error while found partner: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "partner not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "parceiro não encontrado"})
 		return
 	}
 
@@ -58,7 +58,7 @@ func (ph *PartnerHandler) FindAllByCnpj(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error while found partner: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "partner not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "parceiro não encontrado"})
 		return
 	}
 
@@ -74,10 +74,10 @@ func (ph *PartnerHandler) Delete(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error while found partner: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "partner not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "parceiro não encontrado"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "deleted w successfully"})
+	c.JSON(http.StatusOK, http.NoBody)
 
 }

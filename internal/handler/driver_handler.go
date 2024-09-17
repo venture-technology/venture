@@ -36,7 +36,7 @@ func (dh *DriverHandler) Create(c *gin.Context) {
 	err := dh.driverUseCase.Create(c, &input)
 	if err != nil {
 		log.Printf("error to create driver: %s", err.Error())
-		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "an error occured qwhen creating driver"))
+		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realziar a criação do qrcode"))
 		return
 	}
 
@@ -52,7 +52,7 @@ func (dh *DriverHandler) Get(c *gin.Context) {
 	driver, err := dh.driverUseCase.Get(c, &cnh)
 	if err != nil {
 		log.Printf("error while found driver: %s", err.Error())
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "driver not found"))
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "motorista não encontrado"))
 		return
 	}
 
@@ -75,13 +75,13 @@ func (dh *DriverHandler) Update(c *gin.Context) {
 
 	err := dh.driverUseCase.Update(c, &input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "internal server error at update"))
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao realizar atualização das informações do motorista"))
 		return
 	}
 
 	log.Print("infos updated")
 
-	c.JSON(http.StatusOK, gin.H{"message": "updated w successfully"})
+	c.JSON(http.StatusOK, http.NoBody)
 
 }
 
@@ -92,7 +92,7 @@ func (dh *DriverHandler) Delete(c *gin.Context) {
 	err := dh.driverUseCase.Delete(c, &cnh)
 	if err != nil {
 		log.Printf("error whiling deleted school: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "error to deleted school"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar motorista"})
 		return
 	}
 
@@ -100,7 +100,7 @@ func (dh *DriverHandler) Delete(c *gin.Context) {
 
 	log.Printf("deleted your account --> %v", cnh)
 
-	c.JSON(http.StatusOK, gin.H{"message": "driver deleted w successfully"})
+	c.JSON(http.StatusOK, http.NoBody)
 
 }
 
@@ -121,11 +121,11 @@ func (dh *DriverHandler) SavePix(c *gin.Context) {
 	err := dh.driverUseCase.SavePix(c, &input)
 	if err != nil {
 		log.Printf("save pix error: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "error to save pix"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao salvar chave pix"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "pix key created"})
+	c.JSON(http.StatusCreated, http.NoBody)
 
 }
 
@@ -146,11 +146,11 @@ func (dh *DriverHandler) SaveBank(c *gin.Context) {
 	err := dh.driverUseCase.SaveBank(c, &input)
 	if err != nil {
 		log.Printf("save pix error: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "error to save pix"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao salvar informações da conta bancária"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "bank infos created"})
+	c.JSON(http.StatusCreated, http.NoBody)
 
 }
 
@@ -161,7 +161,7 @@ func (dh *DriverHandler) GetGallery(c *gin.Context) {
 	links, err := dh.driverUseCase.GetGallery(c, &cnh)
 	if err != nil {
 		log.Printf("error to get gallery: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "error to get gallery"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao buscar galeria de imagens"})
 		return
 	}
 

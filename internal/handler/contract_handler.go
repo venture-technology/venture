@@ -34,7 +34,7 @@ func (coh *ContractHandler) Create(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error to create contract: %s", err.Error())
-		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "an error occured when creating contract"))
+		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"))
 		return
 	}
 

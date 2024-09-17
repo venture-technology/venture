@@ -26,13 +26,13 @@ func (sh *SchoolHandler) Create(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		log.Printf("error to parsed body: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body content"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
 	validatecnpj := input.ValidateCnpj()
 	if !validatecnpj {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "cnpj is invalid"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "cnpj é inválido"})
 		return
 	}
 
@@ -42,7 +42,7 @@ func (sh *SchoolHandler) Create(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error to create school: %s", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "an error occurred when creating school"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao tentar criar escola"})
 		return
 	}
 
@@ -60,7 +60,7 @@ func (sh *SchoolHandler) Get(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error while found school: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "school don't found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "escola não encontrada"})
 		return
 	}
 
@@ -74,7 +74,7 @@ func (sh *SchoolHandler) FindAll(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error while found schools: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "schools don't found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "nenhuma escola encontrada"})
 		return
 	}
 
@@ -90,7 +90,7 @@ func (sh *SchoolHandler) Update(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		log.Printf("error to parsed body: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body content"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
@@ -98,13 +98,13 @@ func (sh *SchoolHandler) Update(c *gin.Context) {
 
 	err := sh.schoolUseCase.Update(c, &input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "internal server error at update"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno de servidor ao atualizar as informações da escola"})
 		return
 	}
 
 	log.Print("infos updated")
 
-	c.JSON(http.StatusOK, gin.H{"message": "updated w successfully"})
+	c.JSON(http.StatusOK, http.NoBody)
 
 }
 
@@ -116,7 +116,7 @@ func (sh *SchoolHandler) Delete(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error whiling deleted school: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "error to deleted school"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar escola"})
 		return
 	}
 
@@ -124,6 +124,6 @@ func (sh *SchoolHandler) Delete(c *gin.Context) {
 
 	log.Printf("deleted your account --> %v", cnpj)
 
-	c.JSON(http.StatusOK, gin.H{"message": "school deleted w successfully"})
+	c.JSON(http.StatusOK, http.NoBody)
 
 }

@@ -24,7 +24,7 @@ func (ah *AuthHandler) AuthSchool(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		log.Printf("error to parsed body: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body content"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
@@ -32,7 +32,7 @@ func (ah *AuthHandler) AuthSchool(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("wrong email or password: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "school not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "escola não encontrada"})
 		return
 	}
 
@@ -44,7 +44,7 @@ func (ah *AuthHandler) AuthDriver(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		log.Printf("error to parsed body: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body content"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
@@ -52,7 +52,7 @@ func (ah *AuthHandler) AuthDriver(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("wrong email or password: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "school not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "motorista não encontrado"})
 		return
 	}
 
@@ -64,7 +64,7 @@ func (ah *AuthHandler) AuthResponsible(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		log.Printf("error to parsed body: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body content"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
@@ -72,7 +72,7 @@ func (ah *AuthHandler) AuthResponsible(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("wrong email or password: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "school not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "responsável não encontrado"})
 		return
 	}
 

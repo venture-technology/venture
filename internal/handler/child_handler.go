@@ -25,7 +25,7 @@ func (ch *ChildHandler) Create(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		log.Printf("error to parsed body: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body content"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
@@ -33,13 +33,13 @@ func (ch *ChildHandler) Create(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error to create child: %s", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "an error occurred when creating child"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao criar novo filho"})
 		return
 	}
 
 	log.Print("child created was successful")
 
-	c.JSON(http.StatusCreated, input)
+	c.JSON(http.StatusCreated, http.NoBody)
 }
 
 func (ch *ChildHandler) Get(c *gin.Context) {
@@ -50,7 +50,7 @@ func (ch *ChildHandler) Get(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error while found child: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "child don't found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "filho não encontrado"})
 		return
 	}
 
@@ -66,7 +66,7 @@ func (ch *ChildHandler) FindAll(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error while found children: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "children don't found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "filho não encontrado"})
 		return
 	}
 
@@ -84,7 +84,7 @@ func (ch *ChildHandler) Update(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		log.Printf("error to parsed body: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body content"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
@@ -92,13 +92,13 @@ func (ch *ChildHandler) Update(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("update error: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "internal server error at update"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno ao atualizar informações"})
 		return
 	}
 
 	log.Print("infos updated")
 
-	c.JSON(http.StatusOK, gin.H{"message": "updated w successfully"})
+	c.JSON(http.StatusOK, http.NoBody)
 
 }
 
@@ -109,12 +109,12 @@ func (ch *ChildHandler) Delete(c *gin.Context) {
 	err := ch.childUseCase.Delete(c, &rg)
 	if err != nil {
 		log.Printf("delete child error: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "error to deleted child"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar filho"})
 		return
 	}
 
 	log.Printf("deleted your account --> %v", rg)
 
-	c.JSON(http.StatusOK, gin.H{"message": "child deleted w successfully"})
+	c.JSON(http.StatusOK, http.NoBody)
 
 }
