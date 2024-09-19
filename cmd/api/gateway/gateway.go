@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gin-gonic/gin"
 	"github.com/venture-technology/venture/config"
+	"github.com/venture-technology/venture/internal/domain/payments"
 	"github.com/venture-technology/venture/internal/handler"
 	"github.com/venture-technology/venture/internal/repository"
 	"github.com/venture-technology/venture/internal/usecase/auth"
@@ -162,7 +163,7 @@ func (g *Gateway) Partner() {
 }
 
 func (g *Gateway) Contract() {
-	handler := handler.NewContractHandler(contract.NewContractUseCase(repository.NewContractRepository(g.database), repository.NewChildRepository(g.database), repository.NewDriverRepository(g.database), repository.NewSchoolRepository(g.database)))
+	handler := handler.NewContractHandler(contract.NewContractUseCase(repository.NewContractRepository(g.database), repository.NewChildRepository(g.database), repository.NewDriverRepository(g.database), repository.NewSchoolRepository(g.database), payments.NewStripeUseCase()))
 	g.group.POST("/contract", handler.Create)
 	g.group.GET("/contract/:id", handler.Get)
 	g.group.GET("/driver/contract", handler.FindAllByCnh)
