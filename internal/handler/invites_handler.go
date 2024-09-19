@@ -26,7 +26,7 @@ func (ih *InviteHandler) Create(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		log.Printf("error to parsed body: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body content"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
@@ -34,11 +34,11 @@ func (ih *InviteHandler) Create(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error while creating invite: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "internal server error"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno no servidor"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, &input)
+	c.JSON(http.StatusCreated, http.NoBody)
 
 }
 
@@ -50,7 +50,7 @@ func (ih *InviteHandler) Get(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("parse uuid error: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invite don't found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "convite não encontrado"})
 		return
 	}
 
@@ -58,7 +58,7 @@ func (ih *InviteHandler) Get(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error while found invite: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invite don't found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "convite não encontrado"})
 		return
 	}
 
@@ -74,7 +74,7 @@ func (ih *InviteHandler) FindAllByCnh(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("invites don't found: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "internal server error"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno no servidor"})
 		return
 	}
 
@@ -90,7 +90,7 @@ func (ih *InviteHandler) FindAllByCnpj(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("invites don't found: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "internal server error"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno no servidor"})
 		return
 	}
 
@@ -106,7 +106,7 @@ func (ih *InviteHandler) Accept(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("parse uuid error: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invite don't found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "convite não encontrado"})
 		return
 	}
 
@@ -114,11 +114,11 @@ func (ih *InviteHandler) Accept(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error while accepting invite: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "internal server error at accepting invite"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "erro interno no servidor ao tentar aceitar convite"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "invite accepted"})
+	c.JSON(http.StatusCreated, http.NoBody)
 
 }
 
@@ -130,7 +130,7 @@ func (ih *InviteHandler) Decline(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("parse uuid error: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invite don't found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "convite não encontrado"})
 		return
 	}
 
@@ -138,10 +138,10 @@ func (ih *InviteHandler) Decline(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("error while deleting invite: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "internal server error at deleting invite"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "erro interno no servidor ao tentar deletar convite"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "invite declined w/ successfully"})
+	c.JSON(http.StatusOK, http.NoBody)
 
 }

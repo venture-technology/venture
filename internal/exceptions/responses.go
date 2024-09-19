@@ -8,13 +8,13 @@ import (
 
 func InvalidBodyContentResponseError(err error) gin.H {
 	return gin.H{
-		"error": "invalid body content",
+		"error": "conteúdo do body inválido",
 	}
 }
 
 func InternalServerResponseError(err error, msg string) gin.H {
 	return gin.H{
-		"error": fmt.Sprintf("internal server error - %s: %s", msg, err.Error()),
+		"error": fmt.Sprintf("erro interno de servidor - %s: %s", msg, err.Error()),
 	}
 }
 
@@ -26,12 +26,12 @@ func TypeServerResponseError(msg string) gin.H {
 
 func NotParamErrorResponse(param string) gin.H {
 	return gin.H{
-		"error": fmt.Sprintf("The param '%s' not found", param),
+		"error": fmt.Sprintf("O paramêtro '%s' não foi encontrado", param),
 	}
 }
 
 func NotFoundObjectErrorResponse(obj string) gin.H {
 	return gin.H{
-		"error": fmt.Sprintf("%s not found", obj),
+		"error": fmt.Sprintf("%s não foi encontrado", obj),
 	}
 }

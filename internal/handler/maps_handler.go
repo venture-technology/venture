@@ -41,6 +41,6 @@ func (mh *MapsHandler) CalculatePrice(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"value": value})
+	c.JSON(http.StatusOK, gin.H{"valor": value})
 
 }
