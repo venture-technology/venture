@@ -12,6 +12,7 @@
 ![Postgres - Database](https://img.shields.io/badge/database-postgres-blue)
 ![AWS - Cloud](https://img.shields.io/badge/cloud-aws-yellow)
 
+
 </div>
 
 ### 🛢 Migrations
