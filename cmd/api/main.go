@@ -1,18 +1,27 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/venture-technology/venture/cmd/api/gateway"
+	"fmt"
 
+	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
+	"github.com/venture-technology/venture/cmd/api/admin"
+	v1 "github.com/venture-technology/venture/cmd/api/v1"
+	"github.com/venture-technology/venture/internal/infra"
 )
 
 func main() {
 
 	r := gin.Default()
 
-	v1 := r.Group("api/v1")
-	v1.Use(gateway.SetHeaders())
-	gateway.NewGateway(r, v1).Setup()
+	v1Api := r.Group("api/v1")
+	admApi := r.Group("admin")
+
+	app := infra.NewApplication(r, v1Api, admApi)
+
+	v1.NewV1(app).Setup()
+	admin.NewAdmin(app).Setup()
+
+	r.Run(fmt.Sprintf(":%d", app.Config.Server.Port))
 
 }

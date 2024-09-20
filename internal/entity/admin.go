@@ -1,9 +1,6 @@
 package entity
 
-import "time"
-
 type Admin struct {
-	Name       string
-	Position   string
-	Created_at time.Time
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
