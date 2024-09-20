@@ -78,6 +78,6 @@ func (ph *PartnerHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, http.NoBody)
+	c.JSON(http.StatusNoContent, http.NoBody)
 
 }

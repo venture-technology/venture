@@ -81,7 +81,7 @@ func (dh *DriverHandler) Update(c *gin.Context) {
 
 	log.Print("infos updated")
 
-	c.JSON(http.StatusOK, http.NoBody)
+	c.JSON(http.StatusNoContent, http.NoBody)
 
 }
 
@@ -100,7 +100,7 @@ func (dh *DriverHandler) Delete(c *gin.Context) {
 
 	log.Printf("deleted your account --> %v", cnh)
 
-	c.JSON(http.StatusOK, http.NoBody)
+	c.JSON(http.StatusNoContent, http.NoBody)
 
 }
 
