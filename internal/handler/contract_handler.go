@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/usecase/contract"
@@ -41,7 +42,27 @@ func (coh *ContractHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func (coh *ContractHandler) Get(c *gin.Context) {
+func (coh *ContractHandler) GetV1Contracts(c *gin.Context) {
+
+	id := c.Param("id")
+
+	uuid, err := uuid.Parse(id)
+
+	if err != nil {
+		log.Printf("error to parse id: %s", err.Error())
+		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
+
+	contract, err := coh.contractUseCase.Get(c, uuid)
+
+	if err != nil {
+		log.Printf("error while found contract: %s", err.Error())
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
+		return
+	}
+
+	c.JSON(http.StatusOK, contract)
 
 }
 

@@ -165,7 +165,7 @@ func (g *Gateway) Partner() {
 func (g *Gateway) Contract() {
 	handler := handler.NewContractHandler(contract.NewContractUseCase(repository.NewContractRepository(g.database), repository.NewChildRepository(g.database), repository.NewDriverRepository(g.database), repository.NewSchoolRepository(g.database), payments.NewStripeUseCase()))
 	g.group.POST("/contract", handler.Create)
-	g.group.GET("/contract/:id", handler.Get)
+	g.group.GET("/contract/:id", handler.GetV1Contracts)
 	g.group.GET("/driver/contract", handler.FindAllByCnh)
 	g.group.GET("/school/contract", handler.FindAllByCnpj)
 	g.group.GET("/responsible/contract", handler.FindAllByCpf)
