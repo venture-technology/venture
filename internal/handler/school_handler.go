@@ -104,7 +104,7 @@ func (sh *SchoolHandler) Update(c *gin.Context) {
 
 	log.Print("infos updated")
 
-	c.JSON(http.StatusOK, http.NoBody)
+	c.JSON(http.StatusNoContent, http.NoBody)
 
 }
 
@@ -124,6 +124,6 @@ func (sh *SchoolHandler) Delete(c *gin.Context) {
 
 	log.Printf("deleted your account --> %v", cnpj)
 
-	c.JSON(http.StatusOK, http.NoBody)
+	c.JSON(http.StatusNoContent, http.NoBody)
 
 }

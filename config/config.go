@@ -8,15 +8,16 @@ import (
 )
 
 type Config struct {
-	Name              string `yaml:"name"`
-	Database          Database
-	Server            Server `yaml:"server"`
-	Cloud             Cloud
-	Cache             Cache
+	Name              string            `yaml:"name"`
+	Database          Database          `yaml:"database"`
+	Server            Server            `yaml:"server"`
+	Cloud             Cloud             `yaml:"cloud"`
+	Cache             Cache             `yaml:"cache"`
 	Uchiha            Uchiha            `yaml:"uchiha"`
 	Mongo             Mongo             `yaml:"mongo"`
 	GoogleCloudSecret GoogleCloudSecret `yaml:"google-cloud-secret"`
 	StripeEnv         StripeEnv         `yaml:"stripe-env"`
+	Admin             Admin             `yaml:"admin"`
 }
 
 type Server struct {
@@ -68,6 +69,10 @@ type StripeEnv struct {
 	SecretKey string `yaml:"secretkey"`
 }
 
+type Admin struct {
+	ApiKey string `yaml:"apikey"`
+}
+
 var config *Config
 
 func Load(filename string) (*Config, error) {
@@ -87,7 +92,6 @@ func Load(filename string) (*Config, error) {
 
 func Get() *Config {
 
-	// if was created to run tests
 	if config == nil {
 		config, err := Load("../../../config/config.yaml")
 		if err != nil {

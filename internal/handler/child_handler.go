@@ -98,7 +98,7 @@ func (ch *ChildHandler) Update(c *gin.Context) {
 
 	log.Print("infos updated")
 
-	c.JSON(http.StatusOK, http.NoBody)
+	c.JSON(http.StatusNoContent, http.NoBody)
 
 }
 
@@ -115,6 +115,6 @@ func (ch *ChildHandler) Delete(c *gin.Context) {
 
 	log.Printf("deleted your account --> %v", rg)
 
-	c.JSON(http.StatusOK, http.NoBody)
+	c.JSON(http.StatusNoContent, http.NoBody)
 
 }
