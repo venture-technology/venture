@@ -51,7 +51,7 @@ func (cr *ContractRepository) Create(ctx context.Context, contract *entity.Contr
 func (cr *ContractRepository) Get(ctx context.Context, id uuid.UUID) (*entity.Contract, error) {
 	sqlQuery := `
 		SELECT
-			c.record, c.title_stripe_subscription, c.description_stripe_subscription, c.id_stripe_subscription, c.id_price_subscription, c.id_product_subscription, c.created_at, c.expire_at, c.status,
+			c.record, c.title_stripe_subscription, c.description_stripe_subscription, c.id_stripe_subscription, c.id_price_subscription, c.id_product_subscription, c.created_at, c.expire_at, c.status, c.amount,
 			d.name AS driver_name, d.email AS driver_email, d.qrcode AS driver_qrcode, d.phone AS driver_phone,
 			s.name AS school_name, s.email AS school_email, s.phone AS school_phone,
 			ch.name AS child_name, ch.rg AS child_rg, ch.responsible_id AS child_responsible_id, ch.shift AS child_shift,
@@ -81,6 +81,7 @@ func (cr *ContractRepository) Get(ctx context.Context, id uuid.UUID) (*entity.Co
 		&contract.CreatedAt,
 		&contract.ExpireAt,
 		&contract.Status,
+		&contract.Amount,
 		&contract.Driver.Name,
 		&contract.Driver.Email,
 		&contract.Driver.QrCode,
