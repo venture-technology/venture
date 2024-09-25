@@ -24,7 +24,6 @@ type Driver struct {
 	Car         Car     `json:"car,omitempty" validate:"required"`
 }
 
-// future modality
 type Bank struct {
 	Agency  string `json:"agency_number,omitempty" validate:"required"`
 	Account string `json:"account_number,omitempty" validate:"required"`
