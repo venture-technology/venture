@@ -51,10 +51,10 @@ func (cr *ContractRepository) Create(ctx context.Context, contract *entity.Contr
 func (cr *ContractRepository) Get(ctx context.Context, id uuid.UUID) (*entity.Contract, error) {
 	sqlQuery := `
 		SELECT
-			c.record, c.title_stripe_subscription c.description_stripe_subscription, c.id_stripe_subscription, c.id_price_subscription, c.id_product_subscription, c.created_at, c.expire_at, c.status,
+			c.record, c.title_stripe_subscription, c.description_stripe_subscription, c.id_stripe_subscription, c.id_price_subscription, c.id_product_subscription, c.created_at, c.expire_at, c.status,
 			d.name AS driver_name, d.email AS driver_email, d.qrcode AS driver_qrcode, d.phone AS driver_phone,
 			s.name AS school_name, s.email AS school_email, s.phone AS school_phone,
-			ch.name AS child_name, ch.rg AS child_rg, ch.responsible_id AS child_responsible_id, ch.shift AS child_shift
+			ch.name AS child_name, ch.rg AS child_rg, ch.responsible_id AS child_responsible_id, ch.shift AS child_shift,
 			r.name AS responsible_name, r.email AS responsible_email, r.phone AS responsible_phone
 		FROM
 			contracts c
@@ -65,7 +65,7 @@ func (cr *ContractRepository) Get(ctx context.Context, id uuid.UUID) (*entity.Co
 		JOIN
 			children ch ON c.child_id = ch.rg
 		JOIN
-			responsibles r ON ch.responsible_id = r.cpf
+			responsible r ON ch.responsible_id = r.cpf
 		WHERE
 			c.record = $1
 		LIMIT 1;
