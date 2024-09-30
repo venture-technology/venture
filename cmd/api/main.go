@@ -14,6 +14,12 @@ func main() {
 
 	r := gin.Default()
 
+	r.GET("/status", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "up!",
+		})
+	})
+
 	v1Api := r.Group("api/v1")
 	admApi := r.Group("admin")
 
