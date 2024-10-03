@@ -5,10 +5,14 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/venture-technology/venture/internal/infra/ventracer"
 	"github.com/venture-technology/venture/internal/usecase/admin"
+	"go.uber.org/zap"
 )
 
 type AdminHandler struct {
+	logger       *zap.Logger
+	tracer       *ventracer.Ventracer
 	adminUseCase *admin.AdminUseCase
 }
 
@@ -19,6 +23,7 @@ func NewAdminHandler(adminUseCase *admin.AdminUseCase) *AdminHandler {
 }
 
 func (ah *AdminHandler) NewApiKey(c *gin.Context) {
+
 	name := c.Param("name")
 
 	err := ah.adminUseCase.NewApiKey(c, name)

@@ -11,16 +11,20 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/venture-technology/venture/cmd/api/settings"
 	"github.com/venture-technology/venture/config"
+	"github.com/venture-technology/venture/internal/infra/ventracer"
+	"go.uber.org/zap"
 )
 
 type Application struct {
-	Config   *config.Config
-	router   *gin.Engine
-	V1       *gin.RouterGroup
-	Adm      *gin.RouterGroup
-	Database *sql.DB
-	Cloud    *session.Session
-	Cache    *redis.Client
+	Config         *config.Config
+	router         *gin.Engine
+	V1             *gin.RouterGroup
+	Adm            *gin.RouterGroup
+	Database       *sql.DB
+	Cloud          *session.Session
+	Cache          *redis.Client
+	TracerProvider *ventracer.Ventracer
+	Logger         *zap.Logger
 }
 
 func NewApplication(router *gin.Engine, V1 *gin.RouterGroup, Adm *gin.RouterGroup) *Application {
@@ -51,14 +55,26 @@ func NewApplication(router *gin.Engine, V1 *gin.RouterGroup, Adm *gin.RouterGrou
 		DB:       0,
 	})
 
+	TracerProvider, err := ventracer.NewJaegerTracer("localhost:4318", "venture-api")
+	if err != nil {
+		log.Fatalf("failed to create tracer: %v", err)
+	}
+
+	Logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatalf("failed to create logger: %v", err)
+	}
+
 	return &Application{
-		Config:   Config,
-		router:   router,
-		V1:       V1,
-		Adm:      Adm,
-		Database: db,
-		Cloud:    sess,
-		Cache:    rdb,
+		Config:         Config,
+		router:         router,
+		V1:             V1,
+		Adm:            Adm,
+		Database:       db,
+		Cloud:          sess,
+		Cache:          rdb,
+		TracerProvider: TracerProvider,
+		Logger:         Logger,
 	}
 }
 
