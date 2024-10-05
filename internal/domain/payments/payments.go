@@ -27,13 +27,13 @@ type IStripe interface {
 	FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error)
 }
 
-type StripeUseCase struct{}
+type StripeContract struct{}
 
-func NewStripeUseCase() *StripeUseCase {
-	return &StripeUseCase{}
+func NewStripeContract() *StripeContract {
+	return &StripeContract{}
 }
 
-func (su *StripeUseCase) CreateProduct(contract *entity.Contract) (*stripe.Product, error) {
+func (su *StripeContract) CreateProduct(contract *entity.Contract) (*stripe.Product, error) {
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -51,14 +51,14 @@ func (su *StripeUseCase) CreateProduct(contract *entity.Contract) (*stripe.Produ
 	return prodt, nil
 }
 
-func (su *StripeUseCase) CreatePrice(contract *entity.Contract) (*stripe.Price, error) {
+func (su *StripeContract) CreatePrice(contract *entity.Contract) (*stripe.Price, error) {
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
 
 	params := &stripe.PriceParams{
 		Currency: stripe.String(string("brl")),
-		Product:  stripe.String(contract.StripeSubscription.ProductSubscriptionId),
+		Product:  stripe.String(contract.StripeSubscription.Product),
 		Recurring: &stripe.PriceRecurringParams{
 			Interval: stripe.String("month"),
 		},
@@ -73,7 +73,7 @@ func (su *StripeUseCase) CreatePrice(contract *entity.Contract) (*stripe.Price, 
 	return pr, nil
 }
 
-func (su *StripeUseCase) CreateSubscription(contract *entity.Contract) (*stripe.Subscription, error) {
+func (su *StripeContract) CreateSubscription(contract *entity.Contract) (*stripe.Subscription, error) {
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -83,7 +83,7 @@ func (su *StripeUseCase) CreateSubscription(contract *entity.Contract) (*stripe.
 		Customer: stripe.String(contract.Child.Responsible.CustomerId),
 		Items: []*stripe.SubscriptionItemsParams{
 			{
-				Price: stripe.String(contract.StripeSubscription.PriceSubscriptionId),
+				Price: stripe.String(contract.StripeSubscription.Price),
 			},
 		},
 	}
@@ -96,7 +96,7 @@ func (su *StripeUseCase) CreateSubscription(contract *entity.Contract) (*stripe.
 	return subs, err
 }
 
-func (su *StripeUseCase) GetSubscription(subscriptionId string) (*stripe.Subscription, error) {
+func (su *StripeContract) GetSubscription(subscriptionId string) (*stripe.Subscription, error) {
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -108,7 +108,7 @@ func (su *StripeUseCase) GetSubscription(subscriptionId string) (*stripe.Subscri
 	return subscription, nil
 }
 
-func (su *StripeUseCase) ListSubscriptions(contract *entity.Contract) ([]entity.SubscriptionInfo, error) {
+func (su *StripeContract) ListSubscriptions(contract *entity.Contract) ([]entity.SubscriptionInfo, error) {
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -137,19 +137,19 @@ func (su *StripeUseCase) ListSubscriptions(contract *entity.Contract) ([]entity.
 	return subscriptions, nil
 }
 
-func (su *StripeUseCase) DeleteSubscription(contract *entity.Contract) (*stripe.Subscription, error) {
+func (su *StripeContract) DeleteSubscription(contract *entity.Contract) (*stripe.Subscription, error) {
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
 
-	deletedSub, err := subscription.Cancel(contract.StripeSubscription.SubscriptionId, nil)
+	deletedSub, err := subscription.Cancel(contract.StripeSubscription.ID, nil)
 	if err != nil {
 		return nil, err
 	}
 	return deletedSub, nil
 }
 
-func (su *StripeUseCase) GetInvoice(invoiceId string) (*stripe.Invoice, error) {
+func (su *StripeContract) GetInvoice(invoiceId string) (*stripe.Invoice, error) {
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -161,13 +161,13 @@ func (su *StripeUseCase) GetInvoice(invoiceId string) (*stripe.Invoice, error) {
 	return inv, nil
 }
 
-func (su *StripeUseCase) ListInvoices(contract *entity.Contract) ([]entity.InvoiceInfo, error) {
+func (su *StripeContract) ListInvoices(contract *entity.Contract) ([]entity.InvoiceInfo, error) {
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
 
 	params := &stripe.InvoiceListParams{
-		Subscription: stripe.String(contract.StripeSubscription.SubscriptionId),
+		Subscription: stripe.String(contract.StripeSubscription.ID),
 	}
 
 	var invoices []entity.InvoiceInfo
@@ -193,7 +193,7 @@ func (su *StripeUseCase) ListInvoices(contract *entity.Contract) ([]entity.Invoi
 	return invoices, nil
 }
 
-func (su *StripeUseCase) CalculateRemainingValueSubscription(invoices []entity.InvoiceInfo) *entity.InvoiceRemaining {
+func (su *StripeContract) CalculateRemainingValueSubscription(invoices []entity.InvoiceInfo) *entity.InvoiceRemaining {
 	invoice := entity.InvoiceRemaining{
 		InvoiceValue: float64(invoices[0].AmountDue / 100),
 		Quantity:     float64(len(invoices)),
@@ -206,7 +206,7 @@ func (su *StripeUseCase) CalculateRemainingValueSubscription(invoices []entity.I
 	return &invoice
 }
 
-func (su *StripeUseCase) FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error) {
+func (su *StripeContract) FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error) {
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
