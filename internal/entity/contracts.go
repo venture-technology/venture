@@ -7,11 +7,11 @@ import (
 )
 
 type StripeSubscription struct {
-	Title                 string `json:"title_subscription"`
-	SubscriptionId        string `json:"subscription_id"`
-	Description           string `json:"description_subscription,omitempty"`
-	PriceSubscriptionId   string `json:"price_id"`
-	ProductSubscriptionId string `json:"product_id"`
+	Title       string `json:"title_subscription"`
+	ID          string `json:"subscription_id"`
+	Description string `json:"description_subscription,omitempty"`
+	Price       string `json:"price_id"`
+	Product     string `json:"product_id"`
 }
 
 type Contract struct {
