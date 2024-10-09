@@ -23,7 +23,14 @@ func (adm *Admin) Setup() {
 
 	adm.app.Adm.Use(middleware.AdminMiddleware())
 
-	adm.admin = handler.NewAdminHandler(admin.NewAdminUseCase(repository.NewAdminRepository(adm.app.Cache)))
+	adm.admin = handler.NewAdminHandler(
+		admin.NewAdminUseCase(
+			repository.NewAdminRepository(
+				adm.app.Cache,
+			),
+			adm.app.Logger,
+		),
+	)
 
 	adm.NewRoutes()
 

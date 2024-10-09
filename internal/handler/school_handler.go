@@ -8,15 +8,18 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/usecase/school"
 	"github.com/venture-technology/venture/pkg/utils"
+	"go.uber.org/zap"
 )
 
 type SchoolHandler struct {
 	schoolUseCase *school.SchoolUseCase
+	logger        *zap.Logger
 }
 
-func NewSchoolHandler(schoolUseCase *school.SchoolUseCase) *SchoolHandler {
+func NewSchoolHandler(schoolUseCase *school.SchoolUseCase, logger *zap.Logger) *SchoolHandler {
 	return &SchoolHandler{
 		schoolUseCase: schoolUseCase,
+		logger:        logger,
 	}
 }
 

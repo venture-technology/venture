@@ -8,15 +8,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/usecase/maps"
+	"go.uber.org/zap"
 )
 
 type MapsHandler struct {
 	mapsUseCase *maps.MapsUseCase
+	logger      *zap.Logger
 }
 
-func NewMapsHandler(mapsUseCase *maps.MapsUseCase) *MapsHandler {
+func NewMapsHandler(mapsUseCase *maps.MapsUseCase, logger *zap.Logger) *MapsHandler {
 	return &MapsHandler{
 		mapsUseCase: mapsUseCase,
+		logger:      logger,
 	}
 }
 

@@ -53,7 +53,7 @@ func NewApplication(router *gin.Engine, V1 *gin.RouterGroup, Adm *gin.RouterGrou
 		DB:       0,
 	})
 
-	zap, err := zap.NewProduction()
+	Logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("failed to create logger: %v", err)
 	}
@@ -66,7 +66,7 @@ func NewApplication(router *gin.Engine, V1 *gin.RouterGroup, Adm *gin.RouterGrou
 		Database: db,
 		Cloud:    sess,
 		Cache:    rdb,
-		Logger:   zap,
+		Logger:   Logger,
 	}
 }
 

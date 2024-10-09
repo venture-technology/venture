@@ -7,15 +7,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/usecase/auth"
+	"go.uber.org/zap"
 )
 
 type AuthHandler struct {
 	authUseCase *auth.AuthUseCase
+	logger      *zap.Logger
 }
 
-func NewAuthHandler(au *auth.AuthUseCase) *AuthHandler {
+func NewAuthHandler(au *auth.AuthUseCase, logger *zap.Logger) *AuthHandler {
 	return &AuthHandler{
 		authUseCase: au,
+		logger:      logger,
 	}
 }
 

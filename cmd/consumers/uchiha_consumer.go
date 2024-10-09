@@ -17,6 +17,7 @@ import (
 	"github.com/venture-technology/venture/internal/usecase/email"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.uber.org/zap"
 )
 
 type consumer struct {
@@ -100,10 +101,15 @@ func main() {
 	}
 	defer client.Disconnect(context.TODO())
 
-	awsRepository := repository.NewAwsRepository(sess)
-	emailRepository := repository.NewEmailRepository(client, config.Mongo.Database, config.Mongo.Collection)
+	logger, _ := zap.NewProduction()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	emailUseCase := email.NewEmailUseCase(emailRepository, awsRepository)
+	awsRepository := repository.NewAwsRepository(sess, logger)
+	emailRepository := repository.NewEmailRepository(client, config.Mongo.Database, config.Mongo.Collection, logger)
+
+	emailUseCase := email.NewEmailUseCase(emailRepository, awsRepository, logger)
 
 	consumer := NewConsumer(emailUseCase)
 	log.Print("initing service: uchiha")

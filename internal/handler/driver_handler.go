@@ -9,15 +9,18 @@ import (
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/usecase/driver"
 	"github.com/venture-technology/venture/pkg/utils"
+	"go.uber.org/zap"
 )
 
 type DriverHandler struct {
 	driverUseCase *driver.DriverUseCase
+	logger        *zap.Logger
 }
 
-func NewDriverHandler(du *driver.DriverUseCase) *DriverHandler {
+func NewDriverHandler(du *driver.DriverUseCase, logger *zap.Logger) *DriverHandler {
 	return &DriverHandler{
 		driverUseCase: du,
+		logger:        logger,
 	}
 }
 

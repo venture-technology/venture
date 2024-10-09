@@ -9,15 +9,20 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/usecase/contract"
+	"go.uber.org/zap"
 )
 
 type ContractHandler struct {
 	contractUseCase *contract.ContractUseCase
+	logger          *zap.Logger
 }
 
-func NewContractHandler(cu *contract.ContractUseCase) *ContractHandler {
+func NewContractHandler(
+	cu *contract.ContractUseCase,
+	logger *zap.Logger) *ContractHandler {
 	return &ContractHandler{
 		contractUseCase: cu,
+		logger:          logger,
 	}
 }
 
