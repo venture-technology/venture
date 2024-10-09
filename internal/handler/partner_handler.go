@@ -6,15 +6,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/venture-technology/venture/internal/usecase/partner"
+	"go.uber.org/zap"
 )
 
 type PartnerHandler struct {
 	PartnerUseCase *partner.PartnerUseCase
+	logger         *zap.Logger
 }
 
-func NewPartnerHandler(pu *partner.PartnerUseCase) *PartnerHandler {
+func NewPartnerHandler(pu *partner.PartnerUseCase, logger *zap.Logger) *PartnerHandler {
 	return &PartnerHandler{
 		PartnerUseCase: pu,
+		logger:         logger,
 	}
 }
 

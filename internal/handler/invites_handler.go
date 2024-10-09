@@ -8,15 +8,18 @@ import (
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/usecase/invite"
+	"go.uber.org/zap"
 )
 
 type InviteHandler struct {
 	inviteUseCase *invite.InviteUseCase
+	logger        *zap.Logger
 }
 
-func NewInviteHandler(iu *invite.InviteUseCase) *InviteHandler {
+func NewInviteHandler(iu *invite.InviteUseCase, logger *zap.Logger) *InviteHandler {
 	return &InviteHandler{
 		inviteUseCase: iu,
+		logger:        logger,
 	}
 }
 

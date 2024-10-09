@@ -7,15 +7,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/usecase/child"
+	"go.uber.org/zap"
 )
 
 type ChildHandler struct {
 	childUseCase *child.ChildUseCase
+	logger       *zap.Logger
 }
 
-func NewChildHandler(childUseCase *child.ChildUseCase) *ChildHandler {
+func NewChildHandler(childUseCase *child.ChildUseCase, logger *zap.Logger) *ChildHandler {
 	return &ChildHandler{
 		childUseCase: childUseCase,
+		logger:       logger,
 	}
 }
 

@@ -9,15 +9,18 @@ import (
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/usecase/responsible"
 	"github.com/venture-technology/venture/pkg/utils"
+	"go.uber.org/zap"
 )
 
 type ResponsibleHandler struct {
 	responsibleUseCase *responsible.ResponsibleUseCase
+	logger             *zap.Logger
 }
 
-func NewResponsibleHandler(responsibleUseCase *responsible.ResponsibleUseCase) *ResponsibleHandler {
+func NewResponsibleHandler(responsibleUseCase *responsible.ResponsibleUseCase, logger *zap.Logger) *ResponsibleHandler {
 	return &ResponsibleHandler{
 		responsibleUseCase: responsibleUseCase,
+		logger:             logger,
 	}
 }
 
