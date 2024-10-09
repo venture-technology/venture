@@ -183,6 +183,7 @@ func (v1 *V1) NewRoutes() {
 	v1.app.V1.DELETE("/partner/:id", v1.partner.Delete)
 	v1.app.V1.POST("/contract", v1.contract.Create)
 	v1.app.V1.GET("/contract/:id", v1.contract.Get)
+	v1.app.V1.GET("/contract/:rg", v1.contract.FindAllByRg)
 	v1.app.V1.GET("/driver/contract", v1.contract.FindAllByCnh)
 	v1.app.V1.GET("/school/contract", v1.contract.FindAllByCnpj)
 	v1.app.V1.GET("/responsible/contract", v1.contract.FindAllByCpf)
