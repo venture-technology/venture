@@ -8,17 +8,20 @@ import (
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
+	"go.uber.org/zap"
 )
 
 type InviteUseCase struct {
 	inviteRepository  repository.IInviteRepository
 	partnerRepository repository.IPartnerRepository
+	logger            *zap.Logger
 }
 
-func NewInviteUseCase(ir repository.IInviteRepository, pr repository.IPartnerRepository) *InviteUseCase {
+func NewInviteUseCase(ir repository.IInviteRepository, pr repository.IPartnerRepository, logger *zap.Logger) *InviteUseCase {
 	return &InviteUseCase{
 		inviteRepository:  ir,
 		partnerRepository: pr,
+		logger:            logger,
 	}
 }
 

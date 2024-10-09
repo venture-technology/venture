@@ -5,15 +5,18 @@ import (
 
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
+	"go.uber.org/zap"
 )
 
 type SchoolUseCase struct {
 	schoolRepository repository.ISchoolRepository
+	logger           *zap.Logger
 }
 
-func NewSchoolUseCase(schoolRepository repository.ISchoolRepository) *SchoolUseCase {
+func NewSchoolUseCase(schoolRepository repository.ISchoolRepository, logger *zap.Logger) *SchoolUseCase {
 	return &SchoolUseCase{
 		schoolRepository: schoolRepository,
+		logger:           logger,
 	}
 }
 

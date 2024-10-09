@@ -11,15 +11,18 @@ import (
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
+	"go.uber.org/zap"
 )
 
 type ResponsibleUseCase struct {
 	responsibleRepository repository.IResponsibleRepository
+	logger                *zap.Logger
 }
 
-func NewResponsibleUseCase(responsibleRepository repository.IResponsibleRepository) *ResponsibleUseCase {
+func NewResponsibleUseCase(responsibleRepository repository.IResponsibleRepository, logger *zap.Logger) *ResponsibleUseCase {
 	return &ResponsibleUseCase{
 		responsibleRepository: responsibleRepository,
+		logger:                logger,
 	}
 }
 

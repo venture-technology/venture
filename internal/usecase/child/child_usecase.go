@@ -5,15 +5,18 @@ import (
 
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
+	"go.uber.org/zap"
 )
 
 type ChildUseCase struct {
 	childRepository repository.IChildRepository
+	logger          *zap.Logger
 }
 
-func NewChildUseCase(childRepository repository.IChildRepository) *ChildUseCase {
+func NewChildUseCase(childRepository repository.IChildRepository, logger *zap.Logger) *ChildUseCase {
 	return &ChildUseCase{
 		childRepository: childRepository,
+		logger:          logger,
 	}
 }
 

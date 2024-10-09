@@ -67,7 +67,7 @@ func TestContractUseCase_Create(t *testing.T) {
 		cou.On("GetSimpleContractByTitle", context.Background(), &contract.StripeSubscription.Title).Return(&entity.Contract{}, nil)
 		cou.On("Create", context.Background(), &contract).Return(nil)
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		err := useCase.Create(context.Background(), &contract)
 		if err != nil {
@@ -126,7 +126,7 @@ func TestContractUseCase_Create(t *testing.T) {
 
 		cou.On("GetSimpleContractByTitle", context.Background(), &contract.StripeSubscription.Title).Return(nil, fmt.Errorf("error"))
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		err := useCase.Create(context.Background(), &contract)
 
@@ -183,7 +183,7 @@ func TestContractUseCase_Create(t *testing.T) {
 
 		cou.On("GetSimpleContractByTitle", context.Background(), &contract.StripeSubscription.Title).Return(&contract, nil)
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		err := useCase.Create(context.Background(), &contract)
 		assert.Error(t, err)
@@ -238,7 +238,7 @@ func TestContractUseCase_Create(t *testing.T) {
 
 		cou.On("GetSimpleContractByTitle", context.Background(), &contract.StripeSubscription.Title).Return(&entity.Contract{}, nil)
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		err := useCase.Create(context.Background(), &contract)
 		assert.Error(t, err)
@@ -286,7 +286,7 @@ func TestContractUseCase_Create(t *testing.T) {
 
 		cou.On("GetSimpleContractByTitle", context.Background(), &contract.StripeSubscription.Title).Return(&entity.Contract{}, nil)
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		err := useCase.Create(context.Background(), &contract)
 		assert.Error(t, err)
@@ -338,7 +338,7 @@ func TestContractUseCase_Create(t *testing.T) {
 
 		cou.On("GetSimpleContractByTitle", context.Background(), &contract.StripeSubscription.Title).Return(&entity.Contract{}, nil)
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		err := useCase.Create(context.Background(), &contract)
 		assert.Error(t, err)
@@ -394,7 +394,7 @@ func TestContractUseCase_Create(t *testing.T) {
 
 		cou.On("GetSimpleContractByTitle", context.Background(), &contract.StripeSubscription.Title).Return(&entity.Contract{}, nil)
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		err := useCase.Create(context.Background(), &contract)
 		assert.Error(t, err)
@@ -451,7 +451,7 @@ func TestContractUseCase_Create(t *testing.T) {
 		cou.On("GetSimpleContractByTitle", context.Background(), &contract.StripeSubscription.Title).Return(&entity.Contract{}, nil)
 		st.On("CreateProduct", &contract).Return(nil, fmt.Errorf("error"))
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		err := useCase.Create(context.Background(), &contract)
 		assert.Error(t, err)
@@ -510,7 +510,7 @@ func TestContractUseCase_Create(t *testing.T) {
 		}, nil)
 		st.On("CreatePrice", &contract).Return(nil, fmt.Errorf("price error"))
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		err := useCase.Create(context.Background(), &contract)
 		assert.Error(t, err)
@@ -572,7 +572,7 @@ func TestContractUseCase_Create(t *testing.T) {
 		}, nil)
 		st.On("CreateSubscription", &contract).Return(nil, fmt.Errorf("subscription error"))
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		err := useCase.Create(context.Background(), &contract)
 		assert.Error(t, err)
@@ -638,7 +638,7 @@ func TestContractUseCase_Create(t *testing.T) {
 			ID: "sub_1Q7gooLfFDLpePGLkcm2nPkC",
 		}, nil)
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		err := useCase.Create(context.Background(), &contract)
 		if err == nil {
@@ -702,7 +702,7 @@ func TestContract_Get(t *testing.T) {
 		cou.On("Get", context.Background(), id).Return(&contract, nil)
 		st.On("ListInvoices", mock.Anything).Return([]entity.InvoiceInfo{}, nil)
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		_, err := useCase.Get(context.Background(), id)
 		if err != nil {
@@ -764,7 +764,7 @@ func TestContract_Get(t *testing.T) {
 		cou.On("Get", context.Background(), id).Return(&contract, nil)
 		st.On("ListInvoices", mock.Anything).Return(nil, fmt.Errorf("list invoices error"))
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		_, err := useCase.Get(context.Background(), id)
 		if err == nil {
@@ -781,7 +781,7 @@ func TestContract_Get(t *testing.T) {
 
 		cou.On("Get", context.Background(), id).Return(nil, fmt.Errorf("get error"))
 
-		useCase := NewContractUseCase(cou, st, googleAdapter)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		_, err := useCase.Get(context.Background(), id)
 		if err == nil {

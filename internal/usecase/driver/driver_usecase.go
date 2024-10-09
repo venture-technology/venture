@@ -7,17 +7,20 @@ import (
 	"github.com/skip2/go-qrcode"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
+	"go.uber.org/zap"
 )
 
 type DriverUseCase struct {
 	driverRepository repository.IDriverRepository
 	awsRepository    repository.IAwsRepository
+	logger           *zap.Logger
 }
 
-func NewDriverUseCase(dr repository.IDriverRepository, ar repository.IAwsRepository) *DriverUseCase {
+func NewDriverUseCase(dr repository.IDriverRepository, ar repository.IAwsRepository, logger *zap.Logger) *DriverUseCase {
 	return &DriverUseCase{
 		driverRepository: dr,
 		awsRepository:    ar,
+		logger:           logger,
 	}
 }
 

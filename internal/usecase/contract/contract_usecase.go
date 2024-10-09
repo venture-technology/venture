@@ -11,23 +11,27 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
 	"github.com/venture-technology/venture/internal/usecase"
+	"go.uber.org/zap"
 )
 
 type ContractUseCase struct {
 	contractRepository repository.IContractRepository
 	stripe             payments.IStripe
 	googleAdapter      adapter.IGoogleAdapter
+	logger             *zap.Logger
 }
 
 func NewContractUseCase(
 	cou repository.IContractRepository,
 	st payments.IStripe,
 	ga adapter.IGoogleAdapter,
+	logger *zap.Logger,
 ) *ContractUseCase {
 	return &ContractUseCase{
 		contractRepository: cou,
 		stripe:             st,
 		googleAdapter:      ga,
+		logger:             logger,
 	}
 }
 

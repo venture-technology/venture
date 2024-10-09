@@ -19,7 +19,7 @@ func TestEmailUseCase_Record(t *testing.T) {
 			Recipient: "eu@omg.com",
 		}
 		caller.On("Record", context.Background(), &email).Return(nil)
-		useCase := NewEmailUseCase(caller, nil)
+		useCase := NewEmailUseCase(caller, nil, nil)
 		err := useCase.Record(context.Background(), &email)
 		if err != nil {
 			t.Errorf("Error: %s", err)
@@ -34,7 +34,7 @@ func TestEmailUseCase_Record(t *testing.T) {
 			Recipient: "eu@omg.com",
 		}
 		caller.On("Record", context.Background(), &email).Return(fmt.Errorf("error happens"))
-		useCase := NewEmailUseCase(caller, nil)
+		useCase := NewEmailUseCase(caller, nil, nil)
 		err := useCase.Record(context.Background(), &email)
 		if err == nil {
 			t.Error("Not returned error")
