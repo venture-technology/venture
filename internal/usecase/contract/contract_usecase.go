@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/google/uuid"
+	"github.com/venture-technology/venture/internal/domain/adapter"
 	"github.com/venture-technology/venture/internal/domain/payments"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
@@ -14,19 +15,19 @@ import (
 
 type ContractUseCase struct {
 	contractRepository repository.IContractRepository
-	childRepository    repository.IChildRepository
-	driverRepository   repository.IDriverRepository
-	schoolRepository   repository.ISchoolRepository
 	stripe             payments.IStripe
+	googleAdapter      adapter.IGoogleAdapter
 }
 
-func NewContractUseCase(cou repository.IContractRepository, cr repository.IChildRepository, dr repository.IDriverRepository, sr repository.ISchoolRepository, st payments.IStripe) *ContractUseCase {
+func NewContractUseCase(
+	cou repository.IContractRepository,
+	st payments.IStripe,
+	ga adapter.IGoogleAdapter,
+) *ContractUseCase {
 	return &ContractUseCase{
 		contractRepository: cou,
-		childRepository:    cr,
-		driverRepository:   dr,
-		schoolRepository:   sr,
 		stripe:             st,
+		googleAdapter:      ga,
 	}
 }
 
@@ -64,7 +65,10 @@ func (cou *ContractUseCase) Create(ctx context.Context, contract *entity.Contrac
 		return fmt.Errorf("driver %s need car register", contract.Driver.CNH)
 	}
 
-	distance, err := usecase.GetDistance(fmt.Sprintf("%s,%s,%s", contract.Child.Responsible.Address.Street, contract.Child.Responsible.Address.Number, contract.Child.Responsible.Address.ZIP), fmt.Sprintf("%s,%s,%s", contract.School.Address.Street, contract.School.Address.Number, contract.School.Address.ZIP))
+	distance, err := cou.googleAdapter.GetDistance(
+		fmt.Sprintf("%s,%s,%s", contract.Child.Responsible.Address.Street, contract.Child.Responsible.Address.Number, contract.Child.Responsible.Address.ZIP),
+		fmt.Sprintf("%s,%s,%s", contract.School.Address.Street, contract.School.Address.Number, contract.School.Address.ZIP),
+	)
 	if err != nil {
 		return err
 	}
@@ -76,21 +80,21 @@ func (cou *ContractUseCase) Create(ctx context.Context, contract *entity.Contrac
 		return err
 	}
 
-	contract.StripeSubscription.ProductSubscriptionId = prodt.ID
+	contract.StripeSubscription.Product = prodt.ID
 
 	pr, err := cou.stripe.CreatePrice(contract)
 	if err != nil {
 		return err
 	}
 
-	contract.StripeSubscription.PriceSubscriptionId = pr.ID
+	contract.StripeSubscription.Price = pr.ID
 
 	subs, err := cou.stripe.CreateSubscription(contract)
 	if err != nil {
 		return err
 	}
 
-	contract.StripeSubscription.SubscriptionId = subs.ID
+	contract.StripeSubscription.ID = subs.ID
 
 	id, err := uuid.NewV7()
 	if err != nil {
@@ -126,69 +130,69 @@ func (cou *ContractUseCase) Get(ctx context.Context, id uuid.UUID) (*entity.Cont
 	return contract, nil
 }
 
-func (cou *ContractUseCase) FindAllByCnpj(ctx context.Context, cnpj *string) ([]entity.Contract, error) {
-	return cou.contractRepository.FindAllByCnpj(ctx, cnpj)
-}
+// func (cou *ContractUseCase) FindAllByCnpj(ctx context.Context, cnpj *string) ([]entity.Contract, error) {
+// 	return cou.contractRepository.FindAllByCnpj(ctx, cnpj)
+// }
 
-func (cou *ContractUseCase) FindAllByCpf(ctx context.Context, cpf *string) ([]entity.Contract, error) {
-	return cou.contractRepository.FindAllByCpf(ctx, cpf)
-}
+// func (cou *ContractUseCase) FindAllByCpf(ctx context.Context, cpf *string) ([]entity.Contract, error) {
+// 	return cou.contractRepository.FindAllByCpf(ctx, cpf)
+// }
 
-func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Contract, error) {
-	contracts, err := cou.contractRepository.FindAllByCnh(ctx, cnh)
-	if err != nil {
-		return nil, err
-	}
+// func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Contract, error) {
+// 	contracts, err := cou.contractRepository.FindAllByCnh(ctx, cnh)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	for _, contract := range contracts {
+// 	for _, contract := range contracts {
 
-		invoices, err := cou.stripe.ListInvoices(&contract)
-		if err != nil {
-			return nil, err
-		}
+// 		invoices, err := cou.stripe.ListInvoices(&contract)
+// 		if err != nil {
+// 			return nil, err
+// 		}
 
-		contract.Invoices = invoices
+// 		contract.Invoices = invoices
 
-	}
+// 	}
 
-	return contracts, nil
-}
+// 	return contracts, nil
+// }
 
-func (cou *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
-	contract, err := cou.contractRepository.Get(ctx, id)
-	if err != nil {
-		return err
-	}
+// func (cou *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
+// 	contract, err := cou.contractRepository.Get(ctx, id)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	err = cou.contractRepository.Cancel(ctx, id)
-	if err != nil {
-		return err
-	}
+// 	err = cou.contractRepository.Cancel(ctx, id)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	values := cou.stripe.CalculateRemainingValueSubscription(contract.Invoices)
+// 	values := cou.stripe.CalculateRemainingValueSubscription(contract.Invoices)
 
-	_, err = cou.stripe.FineResponsible(contract, int64(values.Fines))
-	if err != nil {
-		return err
-	}
+// 	_, err = cou.stripe.FineResponsible(contract, int64(values.Fines))
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func (cou *ContractUseCase) GetInvoice(ctx context.Context, invoice *string) (*entity.InvoiceInfo, error) {
-	inv, err := cou.stripe.GetInvoice(*invoice)
-	if err != nil {
-		return nil, err
-	}
+// func (cou *ContractUseCase) GetInvoice(ctx context.Context, invoice *string) (*entity.InvoiceInfo, error) {
+// 	inv, err := cou.stripe.GetInvoice(*invoice)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return &entity.InvoiceInfo{
-		ID:              inv.ID,
-		Status:          string(inv.Status),
-		AmountDue:       inv.AmountDue,
-		AmountRemaining: inv.AmountRemaining * 100,
-	}, nil
-}
+// 	return &entity.InvoiceInfo{
+// 		ID:              inv.ID,
+// 		Status:          string(inv.Status),
+// 		AmountDue:       inv.AmountDue,
+// 		AmountRemaining: inv.AmountRemaining * 100,
+// 	}, nil
+// }
 
-func (cou *ContractUseCase) Expired(ctx context.Context, id uuid.UUID) error {
-	return cou.contractRepository.Expired(ctx, id)
-}
+// func (cou *ContractUseCase) Expired(ctx context.Context, id uuid.UUID) error {
+// 	return cou.contractRepository.Expired(ctx, id)
+// }
