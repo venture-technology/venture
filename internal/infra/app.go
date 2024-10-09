@@ -11,6 +11,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/venture-technology/venture/cmd/api/settings"
 	"github.com/venture-technology/venture/config"
+	"go.uber.org/zap"
 )
 
 type Application struct {
@@ -21,6 +22,7 @@ type Application struct {
 	Database *sql.DB
 	Cloud    *session.Session
 	Cache    *redis.Client
+	Logger   *zap.Logger
 }
 
 func NewApplication(router *gin.Engine, V1 *gin.RouterGroup, Adm *gin.RouterGroup) *Application {
@@ -51,6 +53,11 @@ func NewApplication(router *gin.Engine, V1 *gin.RouterGroup, Adm *gin.RouterGrou
 		DB:       0,
 	})
 
+	zap, err := zap.NewProduction()
+	if err != nil {
+		log.Fatalf("failed to create logger: %v", err)
+	}
+
 	return &Application{
 		Config:   Config,
 		router:   router,
@@ -59,6 +66,7 @@ func NewApplication(router *gin.Engine, V1 *gin.RouterGroup, Adm *gin.RouterGrou
 		Database: db,
 		Cloud:    sess,
 		Cache:    rdb,
+		Logger:   zap,
 	}
 }
 

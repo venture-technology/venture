@@ -41,15 +41,71 @@ func (v1 *V1) Setup() {
 
 	v1.app.V1.Use(middleware.RequestMiddleware(v1.app.Cache))
 
-	v1.responsible = handler.NewResponsibleHandler(responsible.NewResponsibleUseCase(repository.NewResponsibleRepository(v1.app.Database)))
-	v1.child = handler.NewChildHandler(child.NewChildUseCase(repository.NewChildRepository(v1.app.Database)))
-	v1.school = handler.NewSchoolHandler(school.NewSchoolUseCase(repository.NewSchoolRepository(v1.app.Database)))
-	v1.driver = handler.NewDriverHandler(driver.NewDriverUseCase(repository.NewDriverRepository(v1.app.Database), repository.NewAwsRepository(v1.app.Cloud)))
-	v1.invite = handler.NewInviteHandler(invite.NewInviteUseCase(repository.NewInviteRepository(v1.app.Database), repository.NewPartnerRepository(v1.app.Database)))
-	v1.partner = handler.NewPartnerHandler(partner.NewPartnerUseCase(repository.NewPartnerRepository(v1.app.Database)))
-	v1.contract = handler.NewContractHandler(contract.NewContractUseCase(repository.NewContractRepository(v1.app.Database), payments.NewStripeContract(), adapter.NewGoogleAdapter()))
-	v1.maps = handler.NewMapsHandler(maps.NewMapsUseCase(adapter.NewGoogleAdapter()))
-	v1.auth = handler.NewAuthHandler(auth.NewAuthUseCase(repository.NewSchoolRepository(v1.app.Database), repository.NewDriverRepository(v1.app.Database), repository.NewResponsibleRepository(v1.app.Database)))
+	v1.responsible = handler.NewResponsibleHandler(
+		responsible.NewResponsibleUseCase(
+			repository.NewResponsibleRepository(
+				v1.app.Database),
+		),
+	)
+
+	v1.child = handler.NewChildHandler(
+		child.NewChildUseCase(
+			repository.NewChildRepository(
+				v1.app.Database,
+			),
+		),
+	)
+
+	v1.school = handler.NewSchoolHandler(
+		school.NewSchoolUseCase(
+			repository.NewSchoolRepository(
+				v1.app.Database,
+			),
+		),
+	)
+
+	v1.driver = handler.NewDriverHandler(
+		driver.NewDriverUseCase(
+			repository.NewDriverRepository(v1.app.Database),
+			repository.NewAwsRepository(v1.app.Cloud),
+		),
+	)
+
+	v1.invite = handler.NewInviteHandler(
+		invite.NewInviteUseCase(
+			repository.NewInviteRepository(v1.app.Database),
+			repository.NewPartnerRepository(v1.app.Database),
+		),
+	)
+
+	v1.partner = handler.NewPartnerHandler(
+		partner.NewPartnerUseCase(
+			repository.NewPartnerRepository(
+				v1.app.Database,
+			),
+		),
+	)
+
+	v1.contract = handler.NewContractHandler(
+		contract.NewContractUseCase(
+			repository.NewContractRepository(v1.app.Database),
+			payments.NewStripeContract(),
+			adapter.NewGoogleAdapter(),
+		),
+	)
+
+	v1.maps = handler.NewMapsHandler(
+		maps.NewMapsUseCase(
+			adapter.NewGoogleAdapter(),
+		),
+	)
+
+	v1.auth = handler.NewAuthHandler(auth.NewAuthUseCase(
+		repository.NewSchoolRepository(v1.app.Database),
+		repository.NewDriverRepository(v1.app.Database),
+		repository.NewResponsibleRepository(v1.app.Database),
+	),
+	)
 
 	v1.NewRoutes()
 
