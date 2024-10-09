@@ -789,3 +789,85 @@ func TestContract_Get(t *testing.T) {
 		}
 	})
 }
+
+func TestContract_FindAllByRg(t *testing.T) {
+	t.Run("when get return success", func(t *testing.T) {
+		cou := mocks.NewIContractRepository(t)
+		st := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		rg := "RG"
+
+		contract := entity.Contract{
+			Driver: entity.Driver{
+				Name: "Motorista",
+				Pix: entity.Pix{
+					Key: "key",
+				},
+				Bank: entity.Bank{
+					Account: "account",
+					Agency:  "agency",
+					Name:    "bank",
+				},
+				Car: entity.Car{
+					Model: "model",
+					Year:  "year",
+				},
+				Amount: 185.0,
+				CNH:    "cnh",
+			},
+			School: entity.School{
+				Name: "Escola",
+				Address: entity.Address{
+					Street: "Avenida Barão de Alagoas",
+					Number: "223",
+					ZIP:    "08120000",
+				},
+			},
+			Child: entity.Child{
+				ID: 1,
+				Responsible: entity.Responsible{
+					Name:            "Responsible",
+					CPF:             "cpf",
+					PaymentMethodId: "pm_1PxgSrLfFDLpePGLDi2tnFEm",
+					CustomerId:      "cus_QpL9XTVfM6sBhD",
+					Address: entity.Address{
+						Street: "Rua Masato Sakai",
+						Number: "180",
+						ZIP:    "008538300",
+					},
+				},
+				Name: "Child",
+				RG:   "112223334",
+			},
+		}
+
+		cou.On("FindAllByRg", context.Background(), &rg).Return(&contract, nil)
+
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
+
+		_, err := useCase.FindAllByRg(context.Background(), &rg)
+		if err != nil {
+			t.Errorf("Error: %s", err)
+		}
+
+	})
+
+	t.Run("when get return fails", func(t *testing.T) {
+		cou := mocks.NewIContractRepository(t)
+		st := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		rg := "RG"
+
+		cou.On("FindAllByRg", context.Background(), &rg).Return(nil, fmt.Errorf("get error"))
+
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
+
+		_, err := useCase.FindAllByRg(context.Background(), &rg)
+		if err == nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+
+}
