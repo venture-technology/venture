@@ -6,6 +6,7 @@ import (
 
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/pkg/utils"
+	"go.uber.org/zap"
 )
 
 type ISchoolRepository interface {
@@ -18,12 +19,14 @@ type ISchoolRepository interface {
 }
 
 type SchoolRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
-func NewSchoolRepository(db *sql.DB) *SchoolRepository {
+func NewSchoolRepository(db *sql.DB, logger *zap.Logger) *SchoolRepository {
 	return &SchoolRepository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/pkg/utils"
+	"go.uber.org/zap"
 )
 
 type IDriverRepository interface {
@@ -21,12 +22,14 @@ type IDriverRepository interface {
 }
 
 type DriverRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
-func NewDriverRepository(db *sql.DB) *DriverRepository {
+func NewDriverRepository(db *sql.DB, logger *zap.Logger) *DriverRepository {
 	return &DriverRepository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 

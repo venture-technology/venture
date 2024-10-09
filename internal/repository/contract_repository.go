@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
+	"go.uber.org/zap"
 )
 
 type IContractRepository interface {
@@ -20,12 +21,14 @@ type IContractRepository interface {
 }
 
 type ContractRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
-func NewContractRepository(db *sql.DB) *ContractRepository {
+func NewContractRepository(db *sql.DB, logger *zap.Logger) *ContractRepository {
 	return &ContractRepository{
 		db,
+		logger,
 	}
 }
 

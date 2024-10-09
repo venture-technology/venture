@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
 )
 
 type IAdminRepository interface {
@@ -12,12 +13,14 @@ type IAdminRepository interface {
 }
 
 type AdminRepository struct {
-	rdb *redis.Client
+	rdb    *redis.Client
+	logger *zap.Logger
 }
 
-func NewAdminRepository(rdb *redis.Client) *AdminRepository {
+func NewAdminRepository(rdb *redis.Client, logger *zap.Logger) *AdminRepository {
 	return &AdminRepository{
-		rdb: rdb,
+		rdb:    rdb,
+		logger: logger,
 	}
 }
 

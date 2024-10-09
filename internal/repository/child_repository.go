@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/venture-technology/venture/internal/entity"
+	"go.uber.org/zap"
 )
 
 type IChildRepository interface {
@@ -16,12 +17,14 @@ type IChildRepository interface {
 }
 
 type ChildRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
-func NewChildRepository(conn *sql.DB) *ChildRepository {
+func NewChildRepository(conn *sql.DB, logger *zap.Logger) *ChildRepository {
 	return &ChildRepository{
-		db: conn,
+		db:     conn,
+		logger: logger,
 	}
 }
 
