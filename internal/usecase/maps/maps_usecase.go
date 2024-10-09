@@ -3,23 +3,23 @@ package maps
 import (
 	"context"
 
-	"github.com/venture-technology/venture/internal/repository"
+	"github.com/venture-technology/venture/internal/domain/adapter"
 	"github.com/venture-technology/venture/internal/usecase"
 )
 
 type MapsUseCase struct {
-	mapsRepository repository.IMapsRepository
+	googleAdapter adapter.IGoogleAdapter
 }
 
-func NeWMapsUseCase(mapsRepository repository.IMapsRepository) *MapsUseCase {
+func NewMapsUseCase(googleAdapter adapter.IGoogleAdapter) *MapsUseCase {
 	return &MapsUseCase{
-		mapsRepository: mapsRepository,
+		googleAdapter: googleAdapter,
 	}
 }
 
 func (mu *MapsUseCase) CalculatePrice(ctx context.Context, origin, destination string, amount float64) (*float64, error) {
 
-	km, err := usecase.GetDistance(origin, destination)
+	km, err := mu.googleAdapter.GetDistance(origin, destination)
 
 	if err != nil {
 		return nil, err

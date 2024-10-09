@@ -5,15 +5,18 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/repository"
+	"go.uber.org/zap"
 )
 
 type AdminUseCase struct {
 	adminRepository repository.IAdminRepository
+	logger          *zap.Logger
 }
 
-func NewAdminUseCase(adminRepository repository.IAdminRepository) *AdminUseCase {
+func NewAdminUseCase(adminRepository repository.IAdminRepository, logger *zap.Logger) *AdminUseCase {
 	return &AdminUseCase{
 		adminRepository: adminRepository,
+		logger:          logger,
 	}
 }
 

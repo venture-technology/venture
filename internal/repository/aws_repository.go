@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ses"
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/entity"
+	"go.uber.org/zap"
 )
 
 type IAwsRepository interface {
@@ -21,12 +22,14 @@ type IAwsRepository interface {
 }
 
 type AwsRepository struct {
-	sess *session.Session
+	sess   *session.Session
+	logger *zap.Logger
 }
 
-func NewAwsRepository(sess *session.Session) *AwsRepository {
+func NewAwsRepository(sess *session.Session, logger *zap.Logger) *AwsRepository {
 	return &AwsRepository{
-		sess: sess,
+		sess:   sess,
+		logger: logger,
 	}
 }
 

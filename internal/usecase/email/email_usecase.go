@@ -6,17 +6,24 @@ import (
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
+	"go.uber.org/zap"
 )
 
 type EmailUseCase struct {
 	emailRepository repository.IEmailRepository
 	awsRepository   repository.IAwsRepository
+	logger          *zap.Logger
 }
 
-func NewEmailUseCase(emailRepository repository.IEmailRepository, awsRepository repository.IAwsRepository) *EmailUseCase {
+func NewEmailUseCase(
+	emailRepository repository.IEmailRepository,
+	awsRepository repository.IAwsRepository,
+	logger *zap.Logger,
+) *EmailUseCase {
 	return &EmailUseCase{
 		emailRepository: emailRepository,
 		awsRepository:   awsRepository,
+		logger:          logger,
 	}
 }
 

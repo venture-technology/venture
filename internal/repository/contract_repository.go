@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
+	"go.uber.org/zap"
 )
 
 type IContractRepository interface {
@@ -20,12 +21,14 @@ type IContractRepository interface {
 }
 
 type ContractRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
-func NewContractRepository(db *sql.DB) *ContractRepository {
+func NewContractRepository(db *sql.DB, logger *zap.Logger) *ContractRepository {
 	return &ContractRepository{
 		db,
+		logger,
 	}
 }
 
@@ -44,7 +47,7 @@ func (cr *ContractRepository) Create(ctx context.Context, contract *entity.Contr
     status
   ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
 
-	_, err := cr.db.Exec(sqlQuery, contract.Record, contract.StripeSubscription.Title, contract.StripeSubscription.Description, contract.StripeSubscription.SubscriptionId, contract.StripeSubscription.PriceSubscriptionId, contract.StripeSubscription.ProductSubscriptionId, contract.School.CNPJ, contract.Driver.CNH, contract.Child.Responsible.CPF, contract.Child.RG, contract.Status)
+	_, err := cr.db.Exec(sqlQuery, contract.Record, contract.StripeSubscription.Title, contract.StripeSubscription.Description, contract.StripeSubscription.ID, contract.StripeSubscription.Price, contract.StripeSubscription.Product, contract.School.CNPJ, contract.Driver.CNH, contract.Child.Responsible.CPF, contract.Child.RG, contract.Status)
 	return err
 }
 
@@ -75,9 +78,9 @@ func (cr *ContractRepository) Get(ctx context.Context, id uuid.UUID) (*entity.Co
 		&contract.Record,
 		&contract.StripeSubscription.Title,
 		&contract.StripeSubscription.Description,
-		&contract.StripeSubscription.SubscriptionId,
-		&contract.StripeSubscription.PriceSubscriptionId,
-		&contract.StripeSubscription.ProductSubscriptionId,
+		&contract.StripeSubscription.ID,
+		&contract.StripeSubscription.Price,
+		&contract.StripeSubscription.Product,
 		&contract.CreatedAt,
 		&contract.ExpireAt,
 		&contract.Status,
@@ -138,9 +141,9 @@ func (cr *ContractRepository) FindAllByCnpj(ctx context.Context, cnpj *string) (
 			&contract.Record,
 			&contract.StripeSubscription.Title,
 			&contract.StripeSubscription.Description,
-			&contract.StripeSubscription.SubscriptionId,
-			&contract.StripeSubscription.PriceSubscriptionId,
-			&contract.StripeSubscription.ProductSubscriptionId,
+			&contract.StripeSubscription.ID,
+			&contract.StripeSubscription.Price,
+			&contract.StripeSubscription.Product,
 			&contract.CreatedAt,
 			&contract.ExpireAt,
 			&contract.Status,
@@ -203,9 +206,9 @@ func (cr *ContractRepository) FindAllByCpf(ctx context.Context, cpf *string) ([]
 			&contract.Record,
 			&contract.StripeSubscription.Title,
 			&contract.StripeSubscription.Description,
-			&contract.StripeSubscription.SubscriptionId,
-			&contract.StripeSubscription.PriceSubscriptionId,
-			&contract.StripeSubscription.ProductSubscriptionId,
+			&contract.StripeSubscription.ID,
+			&contract.StripeSubscription.Price,
+			&contract.StripeSubscription.Product,
 			&contract.CreatedAt,
 			&contract.ExpireAt,
 			&contract.Status,
@@ -268,9 +271,9 @@ func (cr *ContractRepository) FindAllByCnh(ctx context.Context, cnh *string) ([]
 			&contract.Record,
 			&contract.StripeSubscription.Title,
 			&contract.StripeSubscription.Description,
-			&contract.StripeSubscription.SubscriptionId,
-			&contract.StripeSubscription.PriceSubscriptionId,
-			&contract.StripeSubscription.ProductSubscriptionId,
+			&contract.StripeSubscription.ID,
+			&contract.StripeSubscription.Price,
+			&contract.StripeSubscription.Product,
 			&contract.CreatedAt,
 			&contract.ExpireAt,
 			&contract.Status,

@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
+	"go.uber.org/zap"
 )
 
 type IInviteRepository interface {
@@ -18,12 +19,14 @@ type IInviteRepository interface {
 }
 
 type InviteRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
-func NewInviteRepository(db *sql.DB) *InviteRepository {
+func NewInviteRepository(db *sql.DB, logger *zap.Logger) *InviteRepository {
 	return &InviteRepository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 

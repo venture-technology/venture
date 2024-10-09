@@ -12,7 +12,7 @@ import (
 func TestResponsibleUseCase_Create(t *testing.T) {
 	mock := mocks.NewIResponsibleRepository(t)
 	mock.On("Create", context.Background(), &entity.Responsible{}).Return(nil)
-	service := NewResponsibleUseCase(mock)
+	service := NewResponsibleUseCase(mock, nil)
 	err := service.Create(context.Background(), &entity.Responsible{})
 	assert.Nil(t, err)
 	mock.AssertExpectations(t)
@@ -22,7 +22,7 @@ func TestResponsibleUseCase_Get(t *testing.T) {
 	mock := mocks.NewIResponsibleRepository(t)
 	cpf := "12345678910"
 	mock.On("Get", context.Background(), &cpf).Return(&entity.Responsible{}, nil)
-	service := NewResponsibleUseCase(mock)
+	service := NewResponsibleUseCase(mock, nil)
 	_, err := service.Get(context.Background(), &cpf)
 	assert.Nil(t, err)
 	mock.AssertExpectations(t)
@@ -33,7 +33,7 @@ func TestResponsibleUseCase_Upadte(t *testing.T) {
 	responsible := entity.Responsible{Name: "adsasd", CPF: "12345678910", Email: "jorge@gmail.com"}
 	Cresponsible := entity.Responsible{Name: "adsasd", CPF: "12345678910", Email: "jorge@gmail.com"}
 	mock.On("Update", context.Background(), &responsible, &Cresponsible).Return(nil)
-	service := NewResponsibleUseCase(mock)
+	service := NewResponsibleUseCase(mock, nil)
 	err := service.Update(context.Background(), &responsible, &Cresponsible)
 	assert.Nil(t, err)
 	mock.AssertExpectations(t)
@@ -43,7 +43,7 @@ func TestResponsibleUseCase_Delete(t *testing.T) {
 	mock := mocks.NewIResponsibleRepository(t)
 	cpf := "12345678910"
 	mock.On("Delete", context.Background(), &cpf).Return(nil)
-	service := NewResponsibleUseCase(mock)
+	service := NewResponsibleUseCase(mock, nil)
 	err := service.Delete(context.Background(), &cpf)
 	assert.Nil(t, err)
 	mock.AssertExpectations(t)
@@ -59,7 +59,7 @@ func TestResponsibleUseCase_SaveCard(t *testing.T) {
 			Default:   true,
 		}}
 	mock.On("SaveCard", context.Background(), &responsible.CPF, &responsible.CreditCard.CardToken, &pm).Return(nil)
-	service := NewResponsibleUseCase(mock)
+	service := NewResponsibleUseCase(mock, nil)
 	err := service.SaveCard(context.Background(), &responsible.CPF, &responsible.CreditCard.CardToken, &pm)
 	assert.Nil(t, err)
 	mock.AssertExpectations(t)
@@ -72,7 +72,7 @@ func TestResponsibleUseCase_CreateCustomer(t *testing.T) {
 		Email: "CreateCustomer@gmail.com",
 		Phone: "+55 11 123456789",
 	}
-	service := NewResponsibleUseCase(mock)
+	service := NewResponsibleUseCase(mock, nil)
 	_, err := service.CreateCustomer(context.Background(), &responsible)
 	if err != nil {
 		t.Errorf("erro ao criar customer na stripe")
@@ -86,7 +86,7 @@ func TestResponsibleUseCase_UpdateCustomer(t *testing.T) {
 		Email: "CreateCustomer@gmail.com",
 		Phone: "+55 11 123456789",
 	}
-	service := NewResponsibleUseCase(mock)
+	service := NewResponsibleUseCase(mock, nil)
 	cus, err := service.CreateCustomer(context.Background(), &responsible)
 	if err != nil {
 		t.Errorf("erro ao criar customer na stripe")
@@ -105,7 +105,7 @@ func TestResponsibleUseCase_DeleteCustomer(t *testing.T) {
 		Email: "CreateCustomer@gmail.com",
 		Phone: "+55 11 123456789",
 	}
-	service := NewResponsibleUseCase(mock)
+	service := NewResponsibleUseCase(mock, nil)
 	cus, err := service.CreateCustomer(context.Background(), &responsible)
 	if err != nil {
 		t.Errorf("erro ao criar customer na stripe")
@@ -128,7 +128,7 @@ func TestResponsibleUseCase_CreatePaymentMethod(t *testing.T) {
 			Default:   true,
 		},
 	}
-	service := NewResponsibleUseCase(mock)
+	service := NewResponsibleUseCase(mock, nil)
 	cus, err := service.CreateCustomer(context.Background(), &responsible)
 	if err != nil {
 		t.Errorf("erro ao criar customer na stripe")
@@ -150,7 +150,7 @@ func TestResponsibleUseCase_AttachPaymentMethod(t *testing.T) {
 			CardToken: "tok_visa",
 			Default:   true,
 		}}
-	service := NewResponsibleUseCase(mock)
+	service := NewResponsibleUseCase(mock, nil)
 	cus, err := service.CreateCustomer(context.Background(), &responsible)
 	if err != nil {
 		t.Errorf("erro ao criar customer na stripe")

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/venture-technology/venture/internal/entity"
+	"go.uber.org/zap"
 )
 
 type IPartnerRepository interface {
@@ -16,12 +17,14 @@ type IPartnerRepository interface {
 }
 
 type PartnerRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
-func NewPartnerRepository(db *sql.DB) *PartnerRepository {
+func NewPartnerRepository(db *sql.DB, logger *zap.Logger) *PartnerRepository {
 	return &PartnerRepository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 

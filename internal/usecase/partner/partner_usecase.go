@@ -5,15 +5,18 @@ import (
 
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/repository"
+	"go.uber.org/zap"
 )
 
 type PartnerUseCase struct {
 	partnerRepository repository.IPartnerRepository
+	logger            *zap.Logger
 }
 
-func NewPartnerUseCase(pr repository.IPartnerRepository) *PartnerUseCase {
+func NewPartnerUseCase(pr repository.IPartnerRepository, logger *zap.Logger) *PartnerUseCase {
 	return &PartnerUseCase{
 		partnerRepository: pr,
+		logger:            logger,
 	}
 }
 

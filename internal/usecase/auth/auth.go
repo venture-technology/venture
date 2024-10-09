@@ -7,19 +7,27 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/repository"
+	"go.uber.org/zap"
 )
 
 type AuthUseCase struct {
 	schoolRepository      repository.ISchoolRepository
 	driverRepository      repository.IDriverRepository
 	responsibleRepository repository.IResponsibleRepository
+	logger                *zap.Logger
 }
 
-func NewAuthUseCase(schoolRepository repository.ISchoolRepository, driverRepository repository.IDriverRepository, responsibleRepository repository.IResponsibleRepository) *AuthUseCase {
+func NewAuthUseCase(
+	schoolRepository repository.ISchoolRepository,
+	driverRepository repository.IDriverRepository,
+	responsibleRepository repository.IResponsibleRepository,
+	logger *zap.Logger,
+) *AuthUseCase {
 	return &AuthUseCase{
 		schoolRepository:      schoolRepository,
 		driverRepository:      driverRepository,
 		responsibleRepository: responsibleRepository,
+		logger:                logger,
 	}
 }
 

@@ -1,24 +1,42 @@
 package maps
 
 import (
+	"context"
+	"log"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/venture-technology/venture/internal/usecase"
+	"github.com/venture-technology/venture/internal/domain/adapter"
 )
 
 func TestMapsUseCase_CalculatePrice(t *testing.T) {
 
-	origin := "Rua Masato Sakai, 180, 008538300"
-	destination := "Avenida Barão de Alagoas, 223, 08120000"
+	t.Run("when calculate price is sucess", func(t *testing.T) {
+		googleAdapter := adapter.NewGoogleAdapter()
+		log.Print(googleAdapter)
 
-	km, err := usecase.GetDistance(origin, destination)
+		origin := "Rua Masato Sakai, 180, 008538300"
+		destination := "Avenida Barão de Alagoas, 223, 08120000"
 
-	if err != nil {
-		t.Error(err)
-	}
+		useCase := NewMapsUseCase(googleAdapter)
 
-	value := usecase.CalculateContract(*km, 200)
+		_, err := useCase.CalculatePrice(context.Background(), origin, destination, 185.0)
+		if err != nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
 
-	assert.Equal(t, 740.0, value)
+	t.Run("when calculate price is fail", func(t *testing.T) {
+		googleAdapter := adapter.NewGoogleAdapter()
+		log.Print(googleAdapter)
+
+		origin := "Rua Vander Marcelo Freitas Juvenesso, 892374983, 472389472"
+		destination := "DAHSUIDAJHIe Xuyrhauds, 783425893, 842763842"
+
+		useCase := NewMapsUseCase(googleAdapter)
+
+		_, err := useCase.CalculatePrice(context.Background(), origin, destination, 185.0)
+		if err == nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/venture-technology/venture/internal/entity"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/zap"
 )
 
 type IEmailRepository interface {
@@ -13,12 +14,14 @@ type IEmailRepository interface {
 
 type EmailRepository struct {
 	collection *mongo.Collection
+	logger     *zap.Logger
 }
 
-func NewEmailRepository(client *mongo.Client, dbName, collectionName string) *EmailRepository {
+func NewEmailRepository(client *mongo.Client, dbName, collectionName string, logger *zap.Logger) *EmailRepository {
 	collection := client.Database(dbName).Collection(collectionName)
 	return &EmailRepository{
 		collection: collection,
+		logger:     logger,
 	}
 }
 

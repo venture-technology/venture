@@ -7,6 +7,7 @@ import (
 
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/pkg/utils"
+	"go.uber.org/zap"
 )
 
 type IResponsibleRepository interface {
@@ -20,12 +21,14 @@ type IResponsibleRepository interface {
 }
 
 type ResponsibleRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *zap.Logger
 }
 
-func NewResponsibleRepository(db *sql.DB) *ResponsibleRepository {
+func NewResponsibleRepository(db *sql.DB, logger *zap.Logger) *ResponsibleRepository {
 	return &ResponsibleRepository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 
