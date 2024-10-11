@@ -9,23 +9,23 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Setup Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: '1.22.5'
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.22.5'
 
-    - name: Setup Envs
-      uses: kielabokkie/ssh-key-and-known-hosts-action@v1
-      with:
-        ssh-private-key: ${{ secrets.HOST_GITHUB_SSH_KEY }}
-        ssh-host: ${{ secrets.HOST_REMOTE_SERVER_IP }}
+      - name: Setup Envs
+        uses: kielabokkie/ssh-key-and-known-hosts-action@v1
+        with:
+          ssh-private-key: ${{ secrets.HOST_GITHUB_SSH_KEY }}
+          ssh-host: ${{ secrets.HOST_REMOTE_SERVER_IP }}
 
-    - name: Deploy
-      env:
-        HOST_REMOTE_SERVER_IP: ${{ secrets.HOST_REMOTE_SERVER_IP }}
-      run: make deploy
+      - name: Deploy
+        env:
+          HOST_REMOTE_SERVER_IP: ${{ secrets.HOST_REMOTE_SERVER_IP }}
+        run: make deploy
       
