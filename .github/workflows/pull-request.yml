@@ -21,53 +21,58 @@ jobs:
       - name: Create config.yaml
         run: |
           mkdir -p config
-          echo "name: venture" > config/config.yaml
-          echo "development: true" >> config/config.yaml
+          cat <<EOF > config/config.yaml
+          name: venture
+          development: true
           
-          echo "server:" >> config/config.yaml
-          echo "  host: \"${{ secrets.SERVER_HOST }}\"" >> config/config.yaml
-          echo "  port: \"${{ secrets.SERVER_PORT }}\"" >> config/config.yaml
-          echo "  secret: \"${{ secrets.SERVER_SECRET }}\""" >> config/config.yaml
-          
-          echo "database:" >> config/config.yaml
-          echo "  dbuser: \"${{ secrets.DB_USER }}\"" >> config/config.yaml
-          echo "  dbport:  \"${{ secrets.DB_PORT }}\"" >> config/config.yaml
-          echo "  dbhost: \"${{ secrets.DB_HOST }}\"" >> config/config.yaml
-          echo "  dbpassword: \"${{ secrets.DB_PASSWORD }}\"" >> config/config.yaml
-          echo "  dbname: \"${{ secrets.DB_NAME }}\"" >> config/config.yaml
-          
-          echo "cloud:" >> config/config.yaml
-          echo "  region: \"${{ secrets.AWS_REGION }}\"" >> config/config.yaml
-          echo "  accesskey: \"${{ secrets.AWS_ACCESS_KEY }}\"" >> config/config.yaml
-          echo "  secretkey: \"${{ secrets.AWS_SECRET_KEY }}\"" >> config/config.yaml
-          echo "  token: \"\"" >> config/config.yaml
-          echo "  source: \"${{ secrets.AWS_SOURCE_EMAIL }}\"" >> config/config.yaml
-          echo "  bucketname: \"${{ secrets.AWS_BUCKET_NAME }}\"" >> config/config.yaml
+          server:
+            host: ${{ secrets.SERVER_HOST }}
+            port: ${{ secrets.SERVER_PORT }}
+            secret: ${{ secrets.SERVER_SECRET }}
 
-          echo "cache:" >> config/config.yaml
-          echo "  address: \"${{ secrets.REDIS_HOST }}\"" >> config/config.yaml
-          echo "  password: \"${{ secrets.REDIS_PASSWORD }}\"" >> config/config.yaml
+          database:
+            dbuser: ${{ secrets.DB_USER }}
+            dbport: ${{ secrets.DB_PORT }}
+            dbhost: ${{ secrets.DB_HOST }}
+            dbpassword: ${{ secrets.DB_PASSWORD }}
+            dbname: ${{ secrets.DB_NAME }}
 
-          echo "uchiha:" >> config/config.yaml
-          echo "  name: \"uchiha\"" >> config/config.yaml
-          echo "  queue:  \"${{ secrets.UCHIHA_TOPIC_NAME }}\"" >> config/config.yaml
-          echo "  address-queue: \"${{ secrets.UCHIHA_ADDRESS }}\"" >> config/config.yaml
+          cloud:
+            region: ${{ secrets.AWS_REGION }}
+            accesskey: ${{ secrets.AWS_ACCESS_KEY }}
+            secretkey: ${{ secrets.AWS_SECRET_KEY }}
+            token: 
+            source: ${{ secrets.AWS_SOURCE_EMAIL }}
+            bucketname: ${{ secrets.AWS_BUCKET_NAME }}
 
-          echo "mongo:" >> config/config.yaml
-          echo "  address: \"mongodb://0.0.0.0:27017\"" >> config/config.yaml
-          echo "  dbname: \"venturemdb\"" >> config/config.yaml
-          echo "  collection: \"uchiha-email\"" >> config/config.yaml
+          cache:
+            address: ${{ secrets.REDIS_HOST }}
+            password: ${{ secrets.REDIS_PASSWORD }}
 
-          echo "google-cloud-secret:" >> config/config.yaml
-          echo "  apikey: \"${{ secrets.GOOGLE_API_KEY }}\"" >> config/config.yaml
-          echo "  endpoint-matrix-distance: \"https://maps.googleapis.com/maps/api/distancematrix/json\"" >> config/config.yaml
+          uchiha:
+            name: uchiha
+            queue: ${{ secrets.UCHIHA_TOPIC_NAME }}
+            address-queue: ${{ secrets.UCHIHA_ADDRESS }}
 
-          echo "stripe-env:" >> config/config.yaml
-          echo "  publickey: \"${{ secrets.STRIPE_PUBLIC_KEY }}\"" >> config/config.yaml
-          echo "  secretkey: \"${{ secrets.STRIPE_SECRET_KEY }}\"" >> config/config.yaml
+          mongo:
+            address: mongodb://0.0.0.0:27017
+            dbname: venturemdb
+            collection: uchiha-email
 
-          echo "admin:" >> config/config.yaml
-          echo "  apikey: \"${{ secrets.ADMIN_API_KEY }}\"" >> config/config.yaml
+          google-cloud-secret:
+            apikey: ${{ secrets.GOOGLE_API_KEY }}
+            endpoint-matrix-distance: https://maps.googleapis.com/maps/api/distancematrix/json
+
+          stripe-env:
+            publickey: ${{ secrets.STRIPE_PUBLIC_KEY }}
+            secretkey: ${{ secrets.STRIPE_SECRET_KEY }}
+
+          admin:
+            apikey: ${{ secrets.ADMIN_API_KEY }}
+          EOF
+
+      - name: Print config.yaml for Debugging
+        run: cat config/config.yaml
 
       - name: Run Go Tests
         run: go test ./...
