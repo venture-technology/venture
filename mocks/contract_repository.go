@@ -160,6 +160,36 @@ func (_m *IContractRepository) FindAllByCpf(ctx context.Context, cpf *string) ([
 	return r0, r1
 }
 
+// FindAllByRg provides a mock function with given fields: ctx, rg
+func (_m *IContractRepository) FindAllByRg(ctx context.Context, rg *string) (*entity.Contract, error) {
+	ret := _m.Called(ctx, rg)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FindAllByRg")
+	}
+
+	var r0 *entity.Contract
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *string) (*entity.Contract, error)); ok {
+		return rf(ctx, rg)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *string) *entity.Contract); ok {
+		r0 = rf(ctx, rg)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*entity.Contract)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *string) error); ok {
+		r1 = rf(ctx, rg)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Get provides a mock function with given fields: ctx, id
 func (_m *IContractRepository) Get(ctx context.Context, id uuid.UUID) (*entity.Contract, error) {
 	ret := _m.Called(ctx, id)

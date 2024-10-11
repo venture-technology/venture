@@ -19,7 +19,8 @@ type ContractHandler struct {
 
 func NewContractHandler(
 	cu *contract.ContractUseCase,
-	logger *zap.Logger) *ContractHandler {
+	logger *zap.Logger,
+) *ContractHandler {
 	return &ContractHandler{
 		contractUseCase: cu,
 		logger:          logger,
@@ -47,7 +48,7 @@ func (coh *ContractHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func (coh *ContractHandler) GetV1Contracts(c *gin.Context) {
+func (coh *ContractHandler) Get(c *gin.Context) {
 
 	id := c.Param("id")
 
@@ -68,6 +69,22 @@ func (coh *ContractHandler) GetV1Contracts(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, contract)
+
+}
+
+func (coh *ContractHandler) FindAllByRg(c *gin.Context) {
+
+	rg := c.Param("rg")
+
+	contracts, err := coh.contractUseCase.FindAllByRg(c, &rg)
+
+	if err != nil {
+		log.Printf("error while found contract: %s", err.Error())
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
+		return
+	}
+
+	c.JSON(http.StatusOK, contracts)
 
 }
 

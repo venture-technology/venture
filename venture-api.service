@@ -1,0 +1,17 @@
+[Unit]
+Description=Backend Venture API
+
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=root
+WorkingDirectory=/root
+ExecStart=/root/venture-api
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

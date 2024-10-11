@@ -134,6 +134,10 @@ func (cou *ContractUseCase) Get(ctx context.Context, id uuid.UUID) (*entity.Cont
 	return contract, nil
 }
 
+func (cou *ContractUseCase) FindAllByRg(ctx context.Context, rg *string) (*entity.Contract, error) {
+	return cou.contractRepository.FindAllByRg(ctx, rg)
+}
+
 // func (cou *ContractUseCase) FindAllByCnpj(ctx context.Context, cnpj *string) ([]entity.Contract, error) {
 // 	return cou.contractRepository.FindAllByCnpj(ctx, cnpj)
 // }
