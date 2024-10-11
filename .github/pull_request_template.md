@@ -1,6 +1,4 @@
 
-<!--- De extrema importância que você detalhe o máximo possível. -->
-
 ## Descrição
 <!--- Descreva com detalhes sua mudança -->
 
