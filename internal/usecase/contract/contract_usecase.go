@@ -146,25 +146,25 @@ func (cou *ContractUseCase) FindAllByRg(ctx context.Context, rg *string) (*entit
 // 	return cou.contractRepository.FindAllByCpf(ctx, cpf)
 // }
 
-// func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Contract, error) {
-// 	contracts, err := cou.contractRepository.FindAllByCnh(ctx, cnh)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Contract, error) {
+	contracts, err := cou.contractRepository.FindAllByCnh(ctx, cnh)
+	if err != nil {
+		return nil, err
+	}
 
-// 	for _, contract := range contracts {
+	for i, contract := range contracts {
 
-// 		invoices, err := cou.stripe.ListInvoices(&contract)
-// 		if err != nil {
-// 			return nil, err
-// 		}
+		invoices, err := cou.stripe.ListInvoices(&contract)
+		if err != nil {
+			return nil, err
+		}
 
-// 		contract.Invoices = invoices
+		contract.Invoices = invoices
+		contracts[i] = contract
+	}
 
-// 	}
-
-// 	return contracts, nil
-// }
+	return contracts, nil
+}
 
 // func (cou *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
 // 	contract, err := cou.contractRepository.Get(ctx, id)

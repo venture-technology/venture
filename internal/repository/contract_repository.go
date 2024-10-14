@@ -308,7 +308,7 @@ func (cr *ContractRepository) FindAllByCnh(ctx context.Context, cnh *string) ([]
 		JOIN
 			children ch ON c.child_id = ch.rg
 		JOIN
-			responsibles r ON ch.responsible_id = r.cpf
+			responsible r ON ch.responsible_id = r.cpf
 		WHERE
 			d.cnh = $1;
 	`

@@ -871,3 +871,39 @@ func TestContract_FindAllByRg(t *testing.T) {
 	})
 
 }
+
+func TestContract_FindAllByCnh(t *testing.T) {
+
+	t.Run("when get return success", func(t *testing.T) {
+		cou := mocks.NewIContractRepository(t)
+		st := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		cnh := "CNH"
+
+		cou.On("FindAllByCnh", context.Background(), &cnh).Return([]entity.Contract{}, nil)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
+		_, err := useCase.FindAllByCnh(context.Background(), &cnh)
+		if err != nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+
+	t.Run("when get return fails", func(t *testing.T) {
+		cou := mocks.NewIContractRepository(t)
+		st := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		cnh := "CNH"
+
+		cou.On("FindAllByCnh", context.Background(), &cnh).Return(nil, fmt.Errorf("get error"))
+
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
+
+		_, err := useCase.FindAllByCnh(context.Background(), &cnh)
+		if err == nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+
+}

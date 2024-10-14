@@ -98,6 +98,18 @@ func (coh *ContractHandler) FindAllByCpf(c *gin.Context) {
 
 func (coh *ContractHandler) FindAllByCnh(c *gin.Context) {
 
+	cnh := c.Param("cnh")
+
+	contracts, err := coh.contractUseCase.FindAllByCnh(c, &cnh)
+
+	if err != nil {
+		log.Printf("error while found contract: %s", err.Error())
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
+		return
+	}
+
+	c.JSON(http.StatusOK, contracts)
+
 }
 
 func (coh *ContractHandler) Cancel(c *gin.Context) {
