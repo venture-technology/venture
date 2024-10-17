@@ -138,13 +138,13 @@ func (cou *ContractUseCase) FindAllByRg(ctx context.Context, rg *string) (*entit
 	return cou.contractRepository.FindAllByRg(ctx, rg)
 }
 
-// func (cou *ContractUseCase) FindAllByCnpj(ctx context.Context, cnpj *string) ([]entity.Contract, error) {
-// 	return cou.contractRepository.FindAllByCnpj(ctx, cnpj)
-// }
+func (cou *ContractUseCase) FindAllByCnpj(ctx context.Context, cnpj *string) ([]entity.Contract, error) {
+	return cou.contractRepository.FindAllByCnpj(ctx, cnpj)
+}
 
-// func (cou *ContractUseCase) FindAllByCpf(ctx context.Context, cpf *string) ([]entity.Contract, error) {
-// 	return cou.contractRepository.FindAllByCpf(ctx, cpf)
-// }
+func (cou *ContractUseCase) FindAllByCpf(ctx context.Context, cpf *string) ([]entity.Contract, error) {
+	return cou.contractRepository.FindAllByCpf(ctx, cpf)
+}
 
 func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Contract, error) {
 	contracts, err := cou.contractRepository.FindAllByCnh(ctx, cnh)
@@ -166,6 +166,7 @@ func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]en
 	return contracts, nil
 }
 
+// this function is used when the person responsible wants to cancel the contract, we calculate the fines and send to stripe to charge the responsible
 // func (cou *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
 // 	contract, err := cou.contractRepository.Get(ctx, id)
 // 	if err != nil {
@@ -201,6 +202,7 @@ func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]en
 // 	}, nil
 // }
 
+// this function is used when contract expires at stripe, then they'll send a webhook to expire contract in our system
 // func (cou *ContractUseCase) Expired(ctx context.Context, id uuid.UUID) error {
 // 	return cou.contractRepository.Expired(ctx, id)
 // }
