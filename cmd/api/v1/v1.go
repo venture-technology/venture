@@ -185,7 +185,7 @@ func (v1 *V1) NewRoutes() {
 	v1.app.V1.GET("/contract/:id", v1.contract.Get)
 	v1.app.V1.GET("/driver/contract/:cnh", v1.contract.FindAllByCnh)
 	v1.app.V1.GET("/school/contract/:cnpj", v1.contract.FindAllByCnpj)
-	v1.app.V1.GET("/responsible/contract/:cnpj", v1.contract.FindAllByCpf)
+	v1.app.V1.GET("/responsible/contract/:cpf", v1.contract.FindAllByCpf)
 	v1.app.V1.GET("/child/contract/:rg", v1.contract.FindAllByRg)
 	v1.app.V1.PATCH("/contract/:id/cancel", v1.contract.Cancel)
 	v1.app.V1.PATCH("/webhook/contract/:id/expired", v1.contract.Expired)
