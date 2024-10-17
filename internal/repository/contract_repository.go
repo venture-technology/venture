@@ -180,7 +180,7 @@ func (cr *ContractRepository) FindAllByCnpj(ctx context.Context, cnpj *string) (
 		JOIN
 			children ch ON c.child_id = ch.rg
 		JOIN
-			responsibles r ON ch.responsible_id = r.cpf
+			responsible r ON ch.responsible_id = r.cpf
 		WHERE
 			s.cnpj = $1;
 	`
@@ -245,7 +245,7 @@ func (cr *ContractRepository) FindAllByCpf(ctx context.Context, cpf *string) ([]
 		JOIN
 			children ch ON c.child_id = ch.rg
 		JOIN
-			responsibles r ON ch.responsible_id = r.cpf
+			responsible r ON ch.responsible_id = r.cpf
 		WHERE
 			r.cpf = $1;
 	`
