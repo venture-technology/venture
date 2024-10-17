@@ -18,7 +18,7 @@ import (
 func TestContractUseCase_Create(t *testing.T) {
 	t.Run("when create is sucess", func(t *testing.T) {
 		cou := mocks.NewIContractRepository(t)
-		st := payments.NewStripeContract()
+		st := mocks.NewIStripe(t)
 		googleAdapter := adapter.NewGoogleAdapter()
 
 		contract := entity.Contract{
@@ -66,6 +66,15 @@ func TestContractUseCase_Create(t *testing.T) {
 
 		cou.On("GetSimpleContractByTitle", context.Background(), &contract.StripeSubscription.Title).Return(&entity.Contract{}, nil)
 		cou.On("Create", context.Background(), &contract).Return(nil)
+		st.On("CreateProduct", &contract).Return(&stripe.Product{
+			ID: "prod_QzgBXR7xS7nyQ4",
+		}, nil)
+		st.On("CreatePrice", &contract).Return(&stripe.Price{
+			ID: "price_1Q7gooLfFDLpePGL9xAzzxKK",
+		}, nil)
+		st.On("CreateSubscription", &contract).Return(&stripe.Subscription{
+			ID: "sub_1Q7gooLfFDLpePGLkcm2nPkC",
+		}, nil)
 
 		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
@@ -78,7 +87,7 @@ func TestContractUseCase_Create(t *testing.T) {
 
 	t.Run("when getsimple fails", func(t *testing.T) {
 		cou := mocks.NewIContractRepository(t)
-		st := payments.NewStripeContract()
+		st := mocks.NewIStripe(t)
 		googleAdapter := adapter.NewGoogleAdapter()
 
 		contract := entity.Contract{
@@ -901,6 +910,78 @@ func TestContract_FindAllByCnh(t *testing.T) {
 		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
 		_, err := useCase.FindAllByCnh(context.Background(), &cnh)
+		if err == nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+
+}
+
+func TestContract_FindAllByCpf(t *testing.T) {
+
+	t.Run("when get return success", func(t *testing.T) {
+		cou := mocks.NewIContractRepository(t)
+		st := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		cpf := "CPF"
+
+		cou.On("FindAllByCpf", context.Background(), &cpf).Return([]entity.Contract{}, nil)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
+		_, err := useCase.FindAllByCpf(context.Background(), &cpf)
+		if err != nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+
+	t.Run("when get return fails", func(t *testing.T) {
+		cou := mocks.NewIContractRepository(t)
+		st := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		cpf := "Cpf"
+
+		cou.On("FindAllByCpf", context.Background(), &cpf).Return(nil, fmt.Errorf("get error"))
+
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
+
+		_, err := useCase.FindAllByCpf(context.Background(), &cpf)
+		if err == nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+
+}
+
+func TestContract_FindAllByCnpj(t *testing.T) {
+
+	t.Run("when get return success", func(t *testing.T) {
+		cou := mocks.NewIContractRepository(t)
+		st := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		cnpj := "CNPJ"
+
+		cou.On("FindAllByCnpj", context.Background(), &cnpj).Return([]entity.Contract{}, nil)
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
+		_, err := useCase.FindAllByCnpj(context.Background(), &cnpj)
+		if err != nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+
+	t.Run("when get return fails", func(t *testing.T) {
+		cou := mocks.NewIContractRepository(t)
+		st := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		cnpj := "CNPJ"
+
+		cou.On("FindAllByCnpj", context.Background(), &cnpj).Return(nil, fmt.Errorf("get error"))
+
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
+
+		_, err := useCase.FindAllByCnpj(context.Background(), &cnpj)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}

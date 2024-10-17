@@ -90,9 +90,33 @@ func (coh *ContractHandler) FindAllByRg(c *gin.Context) {
 
 func (coh *ContractHandler) FindAllByCnpj(c *gin.Context) {
 
+	cnpj := c.Param("cnpj")
+
+	contracts, err := coh.contractUseCase.FindAllByCnpj(c, &cnpj)
+
+	if err != nil {
+		log.Printf("error while found contract: %s", err.Error())
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
+		return
+	}
+
+	c.JSON(http.StatusOK, contracts)
+
 }
 
 func (coh *ContractHandler) FindAllByCpf(c *gin.Context) {
+
+	cpf := c.Param("cpf")
+
+	contracts, err := coh.contractUseCase.FindAllByCpf(c, &cpf)
+
+	if err != nil {
+		log.Printf("error while found contract: %s", err.Error())
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
+		return
+	}
+
+	c.JSON(http.StatusOK, contracts)
 
 }
 

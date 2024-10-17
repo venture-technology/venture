@@ -18,6 +18,8 @@ type IContractRepository interface {
 	FindAllByRg(ctx context.Context, rg *string) (*entity.Contract, error)
 	Cancel(ctx context.Context, id uuid.UUID) error
 	Expired(ctx context.Context, id uuid.UUID) error
+
+	// we can use this function, when we need to check if a contract already exists
 	GetSimpleContractByTitle(ctx context.Context, title *string) (*entity.Contract, error)
 }
 
@@ -178,7 +180,7 @@ func (cr *ContractRepository) FindAllByCnpj(ctx context.Context, cnpj *string) (
 		JOIN
 			children ch ON c.child_id = ch.rg
 		JOIN
-			responsibles r ON ch.responsible_id = r.cpf
+			responsible r ON ch.responsible_id = r.cpf
 		WHERE
 			s.cnpj = $1;
 	`
@@ -243,7 +245,7 @@ func (cr *ContractRepository) FindAllByCpf(ctx context.Context, cpf *string) ([]
 		JOIN
 			children ch ON c.child_id = ch.rg
 		JOIN
-			responsibles r ON ch.responsible_id = r.cpf
+			responsible r ON ch.responsible_id = r.cpf
 		WHERE
 			r.cpf = $1;
 	`
