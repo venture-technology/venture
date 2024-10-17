@@ -143,11 +143,7 @@ func (cou *ContractUseCase) FindAllByCnpj(ctx context.Context, cnpj *string) ([]
 }
 
 func (cou *ContractUseCase) FindAllByCpf(ctx context.Context, cpf *string) ([]entity.Contract, error) {
-	return cou.contractRepository.FindAllByCpf(ctx, cpf)
-}
-
-func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Contract, error) {
-	contracts, err := cou.contractRepository.FindAllByCnh(ctx, cnh)
+	contracts, err := cou.contractRepository.FindAllByCpf(ctx, cpf)
 	if err != nil {
 		return nil, err
 	}
@@ -161,6 +157,15 @@ func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]en
 
 		contract.Invoices = invoices
 		contracts[i] = contract
+	}
+
+	return contracts, nil
+}
+
+func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]entity.Contract, error) {
+	contracts, err := cou.contractRepository.FindAllByCnh(ctx, cnh)
+	if err != nil {
+		return nil, err
 	}
 
 	return contracts, nil
