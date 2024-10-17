@@ -18,6 +18,8 @@ type IContractRepository interface {
 	FindAllByRg(ctx context.Context, rg *string) (*entity.Contract, error)
 	Cancel(ctx context.Context, id uuid.UUID) error
 	Expired(ctx context.Context, id uuid.UUID) error
+
+	// we can use this function, when we need to check if a contract already exists
 	GetSimpleContractByTitle(ctx context.Context, title *string) (*entity.Contract, error)
 }
 
