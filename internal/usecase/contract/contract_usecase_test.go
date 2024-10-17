@@ -18,7 +18,7 @@ import (
 func TestContractUseCase_Create(t *testing.T) {
 	t.Run("when create is sucess", func(t *testing.T) {
 		cou := mocks.NewIContractRepository(t)
-		st := payments.NewStripeContract()
+		st := mocks.NewIStripe(t)
 		googleAdapter := adapter.NewGoogleAdapter()
 
 		contract := entity.Contract{
@@ -66,6 +66,15 @@ func TestContractUseCase_Create(t *testing.T) {
 
 		cou.On("GetSimpleContractByTitle", context.Background(), &contract.StripeSubscription.Title).Return(&entity.Contract{}, nil)
 		cou.On("Create", context.Background(), &contract).Return(nil)
+		st.On("CreateProduct", &contract).Return(&stripe.Product{
+			ID: "prod_QzgBXR7xS7nyQ4",
+		}, nil)
+		st.On("CreatePrice", &contract).Return(&stripe.Price{
+			ID: "price_1Q7gooLfFDLpePGL9xAzzxKK",
+		}, nil)
+		st.On("CreateSubscription", &contract).Return(&stripe.Subscription{
+			ID: "sub_1Q7gooLfFDLpePGLkcm2nPkC",
+		}, nil)
 
 		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 
@@ -78,7 +87,7 @@ func TestContractUseCase_Create(t *testing.T) {
 
 	t.Run("when getsimple fails", func(t *testing.T) {
 		cou := mocks.NewIContractRepository(t)
-		st := payments.NewStripeContract()
+		st := mocks.NewIStripe(t)
 		googleAdapter := adapter.NewGoogleAdapter()
 
 		contract := entity.Contract{
