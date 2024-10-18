@@ -22,7 +22,7 @@ type IStripe interface {
 	ListSubscriptions(contract *entity.Contract) ([]entity.SubscriptionInfo, error)
 	DeleteSubscription(contract *entity.Contract) (*stripe.Subscription, error)
 	GetInvoice(invoiceId string) (*stripe.Invoice, error)
-	ListInvoices(contract *entity.Contract) ([]entity.InvoiceInfo, error)
+	ListInvoices(contract *entity.Contract) (map[string][]entity.InvoiceInfo, error)
 	CalculateRemainingValueSubscription(invoices []entity.InvoiceInfo) *entity.InvoiceRemaining
 	FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error)
 }
@@ -161,7 +161,7 @@ func (su *StripeContract) GetInvoice(invoiceId string) (*stripe.Invoice, error) 
 	return inv, nil
 }
 
-func (su *StripeContract) ListInvoices(contract *entity.Contract) ([]entity.InvoiceInfo, error) {
+func (su *StripeContract) ListInvoices(contract *entity.Contract) (map[string][]entity.InvoiceInfo, error) {
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -170,19 +170,27 @@ func (su *StripeContract) ListInvoices(contract *entity.Contract) ([]entity.Invo
 		Subscription: stripe.String(contract.StripeSubscription.ID),
 	}
 
-	var invoices []entity.InvoiceInfo
+	invoices := make(map[string][]entity.InvoiceInfo)
 
 	i := invoice.List(params)
 
 	for i.Next() {
 
 		charge := i.Invoice()
-		invoices = append(invoices, entity.InvoiceInfo{
+
+		createdTime := time.Unix(charge.Created, 0)
+		month := createdTime.Month().String()
+
+		invoiceInfo := entity.InvoiceInfo{
 			ID:              charge.ID,
 			Status:          string(charge.Status),
 			AmountDue:       charge.AmountDue,
 			AmountRemaining: charge.AmountRemaining * 100,
-		})
+			Month:           month,
+			Date:            createdTime.Format("01/06"),
+		}
+
+		invoices[month] = append(invoices[month], invoiceInfo)
 
 	}
 

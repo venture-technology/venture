@@ -15,17 +15,17 @@ type StripeSubscription struct {
 }
 
 type Contract struct {
-	Record             uuid.UUID          `json:"record,omitempty"`
-	Status             string             `json:"status" validate:"oneof='currently' 'canceled' 'expired'"`
-	Driver             Driver             `json:"driver"`
-	School             School             `json:"school"`
-	Child              Child              `json:"child"`
-	StripeSubscription StripeSubscription `json:"stripe"`
-	CreatedAt          time.Time          `json:"created_at"`
-	ExpireAt           time.Time          `json:"expire_at"`
-	Invoices           []InvoiceInfo      `json:"invoices"`
-	Amount             float64            `json:"amount"`
-	Months             int64              `json:"months,omitempty"`
+	Record             uuid.UUID                `json:"record,omitempty"`
+	Status             string                   `json:"status" validate:"oneof='currently' 'canceled' 'expired'"`
+	Driver             Driver                   `json:"driver"`
+	School             School                   `json:"school"`
+	Child              Child                    `json:"child"`
+	StripeSubscription StripeSubscription       `json:"stripe"`
+	CreatedAt          time.Time                `json:"created_at"`
+	ExpireAt           time.Time                `json:"expire_at"`
+	Invoices           map[string][]InvoiceInfo `json:"invoices"`
+	Amount             float64                  `json:"amount"`
+	Months             int64                    `json:"months,omitempty"`
 }
 
 type InvoiceInfo struct {
