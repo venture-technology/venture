@@ -29,17 +29,19 @@ type Contract struct {
 }
 
 type InvoiceInfo struct {
-	ID              string `json:"invoice_info_id"`
-	Status          string `json:"invoice_info_status"`
-	AmountDue       int64  `json:"invoice_info_amount_due"`
-	AmountRemaining int64  `json:"invoice_info_amount_remaining"`
+	ID              string `json:"id"`
+	Status          string `json:"status"`
+	AmountDue       int64  `json:"amount_due"`
+	AmountRemaining int64  `json:"amount_remaining"`
+	Month           string `json:"month"`
+	Date            string `json:"date"`
 }
 
 type InvoiceRemaining struct {
-	InvoiceValue float64 `json:"invoice_value"`
-	Quantity     float64 `json:"invoice_quantity"`
-	Remaining    float64 `json:"invoice_remaining"`
-	Fines        float64 `json:"invoice_fine"`
+	InvoiceValue float64 `json:"value"`
+	Quantity     float64 `json:"quantity"`
+	Remaining    float64 `json:"remaining"`
+	Fines        float64 `json:"fine"`
 }
 
 type SubscriptionInfo struct {
