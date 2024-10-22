@@ -48,3 +48,7 @@ type SubscriptionInfo struct {
 	ID     string `json:"subscription_id"`
 	Status string `json:"subscription_status"`
 }
+
+func (c *Contract) ValidateAmount() bool {
+	return c.Amount != 0
+}

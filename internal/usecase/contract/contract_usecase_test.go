@@ -655,6 +655,74 @@ func TestContractUseCase_Create(t *testing.T) {
 		}
 	})
 
+	t.Run("when contract don't had amount", func(t *testing.T) {
+		cou := mocks.NewIContractRepository(t)
+		st := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		contract := entity.Contract{
+			Driver: entity.Driver{
+				Name: "Motorista",
+				Pix: entity.Pix{
+					Key: "key",
+				},
+				Bank: entity.Bank{
+					Account: "account",
+					Agency:  "agency",
+					Name:    "bank",
+				},
+				Car: entity.Car{
+					Model: "model",
+					Year:  "year",
+				},
+				Amount: 0,
+				CNH:    "cnh",
+			},
+			School: entity.School{
+				Name: "Escola",
+				Address: entity.Address{
+					Street: "Avenida Barão de Alagoas",
+					Number: "223",
+					ZIP:    "08120000",
+				},
+			},
+			Child: entity.Child{
+				Responsible: entity.Responsible{
+					Name:            "Responsible",
+					CPF:             "cpf",
+					PaymentMethodId: "pm_1PxgSrLfFDLpePGLDi2tnFEm",
+					CustomerId:      "cus_QpL9XTVfM6sBhD",
+					Address: entity.Address{
+						Street: "Rua Masato Sakai",
+						Number: "180",
+						ZIP:    "008538300",
+					},
+				},
+				Name: "Child",
+				RG:   "RG",
+			},
+		}
+
+		cou.On("GetSimpleContractByTitle", context.Background(), &contract.StripeSubscription.Title).Return(&entity.Contract{}, nil)
+		cou.On("Create", context.Background(), &contract).Return(nil)
+		st.On("CreateProduct", &contract).Return(&stripe.Product{
+			ID: "prod_QzgBXR7xS7nyQ4",
+		}, nil)
+		st.On("CreatePrice", &contract).Return(&stripe.Price{
+			ID: "price_1Q7gooLfFDLpePGL9xAzzxKK",
+		}, nil)
+		st.On("CreateSubscription", &contract).Return(&stripe.Subscription{
+			ID: "sub_1Q7gooLfFDLpePGLkcm2nPkC",
+		}, nil)
+
+		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
+
+		err := useCase.Create(context.Background(), &contract)
+		if err != nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+
 }
 
 func TestContract_Get(t *testing.T) {

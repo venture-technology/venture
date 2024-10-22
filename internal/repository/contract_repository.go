@@ -37,20 +37,32 @@ func NewContractRepository(db *sql.DB, logger *zap.Logger) *ContractRepository {
 
 func (cr *ContractRepository) Create(ctx context.Context, contract *entity.Contract) error {
 	sqlQuery := `INSERT INTO contracts (
-    record,
-    title_stripe_subscription,
-    description_stripe_subscription,
-    id_stripe_subscription,
-    id_price_subscription,
-    id_product_subscription,
-    school_id,
-    driver_id,
-    responsible_id,
-    child_id,
-    status
-  ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
+		record,
+		title_stripe_subscription,
+		description_stripe_subscription,
+		id_stripe_subscription,
+		id_price_subscription,
+		id_product_subscription,
+		school_id,
+		driver_id,
+		responsible_id,
+		child_id,
+		status,
+		amount
+  ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`
 
-	_, err := cr.db.Exec(sqlQuery, contract.Record, contract.StripeSubscription.Title, contract.StripeSubscription.Description, contract.StripeSubscription.ID, contract.StripeSubscription.Price, contract.StripeSubscription.Product, contract.School.CNPJ, contract.Driver.CNH, contract.Child.Responsible.CPF, contract.Child.RG, contract.Status)
+	_, err := cr.db.Exec(sqlQuery,
+		contract.Record,
+		contract.StripeSubscription.Title,
+		contract.StripeSubscription.Description,
+		contract.StripeSubscription.ID,
+		contract.StripeSubscription.Price,
+		contract.StripeSubscription.Product,
+		contract.School.CNPJ, contract.Driver.CNH,
+		contract.Child.Responsible.CPF,
+		contract.Child.RG,
+		contract.Status,
+		contract.Amount)
 	return err
 }
 
