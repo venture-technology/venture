@@ -14,21 +14,19 @@ type IStripe struct {
 	mock.Mock
 }
 
-// CalculateRemainingValueSubscription provides a mock function with given fields: invoices
-func (_m *IStripe) CalculateRemainingValueSubscription(invoices []entity.InvoiceInfo) *entity.InvoiceRemaining {
-	ret := _m.Called(invoices)
+// CalculateRemainingValueSubscription provides a mock function with given fields: invoices, amount
+func (_m *IStripe) CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64 {
+	ret := _m.Called(invoices, amount)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CalculateRemainingValueSubscription")
 	}
 
-	var r0 *entity.InvoiceRemaining
-	if rf, ok := ret.Get(0).(func([]entity.InvoiceInfo) *entity.InvoiceRemaining); ok {
-		r0 = rf(invoices)
+	var r0 float64
+	if rf, ok := ret.Get(0).(func(map[string]entity.InvoiceInfo, float64) float64); ok {
+		r0 = rf(invoices, amount)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.InvoiceRemaining)
-		}
+		r0 = ret.Get(0).(float64)
 	}
 
 	return r0
