@@ -15,31 +15,33 @@ type StripeSubscription struct {
 }
 
 type Contract struct {
-	Record             uuid.UUID          `json:"record,omitempty"`
-	Status             string             `json:"status" validate:"oneof='currently' 'canceled' 'expired'"`
-	Driver             Driver             `json:"driver"`
-	School             School             `json:"school"`
-	Child              Child              `json:"child"`
-	StripeSubscription StripeSubscription `json:"stripe"`
-	CreatedAt          time.Time          `json:"created_at"`
-	ExpireAt           time.Time          `json:"expire_at"`
-	Invoices           []InvoiceInfo      `json:"invoices"`
-	Amount             float64            `json:"amount"`
-	Months             int64              `json:"months,omitempty"`
+	Record             uuid.UUID                `json:"record,omitempty"`
+	Status             string                   `json:"status" validate:"oneof='currently' 'canceled' 'expired'"`
+	Driver             Driver                   `json:"driver"`
+	School             School                   `json:"school"`
+	Child              Child                    `json:"child"`
+	StripeSubscription StripeSubscription       `json:"stripe"`
+	CreatedAt          time.Time                `json:"created_at"`
+	ExpireAt           time.Time                `json:"expire_at"`
+	Invoices           map[string][]InvoiceInfo `json:"invoices"`
+	Amount             float64                  `json:"amount"`
+	Months             int64                    `json:"months,omitempty"`
 }
 
 type InvoiceInfo struct {
-	ID              string `json:"invoice_info_id"`
-	Status          string `json:"invoice_info_status"`
-	AmountDue       int64  `json:"invoice_info_amount_due"`
-	AmountRemaining int64  `json:"invoice_info_amount_remaining"`
+	ID              string `json:"id"`
+	Status          string `json:"status"`
+	AmountDue       int64  `json:"amount_due"`
+	AmountRemaining int64  `json:"amount_remaining"`
+	Month           string `json:"month"`
+	Date            string `json:"date"`
 }
 
 type InvoiceRemaining struct {
-	InvoiceValue float64 `json:"invoice_value"`
-	Quantity     float64 `json:"invoice_quantity"`
-	Remaining    float64 `json:"invoice_remaining"`
-	Fines        float64 `json:"invoice_fine"`
+	InvoiceValue float64 `json:"value"`
+	Quantity     float64 `json:"quantity"`
+	Remaining    float64 `json:"remaining"`
+	Fines        float64 `json:"fine"`
 }
 
 type SubscriptionInfo struct {

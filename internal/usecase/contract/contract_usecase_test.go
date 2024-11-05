@@ -709,7 +709,7 @@ func TestContract_Get(t *testing.T) {
 		}
 
 		cou.On("Get", context.Background(), id).Return(&contract, nil)
-		st.On("ListInvoices", mock.Anything).Return([]entity.InvoiceInfo{}, nil)
+		st.On("ListInvoices", mock.Anything).Return(map[string][]entity.InvoiceInfo{}, nil)
 
 		useCase := NewContractUseCase(cou, st, googleAdapter, nil)
 

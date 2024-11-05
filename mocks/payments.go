@@ -245,23 +245,23 @@ func (_m *IStripe) GetSubscription(subscriptionId string) (*stripe.Subscription,
 }
 
 // ListInvoices provides a mock function with given fields: contract
-func (_m *IStripe) ListInvoices(contract *entity.Contract) ([]entity.InvoiceInfo, error) {
+func (_m *IStripe) ListInvoices(contract *entity.Contract) (map[string][]entity.InvoiceInfo, error) {
 	ret := _m.Called(contract)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListInvoices")
 	}
 
-	var r0 []entity.InvoiceInfo
+	var r0 map[string][]entity.InvoiceInfo
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*entity.Contract) ([]entity.InvoiceInfo, error)); ok {
+	if rf, ok := ret.Get(0).(func(*entity.Contract) (map[string][]entity.InvoiceInfo, error)); ok {
 		return rf(contract)
 	}
-	if rf, ok := ret.Get(0).(func(*entity.Contract) []entity.InvoiceInfo); ok {
+	if rf, ok := ret.Get(0).(func(*entity.Contract) map[string][]entity.InvoiceInfo); ok {
 		r0 = rf(contract)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]entity.InvoiceInfo)
+			r0 = ret.Get(0).(map[string][]entity.InvoiceInfo)
 		}
 	}
 
