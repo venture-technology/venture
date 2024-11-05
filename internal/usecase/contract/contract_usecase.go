@@ -109,6 +109,13 @@ func (cou *ContractUseCase) Create(ctx context.Context, contract *entity.Contrac
 
 	log.Print(contract)
 
+	hasAmount := contract.ValidateAmount()
+
+	if !hasAmount {
+		cou.logger.Info("contract amount is invalid")
+		return fmt.Errorf("contract amount is invalid")
+	}
+
 	err = cou.contractRepository.Create(ctx, contract)
 	log.Print(err)
 	if err != nil {

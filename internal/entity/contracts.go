@@ -24,7 +24,7 @@ type Contract struct {
 	CreatedAt          time.Time              `json:"created_at"`
 	ExpireAt           time.Time              `json:"expire_at"`
 	Invoices           map[string]InvoiceInfo `json:"invoices"`
-	Amount             float64                `json:"amount"`
+	Amount             float64                `json:"amount" validate:"required"`
 	Months             int64                  `json:"months,omitempty"`
 }
 
@@ -47,4 +47,8 @@ type InvoiceRemaining struct {
 type SubscriptionInfo struct {
 	ID     string `json:"subscription_id"`
 	Status string `json:"subscription_status"`
+}
+
+func (c *Contract) ValidateAmount() bool {
+	return c.Amount != 0
 }
