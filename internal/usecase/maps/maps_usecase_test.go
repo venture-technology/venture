@@ -2,7 +2,6 @@ package maps
 
 import (
 	"context"
-	"log"
 	"testing"
 
 	"github.com/venture-technology/venture/internal/domain/adapter"
@@ -12,7 +11,6 @@ func TestMapsUseCase_CalculatePrice(t *testing.T) {
 
 	t.Run("when calculate price is sucess", func(t *testing.T) {
 		googleAdapter := adapter.NewGoogleAdapter()
-		log.Print(googleAdapter)
 
 		origin := "Rua Masato Sakai, 180, 008538300"
 		destination := "Avenida Barão de Alagoas, 223, 08120000"
@@ -27,7 +25,6 @@ func TestMapsUseCase_CalculatePrice(t *testing.T) {
 
 	t.Run("when calculate price is fail", func(t *testing.T) {
 		googleAdapter := adapter.NewGoogleAdapter()
-		log.Print(googleAdapter)
 
 		origin := "Rua Vander Marcelo Freitas Juvenesso, 892374983, 472389472"
 		destination := "DAHSUIDAJHIe Xuyrhauds, 783425893, 842763842"
