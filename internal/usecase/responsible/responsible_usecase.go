@@ -3,7 +3,6 @@ package responsible
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/stripe/stripe-go/v79"
 	"github.com/stripe/stripe-go/v79/customer"
@@ -31,17 +30,14 @@ func (ru *ResponsibleUseCase) Create(ctx context.Context, responsible *entity.Re
 }
 
 func (ru *ResponsibleUseCase) Get(ctx context.Context, cpf *string) (*entity.Responsible, error) {
-	log.Printf("param read school -> cpf: %s", *cpf)
 	return ru.responsibleRepository.Get(ctx, cpf)
 }
 
 func (ru *ResponsibleUseCase) Update(ctx context.Context, currentResponsible, responsible *entity.Responsible) error {
-	log.Printf("input received to update school -> name: %s, cpf: %s, email: %s", responsible.Name, responsible.CPF, responsible.Email)
 	return ru.responsibleRepository.Update(ctx, currentResponsible, responsible)
 }
 
 func (ru *ResponsibleUseCase) Delete(ctx context.Context, cpf *string) error {
-	log.Printf("trying delete your infos --> %v", *cpf)
 	return ru.responsibleRepository.Delete(ctx, cpf)
 }
 
