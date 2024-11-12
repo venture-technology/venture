@@ -3,7 +3,6 @@ package invite
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
@@ -33,9 +32,7 @@ func (iu *InviteUseCase) Create(ctx context.Context, invite *entity.Invite) erro
 
 	invite.ID = id
 
-	log.Print("validating partner")
 	isPartner, err := iu.partnerRepository.IsPartner(ctx, &invite.Driver.CNH, &invite.School.CNPJ)
-
 	if err != nil {
 		return err
 	}
@@ -44,7 +41,6 @@ func (iu *InviteUseCase) Create(ctx context.Context, invite *entity.Invite) erro
 		return fmt.Errorf("it wasnt created invite because they are partners")
 	}
 
-	log.Print("creating invite")
 	return iu.inviteRepository.Create(ctx, invite)
 }
 
