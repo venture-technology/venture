@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -31,7 +30,6 @@ func (coh *ContractHandler) Create(c *gin.Context) {
 	var input entity.Contract
 
 	if err := c.BindJSON(&input); err != nil {
-		log.Printf("error to parsed body: %s", err.Error())
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
@@ -123,18 +121,14 @@ func (coh *ContractHandler) Cancel(c *gin.Context) {
 	id := c.Param("id")
 
 	uuid, err := uuid.Parse(id)
-
 	if err != nil {
-		log.Printf("error to parse id: %s", err.Error())
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
 	err = coh.contractUseCase.Cancel(c, uuid)
-
 	if err != nil {
-		log.Printf("error while cancel contract: %s", err.Error())
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar cancelar o contrato"))
 		return
 	}
 
