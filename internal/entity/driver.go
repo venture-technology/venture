@@ -8,20 +8,21 @@ import (
 )
 
 type Driver struct {
-	ID          int     `json:"id,omitempty"`
-	Name        string  `json:"name,omitempty" validate:"required"`
-	Email       string  `json:"email,omitempty" validate:"required"`
-	Password    string  `json:"password,omitempty"`
-	CPF         string  `json:"cpf,omitempty"`
-	CNH         string  `json:"cnh,omitempty" validate:"required"`
-	QrCode      string  `json:"qrcode,omitempty"`
-	Pix         Pix     `json:"pix,omitempty"`
-	Bank        Bank    `json:"bank,omitempty"`
-	Address     Address `json:"address,omitempty" validate:"required"`
-	Amount      float64 `json:"amount,omitempty" validate:"required"`
-	Phone       string  `json:"phone,omitempty" validate:"required" example:"+55 11 123456789"`
-	MunicipalId string  `json:"municipal_id,omitempty" validate:"required"`
-	Car         Car     `json:"car,omitempty" validate:"required"`
+	ID           int     `json:"id,omitempty"`
+	Name         string  `json:"name,omitempty" validate:"required"`
+	Email        string  `json:"email,omitempty" validate:"required"`
+	Password     string  `json:"password,omitempty"`
+	CPF          string  `json:"cpf,omitempty"`
+	CNH          string  `json:"cnh,omitempty" validate:"required"`
+	QrCode       string  `json:"qrcode,omitempty"`
+	Pix          Pix     `json:"pix,omitempty"`
+	Bank         Bank    `json:"bank,omitempty"`
+	Address      Address `json:"address,omitempty" validate:"required"`
+	Amount       float64 `json:"amount,omitempty" validate:"required"`
+	Phone        string  `json:"phone,omitempty" validate:"required" example:"+55 11 123456789"`
+	MunicipalId  string  `json:"municipal_id,omitempty" validate:"required"`
+	Car          Car     `json:"car,omitempty" validate:"required"`
+	ProfileImage string  `json:"profile_image,omitempty"`
 }
 
 type Bank struct {
