@@ -14,6 +14,7 @@ type Responsible struct {
 	CustomerId      string     `json:"customer_id,omitempty"`
 	PaymentMethodId string     `json:"payment_method_id,omitempty"`
 	Phone           string     `json:"phone,omitempty" validate:"required" example:"+55 11 123456789"` // o telefone deve seguir este mesmo formato
+	ProfileImage    string     `json:"profile_image,omitempty"`
 }
 
 type CreditCard struct {
