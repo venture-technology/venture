@@ -33,13 +33,13 @@ func NewResponsibleRepository(db *sql.DB, logger *zap.Logger) *ResponsibleReposi
 }
 
 func (rr *ResponsibleRepository) Create(ctx context.Context, responsible *entity.Responsible) error {
-	sqlQuery := `INSERT INTO responsible (name, email, password, cpf, street, number, zip, complement, status, customer_id, phone) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
-	_, err := rr.db.Exec(sqlQuery, responsible.Name, responsible.Email, responsible.Password, responsible.CPF, responsible.Address.Street, responsible.Address.Number, responsible.Address.ZIP, responsible.Address.Complement, responsible.Status, responsible.CustomerId, responsible.Phone)
+	sqlQuery := `INSERT INTO responsible (name, email, password, cpf, street, number, zip, complement, status, customer_id, phone, profile_image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`
+	_, err := rr.db.Exec(sqlQuery, responsible.Name, responsible.Email, responsible.Password, responsible.CPF, responsible.Address.Street, responsible.Address.Number, responsible.Address.ZIP, responsible.Address.Complement, responsible.Status, responsible.CustomerId, responsible.Phone, responsible.ProfileImage)
 	return err
 }
 
 func (rr *ResponsibleRepository) Get(ctx context.Context, cpf *string) (*entity.Responsible, error) {
-	sqlQuery := `SELECT id, name, cpf, email, street, number, zip, status, complement, COALESCE(card_token, '') AS card_token, COALESCE(payment_method_id, '') AS payment_method_id, customer_id, phone FROM responsible WHERE cpf = $1 LIMIT 1`
+	sqlQuery := `SELECT id, name, cpf, email, street, number, zip, status, complement, COALESCE(card_token, '') AS card_token, COALESCE(payment_method_id, '') AS payment_method_id, customer_id, phone, profile_image FROM responsible WHERE cpf = $1 LIMIT 1`
 	var responsible entity.Responsible
 	err := rr.db.QueryRow(sqlQuery, *cpf).Scan(
 		&responsible.ID,
@@ -55,6 +55,7 @@ func (rr *ResponsibleRepository) Get(ctx context.Context, cpf *string) (*entity.
 		&responsible.PaymentMethodId,
 		&responsible.CustomerId,
 		&responsible.Phone,
+		&responsible.ProfileImage,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return nil, err
@@ -92,8 +93,12 @@ func (rr *ResponsibleRepository) Update(ctx context.Context, currentResponsible,
 		currentResponsible.Address.Complement = responsible.Address.Complement
 	}
 
-	sqlQueryUpdate := `UPDATE responsible SET name = $1, email = $2, password = $3, street = $4, number = $5, zip = $6, complement = $7 WHERE cpf = $8`
-	_, err := rr.db.ExecContext(ctx, sqlQueryUpdate, currentResponsible.Name, currentResponsible.Email, currentResponsible.Password, currentResponsible.Address.Street, currentResponsible.Address.Number, currentResponsible.Address.ZIP, currentResponsible.Address.Complement, responsible.CPF)
+	if responsible.ProfileImage != "" && responsible.ProfileImage != currentResponsible.ProfileImage {
+		currentResponsible.ProfileImage = responsible.ProfileImage
+	}
+
+	sqlQueryUpdate := `UPDATE responsible SET name = $1, email = $2, password = $3, street = $4, number = $5, zip = $6, complement = $7, profile_image = $8 WHERE cpf = $9`
+	_, err := rr.db.ExecContext(ctx, sqlQueryUpdate, currentResponsible.Name, currentResponsible.Email, currentResponsible.Password, currentResponsible.Address.Street, currentResponsible.Address.Number, currentResponsible.Address.ZIP, currentResponsible.Address.Complement, currentResponsible.ProfileImage, responsible.CPF)
 	return err
 }
 
@@ -123,7 +128,7 @@ func (rr *ResponsibleRepository) SaveCard(ctx context.Context, cpf, cardToken, p
 }
 
 func (rr *ResponsibleRepository) Auth(ctx context.Context, responsible *entity.Responsible) (*entity.Responsible, error) {
-	sqlQuery := `SELECT id, name, cpf, email, street, number, zip, status, complement, card_token, payment_method_id, customer_id, phone, password FROM responsible WHERE email = $1 LIMIT 1`
+	sqlQuery := `SELECT id, name, cpf, email, street, number, zip, status, complement, card_token, payment_method_id, customer_id, phone, password, profile_image FROM responsible WHERE email = $1 LIMIT 1`
 	var responsibleData entity.Responsible
 	err := rr.db.QueryRow(sqlQuery, responsible.Email).Scan(
 		&responsibleData.ID,
@@ -140,6 +145,7 @@ func (rr *ResponsibleRepository) Auth(ctx context.Context, responsible *entity.R
 		&responsibleData.CustomerId,
 		&responsibleData.Phone,
 		&responsibleData.Password,
+		&responsibleData.ProfileImage,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return nil, err
@@ -153,7 +159,7 @@ func (rr *ResponsibleRepository) Auth(ctx context.Context, responsible *entity.R
 }
 
 func (rr *ResponsibleRepository) FindByEmail(ctx context.Context, email *string) (*entity.Responsible, error) {
-	sqlQuery := `SELECT id, name, cpf, email, street, number, zip, status, complement, COALESCE(card_token, '') AS card_token, COALESCE(payment_method_id, '') AS payment_method_id, customer_id, phone FROM responsible WHERE email = $1 LIMIT 1`
+	sqlQuery := `SELECT id, name, cpf, email, street, number, zip, status, complement, COALESCE(card_token, '') AS card_token, COALESCE(payment_method_id, '') AS payment_method_id, customer_id, phone, profile_image FROM responsible WHERE email = $1 LIMIT 1`
 	var responsible entity.Responsible
 	err := rr.db.QueryRow(sqlQuery, *email).Scan(
 		&responsible.ID,
@@ -169,6 +175,7 @@ func (rr *ResponsibleRepository) FindByEmail(ctx context.Context, email *string)
 		&responsible.PaymentMethodId,
 		&responsible.CustomerId,
 		&responsible.Phone,
+		&responsible.ProfileImage,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return nil, err
