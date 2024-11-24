@@ -34,13 +34,13 @@ func NewDriverRepository(db *sql.DB, logger *zap.Logger) *DriverRepository {
 }
 
 func (dr *DriverRepository) Create(ctx context.Context, driver *entity.Driver) error {
-	sqlQuery := `INSERT INTO drivers (amount, qrcode, name, email, password, cpf, cnh, street, number, zip, complement, phone, bank_name, agency_number, account_number, pix_key, municipal_record, car_model, car_year) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)`
-	_, err := dr.db.Exec(sqlQuery, driver.Amount, driver.QrCode, driver.Name, driver.Email, driver.Password, driver.CPF, driver.CNH, driver.Address.Street, driver.Address.Number, driver.Address.ZIP, driver.Address.Complement, driver.Phone, driver.Bank.Name, driver.Bank.Agency, driver.Bank.Account, driver.Pix.Key, driver.MunicipalId, driver.Car.Model, driver.Car.Year)
+	sqlQuery := `INSERT INTO drivers (amount, qrcode, name, email, password, cpf, cnh, street, number, zip, complement, phone, bank_name, agency_number, account_number, pix_key, municipal_record, car_model, car_year, profile_image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`
+	_, err := dr.db.Exec(sqlQuery, driver.Amount, driver.QrCode, driver.Name, driver.Email, driver.Password, driver.CPF, driver.CNH, driver.Address.Street, driver.Address.Number, driver.Address.ZIP, driver.Address.Complement, driver.Phone, driver.Bank.Name, driver.Bank.Agency, driver.Bank.Account, driver.Pix.Key, driver.MunicipalId, driver.Car.Model, driver.Car.Year, driver.ProfileImage)
 	return err
 }
 
 func (dr *DriverRepository) Get(ctx context.Context, cnh *string) (*entity.Driver, error) {
-	sqlQuery := `SELECT id, amount, name, cpf, cnh, qrcode, email, street, number, zip, complement, phone, bank_name, agency_number, account_number, pix_key, municipal_record, car_model, car_year FROM drivers WHERE cnh = $1 LIMIT 1`
+	sqlQuery := `SELECT id, amount, name, cpf, cnh, qrcode, email, street, number, zip, complement, phone, bank_name, agency_number, account_number, pix_key, municipal_record, car_model, car_year, profile_image FROM drivers WHERE cnh = $1 LIMIT 1`
 	var driver entity.Driver
 	err := dr.db.QueryRow(sqlQuery, *cnh).Scan(
 		&driver.ID,
@@ -62,6 +62,7 @@ func (dr *DriverRepository) Get(ctx context.Context, cnh *string) (*entity.Drive
 		&driver.MunicipalId,
 		&driver.Car.Model,
 		&driver.Car.Year,
+		&driver.ProfileImage,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return nil, err
@@ -70,7 +71,7 @@ func (dr *DriverRepository) Get(ctx context.Context, cnh *string) (*entity.Drive
 }
 
 func (dr *DriverRepository) Update(ctx context.Context, driver *entity.Driver) error {
-	sqlQuery := `SELECT name, amount, email, password, street, number, zip, complement, phone, bank_name, agency_number, account_number, pix_key, car_model, car_year FROM drivers WHERE cnh = $1 LIMIT 1`
+	sqlQuery := `SELECT name, amount, email, password, street, number, zip, complement, phone, bank_name, agency_number, account_number, pix_key, car_model, car_year, profile_image FROM drivers WHERE cnh = $1 LIMIT 1`
 	var currentDriver entity.Driver
 	err := dr.db.QueryRow(sqlQuery, driver.CNH).Scan(
 		&currentDriver.Name,
@@ -88,6 +89,7 @@ func (dr *DriverRepository) Update(ctx context.Context, driver *entity.Driver) e
 		&currentDriver.Pix.Key,
 		&currentDriver.Car.Model,
 		&currentDriver.Car.Year,
+		&currentDriver.ProfileImage,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return err
@@ -137,9 +139,12 @@ func (dr *DriverRepository) Update(ctx context.Context, driver *entity.Driver) e
 	if driver.Car.Model != "" && driver.Car.Model != currentDriver.Car.Model {
 		currentDriver.Car.Model = driver.Car.Model
 	}
+	if driver.ProfileImage != "" && driver.ProfileImage != currentDriver.ProfileImage {
+		currentDriver.ProfileImage = driver.ProfileImage
+	}
 
-	sqlQueryUpdate := `UPDATE drivers SET name = $1,  amount = $2, email = $3, password = $4, street = $5, number = $6, zip = $7, complement = $8, phone = $9, bank_name = $10, agency_number = $11, account_number = $12, pix_key = $13, car_model = $14, car_year = $15 WHERE cnh = $16`
-	_, err = dr.db.ExecContext(ctx, sqlQueryUpdate, currentDriver.Name, currentDriver.Amount, currentDriver.Email, currentDriver.Password, currentDriver.Address.Street, currentDriver.Address.Number, currentDriver.Address.ZIP, currentDriver.Address.Complement, currentDriver.Phone, currentDriver.Bank.Name, currentDriver.Bank.Agency, currentDriver.Bank.Account, currentDriver.Pix.Key, currentDriver.Car.Model, currentDriver.Car.Year, driver.CNH)
+	sqlQueryUpdate := `UPDATE drivers SET name = $1,  amount = $2, email = $3, password = $4, street = $5, number = $6, zip = $7, complement = $8, phone = $9, bank_name = $10, agency_number = $11, account_number = $12, pix_key = $13, car_model = $14, car_year = $15, profile_image = $16 WHERE cnh = $17`
+	_, err = dr.db.ExecContext(ctx, sqlQueryUpdate, currentDriver.Name, currentDriver.Amount, currentDriver.Email, currentDriver.Password, currentDriver.Address.Street, currentDriver.Address.Number, currentDriver.Address.ZIP, currentDriver.Address.Complement, currentDriver.Phone, currentDriver.Bank.Name, currentDriver.Bank.Agency, currentDriver.Bank.Account, currentDriver.Pix.Key, currentDriver.Car.Model, currentDriver.Car.Year, currentDriver.ProfileImage, driver.CNH)
 	return err
 }
 
@@ -175,7 +180,7 @@ func (dr *DriverRepository) SaveBank(ctx context.Context, driver *entity.Driver)
 }
 
 func (dr *DriverRepository) FindByEmail(ctx context.Context, email *string) (*entity.Driver, error) {
-	sqlQuery := `SELECT id, amount, name, cpf, cnh, qrcode, email, street, number, zip, complement, phone, bank_name, agency_number, account_number, pix_key, municipal_record, car_model, car_year FROM drivers WHERE email = $1 LIMIT 1`
+	sqlQuery := `SELECT id, amount, name, cpf, cnh, qrcode, email, street, number, zip, complement, phone, bank_name, agency_number, account_number, pix_key, municipal_record, car_model, car_year, profile_image FROM drivers WHERE email = $1 LIMIT 1`
 	var driver entity.Driver
 	err := dr.db.QueryRow(sqlQuery, *email).Scan(
 		&driver.ID,
@@ -197,6 +202,7 @@ func (dr *DriverRepository) FindByEmail(ctx context.Context, email *string) (*en
 		&driver.MunicipalId,
 		&driver.Car.Model,
 		&driver.Car.Year,
+		&driver.ProfileImage,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return nil, err
