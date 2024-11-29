@@ -66,7 +66,6 @@ func (cr *ChildRepository) FindAll(ctx context.Context, cpf *string) ([]entity.C
 		}
 		children = append(children, child)
 	}
-
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}

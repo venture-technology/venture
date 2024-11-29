@@ -25,7 +25,6 @@ func NewDriverUseCase(dr repository.IDriverRepository, ar repository.IAwsReposit
 }
 
 func (du *DriverUseCase) Create(ctx context.Context, driver *entity.Driver) error {
-
 	err := driver.ValidateCnh()
 
 	if err != nil {
@@ -72,7 +71,6 @@ func (du *DriverUseCase) SaveBank(ctx context.Context, driver *entity.Driver) er
 }
 
 func (du *DriverUseCase) GetGallery(ctx context.Context, cnh *string) ([]string, error) {
-
 	path := fmt.Sprintf("%s/gallery", *cnh)
 
 	return du.awsRepository.ListImagesAtS3(ctx, path)

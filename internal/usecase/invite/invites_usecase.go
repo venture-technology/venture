@@ -26,7 +26,6 @@ func NewInviteUseCase(ir repository.IInviteRepository, pr repository.IPartnerRep
 }
 
 func (iu *InviteUseCase) Create(ctx context.Context, invite *entity.Invite) error {
-
 	id, err := uuid.NewV7()
 	if err != nil {
 		return err
@@ -47,7 +46,6 @@ func (iu *InviteUseCase) Create(ctx context.Context, invite *entity.Invite) erro
 
 	log.Print("creating invite")
 	return iu.inviteRepository.Create(ctx, invite)
-
 }
 
 func (iu *InviteUseCase) Get(ctx context.Context, id uuid.UUID) (*entity.Invite, error) {

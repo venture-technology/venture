@@ -37,7 +37,6 @@ func NewContractUseCase(
 
 // we create the contract, checking whether the person responsible has a payment method, calculating the distance between the school and the person responsible's residence, creating the product, the price and the signature on the stripe, and finally, creating the contract in the database
 func (cou *ContractUseCase) Create(ctx context.Context, contract *entity.Contract) error {
-
 	contract.StripeSubscription.Title = fmt.Sprintf("%s - %s - %s - %s", contract.Driver.Name, contract.School.Name, contract.Child.Responsible.Name, contract.Child.Name)
 
 	simpleContract, err := cou.contractRepository.GetSimpleContractByTitle(ctx, &contract.StripeSubscription.Title)

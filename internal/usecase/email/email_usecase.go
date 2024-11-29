@@ -28,7 +28,6 @@ func NewEmailUseCase(
 }
 
 func (eu *EmailUseCase) Record(ctx context.Context, email *entity.Email) error {
-
 	id, err := uuid.NewV7()
 	if err != nil {
 		return err
