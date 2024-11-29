@@ -28,7 +28,6 @@ func NewContractHandler(
 }
 
 func (coh *ContractHandler) Create(c *gin.Context) {
-
 	var input entity.Contract
 
 	if err := c.BindJSON(&input); err != nil {
@@ -40,7 +39,6 @@ func (coh *ContractHandler) Create(c *gin.Context) {
 	err := coh.contractUseCase.Create(c, &input)
 
 	if err != nil {
-		log.Printf("error to create contract: %s", err.Error())
 		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"))
 		return
 	}
@@ -49,13 +47,11 @@ func (coh *ContractHandler) Create(c *gin.Context) {
 }
 
 func (coh *ContractHandler) Get(c *gin.Context) {
-
 	id := c.Param("id")
 
 	uuid, err := uuid.Parse(id)
 
 	if err != nil {
-		log.Printf("error to parse id: %s", err.Error())
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
@@ -63,77 +59,63 @@ func (coh *ContractHandler) Get(c *gin.Context) {
 	contract, err := coh.contractUseCase.Get(c, uuid)
 
 	if err != nil {
-		log.Printf("error while found contract: %s", err.Error())
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
 		return
 	}
 
 	c.JSON(http.StatusOK, contract)
-
 }
 
 func (coh *ContractHandler) FindAllByRg(c *gin.Context) {
-
 	rg := c.Param("rg")
 
 	contracts, err := coh.contractUseCase.FindAllByRg(c, &rg)
 
 	if err != nil {
-		log.Printf("error while found contract: %s", err.Error())
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
 		return
 	}
 
 	c.JSON(http.StatusOK, contracts)
-
 }
 
 func (coh *ContractHandler) FindAllByCnpj(c *gin.Context) {
-
 	cnpj := c.Param("cnpj")
 
 	contracts, err := coh.contractUseCase.FindAllByCnpj(c, &cnpj)
 
 	if err != nil {
-		log.Printf("error while found contract: %s", err.Error())
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
 		return
 	}
 
 	c.JSON(http.StatusOK, contracts)
-
 }
 
 func (coh *ContractHandler) FindAllByCpf(c *gin.Context) {
-
 	cpf := c.Param("cpf")
 
 	contracts, err := coh.contractUseCase.FindAllByCpf(c, &cpf)
 
 	if err != nil {
-		log.Printf("error while found contract: %s", err.Error())
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
 		return
 	}
 
 	c.JSON(http.StatusOK, contracts)
-
 }
 
 func (coh *ContractHandler) FindAllByCnh(c *gin.Context) {
-
 	cnh := c.Param("cnh")
 
 	contracts, err := coh.contractUseCase.FindAllByCnh(c, &cnh)
 
 	if err != nil {
-		log.Printf("error while found contract: %s", err.Error())
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
 		return
 	}
 
 	c.JSON(http.StatusOK, contracts)
-
 }
 
 func (coh *ContractHandler) Cancel(c *gin.Context) {

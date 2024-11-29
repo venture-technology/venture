@@ -50,7 +50,6 @@ func (ru *ResponsibleUseCase) SaveCard(ctx context.Context, cpf, cardToken, paym
 }
 
 func (ru *ResponsibleUseCase) CreateCustomer(ctx context.Context, responsible *entity.Responsible) (*stripe.Customer, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -68,11 +67,9 @@ func (ru *ResponsibleUseCase) CreateCustomer(ctx context.Context, responsible *e
 	}
 
 	return resp, nil
-
 }
 
 func (ru *ResponsibleUseCase) UpdateCustomer(ctx context.Context, responsible *entity.Responsible) (*stripe.Customer, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -89,11 +86,9 @@ func (ru *ResponsibleUseCase) UpdateCustomer(ctx context.Context, responsible *e
 	}
 
 	return updatedCustomer, nil
-
 }
 
 func (ru *ResponsibleUseCase) DeleteCustomer(ctx context.Context, customerId string) (*stripe.Customer, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -104,7 +99,6 @@ func (ru *ResponsibleUseCase) DeleteCustomer(ctx context.Context, customerId str
 	}
 
 	return c, nil
-
 }
 
 func (ru *ResponsibleUseCase) CreatePaymentMethod(ctx context.Context, cardToken *string) (*stripe.PaymentMethod, error) {

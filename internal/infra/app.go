@@ -26,7 +26,6 @@ type Application struct {
 }
 
 func NewApplication(router *gin.Engine, V1 *gin.RouterGroup, Adm *gin.RouterGroup) *Application {
-
 	router.Use(settings.SetHeaders())
 
 	Config, err := config.Load("config/config.yaml")

@@ -18,7 +18,6 @@ func NewMapsUseCase(googleAdapter adapter.IGoogleAdapter) *MapsUseCase {
 }
 
 func (mu *MapsUseCase) CalculatePrice(ctx context.Context, origin, destination string, amount float64) (*float64, error) {
-
 	km, err := mu.googleAdapter.GetDistance(origin, destination)
 
 	if err != nil {
@@ -28,5 +27,4 @@ func (mu *MapsUseCase) CalculatePrice(ctx context.Context, origin, destination s
 	value := usecase.CalculateContract(*km, amount)
 
 	return &value, nil
-
 }

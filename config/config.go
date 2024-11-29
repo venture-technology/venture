@@ -91,7 +91,6 @@ func Load(filename string) (*Config, error) {
 }
 
 func Get() *Config {
-
 	if config == nil {
 		config, err := Load("../../../config/config.yaml")
 		if err != nil {
@@ -99,6 +98,5 @@ func Get() *Config {
 		}
 		return config
 	}
-
 	return config
 }
