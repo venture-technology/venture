@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,7 +23,6 @@ func (ah *AdminHandler) NewApiKey(c *gin.Context) {
 	err := ah.adminUseCase.NewApiKey(c, name)
 
 	if err != nil {
-		log.Printf("error to create a key: %s", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao criar nova chave"})
 		return
 	}

@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-
 	conf, err := config.Load("../config/config.yaml")
 	if err != nil {
 		log.Fatalf("error loading config: %s", err.Error())
@@ -34,8 +33,6 @@ func main() {
 	err = writer.WriteMessages(context.Background(), message)
 	if err != nil {
 		log.Fatalf("Failed to produce message: %v", err)
-	} else {
-		log.Println("Message sent successfully")
 	}
 
 	if err := writer.Close(); err != nil {

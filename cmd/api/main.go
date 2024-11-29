@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-
 	r := gin.Default()
 
 	r.GET("/status", func(c *gin.Context) {
@@ -29,5 +28,4 @@ func main() {
 	admin.NewAdmin(app).Setup()
 
 	r.Run(fmt.Sprintf(":%d", app.Config.Server.Port))
-
 }

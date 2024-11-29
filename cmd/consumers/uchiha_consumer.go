@@ -71,8 +71,6 @@ func (c *consumer) StartConsumer() {
 			if err != nil {
 				log.Fatalf("Erro ao gravar record do email: %v", err)
 			}
-
-			log.Println("Message found in Queue, Email sended.")
 		}
 	}()
 
@@ -80,7 +78,6 @@ func (c *consumer) StartConsumer() {
 }
 
 func main() {
-
 	config, err := config.Load("../../config/config.yaml")
 	if err != nil {
 		log.Fatalf("error loading config: %s", err.Error())
@@ -114,5 +111,4 @@ func main() {
 	consumer := NewConsumer(emailUseCase)
 	log.Print("initing service: uchiha")
 	consumer.StartConsumer()
-
 }

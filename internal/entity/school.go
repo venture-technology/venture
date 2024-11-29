@@ -21,9 +21,7 @@ type ClaimsSchool struct {
 }
 
 func (s *School) ValidateCnpj() bool {
-
 	cnpj := utils.IsCNPJ(s.CNPJ)
 
 	return cnpj
-
 }

@@ -20,7 +20,6 @@ func NewAdmin(app *infra.Application) *Admin {
 }
 
 func (adm *Admin) Setup() {
-
 	adm.app.Adm.Use(middleware.AdminMiddleware())
 
 	adm.admin = handler.NewAdminHandler(
@@ -33,7 +32,6 @@ func (adm *Admin) Setup() {
 	)
 
 	adm.NewRoutes()
-
 }
 
 func (adm *Admin) NewRoutes() {

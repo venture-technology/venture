@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,11 +23,9 @@ func NewMapsHandler(mapsUseCase *maps.MapsUseCase, logger *zap.Logger) *MapsHand
 }
 
 func (mh *MapsHandler) CalculatePrice(c *gin.Context) {
-
 	var input entity.MapPrice
 
 	if err := c.BindJSON(&input); err != nil {
-		log.Printf("bind json error: %s", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -39,11 +36,9 @@ func (mh *MapsHandler) CalculatePrice(c *gin.Context) {
 	value, err := mh.mapsUseCase.CalculatePrice(c, origin, destination, input.Amount)
 
 	if err != nil {
-		log.Printf("calc price error: %s", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"valor": value})
-
 }

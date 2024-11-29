@@ -3,7 +3,6 @@ package adapter
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -38,23 +37,18 @@ func (ga *GoogleAdapter) GetDistance(origin, destination string) (*float64, erro
 
 	url := fmt.Sprintf("%s?%s", endpoint, params.Encode())
 
-	log.Print(url)
-
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Print(err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	var data entity.DistanceMatrixResponse
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-		log.Print(err.Error())
 		return nil, err
 	}
 
 	if data.Status != "OK" {
-		log.Print("Erro na API:", data.Status)
 	}
 
 	distance := data.Rows[0].Elements[0].Distance.Text
