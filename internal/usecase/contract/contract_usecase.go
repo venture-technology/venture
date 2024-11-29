@@ -178,40 +178,48 @@ func (cou *ContractUseCase) FindAllByCnh(ctx context.Context, cnh *string) ([]en
 }
 
 // this function is used when the person responsible wants to cancel the contract, we calculate the fines and send to stripe to charge the responsible
-// func (cou *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
-// 	contract, err := cou.contractRepository.Get(ctx, id)
-// 	if err != nil {
-// 		return err
-// 	}
+func (cou *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
+	contract, err := cou.contractRepository.Get(ctx, id)
+	if err != nil {
+		return err
+	}
 
-// 	err = cou.contractRepository.Cancel(ctx, id)
-// 	if err != nil {
-// 		return err
-// 	}
+	err = cou.contractRepository.Cancel(ctx, id)
+	if err != nil {
+		return err
+	}
 
-// 	values := cou.stripe.CalculateRemainingValueSubscription(contract.Invoices)
+	// search for invoices
 
-// 	_, err = cou.stripe.FineResponsible(contract, int64(values.Fines))
-// 	if err != nil {
-// 		return err
-// 	}
+	invoices, err := cou.stripe.ListInvoices(contract)
 
-// 	return nil
-// }
+	if err != nil {
+		return err
+	}
 
-// func (cou *ContractUseCase) GetInvoice(ctx context.Context, invoice *string) (*entity.InvoiceInfo, error) {
-// 	inv, err := cou.stripe.GetInvoice(*invoice)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	valueFine := cou.stripe.CalculateRemainingValueSubscription(invoices, contract.Amount)
 
-// 	return &entity.InvoiceInfo{
-// 		ID:              inv.ID,
-// 		Status:          string(inv.Status),
-// 		AmountDue:       inv.AmountDue,
-// 		AmountRemaining: inv.AmountRemaining * 100,
-// 	}, nil
-// }
+	_, err = cou.stripe.FineResponsible(contract, int64(valueFine))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cou *ContractUseCase) GetInvoice(ctx context.Context, invoice *string) (*entity.InvoiceInfo, error) {
+	inv, err := cou.stripe.GetInvoice(*invoice)
+	if err != nil {
+		return nil, err
+	}
+
+	return &entity.InvoiceInfo{
+		ID:              inv.ID,
+		Status:          string(inv.Status),
+		AmountDue:       inv.AmountDue,
+		AmountRemaining: inv.AmountRemaining * 100,
+	}, nil
+}
 
 // this function is used when contract expires at stripe, then they'll send a webhook to expire contract in our system
 // func (cou *ContractUseCase) Expired(ctx context.Context, id uuid.UUID) error {
