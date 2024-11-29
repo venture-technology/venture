@@ -102,7 +102,6 @@ func (ru *ResponsibleUseCase) DeleteCustomer(ctx context.Context, customerId str
 }
 
 func (ru *ResponsibleUseCase) CreatePaymentMethod(ctx context.Context, cardToken *string) (*stripe.PaymentMethod, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -121,11 +120,9 @@ func (ru *ResponsibleUseCase) CreatePaymentMethod(ctx context.Context, cardToken
 	}
 
 	return pm, nil
-
 }
 
 func (ru *ResponsibleUseCase) AttachPaymentMethod(ctx context.Context, customerId, paymentMethodId *string, isDefault bool) (*stripe.PaymentMethod, error) {
-
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -154,5 +151,4 @@ func (ru *ResponsibleUseCase) AttachPaymentMethod(ctx context.Context, customerI
 	}
 
 	return pm, nil
-
 }

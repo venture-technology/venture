@@ -38,9 +38,7 @@ func NewV1(app *infra.Application) *V1 {
 }
 
 func (v1 *V1) Setup() {
-
 	v1.app.V1.Use(middleware.RequestMiddleware(v1.app.Cache))
-
 	logger := v1.app.Logger
 
 	v1.responsible = handler.NewResponsibleHandler(
@@ -145,7 +143,6 @@ func (v1 *V1) Setup() {
 		logger,
 	)
 	v1.NewRoutes()
-
 }
 
 func (v1 *V1) NewRoutes() {

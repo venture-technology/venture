@@ -35,7 +35,6 @@ func NewAwsRepository(sess *session.Session, logger *zap.Logger) *AwsRepository 
 
 // Given path without "/" and filename to create a complete path.
 func (ar *AwsRepository) SaveAtS3(ctx context.Context, path, filename string, file []byte) (string, error) {
-
 	conf := config.Get()
 
 	svc := s3.New(ar.sess)
@@ -60,7 +59,6 @@ func (ar *AwsRepository) SaveAtS3(ctx context.Context, path, filename string, fi
 }
 
 func (ar *AwsRepository) SendEmail(ctx context.Context, email *entity.Email) error {
-
 	conf := config.Get()
 
 	svc := ses.New(ar.sess)
@@ -93,7 +91,6 @@ func (ar *AwsRepository) SendEmail(ctx context.Context, email *entity.Email) err
 }
 
 func (ar *AwsRepository) ListImagesAtS3(ctx context.Context, path string) ([]string, error) {
-
 	conf := config.Get()
 
 	svc := s3.New(ar.sess)
