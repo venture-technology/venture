@@ -71,8 +71,6 @@ func (c *consumer) StartConsumer() {
 			if err != nil {
 				log.Fatalf("Erro ao gravar record do email: %v", err)
 			}
-
-			log.Println("Message found in Queue, Email sended.")
 		}
 	}()
 

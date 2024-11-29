@@ -33,8 +33,6 @@ func main() {
 	err = writer.WriteMessages(context.Background(), message)
 	if err != nil {
 		log.Fatalf("Failed to produce message: %v", err)
-	} else {
-		log.Println("Message sent successfully")
 	}
 
 	if err := writer.Close(); err != nil {
