@@ -120,6 +120,26 @@ func (coh *ContractHandler) FindAllByCnh(c *gin.Context) {
 
 func (coh *ContractHandler) Cancel(c *gin.Context) {
 
+	id := c.Param("id")
+
+	uuid, err := uuid.Parse(id)
+
+	if err != nil {
+		log.Printf("error to parse id: %s", err.Error())
+		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
+
+	err = coh.contractUseCase.Cancel(c, uuid)
+
+	if err != nil {
+		log.Printf("error while cancel contract: %s", err.Error())
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
+		return
+	}
+
+	c.JSON(http.StatusOK, "contrato cancelado com sucesso")
+
 }
 
 func (coh *ContractHandler) Expired(c *gin.Context) {

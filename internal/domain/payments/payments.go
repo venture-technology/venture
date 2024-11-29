@@ -23,7 +23,10 @@ type IStripe interface {
 	DeleteSubscription(contract *entity.Contract) (*stripe.Subscription, error)
 	GetInvoice(invoiceId string) (*stripe.Invoice, error)
 	ListInvoices(contract *entity.Contract) (map[string]entity.InvoiceInfo, error)
-	CalculateRemainingValueSubscription(invoices []entity.InvoiceInfo) *entity.InvoiceRemaining
+
+	// this calc is used to calculate the remaining value of the subscription
+	CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64
+
 	FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error)
 }
 
@@ -201,17 +204,9 @@ func (su *StripeContract) ListInvoices(contract *entity.Contract) (map[string]en
 	return invoices, nil
 }
 
-func (su *StripeContract) CalculateRemainingValueSubscription(invoices []entity.InvoiceInfo) *entity.InvoiceRemaining {
-	invoice := entity.InvoiceRemaining{
-		InvoiceValue: float64(invoices[0].AmountDue / 100),
-		Quantity:     float64(len(invoices)),
-	}
-
-	invoice.Remaining = invoice.InvoiceValue * (12 - invoice.Quantity)
-
-	invoice.Fines = invoice.Remaining * 0.40
-
-	return &invoice
+func (su *StripeContract) CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64 {
+	quantity := quantityInvoicesPaid(invoices)
+	return (amount * float64(quantity)) * 0.40
 }
 
 func (su *StripeContract) FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error) {
@@ -234,4 +229,14 @@ func (su *StripeContract) FineResponsible(contract *entity.Contract, amountFine 
 	}
 
 	return paym, nil
+}
+
+func quantityInvoicesPaid(invoices map[string]entity.InvoiceInfo) uint64 {
+	qtdMonth := 12
+	for _, invoice := range invoices {
+		if invoice.Status == "paid" {
+			qtdMonth--
+		}
+	}
+	return uint64(qtdMonth)
 }

@@ -371,13 +371,13 @@ func (cr *ContractRepository) FindAllByCnh(ctx context.Context, cnh *string) ([]
 }
 
 func (cr *ContractRepository) Cancel(ctx context.Context, id uuid.UUID) error {
-	sqlQueryUpdate := `UPDATE contract SET status = 'canceled' WHERE id = $1`
+	sqlQueryUpdate := `UPDATE contracts SET status = 'canceled' WHERE record = $1`
 	_, err := cr.db.ExecContext(ctx, sqlQueryUpdate, id)
 	return err
 }
 
 func (cr *ContractRepository) Expired(ctx context.Context, id uuid.UUID) error {
-	sqlQueryUpdate := `UPDATE contract SET status = 'expired' WHERE id = $1`
+	sqlQueryUpdate := `UPDATE contracts SET status = 'expired' WHERE record = $1`
 	_, err := cr.db.ExecContext(ctx, sqlQueryUpdate, id)
 	return err
 }
