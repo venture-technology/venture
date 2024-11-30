@@ -1,0 +1,55 @@
+linters:
+  disable-all: true
+
+  # https://golangci-lint.run/usage/linters
+  enable:
+    # enabled-by-default
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    # disabled-by-default
+    - gofmt
+    - gosec
+    - bodyclose
+    - gocritic
+    - unconvert
+    - unparam
+    - misspell
+    - gocyclo
+    - lll
+    - goimports
+    - revive
+    - whitespace
+    - errorlint
+    - varnamelen
+    - wrapcheck
+
+run:
+  timeout: 5m
+
+linters-settings:
+  gocyclo:
+    min-complexity: 16
+  lll:
+    line-length: 200
+  varnamelen:
+    ignore-names:
+      - err
+    ignore-decls:
+      - t testing.T
+
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files.
+    - path: _(test|mock)\.go
+      linters:
+        - lll
+        - errcheck
+        - gosec
+  # Maximum issues count per one linter. Set to 0 to disable. Default is 50.
+  max-issues-per-linter: 0
+  # Maximum count of issues with the same text. Set to 0 to disable. Default is 3.
+  max-same-issues: 0
