@@ -184,15 +184,7 @@ func (cou *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
 		return err
 	}
 
-	err = cou.contractRepository.Cancel(ctx, id)
-	if err != nil {
-		return err
-	}
-
-	// search for invoices
-
 	invoices, err := cou.stripe.ListInvoices(contract)
-
 	if err != nil {
 		return err
 	}
@@ -200,6 +192,11 @@ func (cou *ContractUseCase) Cancel(ctx context.Context, id uuid.UUID) error {
 	valueFine := cou.stripe.CalculateRemainingValueSubscription(invoices, contract.Amount)
 
 	_, err = cou.stripe.FineResponsible(contract, int64(valueFine))
+	if err != nil {
+		return err
+	}
+
+	err = cou.contractRepository.Cancel(ctx, id)
 	if err != nil {
 		return err
 	}
