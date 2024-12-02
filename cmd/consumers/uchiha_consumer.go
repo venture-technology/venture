@@ -60,7 +60,6 @@ func (c *consumer) StartConsumer() {
 			if err != nil {
 				log.Fatalf("Erro ao unserializar mensagem do Kafka: %v", err)
 			}
-			log.Printf("Message to -->: %s", email)
 
 			err = c.emailUseCase.SendEmail(context.Background(), email)
 			if err != nil {
@@ -109,6 +108,5 @@ func main() {
 	emailUseCase := email.NewEmailUseCase(emailRepository, awsRepository, logger)
 
 	consumer := NewConsumer(emailUseCase)
-	log.Print("initing service: uchiha")
 	consumer.StartConsumer()
 }
