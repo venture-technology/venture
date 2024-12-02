@@ -1056,3 +1056,100 @@ func TestContract_FindAllByCnpj(t *testing.T) {
 	})
 
 }
+
+func TestContract_Cancel(t *testing.T) {
+	t.Run("when get of contract return fail", func(t *testing.T) {
+		contractRepository := mocks.NewIContractRepository(t)
+		stripe := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		contractRepository.On("Get", context.Background(), mock.Anything).Return(nil, fmt.Errorf("error"))
+
+		useCase := NewContractUseCase(contractRepository, stripe, googleAdapter, nil)
+		var uuid uuid.UUID
+		err := useCase.Cancel(context.Background(), uuid)
+
+		if err == nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+	t.Run("when list invoices on stripe return fail", func(t *testing.T) {
+		contractRepository := mocks.NewIContractRepository(t)
+		stripe := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		contractRepository.On("Get", context.Background(), mock.Anything).Return(&entity.Contract{}, nil)
+		stripe.On("ListInvoices", mock.Anything).Return(nil, fmt.Errorf("error"))
+
+		useCase := NewContractUseCase(contractRepository, stripe, googleAdapter, nil)
+
+		var uuid uuid.UUID
+		err := useCase.Cancel(context.Background(), uuid)
+
+		if err == nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+	t.Run("when fine responsible return fail", func(t *testing.T) {
+		contractRepository := mocks.NewIContractRepository(t)
+		stripe := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		contract := entity.Contract{}
+
+		contractRepository.On("Get", context.Background(), mock.Anything).Return(&entity.Contract{}, nil)
+		stripe.On("ListInvoices", mock.Anything).Return(map[string]entity.InvoiceInfo{}, nil)
+		stripe.On("CalculateRemainingValueSubscription", map[string]entity.InvoiceInfo{}, float64(0)).Return(float64(0), nil)
+		stripe.On("FineResponsible", &contract, int64(0)).Return(nil, fmt.Errorf("error"))
+
+		useCase := NewContractUseCase(contractRepository, stripe, googleAdapter, nil)
+
+		var uuid uuid.UUID
+		err := useCase.Cancel(context.Background(), uuid)
+		if err == nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+	t.Run("when we try update contract to cancel return fail", func(t *testing.T) {
+		contractRepository := mocks.NewIContractRepository(t)
+		stripe := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		contract := entity.Contract{}
+
+		contractRepository.On("Get", context.Background(), mock.Anything).Return(&entity.Contract{}, nil)
+		stripe.On("ListInvoices", mock.Anything).Return(map[string]entity.InvoiceInfo{}, nil)
+		stripe.On("CalculateRemainingValueSubscription", map[string]entity.InvoiceInfo{}, float64(0)).Return(float64(0), nil)
+		stripe.On("FineResponsible", &contract, int64(0)).Return(nil, nil)
+		contractRepository.On("Cancel", context.Background(), mock.Anything).Return(fmt.Errorf("error"))
+
+		useCase := NewContractUseCase(contractRepository, stripe, googleAdapter, nil)
+
+		var uuid uuid.UUID
+		err := useCase.Cancel(context.Background(), uuid)
+		if err == nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+	t.Run("when return success", func(t *testing.T) {
+		contractRepository := mocks.NewIContractRepository(t)
+		stripe := mocks.NewIStripe(t)
+		googleAdapter := adapter.NewGoogleAdapter()
+
+		contract := entity.Contract{}
+
+		contractRepository.On("Get", context.Background(), mock.Anything).Return(&entity.Contract{}, nil)
+		stripe.On("ListInvoices", mock.Anything).Return(map[string]entity.InvoiceInfo{}, nil)
+		stripe.On("CalculateRemainingValueSubscription", map[string]entity.InvoiceInfo{}, float64(0)).Return(float64(0), nil)
+		stripe.On("FineResponsible", &contract, int64(0)).Return(nil, nil)
+		contractRepository.On("Cancel", context.Background(), mock.Anything).Return(nil)
+
+		useCase := NewContractUseCase(contractRepository, stripe, googleAdapter, nil)
+
+		var uuid uuid.UUID
+		err := useCase.Cancel(context.Background(), uuid)
+		if err != nil {
+			t.Errorf("Error: %s", err)
+		}
+	})
+}
