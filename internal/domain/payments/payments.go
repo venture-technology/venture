@@ -12,6 +12,7 @@ import (
 	"github.com/stripe/stripe-go/v79/subscription"
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/entity"
+	"go.uber.org/zap"
 )
 
 type IStripe interface {
@@ -30,10 +31,16 @@ type IStripe interface {
 	FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error)
 }
 
-type StripeContract struct{}
+type StripeContract struct {
+	logger *zap.Logger
+}
 
-func NewStripeContract() *StripeContract {
-	return &StripeContract{}
+func NewStripeContract(
+	logger *zap.Logger,
+) *StripeContract {
+	return &StripeContract{
+		logger: logger,
+	}
 }
 
 func (su *StripeContract) CreateProduct(contract *entity.Contract) (*stripe.Product, error) {
@@ -210,6 +217,7 @@ func (su *StripeContract) CalculateRemainingValueSubscription(invoices map[strin
 }
 
 func (su *StripeContract) FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error) {
+	logger := su.logger
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
@@ -222,6 +230,11 @@ func (su *StripeContract) FineResponsible(contract *entity.Contract, amountFine 
 		OffSession:    stripe.Bool(true),
 		Confirm:       stripe.Bool(true),
 	}
+
+	logger.Info("fine responsible",
+		zap.String("customer_id", contract.Child.Responsible.CustomerId),
+		zap.String("payment_method", contract.Child.Responsible.PaymentMethodId),
+	)
 
 	paym, err := paymentintent.New(params)
 	if err != nil {

@@ -73,7 +73,7 @@ func (cr *ContractRepository) Get(ctx context.Context, id uuid.UUID) (*entity.Co
 			d.name AS driver_name, d.email AS driver_email, d.qrcode AS driver_qrcode, d.phone AS driver_phone,
 			s.name AS school_name, s.email AS school_email, s.phone AS school_phone,
 			ch.name AS child_name, ch.rg AS child_rg, ch.responsible_id AS child_responsible_id, ch.shift AS child_shift,
-			r.name AS responsible_name, r.email AS responsible_email, r.phone AS responsible_phone
+			r.name AS responsible_name, r.email AS responsible_email, r.phone AS responsible_phone, r.payment_method_id AS responsible_payment_method_id, r.customer_id AS responsible_customer_id
 		FROM
 			contracts c
 		JOIN
@@ -114,6 +114,8 @@ func (cr *ContractRepository) Get(ctx context.Context, id uuid.UUID) (*entity.Co
 		&contract.Child.Responsible.Name,
 		&contract.Child.Responsible.Email,
 		&contract.Child.Responsible.Phone,
+		&contract.Child.Responsible.PaymentMethodId,
+		&contract.Child.Responsible.CustomerId,
 	)
 	if err != nil {
 		return nil, err

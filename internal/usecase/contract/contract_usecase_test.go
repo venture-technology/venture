@@ -13,6 +13,7 @@ import (
 	"github.com/venture-technology/venture/internal/domain/payments"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/mocks"
+	"go.uber.org/zap"
 )
 
 func TestContractUseCase_Create(t *testing.T) {
@@ -143,8 +144,9 @@ func TestContractUseCase_Create(t *testing.T) {
 	})
 
 	t.Run("when title already exists", func(t *testing.T) {
+		logger, _ := zap.NewProduction()
 		cou := mocks.NewIContractRepository(t)
-		st := payments.NewStripeContract()
+		st := payments.NewStripeContract(logger)
 		googleAdapter := adapter.NewGoogleAdapter()
 
 		contract := entity.Contract{
@@ -199,8 +201,9 @@ func TestContractUseCase_Create(t *testing.T) {
 	})
 
 	t.Run("when doesnt had payment method", func(t *testing.T) {
+		logger, _ := zap.NewProduction()
 		cou := mocks.NewIContractRepository(t)
-		st := payments.NewStripeContract()
+		st := payments.NewStripeContract(logger)
 		googleAdapter := adapter.NewGoogleAdapter()
 
 		contract := entity.Contract{
@@ -254,8 +257,9 @@ func TestContractUseCase_Create(t *testing.T) {
 	})
 
 	t.Run("when doesnt had pix or bank", func(t *testing.T) {
+		logger, _ := zap.NewProduction()
 		cou := mocks.NewIContractRepository(t)
-		st := payments.NewStripeContract()
+		st := payments.NewStripeContract(logger)
 		googleAdapter := adapter.NewGoogleAdapter()
 
 		contract := entity.Contract{
@@ -302,8 +306,9 @@ func TestContractUseCase_Create(t *testing.T) {
 	})
 
 	t.Run("when doesnt had car and year", func(t *testing.T) {
+		logger, _ := zap.NewProduction()
 		cou := mocks.NewIContractRepository(t)
-		st := payments.NewStripeContract()
+		st := payments.NewStripeContract(logger)
 		googleAdapter := adapter.NewGoogleAdapter()
 
 		contract := entity.Contract{
@@ -354,8 +359,9 @@ func TestContractUseCase_Create(t *testing.T) {
 	})
 
 	t.Run("when get distance return error", func(t *testing.T) {
+		logger, _ := zap.NewProduction()
 		cou := mocks.NewIContractRepository(t)
-		st := payments.NewStripeContract()
+		st := payments.NewStripeContract(logger)
 		googleAdapter := adapter.NewGoogleAdapter()
 
 		contract := entity.Contract{

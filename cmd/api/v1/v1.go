@@ -119,7 +119,7 @@ func (v1 *V1) Setup() {
 		contract.NewContractUseCase(
 			repository.NewContractRepository(
 				v1.app.Database, logger),
-			payments.NewStripeContract(),
+			payments.NewStripeContract(logger),
 			adapter.NewGoogleAdapter(),
 			logger,
 		),

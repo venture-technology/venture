@@ -3,7 +3,6 @@ package contract
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/domain/adapter"
@@ -37,7 +36,13 @@ func NewContractUseCase(
 
 // we create the contract, checking whether the person responsible has a payment method, calculating the distance between the school and the person responsible's residence, creating the product, the price and the signature on the stripe, and finally, creating the contract in the database
 func (cou *ContractUseCase) Create(ctx context.Context, contract *entity.Contract) error {
-	contract.StripeSubscription.Title = fmt.Sprintf("%s - %s - %s - %s", contract.Driver.Name, contract.School.Name, contract.Child.Responsible.Name, contract.Child.Name)
+	contract.StripeSubscription.Title = fmt.Sprintf(
+		"%s - %s - %s - %s",
+		contract.Driver.Name,
+		contract.School.Name,
+		contract.Child.Responsible.Name,
+		contract.Child.Name,
+	)
 
 	simpleContract, err := cou.contractRepository.GetSimpleContractByTitle(ctx, &contract.StripeSubscription.Title)
 	if err != nil {
@@ -50,20 +55,16 @@ func (cou *ContractUseCase) Create(ctx context.Context, contract *entity.Contrac
 
 	hasPaymentMethod := contract.Child.Responsible.HasPaymentMethod()
 
-	log.Print(hasPaymentMethod, contract.Child.Responsible.PaymentMethodId)
-
 	if !hasPaymentMethod {
 		return fmt.Errorf("responsible %s doesnt have a payment method", contract.Child.Responsible.CPF)
 	}
 
 	hasPixOrBankAccount := contract.Driver.HasPixOrBankAccount()
-
 	if !hasPixOrBankAccount {
 		return fmt.Errorf("driver %s need pix or bank account register", contract.Driver.CNH)
 	}
 
 	hasCar := contract.Driver.HasCar()
-
 	if !hasCar {
 		return fmt.Errorf("driver %s need car register", contract.Driver.CNH)
 	}
@@ -84,29 +85,24 @@ func (cou *ContractUseCase) Create(ctx context.Context, contract *entity.Contrac
 	}
 
 	contract.StripeSubscription.Product = prodt.ID
-
 	pr, err := cou.stripe.CreatePrice(contract)
 	if err != nil {
 		return err
 	}
 
 	contract.StripeSubscription.Price = pr.ID
-
 	subs, err := cou.stripe.CreateSubscription(contract)
 	if err != nil {
 		return err
 	}
 
 	contract.StripeSubscription.ID = subs.ID
-
 	id, err := uuid.NewV7()
 	if err != nil {
 		return err
 	}
 
 	contract.Record = id
-
-	log.Print(contract)
 
 	hasAmount := contract.ValidateAmount()
 
@@ -116,7 +112,6 @@ func (cou *ContractUseCase) Create(ctx context.Context, contract *entity.Contrac
 	}
 
 	err = cou.contractRepository.Create(ctx, contract)
-	log.Print(err)
 	if err != nil {
 		return err
 	}

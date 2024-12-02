@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -94,8 +93,6 @@ func (ar *AwsRepository) ListImagesAtS3(ctx context.Context, path string) ([]str
 	conf := config.Get()
 
 	svc := s3.New(ar.sess)
-
-	log.Print(path)
 
 	input := &s3.ListObjectsV2Input{
 		Bucket: aws.String(conf.Cloud.BucketName),
