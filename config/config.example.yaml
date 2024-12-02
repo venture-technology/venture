@@ -26,9 +26,15 @@ cache:
   address: "localhost"
   password: "password"
 
-messaging:
-  broker: "your-broker-ip"
-  topic: "your-topic-name"
+uchiha:
+  name: 'uchiha'
+  queue: 'uchiha-topic'
+  address-queue: '0.0.0.0:9092'
+
+mongo:
+  address: 'mongodb://0.0.0.0:27017'
+  dbname: 'venturemdb'
+  collection: 'uchiha-email'
 
 google-cloud-secret:
   apikey: "your-apikey-google"
@@ -37,3 +43,6 @@ google-cloud-secret:
 stripe-env:
   publickey: "your-stripe-public-key"
   secretkey: "your-stripe-secret-key"
+
+admin:
+  apikey: 'your-api-admin-key

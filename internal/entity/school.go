@@ -6,13 +6,14 @@ import (
 )
 
 type School struct {
-	ID       int     `json:"id,omitempty"`
-	Name     string  `json:"name,omitempty" validate:"required"`
-	CNPJ     string  `json:"cnpj,omitempty" validate:"required"`
-	Email    string  `json:"email,omitempty" validate:"required"`
-	Password string  `json:"password,omitempty" validate:"required"`
-	Address  Address `json:"address,omitempty" validate:"required"`
-	Phone    string  `json:"phone,omitempty" validate:"required" example:"+55 11 123456789"`
+	ID           int     `json:"id,omitempty"`
+	Name         string  `json:"name,omitempty" validate:"required"`
+	CNPJ         string  `json:"cnpj,omitempty" validate:"required"`
+	Email        string  `json:"email,omitempty" validate:"required"`
+	Password     string  `json:"password,omitempty" validate:"required"`
+	Address      Address `json:"address,omitempty" validate:"required"`
+	Phone        string  `json:"phone,omitempty" validate:"required" example:"+55 11 123456789"`
+	ProfileImage string  `json:"profile_image,omitempty"`
 }
 
 type ClaimsSchool struct {
