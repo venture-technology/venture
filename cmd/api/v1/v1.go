@@ -185,7 +185,7 @@ func (v1 *V1) NewRoutes() {
 	v1.app.V1.GET("/responsible/contract/:cpf", v1.contract.FindAllByCpf)
 	v1.app.V1.GET("/child/contract/:rg", v1.contract.FindAllByRg)
 	v1.app.V1.PATCH("/contract/:id/cancel", v1.contract.Cancel)
-	v1.app.V1.PATCH("/webhook/contract/:id/expired", v1.contract.Expired)
+	v1.app.V1.PATCH("/contract/:id/expired", v1.contract.Expired)
 	v1.app.V1.POST("/maps/price", v1.maps.CalculatePrice)
 	v1.app.V1.POST("/school/auth", v1.auth.AuthSchool)
 	v1.app.V1.POST("/driver/auth", v1.auth.AuthDriver)

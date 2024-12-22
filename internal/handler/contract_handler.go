@@ -133,9 +133,23 @@ func (coh *ContractHandler) Cancel(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, "contrato cancelado com sucesso")
-
 }
 
 func (coh *ContractHandler) Expired(c *gin.Context) {
 
+	id := c.Param("id")
+
+	uuid, err := uuid.Parse(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
+
+	err = coh.contractUseCase.Expired(c, uuid)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar expirar o contrato"))
+		return
+	}
+
+	c.JSON(http.StatusOK, "contrato expirado com sucesso")
 }

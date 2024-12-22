@@ -214,6 +214,6 @@ func (cou *ContractUseCase) GetInvoice(ctx context.Context, invoice *string) (*e
 }
 
 // this function is used when contract expires at stripe, then they'll send a webhook to expire contract in our system
-// func (cou *ContractUseCase) Expired(ctx context.Context, id uuid.UUID) error {
-// 	return cou.contractRepository.Expired(ctx, id)
-// }
+func (cou *ContractUseCase) Expired(ctx context.Context, id uuid.UUID) error {
+	return cou.contractRepository.Expired(ctx, id)
+}
