@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"fmt"
+
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
@@ -35,5 +37,43 @@ func (ldcuc *ListDriverContractsUseCase) ListDriverContracts(cnh *string) ([]val
 }
 
 func buildDriverListContracts(contracts *entity.Contract) value.DriverListContracts {
-	return value.DriverListContracts{}
+	return value.DriverListContracts{
+		ID:     contracts.ID,
+		Record: contracts.Record,
+		Status: contracts.Status,
+		Amount: contracts.Amount,
+		School: value.GetSchoolContract{
+			ID:   contracts.School.ID,
+			Name: contracts.School.Name,
+			Address: fmt.Sprintf(
+				"%s, %s, %s",
+				contracts.School.Address.Street,
+				contracts.School.Address.Number,
+				contracts.School.Address.ZIP,
+			),
+			Phone:        contracts.School.Phone,
+			ProfileImage: contracts.School.ProfileImage,
+		},
+		Child: value.GetChildContract{
+			ID:           contracts.Child.ID,
+			Name:         contracts.Child.Name,
+			Period:       contracts.Child.Shift,
+			ProfileImage: contracts.Child.ProfileImage,
+		},
+		Responsible: value.GetParentContract{
+			ID:           contracts.Child.Responsible.ID,
+			Name:         contracts.Child.Responsible.Name,
+			Phone:        contracts.Child.Responsible.Phone,
+			Email:        contracts.Child.Responsible.Email,
+			ProfileImage: contracts.Child.Responsible.ProfileImage,
+			Address: fmt.Sprintf(
+				"%s, %s, %s",
+				contracts.Child.Responsible.Address.Street,
+				contracts.Child.Responsible.Address.Number,
+				contracts.Child.Responsible.Address.ZIP,
+			),
+		},
+		CreatedAt: contracts.CreatedAt,
+		ExpireAt:  contracts.ExpireAt,
+	}
 }
