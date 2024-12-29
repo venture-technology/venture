@@ -22,7 +22,7 @@ type Config struct {
 
 type Server struct {
 	Host   string `yaml:"host"`
-	Port   int    `yaml:"port"`
+	Port   string `yaml:"port"`
 	Secret string `yaml:"string"`
 }
 
