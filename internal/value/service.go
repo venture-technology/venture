@@ -175,9 +175,15 @@ type GetContract struct {
 }
 
 type DriverListContracts struct {
-	ID     int       `json:"id"`
-	Record uuid.UUID `json:"record"`
-	Status string    `json:"status"`
+	ID          int               `json:"id"`
+	Record      uuid.UUID         `json:"record"`
+	Status      string            `json:"status"`
+	Amount      float64           `json:"amount"`
+	School      GetSchoolContract `json:"school"`
+	Responsible GetParentContract `json:"responsible"`
+	Child       GetChildContract  `json:"child"`
+	CreatedAt   time.Time         `json:"created_at"`
+	ExpireAt    time.Time         `json:"expire_at"`
 }
 
 type SchoolListContracts struct {
@@ -212,5 +218,12 @@ type GetParentContract struct {
 	Email        string `json:"email"`
 	Address      string `json:"address"`
 	Phone        string `json:"phone"`
+	ProfileImage string `json:"profile_image"`
+}
+
+type GetChildContract struct {
+	ID           int    `json:"id"`
+	Name         string `json:"name"`
+	Period       string `json:"period"`
 	ProfileImage string `json:"profile_image"`
 }
