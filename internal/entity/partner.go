@@ -3,8 +3,9 @@ package entity
 import "time"
 
 type Partner struct {
-	Record    int       `json:"record"`
+	ID        int       `gorm:"primary_key;auto_increment" json:"record"`
 	Driver    Driver    `json:"driver"`
 	School    School    `json:"school"`
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
