@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/venture-technology/venture/internal/infra"
+	"github.com/venture-technology/venture/internal/usecase"
 )
 
 type PartnerController struct {
@@ -13,24 +15,15 @@ func NewPartnerController() *PartnerController {
 	return &PartnerController{}
 }
 
-func (ph *PartnerController) Get(c *gin.Context) {
-	id := c.Param("id")
-
-	partner, err := ph.PartnerUseCase.Get(c, &id)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "parceiro não encontrado"})
-		return
-	}
-
-	c.JSON(http.StatusOK, partner)
-}
-
-func (ph *PartnerController) FindAllByCnh(c *gin.Context) {
+func (ph *PartnerController) getV1DriverListPartners(c *gin.Context) {
 	cnh := c.Param("cnh")
 
-	partners, err := ph.PartnerUseCase.FindAllByCnh(c, &cnh)
+	usecase := usecase.NewDriverListPartnersUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
 
+	partners, err := usecase.DriverListPartners(cnh)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "parceiro não encontrado"})
 		return
@@ -39,11 +32,15 @@ func (ph *PartnerController) FindAllByCnh(c *gin.Context) {
 	c.JSON(http.StatusOK, partners)
 }
 
-func (ph *PartnerController) FindAllByCnpj(c *gin.Context) {
+func (ph *PartnerController) getV1SchoolListPartners(c *gin.Context) {
 	cnpj := c.Param("cnpj")
 
-	partners, err := ph.PartnerUseCase.FindAllByCnpj(c, &cnpj)
+	usecase := usecase.NewSchoolListPartnersUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
 
+	partners, err := usecase.SchoolListPartners(cnpj)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "parceiro não encontrado"})
 		return
@@ -55,8 +52,12 @@ func (ph *PartnerController) FindAllByCnpj(c *gin.Context) {
 func (ph *PartnerController) Delete(c *gin.Context) {
 	id := c.Param("id")
 
-	err := ph.PartnerUseCase.Delete(c, &id)
+	usecase := usecase.NewDeletePartnerUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
 
+	err := usecase.DeletePartner(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "parceiro não encontrado"})
 		return

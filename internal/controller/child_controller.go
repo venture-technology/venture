@@ -5,6 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/venture-technology/venture/internal/entity"
+	"github.com/venture-technology/venture/internal/infra"
+	"github.com/venture-technology/venture/internal/usecase"
 )
 
 type ChildController struct {
@@ -14,16 +16,19 @@ func NewChildController() *ChildController {
 	return &ChildController{}
 }
 
-func (ch *ChildController) Create(c *gin.Context) {
+func (ch *ChildController) PostV1CreateChild(c *gin.Context) {
 	var input entity.Child
-
 	if err := c.BindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
-	err := ch.childUseCase.Create(c, &input)
+	usecase := usecase.NewCreateChildUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
 
+	err := usecase.CreateChild(&input)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao criar novo filho"})
 		return
@@ -32,7 +37,7 @@ func (ch *ChildController) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, http.NoBody)
 }
 
-func (ch *ChildController) Get(c *gin.Context) {
+func (ch *ChildController) GetV1GetChild(c *gin.Context) {
 	rg := c.Param("rg")
 
 	child, err := ch.childUseCase.Get(c, &rg)

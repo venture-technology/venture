@@ -20,17 +20,16 @@ func NewResponsibleController() *ResponsibleController {
 
 func (rh *ResponsibleController) Create(c *gin.Context) {
 	var input entity.Responsible
+	if err := c.BindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
 
 	usecase := usecase.NewCreateResponsibleUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 		infra.App.Config,
 	)
-
-	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
-		return
-	}
 
 	input.Password = utils.MakeHash(input.Password)
 
@@ -46,7 +45,12 @@ func (rh *ResponsibleController) Create(c *gin.Context) {
 func (rh *ResponsibleController) Get(c *gin.Context) {
 	cpf := c.Param("cpf")
 
-	responsible, err := rh.responsibleUseCase.Get(c, &cpf)
+	usecase := usecase.NewGetResponsibleUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	responsible, err := usecase.GetResponsible(cpf)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "responsavel não encontrado"))
 		return
@@ -59,21 +63,18 @@ func (rh *ResponsibleController) Update(c *gin.Context) {
 	cpf := c.Param("cpf")
 
 	var input entity.Responsible
-
 	if err := c.BindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
 	input.CPF = cpf
+	usecase := usecase.NewUpdateResponsibleUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
 
-	currentResponsible, err := rh.responsibleUseCase.Get(c, &input.CPF)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro interno de servidor ao tentar buscar o responsável atual"))
-		return
-	}
-
-	_, err = rh.responsibleUseCase.UpdateCustomer(c, currentResponsible)
+	_, err = usecase.UpdateResponsible(&input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar atualizar as informações do responsável na stripe"))
 		return
