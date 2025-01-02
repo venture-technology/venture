@@ -4,22 +4,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/venture-technology/venture/internal/entity"
 )
-
-type CreateResponsibleInput struct {
-}
-
-type CreateResponsibleOutput struct {
-}
-
-type SaveCardInput struct {
-}
-
-type UpdateResponsibleInput struct {
-}
-
-type UpdateResponsibleOutput struct {
-}
 
 type GetResponsible struct {
 	ID              int       `json:"id"`
@@ -31,15 +17,6 @@ type GetResponsible struct {
 	ProfileImage    string    `json:"profile_image"`
 	PaymentMethodId string    `json:"payment_method_id"`
 	CreatedAt       time.Time `json:"created_at"`
-}
-
-type LoginResponsible struct {
-}
-
-type CreateChildInput struct {
-}
-
-type CreateChildOutput struct {
 }
 
 type GetChild struct {
@@ -59,27 +36,6 @@ type ListChild struct {
 	ProfileImage string `json:"profile_image"`
 }
 
-type UpdateChildInput struct {
-}
-
-type UpdateChildOutput struct {
-}
-
-type CreateDriverInput struct {
-}
-
-type CreateDriverOutput struct {
-}
-
-type CreateSchoolInput struct {
-}
-
-type CreateSchoolOutput struct {
-}
-
-type LoginSchool struct {
-}
-
 type GetSchool struct {
 	ID           int       `json:"id"`
 	Name         string    `json:"name"`
@@ -91,18 +47,29 @@ type GetSchool struct {
 }
 
 type ListSchool struct {
-}
-
-type UpdateSchoolInput struct {
-}
-
-type UpdateSchoolOutput struct {
-}
-
-type LoginDriver struct {
+	ID           int       `json:"id"`
+	Name         string    `json:"name"`
+	Email        string    `json:"email"`
+	Address      string    `json:"address"`
+	Phone        string    `json:"phone"`
+	ProfileImage string    `json:"profile_image"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type GetDriver struct {
+	ID           int            `json:"id"`
+	Name         string         `json:"name"`
+	Email        string         `json:"email"`
+	QrCode       string         `json:"qrcode"`
+	Amount       float64        `json:"amount"`
+	Phone        string         `json:"phone"`
+	Car          string         `json:"car"`
+	ProfileImage string         `json:"profile_image"`
+	CreatedAt    time.Time      `json:"created_at"`
+	Gallery      map[int]string `json:"gallery"`
+}
+
+type ListDriver struct {
 	ID           int       `json:"id"`
 	Name         string    `json:"name"`
 	Email        string    `json:"email"`
@@ -114,31 +81,21 @@ type GetDriver struct {
 	CreatedAt    time.Time `json:"created_at"`
 }
 
-type ListDriver struct {
+type SchoolListInvite struct {
+	ID           int    `json:"id"`
+	Name         string `json:"name"`
+	Email        string `json:"email"`
+	Phone        string `json:"phone"`
+	ProfileImage string `json:"profile_image"`
 }
 
-type ListGallery struct {
-}
-
-type CreateInviteInput struct {
-}
-
-type CreateInviteOutput struct {
-}
-
-type GetInvite struct {
-}
-
-type ListInvite struct {
-}
-
-type GetPrice struct {
-}
-
-type CreatePartnerInput struct {
-}
-
-type CreatePartnerOutput struct {
+type DriverListInvite struct {
+	ID           int    `json:"id"`
+	Name         string `json:"name"`
+	Email        string `json:"email"`
+	Phone        string `json:"phone"`
+	ProfileImage string `json:"profile_image"`
+	Address      string `json:"address"`
 }
 
 type SchoolListPartners struct {
@@ -161,17 +118,18 @@ type DriverListPartners struct {
 }
 
 type GetContract struct {
-	ID          int               `json:"id"`
-	Status      string            `json:"status"`
-	ChildName   string            `json:"child_name"`
-	Period      string            `json:"period"`
-	Amount      float64           `json:"amount"`
-	Record      uuid.UUID         `json:"record"`
-	CreatedAt   time.Time         `json:"created_at"`
-	ExpireAt    time.Time         `json:"expire_at"`
-	Driver      GetDriverContract `json:"driver"`
-	School      GetSchoolContract `json:"school"`
-	Responsible GetParentContract `json:"responsible"`
+	ID          int                           `json:"id"`
+	Status      string                        `json:"status"`
+	ChildName   string                        `json:"child_name"`
+	Period      string                        `json:"period"`
+	Amount      float64                       `json:"amount"`
+	Record      uuid.UUID                     `json:"record"`
+	CreatedAt   time.Time                     `json:"created_at"`
+	ExpireAt    time.Time                     `json:"expire_at"`
+	Responsible GetParentContract             `json:"responsible"`
+	Driver      GetDriverContract             `json:"driver"`
+	School      GetSchoolContract             `json:"school"`
+	Invoices    map[string]entity.InvoiceInfo `json:"invoices"`
 }
 
 type DriverListContracts struct {
@@ -187,12 +145,29 @@ type DriverListContracts struct {
 }
 
 type SchoolListContracts struct {
+	ID          int               `json:"id"`
+	Status      string            `json:"status"`
+	ChildName   string            `json:"child_name"`
+	Period      string            `json:"period"`
+	Amount      float64           `json:"amount"`
+	Record      uuid.UUID         `json:"record"`
+	CreatedAt   time.Time         `json:"created_at"`
+	ExpireAt    time.Time         `json:"expire_at"`
+	Driver      GetDriverContract `json:"driver"`
+	Responsible GetParentContract `json:"responsible"`
 }
 
 type ResponsibleListContracts struct {
-}
-
-type ListPartnerDriver struct {
+	ID        int               `json:"id"`
+	Status    string            `json:"status"`
+	ChildName string            `json:"child_name"`
+	Period    string            `json:"period"`
+	Amount    float64           `json:"amount"`
+	Record    uuid.UUID         `json:"record"`
+	CreatedAt time.Time         `json:"created_at"`
+	ExpireAt  time.Time         `json:"expire_at"`
+	Driver    GetDriverContract `json:"driver"`
+	School    GetSchoolContract `json:"school"`
 }
 
 type GetDriverContract struct {
