@@ -5,8 +5,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/venture-technology/venture/internal/domain/adapter"
+	"github.com/venture-technology/venture/internal/domain/payments"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/exceptions"
+	"github.com/venture-technology/venture/internal/infra"
+	"github.com/venture-technology/venture/internal/usecase"
 )
 
 type ContractController struct {
@@ -16,16 +20,19 @@ func NewContractController() *ContractController {
 	return &ContractController{}
 }
 
-func (coh *ContractController) Create(c *gin.Context) {
+func (coh *ContractController) PostV1Create(c *gin.Context) {
 	var input entity.Contract
-
 	if err := c.BindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
-	err := coh.contractUseCase.Create(c, &input)
-
+	usecase := usecase.NewCreateContractUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		adapter.NewGoogleAdapter(),
+		payments.NewStripeContract(),
+	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"))
 		return
