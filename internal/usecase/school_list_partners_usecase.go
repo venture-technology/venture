@@ -24,8 +24,16 @@ func NewSchoolListPartnersUseCase(
 	}
 }
 
-func (slpuc *SchoolListPartnersUseCase) SchoolListPartners() {
-
+func (slpuc *SchoolListPartnersUseCase) SchoolListPartners(cnpj string) ([]value.SchoolListPartners, error) {
+	partners, err := slpuc.repositories.PartnerRepository.FindAllByCnpj(cnpj)
+	if err != nil {
+		return nil, err
+	}
+	response := []value.SchoolListPartners{}
+	for _, partner := range partners {
+		response = append(response, buildSchoolListPartner(partner))
+	}
+	return response, nil
 }
 
 func buildSchoolListPartner(partners entity.Partner) value.SchoolListPartners {

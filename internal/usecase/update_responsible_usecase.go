@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -20,4 +21,6 @@ func NewUpdateResponsibleUseCase(
 	}
 }
 
-func (uruc *UpdateResponsibleUseCase) UpdateResponsible() {}
+func (uruc *UpdateResponsibleUseCase) UpdateResponsible(responsible *entity.Responsible) error {
+	return uruc.repositories.ResponsibleRepository.Update(responsible)
+}

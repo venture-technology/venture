@@ -31,7 +31,7 @@ func (ccuc *CancelContractUseCase) CancelContract(id uuid.UUID) error {
 		return err
 	}
 
-	invoices, err := ccuc.payments.ListInvoices(contract)
+	invoices, err := ccuc.payments.ListInvoices(contract.StripeSubscription.ID)
 	if err != nil {
 		return err
 	}

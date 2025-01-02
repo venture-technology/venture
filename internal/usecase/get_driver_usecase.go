@@ -11,15 +11,18 @@ import (
 type GetDriverUseCase struct {
 	repositories *persistence.PostgresRepositories
 	logger       contracts.Logger
+	S3           contracts.S3Iface
 }
 
 func NewGetDriverUseCase(
 	repositories *persistence.PostgresRepositories,
 	logger contracts.Logger,
+	S3 contracts.S3Iface,
 ) *GetDriverUseCase {
 	return &GetDriverUseCase{
 		repositories: repositories,
 		logger:       logger,
+		S3:           S3,
 	}
 }
 
@@ -28,6 +31,14 @@ func (gduc *GetDriverUseCase) GetDriver(cnh string) (value.GetDriver, error) {
 	if err != nil {
 		return value.GetDriver{}, err
 	}
+
+	gallery := make(map[int]string)
+
+	images, err := gduc.S3.List(fmt.Sprintf("%s/gallery", cnh))
+	for idx, image := range images {
+		gallery[idx] = image
+	}
+
 	return value.GetDriver{
 		ID:     driver.ID,
 		Name:   driver.Name,
@@ -42,5 +53,6 @@ func (gduc *GetDriverUseCase) GetDriver(cnh string) (value.GetDriver, error) {
 		),
 		ProfileImage: driver.ProfileImage,
 		CreatedAt:    driver.CreatedAt,
+		Gallery:      gallery,
 	}, nil
 }

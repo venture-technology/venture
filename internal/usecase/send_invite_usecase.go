@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -20,6 +21,10 @@ func NewSendInviteUseCase(
 	}
 }
 
-func (siuc *SendInviteUseCase) SendInvite() {
-
+func (siuc *SendInviteUseCase) SendInvite(invite *entity.Invite) error {
+	err := siuc.repositories.InviteRepository.Create(invite)
+	if err != nil {
+		return err
+	}
+	return nil
 }
