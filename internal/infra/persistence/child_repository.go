@@ -32,11 +32,12 @@ func (cr ChildRepositoryImpl) FindAll(cpf *string) ([]entity.Child, error) {
 	return children, nil
 }
 
-func (cr ChildRepositoryImpl) Update(child *entity.Child, attributes map[string]interface{}) error {
+func (cr ChildRepositoryImpl) Update(rg string, attributes map[string]interface{}) error {
 	attributes["updated_at"] = realtime.Now().UTC()
 
 	err := cr.Postgres.Client().
-		Model(&child).
+		Model(&entity.Child{}).
+		Where("rg = ?", rg).
 		UpdateColumns(attributes).
 		Error
 

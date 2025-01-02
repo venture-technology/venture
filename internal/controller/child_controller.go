@@ -63,20 +63,20 @@ func (ch *ChildController) FindAll(c *gin.Context) {
 	c.JSON(http.StatusOK, children)
 }
 
-func (ch *ChildController) Update(c *gin.Context) {
+func (ch *ChildController) PatchV1UpdateController(c *gin.Context) {
 	rg := c.Param("rg")
-
-	var input entity.Child
-
-	input.RG = rg
-
-	if err := c.BindJSON(&input); err != nil {
+	var data map[string]interface{}
+	if err := c.BindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
-	err := ch.childUseCase.Update(c, &input)
+	usecase := usecase.NewUpdateChildUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
 
+	err := usecase.UpdateChild(rg, data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno ao atualizar informações"})
 		return

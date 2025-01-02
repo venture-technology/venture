@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -21,6 +20,6 @@ func NewUpdateChildUseCase(
 	}
 }
 
-func (ucuc *UpdateChildUseCase) UpdateChild(child *entity.Child, attributes map[string]interface{}) error {
-	return ucuc.repositories.ChildRepository.Update(child, attributes)
+func (ucuc *UpdateChildUseCase) UpdateChild(rg string, attributes map[string]interface{}) error {
+	return ucuc.repositories.ChildRepository.Update(rg, attributes)
 }
