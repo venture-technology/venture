@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/exceptions"
+	"github.com/venture-technology/venture/internal/infra"
+	"github.com/venture-technology/venture/internal/usecase"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
@@ -47,19 +49,20 @@ func (dh *DriverController) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, driver)
 }
 
-func (dh *DriverController) Update(c *gin.Context) {
+func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
 	cnh := c.Param("cnh")
-
-	var input entity.Driver
-
-	if err := c.BindJSON(&input); err != nil {
+	var data map[string]interface{}
+	if err := c.BindJSON(data); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
-	input.CNH = cnh
+	usecase := usecase.NewUpdateDriverUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
 
-	err := dh.driverUseCase.Update(c, &input)
+	err := usecase.UpdateDriver(cnh, data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao realizar atualização das informações do motorista"))
 		return

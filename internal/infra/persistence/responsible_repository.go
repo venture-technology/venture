@@ -5,6 +5,7 @@ import (
 
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
+	"github.com/venture-technology/venture/pkg/realtime"
 )
 
 type ResponsibleRepositoryImpl struct {
@@ -24,8 +25,16 @@ func (rr ResponsibleRepositoryImpl) Get(cpf string) (*entity.Responsible, error)
 	return &responsible, nil
 }
 
-func (rr ResponsibleRepositoryImpl) Update(responsible *entity.Responsible, attributes map[string]interface{}) error {
-	return rr.Postgres.Client().Model(responsible).Updates(attributes).Error
+func (rr ResponsibleRepositoryImpl) Update(cpf string, attributes map[string]interface{}) error {
+	attributes["updated_at"] = realtime.Now().UTC()
+
+	err := rr.Postgres.Client().
+		Model(&entity.Responsible{}).
+		Where("cpf = ?", cpf).
+		UpdateColumns(attributes).
+		Error
+
+	return err
 }
 
 func (rr ResponsibleRepositoryImpl) Delete(cpf string) error {

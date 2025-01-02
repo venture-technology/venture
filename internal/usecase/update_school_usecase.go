@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -21,6 +20,6 @@ func NewUpdateSchoolUseCase(
 	}
 }
 
-func (usuc *UpdateSchoolUseCase) UpdateSchool(school *entity.School, attributes map[string]interface{}) error {
-	return usuc.repositories.SchoolRepository.Update(school, attributes)
+func (usuc *UpdateSchoolUseCase) UpdateSchool(cnpj string, attributes map[string]interface{}) error {
+	return usuc.repositories.SchoolRepository.Update(cnpj, attributes)
 }

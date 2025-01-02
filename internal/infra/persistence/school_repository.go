@@ -3,6 +3,7 @@ package persistence
 import (
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
+	"github.com/venture-technology/venture/pkg/realtime"
 )
 
 type SchoolRepositoryImpl struct {
@@ -28,8 +29,16 @@ func (sr SchoolRepositoryImpl) FindAll() ([]entity.School, error) {
 	return schools, err
 }
 
-func (sr SchoolRepositoryImpl) Update(school *entity.School, attributes map[string]interface{}) error {
-	return sr.Postgres.Client().Model(school).Updates(attributes).Error
+func (sr SchoolRepositoryImpl) Update(cnpj string, attributes map[string]interface{}) error {
+	attributes["updated_at"] = realtime.Now().UTC()
+
+	err := sr.Postgres.Client().
+		Model(&entity.School{}).
+		Where("cnpj = ?", cnpj).
+		UpdateColumns(attributes).
+		Error
+
+	return err
 }
 
 func (sr SchoolRepositoryImpl) Delete(cnpj string) error {

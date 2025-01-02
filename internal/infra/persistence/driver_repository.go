@@ -23,17 +23,20 @@ func (dr DriverRepositoryImpl) Get(cnh string) (*entity.Driver, error) {
 	return &driver, nil
 }
 
-func (dr DriverRepositoryImpl) Update(driver *entity.Driver, attributes map[string]interface{}) error {
+func (dr DriverRepositoryImpl) Update(cnh string, attributes map[string]interface{}) error {
 	attributes["updated_at"] = realtime.Now().UTC()
-	return dr.Postgres.Client().Model(driver).Updates(attributes).Error
+
+	err := dr.Postgres.Client().
+		Model(&entity.Driver{}).
+		Where("cnh = ?", cnh).
+		UpdateColumns(attributes).
+		Error
+
+	return err
 }
 
 func (dr DriverRepositoryImpl) Delete(cnh string) error {
 	return dr.Postgres.Client().Where("cnh = ?", cnh).Delete(&entity.Driver{}).Error
-}
-
-func (dr DriverRepositoryImpl) SavePix(driver *entity.Driver) error {
-	return dr.Update(driver, map[string]interface{}{"pix_key": driver.Pix.Key})
 }
 
 func (dr DriverRepositoryImpl) FindByEmail(email string) (*entity.Driver, error) {

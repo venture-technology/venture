@@ -59,30 +59,22 @@ func (rh *ResponsibleController) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, responsible)
 }
 
-func (rh *ResponsibleController) Update(c *gin.Context) {
+func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 	cpf := c.Param("cpf")
-
-	var input entity.Responsible
-	if err := c.BindJSON(&input); err != nil {
+	var data map[string]interface{}
+	if err := c.BindJSON(data); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
-	input.CPF = cpf
 	usecase := usecase.NewUpdateResponsibleUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	_, err = usecase.UpdateResponsible(&input)
+	err := usecase.UpdateResponsible(cpf, data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar atualizar as informações do responsável na stripe"))
-		return
-	}
-
-	err = rh.responsibleUseCase.Update(c, currentResponsible, &input)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar atualizar as informações do responsável"))
 		return
 	}
 

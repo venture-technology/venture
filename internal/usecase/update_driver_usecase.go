@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -21,6 +20,6 @@ func NewUpdateDriverUseCase(
 	}
 }
 
-func (uduc *UpdateDriverUseCase) UpdateDriver(driver *entity.Driver) error {
-	return uduc.repositories.DriverRepository.Update(driver)
+func (uduc *UpdateDriverUseCase) UpdateDriver(cnh string, attributes map[string]interface{}) error {
+	return uduc.repositories.DriverRepository.Update(cnh, attributes)
 }

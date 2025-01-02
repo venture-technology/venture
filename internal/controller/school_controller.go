@@ -80,21 +80,18 @@ func (sh *SchoolController) GetV1ListSchool(c *gin.Context) {
 
 func (sh *SchoolController) PatchV1UpdateSchool(c *gin.Context) {
 	cnpj := c.Param("cnpj")
-
-	var input entity.School
-	if err := c.BindJSON(&input); err != nil {
+	var data map[string]interface{}
+	if err := c.BindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
-
-	input.CNPJ = cnpj
 
 	usecase := usecase.NewUpdateSchoolUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	err := usecase.UpdateSchool(&input)
+	err := usecase.UpdateSchool(cnpj, data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno de servidor ao atualizar as informações da escola"})
 		return
