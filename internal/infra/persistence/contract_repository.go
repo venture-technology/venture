@@ -27,15 +27,6 @@ func (cr ContractRepositoryImpl) Get(id uuid.UUID) (*entity.Contract, error) {
 	return &contract, nil
 }
 
-func (cr ContractRepositoryImpl) FindAllByRg(rg *string) (*entity.Contract, error) {
-	var contract entity.Contract
-	err := cr.Postgres.Client().Where("child_id = ?", rg).First(&contract).Error
-	if err != nil {
-		return nil, err
-	}
-	return &contract, nil
-}
-
 func (cr ContractRepositoryImpl) FindAllByCnpj(cnpj *string) ([]entity.Contract, error) {
 	var contracts []entity.Contract
 	err := cr.Postgres.Client().Where("school_id = ?", cnpj).Find(&contracts).Error
