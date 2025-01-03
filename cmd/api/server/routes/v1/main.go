@@ -14,7 +14,6 @@ type V1Controllers struct {
 	Partner     *controller.PartnerController
 	Contract    *controller.ContractController
 	Maps        *controller.MapsController
-	Auth        *controller.AuthController
 }
 
 func NewV1Controller() *V1Controllers {
@@ -27,7 +26,6 @@ func NewV1Controller() *V1Controllers {
 		Partner:     controller.NewPartnerController(),
 		Contract:    controller.NewContractController(),
 		Maps:        controller.NewMapsController(),
-		Auth:        controller.NewAuthController(),
 	}
 }
 
@@ -75,8 +73,4 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.PATCH("/contract/:id/expired", route.Contract.Expired)
 
 	group.POST("/maps/price", route.Maps.CalculatePrice)
-
-	group.POST("/school/auth", route.Auth.AuthSchool)
-	group.POST("/driver/auth", route.Auth.AuthDriver)
-	group.POST("/responsible/auth", route.Auth.AuthResponsible)
 }

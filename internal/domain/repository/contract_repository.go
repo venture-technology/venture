@@ -11,7 +11,6 @@ type IContractRepository interface {
 	FindAllByCnpj(cnpj *string) ([]entity.Contract, error)
 	FindAllByCpf(cpf *string) ([]entity.Contract, error)
 	FindAllByCnh(cnh *string) ([]entity.Contract, error)
-	FindAllByRg(rg *string) (*entity.Contract, error)
 	Cancel(uuid uuid.UUID) error
 	Expired(uuid uuid.UUID) error
 	Update(uuid uuid.UUID, attributes map[string]interface{}) error
