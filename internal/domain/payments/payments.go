@@ -23,7 +23,7 @@ type IStripe interface {
 	ListSubscriptions(contract *entity.Contract) ([]entity.SubscriptionInfo, error)
 	DeleteSubscription(contract *entity.Contract) (*stripe.Subscription, error)
 	GetInvoice(invoiceId string) (*stripe.Invoice, error)
-	ListInvoices(contract *entity.Contract) (map[string]entity.InvoiceInfo, error)
+	ListInvoices(contractId string) (map[string]entity.InvoiceInfo, error)
 
 	// this calc is used to calculate the remaining value of the subscription
 	CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64
@@ -171,13 +171,13 @@ func (su *StripeContract) GetInvoice(invoiceId string) (*stripe.Invoice, error) 
 	return inv, nil
 }
 
-func (su *StripeContract) ListInvoices(contract *entity.Contract) (map[string]entity.InvoiceInfo, error) {
+func (su *StripeContract) ListInvoices(contractId string) (map[string]entity.InvoiceInfo, error) {
 	conf := config.Get()
 
 	stripe.Key = conf.StripeEnv.SecretKey
 
 	params := &stripe.InvoiceListParams{
-		Subscription: stripe.String(contract.StripeSubscription.ID),
+		Subscription: stripe.String(contractId),
 	}
 
 	invoices := make(map[string]entity.InvoiceInfo)
