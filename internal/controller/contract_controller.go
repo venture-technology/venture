@@ -33,6 +33,8 @@ func (coh *ContractController) PostV1Create(c *gin.Context) {
 		adapter.NewGoogleAdapter(),
 		payments.NewStripeContract(),
 	)
+
+	err := usecase.CreateContract(&input)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"))
 		return
@@ -41,7 +43,7 @@ func (coh *ContractController) PostV1Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func (coh *ContractController) Get(c *gin.Context) {
+func (coh *ContractController) GetV1GetContract(c *gin.Context) {
 	id := c.Param("id")
 
 	uuid, err := uuid.Parse(id)
@@ -51,7 +53,13 @@ func (coh *ContractController) Get(c *gin.Context) {
 		return
 	}
 
-	contract, err := coh.contractUseCase.Get(c, uuid)
+	usecase := usecase.NewGetContractUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		payments.NewStripeContract(),
+	)
+
+	contract, err := usecase.GetContract(uuid)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
@@ -61,23 +69,15 @@ func (coh *ContractController) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, contract)
 }
 
-func (coh *ContractController) FindAllByRg(c *gin.Context) {
-	rg := c.Param("rg")
-
-	contracts, err := coh.contractUseCase.FindAllByRg(c, &rg)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
-		return
-	}
-
-	c.JSON(http.StatusOK, contracts)
-}
-
-func (coh *ContractController) FindAllByCnpj(c *gin.Context) {
+func (coh *ContractController) GetV1ListContractSchool(c *gin.Context) {
 	cnpj := c.Param("cnpj")
 
-	contracts, err := coh.contractUseCase.FindAllByCnpj(c, &cnpj)
+	usecase := usecase.NewListSchoolContractUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	contracts, err := usecase.ListSchoolContract(&cnpj)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
