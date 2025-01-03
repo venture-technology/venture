@@ -45,13 +45,13 @@ func (ccuc *CreateContractUseCase) CreateContract(contract *entity.Contract) err
 		return err
 	}
 
+	if hasAmount := contract.ValidateAmount(); !hasAmount {
+		return fmt.Errorf("contract amount is invalid")
+	}
+
 	contract, err = ccuc.createStripeItems(contract)
 	if err != nil {
 		return err
-	}
-
-	if hasAmount := contract.ValidateAmount(); !hasAmount {
-		return fmt.Errorf("contract amount is invalid")
 	}
 
 	return ccuc.repositories.ContractRepository.Create(contract)
