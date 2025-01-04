@@ -87,10 +87,16 @@ func (coh *ContractController) GetV1ListContractSchool(c *gin.Context) {
 	c.JSON(http.StatusOK, contracts)
 }
 
-func (coh *ContractController) FindAllByCpf(c *gin.Context) {
+func (coh *ContractController) GetV1ListResponsibleContract(c *gin.Context) {
 	cpf := c.Param("cpf")
 
-	contracts, err := coh.contractUseCase.FindAllByCpf(c, &cpf)
+	usecase := usecase.NewListResponsibleContractsUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		payments.NewStripeContract(),
+	)
+
+	contracts, err := usecase.ListResponsibleContracts(&cpf)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
@@ -100,10 +106,15 @@ func (coh *ContractController) FindAllByCpf(c *gin.Context) {
 	c.JSON(http.StatusOK, contracts)
 }
 
-func (coh *ContractController) FindAllByCnh(c *gin.Context) {
+func (coh *ContractController) GetV1ListDriverContract(c *gin.Context) {
 	cnh := c.Param("cnh")
 
-	contracts, err := coh.contractUseCase.FindAllByCnh(c, &cnh)
+	usecase := usecase.NewListDriverContractsUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	contracts, err := usecase.ListDriverContracts(&cnh)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
