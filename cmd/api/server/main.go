@@ -30,11 +30,11 @@ func main() {
 	setup.Logger("venture-server")
 
 	serverPort := config.Server.Port
-	server := setupServer()
+	server := setupServer(config)
 	server.Run(fmt.Sprintf(":%s", serverPort))
 }
 
-func setupServer() *gin.Engine {
+func setupServer(config *config.Config) *gin.Engine {
 	router := gin.Default()
 	router.GET("/status", getStatus)
 
@@ -45,7 +45,7 @@ func setupServer() *gin.Engine {
 			return
 		}
 
-		token, err := auth.NewToken(authParams)
+		token, err := auth.NewToken(config, authParams)
 		if err != nil {
 			c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 			return
@@ -56,7 +56,7 @@ func setupServer() *gin.Engine {
 
 	apisV1 := router.Group("/api/v1")
 	apisV1.Use(configHeaders())
-	apisV1.Use(middleware.AuthMiddleware())
+	apisV1.Use(middleware.AuthMiddleware(config))
 	v1.NewV1Controller().V1Routes(apisV1)
 
 	return router
@@ -65,7 +65,7 @@ func setupServer() *gin.Engine {
 func getStatus(c *gin.Context) {
 	c.Header("Content-Type", "application/json; charset=utf-8")
 	c.Header("charset", "utf-8")
-	c.Header("app_version", "2024.12.26 18:42")
+	c.Header("app_version", "2025.01.07 02:38")
 	c.String(http.StatusOK, "ok")
 }
 
