@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"github.com/venture-technology/venture/config"
+	"github.com/venture-technology/venture/internal/domain/service/addresses"
+	"github.com/venture-technology/venture/internal/domain/service/payments"
 	"github.com/venture-technology/venture/internal/infra"
 	"github.com/venture-technology/venture/internal/infra/bucket"
 	"github.com/venture-technology/venture/internal/infra/database"
@@ -63,4 +65,9 @@ func (s Setup) Email() {
 
 func (s Setup) Logger(taskname string) {
 	s.app.Logger, _ = logger.New(taskname)
+}
+
+func (s Setup) Adapters() {
+	s.app.Adapters.AddressService = addresses.NewGoogleAdapter(s.app.Config)
+	s.app.Adapters.PaymentsService = payments.NewStripeAdapter(s.app.Config)
 }

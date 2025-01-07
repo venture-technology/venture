@@ -2,6 +2,7 @@ package infra
 
 import (
 	"github.com/venture-technology/venture/config"
+	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -14,6 +15,7 @@ type Application struct {
 	Bucket            contracts.S3Iface
 	Email             contracts.SESIface
 	Logger            contracts.Logger
+	Adapters          adapters.Adapters
 	Config            config.Config
 }
 
