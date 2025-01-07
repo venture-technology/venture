@@ -202,3 +202,9 @@ type GetChildContract struct {
 	Period       string `json:"period"`
 	ProfileImage string `json:"profile_image"`
 }
+
+type AuthValidate struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Kind     string `json:"kind"`
+}
