@@ -71,6 +71,7 @@ type StripeEnv struct {
 
 type Admin struct {
 	ApiKey string `yaml:"apikey"`
+	Port   string `yaml:"port"`
 }
 
 var config *Config

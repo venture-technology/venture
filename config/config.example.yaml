@@ -3,7 +3,7 @@ development: true
 
 server:
   host: "localhost"
-  port: 9999
+  port: "9999"
   secret: "venture"
 
 database:
@@ -45,4 +45,5 @@ stripe-env:
   secretkey: "your-stripe-secret-key"
 
 admin:
-  apikey: 'your-api-admin-key
+  apikey: 'your-api-admin-key'
+  port: '0000'
