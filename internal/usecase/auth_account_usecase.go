@@ -24,15 +24,15 @@ func NewAuthAccountUsecase(
 }
 
 // FindToAuth is a method from AuthAccountUsecase struct, it can be return responsible, driver or school
-func (aauc *AuthAccountUsecase) FindToAuth(auth value.AuthValidate) (interface{}, error) {
-	var kinds = map[string]func(value.AuthValidate) (interface{}, error){
-		"responsible": func(authParams value.AuthValidate) (interface{}, error) {
+func (aauc *AuthAccountUsecase) FindToAuth(auth value.AuthParams) (interface{}, error) {
+	var kinds = map[string]func(value.AuthParams) (interface{}, error){
+		"responsible": func(authParams value.AuthParams) (interface{}, error) {
 			return aauc.repositories.ResponsibleRepository.FindByEmail(authParams.Email)
 		},
-		"driver": func(authParams value.AuthValidate) (interface{}, error) {
+		"driver": func(authParams value.AuthParams) (interface{}, error) {
 			return aauc.repositories.DriverRepository.FindByEmail(authParams.Email)
 		},
-		"school": func(authParams value.AuthValidate) (interface{}, error) {
+		"school": func(authParams value.AuthParams) (interface{}, error) {
 			return aauc.repositories.SchoolRepository.FindByEmail(authParams.Email)
 		},
 	}
