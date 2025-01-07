@@ -21,7 +21,7 @@ var kinds = map[string]interface{}{
 
 func NewToken(
 	conf *config.Config,
-	authParams value.AuthValidate,
+	authParams value.AuthParams,
 ) (string, error) {
 	usecase := usecase.NewAuthAccountUsecase(
 		&infra.App.Repositories,
