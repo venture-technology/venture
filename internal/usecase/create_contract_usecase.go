@@ -4,8 +4,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/venture-technology/venture/internal/domain/adapter"
-	"github.com/venture-technology/venture/internal/domain/payments"
+	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
@@ -13,23 +12,20 @@ import (
 )
 
 type CreateContractUseCase struct {
-	repositories  *persistence.PostgresRepositories
-	logger        contracts.Logger
-	googleAdapter adapter.IGoogleAdapter
-	payments      payments.IStripe
+	repositories *persistence.PostgresRepositories
+	logger       contracts.Logger
+	adapters     adapters.Adapters
 }
 
 func NewCreateContractUseCase(
 	repositories *persistence.PostgresRepositories,
 	logger contracts.Logger,
-	googleAdapter adapter.IGoogleAdapter,
-	payments payments.IStripe,
+	adapters adapters.Adapters,
 ) *CreateContractUseCase {
 	return &CreateContractUseCase{
-		repositories:  repositories,
-		logger:        logger,
-		googleAdapter: googleAdapter,
-		payments:      payments,
+		repositories: repositories,
+		logger:       logger,
+		adapters:     adapters,
 	}
 }
 
@@ -58,7 +54,7 @@ func (ccuc *CreateContractUseCase) CreateContract(contract *entity.Contract) err
 }
 
 func (ccuc *CreateContractUseCase) calcAmount(contract *entity.Contract) (float64, error) {
-	dist, err := ccuc.googleAdapter.GetDistance(
+	dist, err := ccuc.adapters.AddressService.GetDistance(
 		buildResponsibleAddress(&contract.Child.Responsible),
 		buildSchoolAddress(&contract.School),
 	)
@@ -69,19 +65,19 @@ func (ccuc *CreateContractUseCase) calcAmount(contract *entity.Contract) (float6
 }
 
 func (ccuc *CreateContractUseCase) createStripeItems(contract *entity.Contract) (*entity.Contract, error) {
-	prodt, err := ccuc.payments.CreateProduct(contract)
+	prodt, err := ccuc.adapters.PaymentsService.CreateProduct(contract)
 	if err != nil {
 		return nil, err
 	}
 
 	contract.StripeSubscription.Product = prodt.ID
-	pr, err := ccuc.payments.CreatePrice(contract)
+	pr, err := ccuc.adapters.PaymentsService.CreatePrice(contract)
 	if err != nil {
 		return nil, err
 	}
 
 	contract.StripeSubscription.Price = pr.ID
-	subs, err := ccuc.payments.CreateSubscription(contract)
+	subs, err := ccuc.adapters.PaymentsService.CreateSubscription(contract)
 	if err != nil {
 		return nil, err
 	}

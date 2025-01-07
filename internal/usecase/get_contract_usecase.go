@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/venture-technology/venture/internal/domain/payments"
+	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
@@ -13,18 +13,18 @@ import (
 type GetContractUseCase struct {
 	repositories *persistence.PostgresRepositories
 	logger       contracts.Logger
-	payments     payments.IStripe
+	adapters     adapters.Adapters
 }
 
 func NewGetContractUseCase(
 	repositories *persistence.PostgresRepositories,
 	logger contracts.Logger,
-	payments payments.IStripe,
+	adapters adapters.Adapters,
 ) *GetContractUseCase {
 	return &GetContractUseCase{
 		repositories: repositories,
 		logger:       logger,
-		payments:     payments,
+		adapters:     adapters,
 	}
 }
 
@@ -33,7 +33,7 @@ func (gcuc *GetContractUseCase) GetContract(uuid uuid.UUID) (value.GetContract, 
 	if err != nil {
 		return value.GetContract{}, err
 	}
-	invoices, err := gcuc.payments.ListInvoices(contract.StripeSubscription.ID)
+	invoices, err := gcuc.adapters.PaymentsService.ListInvoices(contract.StripeSubscription.ID)
 	if err != nil {
 		return value.GetContract{}, err
 	}
