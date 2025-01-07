@@ -203,7 +203,7 @@ type GetChildContract struct {
 	ProfileImage string `json:"profile_image"`
 }
 
-type AuthValidate struct {
+type AuthParams struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Kind     string `json:"kind"`
