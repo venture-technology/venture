@@ -1,4 +1,4 @@
-package routes
+package adm
 
 import (
 	"github.com/gin-gonic/gin"

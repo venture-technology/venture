@@ -3,7 +3,7 @@ package usecase
 import (
 	"fmt"
 
-	"github.com/venture-technology/venture/internal/domain/payments"
+	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
@@ -13,18 +13,18 @@ import (
 type ListResponsibleContractsUseCase struct {
 	repositories *persistence.PostgresRepositories
 	logger       contracts.Logger
-	payments     payments.IStripe
+	adapters     adapters.Adapters
 }
 
 func NewListResponsibleContractsUseCase(
 	repositories *persistence.PostgresRepositories,
 	logger contracts.Logger,
-	payments payments.IStripe,
+	adapters adapters.Adapters,
 ) *ListResponsibleContractsUseCase {
 	return &ListResponsibleContractsUseCase{
 		repositories: repositories,
 		logger:       logger,
-		payments:     payments,
+		adapters:     adapters,
 	}
 }
 

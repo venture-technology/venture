@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"github.com/google/uuid"
-	"github.com/venture-technology/venture/internal/domain/payments"
+	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -10,18 +10,18 @@ import (
 type CancelContractUseCase struct {
 	repositories *persistence.PostgresRepositories
 	logger       contracts.Logger
-	payments     payments.IStripe
+	adapters     adapters.Adapters
 }
 
 func NewCancelContractUseCase(
 	repositories *persistence.PostgresRepositories,
 	logger contracts.Logger,
-	payments payments.IStripe,
+	adapters adapters.Adapters,
 ) *CancelContractUseCase {
 	return &CancelContractUseCase{
 		repositories: repositories,
 		logger:       logger,
-		payments:     payments,
+		adapters:     adapters,
 	}
 }
 
@@ -31,13 +31,13 @@ func (ccuc *CancelContractUseCase) CancelContract(id uuid.UUID) error {
 		return err
 	}
 
-	invoices, err := ccuc.payments.ListInvoices(contract.StripeSubscription.ID)
+	invoices, err := ccuc.adapters.PaymentsService.ListInvoices(contract.StripeSubscription.ID)
 	if err != nil {
 		return err
 	}
 
-	fine := ccuc.payments.CalculateRemainingValueSubscription(invoices, contract.Amount)
-	_, err = ccuc.payments.FineResponsible(contract, int64(fine))
+	fine := ccuc.adapters.PaymentsService.CalculateRemainingValueSubscription(invoices, contract.Amount)
+	_, err = ccuc.adapters.PaymentsService.FineResponsible(contract, int64(fine))
 	if err != nil {
 		return nil
 	}

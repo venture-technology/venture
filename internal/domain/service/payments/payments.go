@@ -12,41 +12,22 @@ import (
 	"github.com/stripe/stripe-go/v79/subscription"
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/entity"
-	"go.uber.org/zap"
 )
 
-type IStripe interface {
-	CreatePrice(contract *entity.Contract) (*stripe.Price, error)
-	CreateProduct(contract *entity.Contract) (*stripe.Product, error)
-	CreateSubscription(contract *entity.Contract) (*stripe.Subscription, error)
-	GetSubscription(subscriptionId string) (*stripe.Subscription, error)
-	ListSubscriptions(contract *entity.Contract) ([]entity.SubscriptionInfo, error)
-	DeleteSubscription(contract *entity.Contract) (*stripe.Subscription, error)
-	GetInvoice(invoiceId string) (*stripe.Invoice, error)
-	ListInvoices(contractId string) (map[string]entity.InvoiceInfo, error)
-
-	// this calc is used to calculate the remaining value of the subscription
-	CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64
-
-	FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error)
+type StripeAdapter struct {
+	config config.Config
 }
 
-type StripeContract struct {
-	logger *zap.Logger
-}
-
-func NewStripeContract(
-	logger *zap.Logger,
-) *StripeContract {
-	return &StripeContract{
-		logger: logger,
+func NewStripeAdapter(
+	config config.Config,
+) *StripeAdapter {
+	return &StripeAdapter{
+		config: config,
 	}
 }
 
-func (su *StripeContract) CreateProduct(contract *entity.Contract) (*stripe.Product, error) {
-	conf := config.Get()
-
-	stripe.Key = conf.StripeEnv.SecretKey
+func (su *StripeAdapter) CreateProduct(contract *entity.Contract) (*stripe.Product, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
 
 	params := &stripe.ProductParams{
 		Name:        stripe.String(fmt.Sprintf("Assinatura - Motorista: %s & Responsável: %s por: %s", contract.Driver.CNH, contract.Child.Responsible.CPF, contract.Child.RG)),
@@ -61,10 +42,8 @@ func (su *StripeContract) CreateProduct(contract *entity.Contract) (*stripe.Prod
 	return prodt, nil
 }
 
-func (su *StripeContract) CreatePrice(contract *entity.Contract) (*stripe.Price, error) {
-	conf := config.Get()
-
-	stripe.Key = conf.StripeEnv.SecretKey
+func (su *StripeAdapter) CreatePrice(contract *entity.Contract) (*stripe.Price, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
 
 	params := &stripe.PriceParams{
 		Currency: stripe.String(string("brl")),
@@ -83,10 +62,8 @@ func (su *StripeContract) CreatePrice(contract *entity.Contract) (*stripe.Price,
 	return pr, nil
 }
 
-func (su *StripeContract) CreateSubscription(contract *entity.Contract) (*stripe.Subscription, error) {
-	conf := config.Get()
-
-	stripe.Key = conf.StripeEnv.SecretKey
+func (su *StripeAdapter) CreateSubscription(contract *entity.Contract) (*stripe.Subscription, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
 
 	params := &stripe.SubscriptionParams{
 		CancelAt: stripe.Int64(time.Now().AddDate(0, 12, 0).Unix()),
@@ -106,11 +83,8 @@ func (su *StripeContract) CreateSubscription(contract *entity.Contract) (*stripe
 	return subs, err
 }
 
-func (su *StripeContract) GetSubscription(subscriptionId string) (*stripe.Subscription, error) {
-	conf := config.Get()
-
-	stripe.Key = conf.StripeEnv.SecretKey
-
+func (su *StripeAdapter) GetSubscription(subscriptionId string) (*stripe.Subscription, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
 	subscription, err := subscription.Get(subscriptionId, nil)
 	if err != nil {
 		return nil, err
@@ -118,10 +92,8 @@ func (su *StripeContract) GetSubscription(subscriptionId string) (*stripe.Subscr
 	return subscription, nil
 }
 
-func (su *StripeContract) ListSubscriptions(contract *entity.Contract) ([]entity.SubscriptionInfo, error) {
-	conf := config.Get()
-
-	stripe.Key = conf.StripeEnv.SecretKey
+func (su *StripeAdapter) ListSubscriptions(contract *entity.Contract) ([]entity.SubscriptionInfo, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
 
 	params := &stripe.SubscriptionListParams{
 		Customer: stripe.String(contract.Child.Responsible.CustomerId),
@@ -129,9 +101,7 @@ func (su *StripeContract) ListSubscriptions(contract *entity.Contract) ([]entity
 	params.Filters.AddFilter("limit", "", "10")
 
 	var subscriptions []entity.SubscriptionInfo
-
 	i := subscription.List(params)
-
 	for i.Next() {
 		s := i.Subscription()
 		subscriptions = append(subscriptions, entity.SubscriptionInfo{
@@ -147,11 +117,8 @@ func (su *StripeContract) ListSubscriptions(contract *entity.Contract) ([]entity
 	return subscriptions, nil
 }
 
-func (su *StripeContract) DeleteSubscription(contract *entity.Contract) (*stripe.Subscription, error) {
-	conf := config.Get()
-
-	stripe.Key = conf.StripeEnv.SecretKey
-
+func (su *StripeAdapter) DeleteSubscription(contract *entity.Contract) (*stripe.Subscription, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
 	deletedSub, err := subscription.Cancel(contract.StripeSubscription.ID, nil)
 	if err != nil {
 		return nil, err
@@ -159,11 +126,8 @@ func (su *StripeContract) DeleteSubscription(contract *entity.Contract) (*stripe
 	return deletedSub, nil
 }
 
-func (su *StripeContract) GetInvoice(invoiceId string) (*stripe.Invoice, error) {
-	conf := config.Get()
-
-	stripe.Key = conf.StripeEnv.SecretKey
-
+func (su *StripeAdapter) GetInvoice(invoiceId string) (*stripe.Invoice, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
 	inv, err := invoice.Get(invoiceId, nil)
 	if err != nil {
 		return nil, err
@@ -171,26 +135,19 @@ func (su *StripeContract) GetInvoice(invoiceId string) (*stripe.Invoice, error) 
 	return inv, nil
 }
 
-func (su *StripeContract) ListInvoices(contractId string) (map[string]entity.InvoiceInfo, error) {
-	conf := config.Get()
-
-	stripe.Key = conf.StripeEnv.SecretKey
+func (su *StripeAdapter) ListInvoices(contractId string) (map[string]entity.InvoiceInfo, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
 
 	params := &stripe.InvoiceListParams{
 		Subscription: stripe.String(contractId),
 	}
 
 	invoices := make(map[string]entity.InvoiceInfo)
-
 	i := invoice.List(params)
-
 	for i.Next() {
-
 		charge := i.Invoice()
-
 		createdTime := time.Unix(charge.Created, 0)
 		month := createdTime.Month().String()
-
 		invoiceInfo := entity.InvoiceInfo{
 			ID:              charge.ID,
 			Status:          string(charge.Status),
@@ -199,9 +156,7 @@ func (su *StripeContract) ListInvoices(contractId string) (map[string]entity.Inv
 			Month:           month,
 			Date:            createdTime.Format("01/06"),
 		}
-
 		invoices[month] = invoiceInfo
-
 	}
 
 	if err := i.Err(); err != nil {
@@ -211,16 +166,13 @@ func (su *StripeContract) ListInvoices(contractId string) (map[string]entity.Inv
 	return invoices, nil
 }
 
-func (su *StripeContract) CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64 {
+func (su *StripeAdapter) CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64 {
 	quantity := quantityInvoicesPaid(invoices)
 	return (amount * float64(quantity)) * 0.40
 }
 
-func (su *StripeContract) FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error) {
-	logger := su.logger
-	conf := config.Get()
-
-	stripe.Key = conf.StripeEnv.SecretKey
+func (su *StripeAdapter) FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
 
 	params := &stripe.PaymentIntentParams{
 		Customer:      stripe.String(contract.Child.Responsible.CustomerId),
@@ -230,11 +182,6 @@ func (su *StripeContract) FineResponsible(contract *entity.Contract, amountFine 
 		OffSession:    stripe.Bool(true),
 		Confirm:       stripe.Bool(true),
 	}
-
-	logger.Info("fine responsible",
-		zap.String("customer_id", contract.Child.Responsible.CustomerId),
-		zap.String("payment_method", contract.Child.Responsible.PaymentMethodId),
-	)
 
 	paym, err := paymentintent.New(params)
 	if err != nil {

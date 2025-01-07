@@ -1,4 +1,4 @@
-package adapter
+package addresses
 
 import (
 	"encoding/json"
@@ -12,31 +12,29 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 )
 
-type IGoogleAdapter interface {
-	GetDistance(origin, destination string) (*float64, error)
-}
-
 type GoogleAdapter struct {
+	config config.Config
 }
 
-func NewGoogleAdapter() *GoogleAdapter {
-	return &GoogleAdapter{}
+func NewGoogleAdapter(
+	config config.Config,
+) *GoogleAdapter {
+	return &GoogleAdapter{
+		config: config,
+	}
 }
 
 func (ga *GoogleAdapter) GetDistance(origin, destination string) (*float64, error) {
-	conf := config.Get()
-
-	endpoint := conf.GoogleCloudSecret.EndpointMatrixDistance
+	endpoint := ga.config.GoogleCloudSecret.EndpointMatrixDistance
 
 	params := url.Values{
 		"units":        {"metric"},
 		"origins":      {origin},
 		"destinations": {destination},
-		"key":          {conf.GoogleCloudSecret.ApiKey},
+		"key":          {ga.config.GoogleCloudSecret.ApiKey},
 	}
 
 	url := fmt.Sprintf("%s?%s", endpoint, params.Encode())
-
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
@@ -48,13 +46,8 @@ func (ga *GoogleAdapter) GetDistance(origin, destination string) (*float64, erro
 		return nil, err
 	}
 
-	if data.Status != "OK" {
-	}
-
 	distance := data.Rows[0].Elements[0].Distance.Text
-
 	distance = strings.TrimSpace(strings.Replace(distance, "km", "", 1))
-
 	kmFloat, err := strconv.ParseFloat(distance, 64)
 	if err != nil {
 		return nil, err
