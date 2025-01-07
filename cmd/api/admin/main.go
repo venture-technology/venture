@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/venture-technology/venture/cmd/api/admin/routes"
+	"github.com/venture-technology/venture/cmd/api/admin/routes/adm"
 	"github.com/venture-technology/venture/internal/setup"
 )
 
@@ -26,7 +26,7 @@ func setupServer() *gin.Engine {
 
 	apisAdmin := router.Group("/api/admin")
 	apisAdmin.Use(configHeaders())
-	routes.NewAdminController().AdminRoutes(apisAdmin)
+	adm.NewAdminController().AdminRoutes(apisAdmin)
 
 	return router
 }
