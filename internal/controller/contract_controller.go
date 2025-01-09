@@ -124,7 +124,7 @@ func (coh *ContractController) GetV1ListDriverContract(c *gin.Context) {
 	c.JSON(http.StatusOK, contracts)
 }
 
-func (coh *ContractController) Cancel(c *gin.Context) {
+func (coh *ContractController) PatchV1CancelContract(c *gin.Context) {
 
 	id := c.Param("id")
 
@@ -134,7 +134,13 @@ func (coh *ContractController) Cancel(c *gin.Context) {
 		return
 	}
 
-	err = coh.contractUseCase.Cancel(c, uuid)
+	usecase := usecase.NewCancelContractUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		payments.NewStripeContract(),
+	)
+
+	err = usecase.CancelContract(uuid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar cancelar o contrato"))
 		return
@@ -143,7 +149,7 @@ func (coh *ContractController) Cancel(c *gin.Context) {
 	c.JSON(http.StatusOK, "contrato cancelado com sucesso")
 }
 
-func (coh *ContractController) Expired(c *gin.Context) {
+func (coh *ContractController) PatchV1ExpiredContract(c *gin.Context) {
 
 	id := c.Param("id")
 
@@ -153,7 +159,12 @@ func (coh *ContractController) Expired(c *gin.Context) {
 		return
 	}
 
-	err = coh.contractUseCase.Expired(c, uuid)
+	usecase := usecase.NewExpireContractUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	err = usecase.ExpireContract(uuid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar expirar o contrato"))
 		return
