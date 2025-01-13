@@ -5,9 +5,11 @@ import (
 
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/domain/service/addresses"
+	"github.com/venture-technology/venture/internal/domain/service/decorator"
 	"github.com/venture-technology/venture/internal/domain/service/payments"
 	"github.com/venture-technology/venture/internal/infra"
 	"github.com/venture-technology/venture/internal/infra/bucket"
+	"github.com/venture-technology/venture/internal/infra/cache"
 	"github.com/venture-technology/venture/internal/infra/database"
 	"github.com/venture-technology/venture/internal/infra/email"
 	"github.com/venture-technology/venture/internal/infra/logger"
@@ -47,12 +49,11 @@ func (s Setup) Repositories() {
 	s.repositories.SchoolRepository = persistence.SchoolRepositoryImpl{Postgres: s.app.Postgres}
 }
 
-func (s Setup) Redis() {
-	s.app.Redis = database.NewRedisImpl(s.app.Config)
-}
-
-func (s Setup) RedisRepositories() {
-	s.app.RedisRepositories.AdminRepository = persistence.AdminRepositoryImpl{Redis: s.app.Redis}
+// Cache need started before SQL Database.
+//
+// Because, how we used cache like decorator with Repository, Repository cant receive a null instance of cache
+func (s Setup) Cache() {
+	s.app.Cache = cache.NewCacheImpl(s.app.Config)
 }
 
 func (s Setup) Bucket() {
@@ -68,6 +69,10 @@ func (s Setup) Logger(taskname string) {
 }
 
 func (s Setup) Adapters() {
-	s.app.Adapters.AddressService = addresses.NewGoogleAdapter(s.app.Config)
+	s.app.Adapters.AddressService = decorator.AddressDecorator{
+		AddressAdapter: addresses.NewGoogleAdapter(s.app.Config),
+		Cache:          s.app.Cache,
+	}
+
 	s.app.Adapters.PaymentsService = payments.NewStripeAdapter(s.app.Config)
 }

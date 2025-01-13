@@ -7,6 +7,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/exceptions"
+	"github.com/venture-technology/venture/internal/infra"
+	"github.com/venture-technology/venture/internal/usecase"
 )
 
 type ContractController struct {
@@ -17,21 +19,26 @@ func NewContractController() *ContractController {
 }
 
 func (coh *ContractController) Create(c *gin.Context) {
-	var input entity.Contract
+	var requestParams entity.Contract
 
-	if err := c.BindJSON(&input); err != nil {
+	if err := c.BindJSON(&requestParams); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
-	err := coh.contractUseCase.Create(c, &input)
+	usecase := usecase.NewCreateContractUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		infra.App.Adapters,
+	)
 
+	err := usecase.CreateContract(&requestParams)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"))
 		return
 	}
 
-	c.JSON(http.StatusCreated, input)
+	c.JSON(http.StatusCreated, requestParams)
 }
 
 func (coh *ContractController) Get(c *gin.Context) {

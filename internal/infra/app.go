@@ -8,15 +8,14 @@ import (
 )
 
 type Application struct {
-	Repositories      persistence.PostgresRepositories
-	RedisRepositories persistence.RedisRepositories
-	Postgres          contracts.PostgresIface
-	Redis             contracts.RedisIface
-	Bucket            contracts.S3Iface
-	Email             contracts.SESIface
-	Logger            contracts.Logger
-	Adapters          adapters.Adapters
-	Config            config.Config
+	Repositories persistence.PostgresRepositories
+	Postgres     contracts.PostgresIface
+	Cache        contracts.CacheIface
+	Bucket       contracts.S3Iface
+	Email        contracts.SESIface
+	Logger       contracts.Logger
+	Adapters     adapters.Adapters
+	Config       config.Config
 }
 
 var App Application
