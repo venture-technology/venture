@@ -21,10 +21,9 @@ func main() {
 	}
 
 	setup := setup.NewSetup()
+	setup.Cache()
 	setup.Postgres()
-	setup.Redis()
 	setup.Repositories()
-	setup.RedisRepositories()
 	setup.Bucket()
 	setup.Email()
 	setup.Logger("venture-server")
