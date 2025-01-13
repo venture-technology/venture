@@ -11,7 +11,3 @@ type PostgresRepositories struct {
 	ContractRepository    repository.IContractRepository
 	InviteRepository      repository.IInviteRepository
 }
-
-type RedisRepositories struct {
-	AdminRepository repository.IAdminRepository
-}
