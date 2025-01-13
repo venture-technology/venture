@@ -1,8 +1,9 @@
 package contracts
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
-	"github.com/redis/go-redis/v9"
 	"github.com/venture-technology/venture/internal/entity"
 	"go.uber.org/zap"
 )
@@ -21,8 +22,10 @@ type PostgresIface interface {
 	Close() error
 }
 
-type RedisIface interface {
-	Client() *redis.Client
+type CacheIface interface {
+	Set(key string, value any, expiration time.Duration) error
+	Get(key string) (string, error)
+	Expire(key string, expiration time.Duration) (bool, error)
 }
 
 type Logger interface {
