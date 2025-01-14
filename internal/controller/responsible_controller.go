@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +18,7 @@ func NewResponsibleController() *ResponsibleController {
 	return &ResponsibleController{}
 }
 
-func (rh *ResponsibleController) Create(c *gin.Context) {
+func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
 	var input entity.Responsible
 	if err := c.BindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
@@ -43,7 +42,7 @@ func (rh *ResponsibleController) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func (rh *ResponsibleController) Get(c *gin.Context) {
+func (rh *ResponsibleController) GetV1GetResponsible(c *gin.Context) {
 	cpf := c.Param("cpf")
 
 	usecase := usecase.NewGetResponsibleUseCase(
@@ -82,25 +81,18 @@ func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
 
-func (rh *ResponsibleController) Delete(c *gin.Context) {
+func (rh *ResponsibleController) DeleteV1DeleteResponsbile(c *gin.Context) {
 	cpf := c.Param("cpf")
 
+	usecase := usecase.NewDeleteResponsibleUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
 	// buscando customerid do responsible
-	responsible, err := rh.responsibleUseCase.Get(c, &cpf)
+	err := usecase.DeleteResponsible(cpf)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "ao tentar buscar a chave do cliente no stripe"))
-		return
-	}
-
-	_, err = rh.responsibleUseCase.DeleteCustomer(c, responsible.CustomerId)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao deletar cliente na stripe"))
-		return
-	}
-
-	err = rh.responsibleUseCase.Delete(c, &cpf)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar responsável"})
 		return
 	}
 
@@ -108,7 +100,7 @@ func (rh *ResponsibleController) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
 
-func (rh *ResponsibleController) SaveCard(c *gin.Context) {
+/*func (rh *ResponsibleController) SaveCard(c *gin.Context) {
 	var input entity.Responsible
 
 	if err := c.BindJSON(&input); err != nil {
@@ -148,39 +140,4 @@ func (rh *ResponsibleController) SaveCard(c *gin.Context) {
 
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
-
-func (rh *ResponsibleController) CalculatePrice(c *gin.Context) {
-	var input entity.MapPrice
-	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	usecase := usecase.NewCalculatePriceUseCase(
-		&infra.App.Repositories,
-		infra.App.Logger,
-		infra.App.Adapters,
-	)
-
-	origin := fmt.Sprintf(
-		"%s,%s,%s",
-		input.Origin.Street,
-		input.Origin.Number,
-		input.Origin.ZIP,
-	)
-
-	destination := fmt.Sprintf(
-		"%s,%s,%s",
-		input.Destination.Street,
-		input.Destination.Number,
-		input.Destination.ZIP,
-	)
-
-	value, err := usecase.CalculatePrice(origin, destination, input.Amount)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"valor": value})
-}
+*/

@@ -18,9 +18,8 @@ func NewContractController() *ContractController {
 	return &ContractController{}
 }
 
-func (coh *ContractController) Create(c *gin.Context) {
+func (coh *ContractController) PostV1CreateContract(c *gin.Context) {
 	var requestParams entity.Contract
-
 	if err := c.BindJSON(&requestParams); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
@@ -41,7 +40,7 @@ func (coh *ContractController) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, requestParams)
 }
 
-func (coh *ContractController) Get(c *gin.Context) {
+func (coh *ContractController) GetV1GetContract(c *gin.Context) {
 	id := c.Param("id")
 
 	uuid, err := uuid.Parse(id)
@@ -51,7 +50,13 @@ func (coh *ContractController) Get(c *gin.Context) {
 		return
 	}
 
-	contract, err := coh.contractUseCase.Get(c, uuid)
+	usecase := usecase.NewGetContractUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		infra.App.Adapters,
+	)
+
+	contract, err := usecase.GetContract(uuid)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
@@ -61,23 +66,15 @@ func (coh *ContractController) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, contract)
 }
 
-func (coh *ContractController) FindAllByRg(c *gin.Context) {
-	rg := c.Param("rg")
-
-	contracts, err := coh.contractUseCase.FindAllByRg(c, &rg)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
-		return
-	}
-
-	c.JSON(http.StatusOK, contracts)
-}
-
-func (coh *ContractController) FindAllByCnpj(c *gin.Context) {
+func (coh *ContractController) GetV1ListContractSchool(c *gin.Context) {
 	cnpj := c.Param("cnpj")
 
-	contracts, err := coh.contractUseCase.FindAllByCnpj(c, &cnpj)
+	usecase := usecase.NewListSchoolContractUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	contracts, err := usecase.ListSchoolContract(&cnpj)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
@@ -87,10 +84,16 @@ func (coh *ContractController) FindAllByCnpj(c *gin.Context) {
 	c.JSON(http.StatusOK, contracts)
 }
 
-func (coh *ContractController) FindAllByCpf(c *gin.Context) {
+func (coh *ContractController) GetV1ListResponsibleContract(c *gin.Context) {
 	cpf := c.Param("cpf")
 
-	contracts, err := coh.contractUseCase.FindAllByCpf(c, &cpf)
+	usecase := usecase.NewListResponsibleContractsUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		infra.App.Adapters,
+	)
+
+	contracts, err := usecase.ListResponsibleContracts(&cpf)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
@@ -100,10 +103,15 @@ func (coh *ContractController) FindAllByCpf(c *gin.Context) {
 	c.JSON(http.StatusOK, contracts)
 }
 
-func (coh *ContractController) FindAllByCnh(c *gin.Context) {
+func (coh *ContractController) GetV1ListDriverContract(c *gin.Context) {
 	cnh := c.Param("cnh")
 
-	contracts, err := coh.contractUseCase.FindAllByCnh(c, &cnh)
+	usecase := usecase.NewListDriverContractsUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	contracts, err := usecase.ListDriverContracts(&cnh)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "contrato não encontrado"))
@@ -113,7 +121,7 @@ func (coh *ContractController) FindAllByCnh(c *gin.Context) {
 	c.JSON(http.StatusOK, contracts)
 }
 
-func (coh *ContractController) Cancel(c *gin.Context) {
+func (coh *ContractController) PatchV1CancelContract(c *gin.Context) {
 
 	id := c.Param("id")
 
@@ -123,7 +131,13 @@ func (coh *ContractController) Cancel(c *gin.Context) {
 		return
 	}
 
-	err = coh.contractUseCase.Cancel(c, uuid)
+	usecase := usecase.NewCancelContractUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		infra.App.Adapters,
+	)
+
+	err = usecase.CancelContract(uuid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar cancelar o contrato"))
 		return
@@ -132,7 +146,7 @@ func (coh *ContractController) Cancel(c *gin.Context) {
 	c.JSON(http.StatusOK, "contrato cancelado com sucesso")
 }
 
-func (coh *ContractController) Expired(c *gin.Context) {
+func (coh *ContractController) PatchV1ExpiredContract(c *gin.Context) {
 
 	id := c.Param("id")
 
@@ -142,7 +156,12 @@ func (coh *ContractController) Expired(c *gin.Context) {
 		return
 	}
 
-	err = coh.contractUseCase.Expired(c, uuid)
+	usecase := usecase.NewExpireContractUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	err = usecase.ExpireContract(uuid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar expirar o contrato"))
 		return

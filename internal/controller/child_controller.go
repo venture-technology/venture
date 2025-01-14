@@ -40,7 +40,12 @@ func (ch *ChildController) PostV1CreateChild(c *gin.Context) {
 func (ch *ChildController) GetV1GetChild(c *gin.Context) {
 	rg := c.Param("rg")
 
-	child, err := ch.childUseCase.Get(c, &rg)
+	usecase := usecase.NewGetChildUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	child, err := usecase.GetChild(&rg)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "filho não encontrado"})
@@ -50,10 +55,15 @@ func (ch *ChildController) GetV1GetChild(c *gin.Context) {
 	c.JSON(http.StatusOK, child)
 }
 
-func (ch *ChildController) FindAll(c *gin.Context) {
+func (ch *ChildController) GetV1ListChildren(c *gin.Context) {
 	cpf := c.Param("cpf")
 
-	children, err := ch.childUseCase.FindAll(c, &cpf)
+	usecase := usecase.NewListChildrenUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	children, err := usecase.ListChildren(&cpf)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "filho não encontrado"})
@@ -85,10 +95,15 @@ func (ch *ChildController) PatchV1UpdateController(c *gin.Context) {
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
 
-func (ch *ChildController) Delete(c *gin.Context) {
+func (ch *ChildController) DeleteV1DeleteChild(c *gin.Context) {
 	rg := c.Param("rg")
 
-	err := ch.childUseCase.Delete(c, &rg)
+	usecase := usecase.NewDeleteChildUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	err := usecase.DeleteChild(&rg)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar filho"})
 		return

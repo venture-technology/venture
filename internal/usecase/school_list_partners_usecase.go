@@ -44,7 +44,7 @@ func buildSchoolListPartner(partners entity.Partner) value.SchoolListPartners {
 		Phone:  partners.Driver.Phone,
 		QrCode: partners.Driver.QrCode,
 		Car: fmt.Sprintf(
-			"%s %s %s",
+			"%s, %s",
 			partners.Driver.Car.Model,
 			partners.Driver.Car.Year,
 		),

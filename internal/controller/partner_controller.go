@@ -15,7 +15,7 @@ func NewPartnerController() *PartnerController {
 	return &PartnerController{}
 }
 
-func (ph *PartnerController) getV1DriverListPartners(c *gin.Context) {
+func (ph *PartnerController) GetV1DriverListPartners(c *gin.Context) {
 	cnh := c.Param("cnh")
 
 	usecase := usecase.NewDriverListPartnersUseCase(
@@ -32,7 +32,7 @@ func (ph *PartnerController) getV1DriverListPartners(c *gin.Context) {
 	c.JSON(http.StatusOK, partners)
 }
 
-func (ph *PartnerController) getV1SchoolListPartners(c *gin.Context) {
+func (ph *PartnerController) GetV1SchoolListPartners(c *gin.Context) {
 	cnpj := c.Param("cnpj")
 
 	usecase := usecase.NewSchoolListPartnersUseCase(
@@ -49,7 +49,7 @@ func (ph *PartnerController) getV1SchoolListPartners(c *gin.Context) {
 	c.JSON(http.StatusOK, partners)
 }
 
-func (ph *PartnerController) Delete(c *gin.Context) {
+func (ph *PartnerController) DeleteV1DeletePartner(c *gin.Context) {
 	id := c.Param("id")
 
 	usecase := usecase.NewDeletePartnerUseCase(
