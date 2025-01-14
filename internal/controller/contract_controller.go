@@ -20,7 +20,7 @@ func NewContractController() *ContractController {
 	return &ContractController{}
 }
 
-func (coh *ContractController) PostV1Create(c *gin.Context) {
+func (coh *ContractController) PostV1CreateContract(c *gin.Context) {
 	var input entity.Contract
 	if err := c.BindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
