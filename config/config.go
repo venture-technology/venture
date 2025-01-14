@@ -22,7 +22,7 @@ type Config struct {
 
 type Server struct {
 	Host   string `yaml:"host"`
-	Port   int    `yaml:"port"`
+	Port   string `yaml:"port"`
 	Secret string `yaml:"string"`
 }
 
@@ -71,6 +71,7 @@ type StripeEnv struct {
 
 type Admin struct {
 	ApiKey string `yaml:"apikey"`
+	Port   string `yaml:"port"`
 }
 
 var config *Config

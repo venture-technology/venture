@@ -3,6 +3,7 @@ package entity
 import (
 	"encoding/json"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/segmentio/kafka-go"
@@ -13,6 +14,8 @@ type Email struct {
 	Recipient string    `json:"recipient" validate:"required" example:"example@gmail.com"`
 	Subject   string    `json:"subject" validate:"required" example:"subject - create account"`
 	Body      string    `json:"body" validate:"required" example:"hello sr...e"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 func (e *Email) EmailStructToJson() (string, error) {

@@ -1,0 +1,102 @@
+package controller
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/venture-technology/venture/internal/entity"
+	"github.com/venture-technology/venture/internal/exceptions"
+	"github.com/venture-technology/venture/internal/infra"
+	"github.com/venture-technology/venture/internal/usecase"
+	"github.com/venture-technology/venture/pkg/utils"
+)
+
+type DriverController struct {
+}
+
+func NewDriverController() *DriverController {
+	return &DriverController{}
+}
+
+func (dh *DriverController) PostV1Create(c *gin.Context) {
+	var input entity.Driver
+
+	if err := c.BindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
+
+	input.Password = utils.MakeHash(input.Password)
+
+	usecase := usecase.NewCreateDriverUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		infra.App.Bucket,
+	)
+
+	err := usecase.CreateDriver(&input)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realziar a criação do qrcode"))
+		return
+	}
+
+	c.JSON(http.StatusCreated, input)
+}
+
+func (dh *DriverController) GetV1GetDriver(c *gin.Context) {
+	cnh := c.Param("cnh")
+
+	usecase := usecase.NewGetDriverUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		infra.App.Bucket,
+	)
+
+	driver, err := usecase.GetDriver(cnh)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "motorista não encontrado"))
+		return
+	}
+
+	c.JSON(http.StatusOK, driver)
+}
+
+func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
+	cnh := c.Param("cnh")
+	var data map[string]interface{}
+	if err := c.BindJSON(data); err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
+
+	usecase := usecase.NewUpdateDriverUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	err := usecase.UpdateDriver(cnh, data)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao realizar atualização das informações do motorista"))
+		return
+	}
+
+	c.JSON(http.StatusNoContent, http.NoBody)
+}
+
+func (dh *DriverController) DeleteV1DeleteDriver(c *gin.Context) {
+	cnh := c.Param("cnh")
+
+	usecase := usecase.NewDeleteDriverUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	err := usecase.DeleteDriver(cnh)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar motorista"})
+		return
+	}
+
+	c.SetCookie("token", "", -1, "/", c.Request.Host, false, true)
+	c.JSON(http.StatusNoContent, http.NoBody)
+}
