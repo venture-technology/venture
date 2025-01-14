@@ -18,7 +18,7 @@ func NewDriverController() *DriverController {
 	return &DriverController{}
 }
 
-func (dh *DriverController) Create(c *gin.Context) {
+func (dh *DriverController) PostV1Create(c *gin.Context) {
 	var input entity.Driver
 
 	if err := c.BindJSON(&input); err != nil {
@@ -26,9 +26,15 @@ func (dh *DriverController) Create(c *gin.Context) {
 		return
 	}
 
-	input.Password = utils.HashPassword(input.Password)
+	input.Password = utils.MakeHash(input.Password)
 
-	err := dh.driverUseCase.Create(c, &input)
+	usecase := usecase.NewCreateDriverUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		infra.App.Bucket,
+	)
+
+	err := usecase.CreateDriver(&input)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realziar a criação do qrcode"))
 		return
@@ -37,10 +43,16 @@ func (dh *DriverController) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
-func (dh *DriverController) Get(c *gin.Context) {
+func (dh *DriverController) GetV1GetDriver(c *gin.Context) {
 	cnh := c.Param("cnh")
 
-	driver, err := dh.driverUseCase.Get(c, &cnh)
+	usecase := usecase.NewGetDriverUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		infra.App.Bucket,
+	)
+
+	driver, err := usecase.GetDriver(cnh)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "motorista não encontrado"))
 		return
@@ -71,10 +83,15 @@ func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
 
-func (dh *DriverController) Delete(c *gin.Context) {
+func (dh *DriverController) DeleteV1DeleteDriver(c *gin.Context) {
 	cnh := c.Param("cnh")
 
-	err := dh.driverUseCase.Delete(c, &cnh)
+	usecase := usecase.NewDeleteDriverUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	err := usecase.DeleteDriver(cnh)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar motorista"})
 		return
@@ -82,58 +99,4 @@ func (dh *DriverController) Delete(c *gin.Context) {
 
 	c.SetCookie("token", "", -1, "/", c.Request.Host, false, true)
 	c.JSON(http.StatusNoContent, http.NoBody)
-}
-
-func (dh *DriverController) SavePix(c *gin.Context) {
-	cnh := c.Param("cnh")
-
-	var input entity.Driver
-
-	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
-		return
-	}
-
-	input.CNH = cnh
-
-	err := dh.driverUseCase.SavePix(c, &input)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao salvar chave pix"})
-		return
-	}
-
-	c.JSON(http.StatusCreated, http.NoBody)
-}
-
-func (dh *DriverController) SaveBank(c *gin.Context) {
-	cnh := c.Param("cnh")
-
-	var input entity.Driver
-
-	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
-		return
-	}
-
-	input.CNH = cnh
-
-	err := dh.driverUseCase.SaveBank(c, &input)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao salvar informações da conta bancária"})
-		return
-	}
-
-	c.JSON(http.StatusCreated, http.NoBody)
-}
-
-func (dh *DriverController) GetGallery(c *gin.Context) {
-	cnh := c.Param("cnh")
-
-	links, err := dh.driverUseCase.GetGallery(c, &cnh)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao buscar galeria de imagens"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"images": links})
 }

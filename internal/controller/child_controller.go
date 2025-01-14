@@ -95,7 +95,7 @@ func (ch *ChildController) PatchV1UpdateController(c *gin.Context) {
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
 
-func (ch *ChildController) DeleteV1Child(c *gin.Context) {
+func (ch *ChildController) DeleteV1DeleteChild(c *gin.Context) {
 	rg := c.Param("rg")
 
 	usecase := usecase.NewDeleteChildUseCase(
