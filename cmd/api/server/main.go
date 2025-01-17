@@ -2,34 +2,37 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	v1 "github.com/venture-technology/venture/cmd/api/server/routes/v1"
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/domain/service/auth"
-	"github.com/venture-technology/venture/internal/domain/service/middleware"
 	"github.com/venture-technology/venture/internal/setup"
 	"github.com/venture-technology/venture/internal/value"
 )
 
 func main() {
-	config, err := config.Load("config/config.yaml")
+	envs, err := config.Load("../../../config/config.yaml")
 	if err != nil {
-		log.Fatalf("failed to load config: %v", err)
+		envs, err = config.Load("config/config.yaml")
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	setup := setup.NewSetup()
+	setup.Logger("venture-server")
 	setup.Cache()
 	setup.Postgres()
 	setup.Repositories()
 	setup.Bucket()
 	setup.Email()
-	setup.Logger("venture-server")
 
-	serverPort := config.Server.Port
-	server := setupServer(config)
+	setup.Finish()
+
+	serverPort := envs.Server.Port
+	server := setupServer(envs)
 	server.Run(fmt.Sprintf(":%s", serverPort))
 }
 
@@ -55,7 +58,7 @@ func setupServer(config *config.Config) *gin.Engine {
 
 	apisV1 := router.Group("/api/v1")
 	apisV1.Use(configHeaders())
-	apisV1.Use(middleware.AuthMiddleware(config))
+	// apisV1.Use(middleware.AuthMiddleware(config))
 	v1.NewV1Controller().V1Routes(apisV1)
 
 	return router

@@ -1,11 +1,10 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type GetChildUseCase struct {
@@ -33,11 +32,11 @@ func (gcuc *GetChildUseCase) GetChild(rg *string) (value.GetChild, error) {
 		Name:            child.Name,
 		RG:              child.RG,
 		ResponsibleName: child.Responsible.Name,
-		Address: fmt.Sprintf(
-			"%s, %s, %s",
+		Address: utils.BuildAddress(
 			child.Responsible.Address.Street,
 			child.Responsible.Address.Number,
-			child.Responsible.Address.ZIP,
+			child.Responsible.Address.Complement,
+			child.Responsible.Address.Zip,
 		),
 		Period:       child.Shift,
 		ProfileImage: child.ProfileImage,

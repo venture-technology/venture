@@ -109,7 +109,7 @@ func buildResponsibleAddress(responsible *entity.Responsible) string {
 		"%s,%s,%s",
 		responsible.Address.Street,
 		responsible.Address.Number,
-		responsible.Address.ZIP,
+		responsible.Address.Zip,
 	)
 }
 
@@ -118,6 +118,6 @@ func buildSchoolAddress(school *entity.School) string {
 		"%s,%s,%s",
 		school.Address.Street,
 		school.Address.Number,
-		school.Address.ZIP,
+		school.Address.Zip,
 	)
 }

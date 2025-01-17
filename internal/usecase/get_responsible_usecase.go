@@ -1,11 +1,10 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type GetResponsibleUseCase struct {
@@ -33,11 +32,11 @@ func (gruc *GetResponsibleUseCase) GetResponsible(cpf string) (value.GetResponsi
 		Name:  responsible.Name,
 		Email: responsible.Email,
 		Phone: responsible.Phone,
-		Address: fmt.Sprintf(
-			"%s, %s, %s",
+		Address: utils.BuildAddress(
 			responsible.Address.Street,
 			responsible.Address.Number,
-			responsible.Address.ZIP,
+			responsible.Address.Complement,
+			responsible.Address.Zip,
 		),
 		CustomerId:      responsible.CustomerId,
 		ProfileImage:    responsible.ProfileImage,

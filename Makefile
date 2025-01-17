@@ -1,5 +1,5 @@
 build:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o dist/venture-api cmd/api/main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o dist/venture-api cmd/api/server/main.go
 
 send:
 	rsync dist/venture-api root@$(HOST_REMOTE_SERVER_IP):~

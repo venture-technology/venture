@@ -1,13 +1,12 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type ListResponsibleContractsUseCase struct {
@@ -49,11 +48,11 @@ func buildResponsibleListContracts(contracts *entity.Contract) value.Responsible
 		School: value.GetSchoolContract{
 			ID:   contracts.School.ID,
 			Name: contracts.School.Name,
-			Address: fmt.Sprintf(
-				"%s, %s, %s",
+			Address: utils.BuildAddress(
 				contracts.School.Address.Street,
 				contracts.School.Address.Number,
-				contracts.School.Address.ZIP,
+				contracts.School.Address.Complement,
+				contracts.School.Address.Zip,
 			),
 			Phone:        contracts.School.Phone,
 			ProfileImage: contracts.School.ProfileImage,
@@ -62,11 +61,11 @@ func buildResponsibleListContracts(contracts *entity.Contract) value.Responsible
 			ID:    contracts.Driver.ID,
 			Name:  contracts.Driver.Name,
 			Email: contracts.Driver.Email,
-			Address: fmt.Sprintf(
-				"%s, %s, %s",
+			Address: utils.BuildAddress(
 				contracts.Driver.Address.Street,
 				contracts.Driver.Address.Number,
-				contracts.Driver.Address.ZIP,
+				contracts.Driver.Address.Complement,
+				contracts.Driver.Address.Zip,
 			),
 			Phone:        contracts.Driver.Phone,
 			ProfileImage: contracts.Driver.ProfileImage,

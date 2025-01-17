@@ -1,13 +1,12 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type GetContractUseCase struct {
@@ -50,11 +49,11 @@ func (gcuc *GetContractUseCase) GetContract(uuid uuid.UUID) (value.GetContract, 
 			ID:    contract.Driver.ID,
 			Name:  contract.Driver.Name,
 			Email: contract.Driver.Email,
-			Address: fmt.Sprintf(
-				"%s, %s, %s",
+			Address: utils.BuildAddress(
 				contract.Driver.Address.Street,
 				contract.Driver.Address.Number,
-				contract.Driver.Address.ZIP,
+				contract.Driver.Address.Complement,
+				contract.Driver.Address.Zip,
 			),
 			Phone:        contract.Driver.Phone,
 			ProfileImage: contract.Driver.ProfileImage,
@@ -62,11 +61,11 @@ func (gcuc *GetContractUseCase) GetContract(uuid uuid.UUID) (value.GetContract, 
 		School: value.GetSchoolContract{
 			ID:   contract.School.ID,
 			Name: contract.School.Name,
-			Address: fmt.Sprintf(
-				"%s, %s, %s",
+			Address: utils.BuildAddress(
 				contract.School.Address.Street,
 				contract.School.Address.Number,
-				contract.School.Address.ZIP,
+				contract.School.Address.Complement,
+				contract.School.Address.Zip,
 			),
 			Phone:        contract.School.Phone,
 			ProfileImage: contract.School.ProfileImage,
@@ -75,11 +74,11 @@ func (gcuc *GetContractUseCase) GetContract(uuid uuid.UUID) (value.GetContract, 
 			ID:    contract.Child.Responsible.ID,
 			Name:  contract.Child.Responsible.Name,
 			Email: contract.Child.Responsible.Email,
-			Address: fmt.Sprintf(
-				"%s, %s, %s",
+			Address: utils.BuildAddress(
 				contract.Child.Responsible.Address.Street,
 				contract.Child.Responsible.Address.Number,
-				contract.Child.Responsible.Address.ZIP,
+				contract.Child.Responsible.Address.Complement,
+				contract.Child.Responsible.Address.Zip,
 			),
 			Phone:        contract.Child.Responsible.Phone,
 			ProfileImage: contract.Child.Responsible.ProfileImage,

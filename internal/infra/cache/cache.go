@@ -19,7 +19,8 @@ type CacheImpl struct {
 func NewCacheImpl(config config.Config) *CacheImpl {
 	return &CacheImpl{
 		client: redis.NewClient(&redis.Options{
-			Addr: config.Cache.Address,
+			Addr:     config.Cache.Address,
+			Password: config.Cache.Password,
 		}),
 		config: &config,
 	}

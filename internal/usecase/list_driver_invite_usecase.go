@@ -1,12 +1,11 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type ListDriverInvitesUseCase struct {
@@ -43,11 +42,11 @@ func buildDriverListInvites(invites entity.Invite) value.DriverListInvite {
 		Name:         invites.School.Name,
 		Phone:        invites.School.Phone,
 		ProfileImage: invites.School.ProfileImage,
-		Address: fmt.Sprintf(
-			"%s, %s, %s",
+		Address: utils.BuildAddress(
 			invites.School.Address.Street,
 			invites.School.Address.Number,
-			invites.School.Address.ZIP,
+			invites.School.Address.Complement,
+			invites.School.Address.Zip,
 		),
 	}
 }

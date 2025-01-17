@@ -1,12 +1,11 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type ListSchoolUseCase struct {
@@ -44,11 +43,11 @@ func buildListSchool(school entity.School) value.ListSchool {
 		Phone:        school.Phone,
 		ProfileImage: school.ProfileImage,
 		CreatedAt:    school.CreatedAt,
-		Address: fmt.Sprintf(
-			"%s, %s, %s",
+		Address: utils.BuildAddress(
 			school.Address.Street,
 			school.Address.Number,
-			school.Address.ZIP,
+			school.Address.Complement,
+			school.Address.Zip,
 		),
 	}
 }

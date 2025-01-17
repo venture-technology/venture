@@ -51,7 +51,6 @@ func (s3Impl *S3Impl) Save(path, filename string, file []byte) (string, error) {
 	}
 
 	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", s3Impl.config.Cloud.BucketName, filename)
-
 	return url, nil
 }
 
@@ -64,7 +63,6 @@ func (s3Impl *S3Impl) List(path string) ([]string, error) {
 	}
 
 	var links []string
-
 	err := svc.ListObjectsV2Pages(input, func(page *s3.ListObjectsV2Output, lastPage bool) bool {
 		for _, obj := range page.Contents {
 			publicURL := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", s3Impl.config.Cloud.BucketName, *obj.Key)
