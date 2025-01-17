@@ -22,9 +22,12 @@ type Setup struct {
 }
 
 func NewSetup() Setup {
-	Config, err := config.Load("config/config.yaml")
+	Config, err := config.Load("../../../config/config.yaml")
 	if err != nil {
-		log.Fatalf("failed to load config: %v", err)
+		Config, err = config.Load("config/config.yaml")
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	return Setup{
@@ -40,13 +43,13 @@ func (s Setup) Postgres() {
 }
 
 func (s Setup) Repositories() {
-	s.repositories.ChildRepository = persistence.ChildRepositoryImpl{Postgres: s.app.Postgres}
-	s.repositories.ContractRepository = persistence.ContractRepositoryImpl{Postgres: s.app.Postgres}
-	s.repositories.DriverRepository = persistence.DriverRepositoryImpl{Postgres: s.app.Postgres}
-	s.repositories.InviteRepository = persistence.InviteRepositoryImpl{Postgres: s.app.Postgres}
-	s.repositories.PartnerRepository = persistence.PartnerRepositoryImpl{Postgres: s.app.Postgres}
-	s.repositories.ResponsibleRepository = persistence.ResponsibleRepositoryImpl{Postgres: s.app.Postgres}
-	s.repositories.SchoolRepository = persistence.SchoolRepositoryImpl{Postgres: s.app.Postgres}
+	s.app.Repositories.ChildRepository = persistence.ChildRepositoryImpl{Postgres: s.app.Postgres}
+	s.app.Repositories.ContractRepository = persistence.ContractRepositoryImpl{Postgres: s.app.Postgres}
+	s.app.Repositories.DriverRepository = persistence.DriverRepositoryImpl{Postgres: s.app.Postgres}
+	s.app.Repositories.InviteRepository = persistence.InviteRepositoryImpl{Postgres: s.app.Postgres}
+	s.app.Repositories.PartnerRepository = persistence.PartnerRepositoryImpl{Postgres: s.app.Postgres}
+	s.app.Repositories.ResponsibleRepository = persistence.ResponsibleRepositoryImpl{Postgres: s.app.Postgres}
+	s.app.Repositories.SchoolRepository = persistence.SchoolRepositoryImpl{Postgres: s.app.Postgres}
 }
 
 // Cache need started before SQL Database.
@@ -66,6 +69,10 @@ func (s Setup) Email() {
 
 func (s Setup) Logger(taskname string) {
 	s.app.Logger, _ = logger.New(taskname)
+}
+
+func (s Setup) Finish() {
+	infra.App = *s.app
 }
 
 func (s Setup) Adapters() {

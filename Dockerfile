@@ -12,7 +12,7 @@ RUN apk add --no-cache gcc musl-dev
 COPY . .
 
 # Build the binary from the specific main.go path
-RUN go mod download && go build -o main ./cmd/api
+RUN go mod download && go build -o main ./cmd/api/server
 
 # Stage 2: Run the application
 FROM alpine:latest

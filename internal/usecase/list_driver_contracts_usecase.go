@@ -1,12 +1,11 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type ListDriverContractsUseCase struct {
@@ -45,11 +44,11 @@ func buildDriverListContracts(contracts *entity.Contract) value.DriverListContra
 		School: value.GetSchoolContract{
 			ID:   contracts.School.ID,
 			Name: contracts.School.Name,
-			Address: fmt.Sprintf(
-				"%s, %s, %s",
+			Address: utils.BuildAddress(
 				contracts.School.Address.Street,
 				contracts.School.Address.Number,
-				contracts.School.Address.ZIP,
+				contracts.School.Address.Complement,
+				contracts.School.Address.Zip,
 			),
 			Phone:        contracts.School.Phone,
 			ProfileImage: contracts.School.ProfileImage,
@@ -66,11 +65,11 @@ func buildDriverListContracts(contracts *entity.Contract) value.DriverListContra
 			Phone:        contracts.Child.Responsible.Phone,
 			Email:        contracts.Child.Responsible.Email,
 			ProfileImage: contracts.Child.Responsible.ProfileImage,
-			Address: fmt.Sprintf(
-				"%s, %s, %s",
+			Address: utils.BuildAddress(
 				contracts.Child.Responsible.Address.Street,
 				contracts.Child.Responsible.Address.Number,
-				contracts.Child.Responsible.Address.ZIP,
+				contracts.Child.Responsible.Address.Complement,
+				contracts.Child.Responsible.Address.Zip,
 			),
 		},
 		CreatedAt: contracts.CreatedAt,

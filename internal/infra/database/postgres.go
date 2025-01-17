@@ -3,13 +3,11 @@ package database
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/venture-technology/venture/config"
 )
-
-const maxRetryCount = 20
 
 type GORMImpl struct {
 	c *gorm.DB
@@ -17,7 +15,6 @@ type GORMImpl struct {
 
 func NewPGGORMImpl(config config.Config) (GORMImpl, error) {
 	var err error
-	var retryCount int
 
 	gormimpl := GORMImpl{}
 
@@ -31,23 +28,17 @@ func NewPGGORMImpl(config config.Config) (GORMImpl, error) {
 		config.Database.Password,
 	)
 
-	for retryCount < maxRetryCount {
-		gormimpl.c, err = gorm.Open("postgres", DBURL)
-
-		if err != nil {
-			retryCount++
-			log.Printf("error connecting to database, retrying... %s", err)
-		} else {
-			break
-		}
-
-		time.Sleep(3 * time.Second)
-	}
+	gormimpl.c, err = gorm.Open("postgres", DBURL)
 
 	if err != nil {
+		log.Println(err)
 		log.Fatal(err)
 
 		return gormimpl, err
+	}
+
+	if gormimpl.c.DB().Ping() == nil {
+		return gormimpl, nil
 	}
 
 	fatalErrorAboutDB := fmt.Errorf("can't start the database %s", err)

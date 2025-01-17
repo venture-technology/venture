@@ -58,5 +58,4 @@ func (sesImpl *SesImpl) SendEmail(email *entity.Email) error {
 	}
 
 	return nil
-
 }
