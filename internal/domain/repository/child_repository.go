@@ -4,7 +4,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 )
 
-type IChildRepository interface {
+type ChildRepository interface {
 	Create(child *entity.Child) error
 	Get(rg *string) (*entity.Child, error)
 	FindAll(cpf *string) ([]entity.Child, error)

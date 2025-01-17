@@ -10,7 +10,7 @@ import (
 type Application struct {
 	Repositories persistence.PostgresRepositories
 	Postgres     contracts.PostgresIface
-	Cache        contracts.CacheIface
+	Cache        contracts.Cacher
 	Bucket       contracts.S3Iface
 	Email        contracts.SESIface
 	Logger       contracts.Logger

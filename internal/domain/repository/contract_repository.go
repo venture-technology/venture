@@ -5,7 +5,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 )
 
-type IContractRepository interface {
+type ContractRepository interface {
 	Create(contract *entity.Contract) error
 	Get(uuid uuid.UUID) (*entity.Contract, error)
 	FindAllByCnpj(cnpj *string) ([]entity.Contract, error)

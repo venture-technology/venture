@@ -4,7 +4,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 )
 
-type ISchoolRepository interface {
+type SchoolRepository interface {
 	Create(school *entity.School) error
 	Get(cnpj string) (*entity.School, error)
 	FindAll() ([]entity.School, error)
