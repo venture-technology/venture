@@ -5,7 +5,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 )
 
-type IInviteRepository interface {
+type InviteRepository interface {
 	Create(invite *entity.Invite) error
 	Get(uuid uuid.UUID) (*entity.Invite, error)
 	FindAllByCnh(cnh string) ([]entity.Invite, error)

@@ -22,7 +22,7 @@ type PostgresIface interface {
 	Close() error
 }
 
-type CacheIface interface {
+type Cacher interface {
 	Set(key string, value any, expiration time.Duration) error
 	Get(key string) (string, error)
 	Expire(key string, expiration time.Duration) (bool, error)

@@ -4,7 +4,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 )
 
-type IDriverRepository interface {
+type DriverRepository interface {
 	Create(driver *entity.Driver) error
 	Get(cnh string) (*entity.Driver, error)
 	Update(cnh string, attributes map[string]interface{}) error

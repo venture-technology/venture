@@ -3,11 +3,11 @@ package persistence
 import "github.com/venture-technology/venture/internal/domain/repository"
 
 type PostgresRepositories struct {
-	ChildRepository       repository.IChildRepository
-	ResponsibleRepository repository.IResponsibleRepository
-	SchoolRepository      repository.ISchoolRepository
-	DriverRepository      repository.IDriverRepository
-	PartnerRepository     repository.IPartnerRepository
-	ContractRepository    repository.IContractRepository
-	InviteRepository      repository.IInviteRepository
+	ChildRepository       repository.ChildRepository
+	ResponsibleRepository repository.ResponsiblesibleRepository
+	SchoolRepository      repository.SchoolRepository
+	DriverRepository      repository.DriverRepository
+	PartnerRepository     repository.PartnerRepository
+	ContractRepository    repository.ContractRepository
+	InviteRepository      repository.InviteRepository
 }

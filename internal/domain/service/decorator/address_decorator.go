@@ -10,10 +10,10 @@ import (
 
 type AddressDecorator struct {
 	AddressAdapter adapters.AddressService
-	Cache          contracts.CacheIface
+	Cache          contracts.Cacher
 }
 
-func NewAddressDecorator(addressAdapter adapters.AddressService, cache contracts.CacheIface) AddressDecorator {
+func NewAddressDecorator(addressAdapter adapters.AddressService, cache contracts.Cacher) AddressDecorator {
 	return AddressDecorator{
 		AddressAdapter: addressAdapter,
 		Cache:          cache,
