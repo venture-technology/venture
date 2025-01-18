@@ -1,0 +1,2 @@
+ALTER TABLE responsible
+ALTER COLUMN card_token SET NOT NULL;
