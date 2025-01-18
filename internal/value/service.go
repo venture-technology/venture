@@ -208,3 +208,13 @@ type AuthParams struct {
 	Password string `json:"password"`
 	Kind     string `json:"kind"`
 }
+
+var Schedules = map[string]string{
+	"morning":            "1",
+	"afternoon":          "2",
+	"night":              "3",
+	"morning, afternoon": "4",
+	"morning, night":     "5",
+	"afternoon, night":   "6",
+	"all":                "7",
+}
