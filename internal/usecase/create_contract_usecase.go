@@ -93,10 +93,6 @@ func (ccuc *CreateContractUseCase) createStripeItems(contract *entity.Contract) 
 }
 
 func validateAttrs(driver *entity.Driver, responsible *entity.Responsible) error {
-	hasPaymentMethod := responsible.HasPaymentMethod()
-	if !hasPaymentMethod {
-		return fmt.Errorf("responsible %s has no payment method", responsible.Name)
-	}
 	hasCar := driver.HasCar()
 	if !hasCar {
 		return fmt.Errorf("driver %s need car register", driver.CNH)
