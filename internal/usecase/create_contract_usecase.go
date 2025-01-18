@@ -30,12 +30,7 @@ func NewCreateContractUseCase(
 }
 
 func (ccuc *CreateContractUseCase) CreateContract(contract *entity.Contract) error {
-	responsible := contract.Child.Responsible
-	err := validateAttrs(&contract.Driver, &responsible)
-	if err != nil {
-		return err
-	}
-
+	var err error
 	contract.Amount, err = ccuc.calcAmount(contract)
 	if err != nil {
 		return err
@@ -51,6 +46,10 @@ func (ccuc *CreateContractUseCase) CreateContract(contract *entity.Contract) err
 	}
 
 	return ccuc.repositories.ContractRepository.Create(contract)
+
+	// abaixar um numero de seats de acordo com o valor do turno da criança e
+	// abaixar um numero de vagas do driver
+
 }
 
 func (ccuc *CreateContractUseCase) calcAmount(contract *entity.Contract) (float64, error) {
@@ -90,14 +89,6 @@ func (ccuc *CreateContractUseCase) createStripeItems(contract *entity.Contract) 
 
 	contract.Record = id
 	return contract, nil
-}
-
-func validateAttrs(driver *entity.Driver, responsible *entity.Responsible) error {
-	hasCar := driver.HasCar()
-	if !hasCar {
-		return fmt.Errorf("driver %s need car register", driver.CNH)
-	}
-	return nil
 }
 
 func buildResponsibleAddress(responsible *entity.Responsible) string {
