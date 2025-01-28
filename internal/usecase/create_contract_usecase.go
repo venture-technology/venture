@@ -11,6 +11,27 @@ import (
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
+var createSeat = map[string]func(ccuc *CreateContractUseCase, contract *entity.Contract) error{
+	"morning": func(ccuc *CreateContractUseCase, contract *entity.Contract) error {
+		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
+			"seats_remaining": contract.Driver.Seats.Remaining - 1,
+			"seats_morning":   contract.Driver.Seats.Morning - 1,
+		})
+	},
+	"afternoon": func(ccuc *CreateContractUseCase, contract *entity.Contract) error {
+		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
+			"seats_remaining": contract.Driver.Seats.Remaining - 1,
+			"seats_afternoon": contract.Driver.Seats.Afternoon - 1,
+		})
+	},
+	"night": func(ccuc *CreateContractUseCase, contract *entity.Contract) error {
+		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
+			"seats_remaining": contract.Driver.Seats.Remaining - 1,
+			"seats_night":     contract.Driver.Seats.Night - 1,
+		})
+	},
+}
+
 type CreateContractUseCase struct {
 	repositories *persistence.PostgresRepositories
 	logger       contracts.Logger
@@ -45,16 +66,17 @@ func (ccuc *CreateContractUseCase) CreateContract(contract *entity.Contract) err
 		return err
 	}
 
-	return ccuc.repositories.ContractRepository.Create(contract)
+	err = ccuc.repositories.ContractRepository.Create(contract)
+	if err != nil {
+		return err
+	}
 
-	// abaixar um numero de seats de acordo com o valor do turno da criança e
-	// abaixar um numero de vagas do driver
-
+	return createSeat[contract.Kid.Shift](ccuc, contract)
 }
 
 func (ccuc *CreateContractUseCase) calcAmount(contract *entity.Contract) (float64, error) {
 	dist, err := ccuc.adapters.AddressService.GetDistance(
-		buildResponsibleAddress(&contract.Child.Responsible),
+		buildResponsibleAddress(&contract.Kid.Responsible),
 		buildSchoolAddress(&contract.School),
 	)
 	if err != nil {
