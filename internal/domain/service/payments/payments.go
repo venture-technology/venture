@@ -30,8 +30,8 @@ func (su *StripeAdapter) CreateProduct(contract *entity.Contract) (*stripe.Produ
 	stripe.Key = su.config.StripeEnv.SecretKey
 
 	params := &stripe.ProductParams{
-		Name:        stripe.String(fmt.Sprintf("Assinatura - Motorista: %s & Responsável: %s por: %s", contract.Driver.CNH, contract.Child.Responsible.CPF, contract.Child.RG)),
-		Description: stripe.String(fmt.Sprintf("Assinatura - Motorista: %s & Responsável: %s por: %s", contract.Driver.Name, contract.Child.Responsible.Name, contract.Child.Name)),
+		Name:        stripe.String(fmt.Sprintf("Assinatura - Motorista: %s & Responsável: %s por: %s", contract.Driver.CNH, contract.Kid.Responsible.CPF, contract.Kid.RG)),
+		Description: stripe.String(fmt.Sprintf("Assinatura - Motorista: %s & Responsável: %s por: %s", contract.Driver.Name, contract.Kid.Responsible.Name, contract.Kid.Name)),
 	}
 
 	prodt, err := product.New(params)
@@ -67,7 +67,7 @@ func (su *StripeAdapter) CreateSubscription(contract *entity.Contract) (*stripe.
 
 	params := &stripe.SubscriptionParams{
 		CancelAt: stripe.Int64(time.Now().AddDate(0, 12, 0).Unix()),
-		Customer: stripe.String(contract.Child.Responsible.CustomerId),
+		Customer: stripe.String(contract.Kid.Responsible.CustomerId),
 		Items: []*stripe.SubscriptionItemsParams{
 			{
 				Price: stripe.String(contract.StripeSubscription.Price),
@@ -96,7 +96,7 @@ func (su *StripeAdapter) ListSubscriptions(contract *entity.Contract) ([]entity.
 	stripe.Key = su.config.StripeEnv.SecretKey
 
 	params := &stripe.SubscriptionListParams{
-		Customer: stripe.String(contract.Child.Responsible.CustomerId),
+		Customer: stripe.String(contract.Kid.Responsible.CustomerId),
 	}
 	params.Filters.AddFilter("limit", "", "10")
 
@@ -175,10 +175,10 @@ func (su *StripeAdapter) FineResponsible(contract *entity.Contract, amountFine i
 	stripe.Key = su.config.StripeEnv.SecretKey
 
 	params := &stripe.PaymentIntentParams{
-		Customer:      stripe.String(contract.Child.Responsible.CustomerId),
+		Customer:      stripe.String(contract.Kid.Responsible.CustomerId),
 		Amount:        stripe.Int64(amountFine * 100),
 		Currency:      stripe.String("brl"),
-		PaymentMethod: stripe.String(contract.Child.Responsible.PaymentMethodId),
+		PaymentMethod: stripe.String(contract.Kid.Responsible.PaymentMethodId),
 		OffSession:    stripe.Bool(true),
 		Confirm:       stripe.Bool(true),
 	}

@@ -25,6 +25,7 @@ func (cr KidRepositoryImpl) Get(rg *string) (*entity.Kid, error) {
 	}
 	return &kid, nil
 }
+
 func (cr KidRepositoryImpl) FindAll(cpf *string) ([]entity.Kid, error) {
 	var kids []entity.Kid
 	err := cr.Postgres.Client().Where("responsible_id = ?", *cpf).Find(&kids).Error

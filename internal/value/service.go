@@ -19,7 +19,7 @@ type GetResponsible struct {
 	CreatedAt       time.Time `json:"created_at"`
 }
 
-type GetChild struct {
+type GetKid struct {
 	ID              int    `json:"id"`
 	Name            string `json:"name"`
 	RG              string `json:"rg"`
@@ -29,7 +29,7 @@ type GetChild struct {
 	ProfileImage    string `json:"profile_image"`
 }
 
-type ListChild struct {
+type ListKid struct {
 	ID           int    `json:"id"`
 	Name         string `json:"name"`
 	Period       string `json:"period"`
@@ -120,7 +120,7 @@ type DriverListPartners struct {
 type GetContract struct {
 	ID          int                           `json:"id"`
 	Status      string                        `json:"status"`
-	ChildName   string                        `json:"child_name"`
+	KidName     string                        `json:"kid_name"`
 	Period      string                        `json:"period"`
 	Amount      float64                       `json:"amount"`
 	Record      uuid.UUID                     `json:"record"`
@@ -139,7 +139,7 @@ type DriverListContracts struct {
 	Amount      float64           `json:"amount"`
 	School      GetSchoolContract `json:"school"`
 	Responsible GetParentContract `json:"responsible"`
-	Child       GetChildContract  `json:"child"`
+	Kid         GetKidContract    `json:"kid"`
 	CreatedAt   time.Time         `json:"created_at"`
 	ExpireAt    time.Time         `json:"expire_at"`
 }
@@ -147,7 +147,7 @@ type DriverListContracts struct {
 type SchoolListContracts struct {
 	ID          int               `json:"id"`
 	Status      string            `json:"status"`
-	ChildName   string            `json:"child_name"`
+	KidName     string            `json:"kid_name"`
 	Period      string            `json:"period"`
 	Amount      float64           `json:"amount"`
 	Record      uuid.UUID         `json:"record"`
@@ -160,7 +160,7 @@ type SchoolListContracts struct {
 type ResponsibleListContracts struct {
 	ID        int               `json:"id"`
 	Status    string            `json:"status"`
-	ChildName string            `json:"child_name"`
+	KidName   string            `json:"kid_name"`
 	Period    string            `json:"period"`
 	Amount    float64           `json:"amount"`
 	Record    uuid.UUID         `json:"record"`
@@ -196,7 +196,7 @@ type GetParentContract struct {
 	ProfileImage string `json:"profile_image"`
 }
 
-type GetChildContract struct {
+type GetKidContract struct {
 	ID           int    `json:"id"`
 	Name         string `json:"name"`
 	Period       string `json:"period"`
