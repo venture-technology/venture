@@ -70,8 +70,8 @@ func buildResponsibleListContracts(contracts *entity.Contract) value.Responsible
 			Phone:        contracts.Driver.Phone,
 			ProfileImage: contracts.Driver.ProfileImage,
 		},
-		ChildName: contracts.Child.Name,
-		Period:    contracts.Child.Shift,
+		KidName:   contracts.Kid.Name,
+		Period:    contracts.Kid.Shift,
 		CreatedAt: contracts.CreatedAt,
 		ExpireAt:  contracts.ExpireAt,
 	}

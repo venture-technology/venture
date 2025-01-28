@@ -43,7 +43,7 @@ func (s Setup) Postgres() {
 }
 
 func (s Setup) Repositories() {
-	s.app.Repositories.ChildRepository = persistence.ChildRepositoryImpl{Postgres: s.app.Postgres}
+	s.app.Repositories.KidRepository = persistence.KidRepositoryImpl{Postgres: s.app.Postgres}
 	s.app.Repositories.ContractRepository = persistence.ContractRepositoryImpl{Postgres: s.app.Postgres}
 	s.app.Repositories.DriverRepository = persistence.DriverRepositoryImpl{Postgres: s.app.Postgres}
 	s.app.Repositories.InviteRepository = persistence.InviteRepositoryImpl{Postgres: s.app.Postgres}
