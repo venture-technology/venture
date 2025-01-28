@@ -45,3 +45,6 @@ CREATE TABLE IF NOT EXISTS kids (
     FOREIGN KEY (responsible_id) REFERENCES responsibles(cpf) ON DELETE cascade,
     CONSTRAINT unique_kid UNIQUE (rg)
 );
+
+alter table drivers rename column qrcode to qr_code;
+alter table drivers drop column students_remaining
