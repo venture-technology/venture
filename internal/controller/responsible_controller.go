@@ -19,8 +19,8 @@ func NewResponsibleController() *ResponsibleController {
 }
 
 func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
-	var input entity.Responsible
-	if err := c.BindJSON(&input); err != nil {
+	var requestParams entity.Responsible
+	if err := c.BindJSON(&requestParams); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
@@ -31,15 +31,15 @@ func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
 		infra.App.Config,
 	)
 
-	input.Password = utils.MakeHash(input.Password)
+	requestParams.Password = utils.MakeHash(requestParams.Password)
 
-	err := usecase.CreateResponsible(&input)
+	err := usecase.CreateResponsible(&requestParams)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar criar responsável"))
 		return
 	}
 
-	c.JSON(http.StatusCreated, input)
+	c.JSON(http.StatusCreated, requestParams)
 }
 
 func (rh *ResponsibleController) GetV1GetResponsible(c *gin.Context) {
