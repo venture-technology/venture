@@ -14,7 +14,4 @@ type ContractRepository interface {
 	Cancel(uuid uuid.UUID) error
 	Expired(uuid uuid.UUID) error
 	Update(uuid uuid.UUID, attributes map[string]interface{}) error
-
-	// we can use this function, when we need to check if a contract already exists
-	GetSimpleContractByTitle(title *string) (*entity.Contract, error)
 }

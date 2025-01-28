@@ -70,9 +70,12 @@ func (s3Impl *S3Impl) List(path string) ([]string, error) {
 		}
 		return !lastPage
 	})
-
 	if err != nil {
 		return nil, err
+	}
+
+	if len(links) == 0 {
+		return links, nil
 	}
 
 	// remove the first link from the list, because it is the path itself

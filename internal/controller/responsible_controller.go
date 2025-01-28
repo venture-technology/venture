@@ -19,8 +19,8 @@ func NewResponsibleController() *ResponsibleController {
 }
 
 func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
-	var input entity.Responsible
-	if err := c.BindJSON(&input); err != nil {
+	var requestParams entity.Responsible
+	if err := c.BindJSON(&requestParams); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
@@ -31,15 +31,15 @@ func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
 		infra.App.Config,
 	)
 
-	input.Password = utils.MakeHash(input.Password)
+	requestParams.Password = utils.MakeHash(requestParams.Password)
 
-	err := usecase.CreateResponsible(&input)
+	err := usecase.CreateResponsible(&requestParams)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar criar responsável"))
 		return
 	}
 
-	c.JSON(http.StatusCreated, input)
+	c.JSON(http.StatusCreated, requestParams)
 }
 
 func (rh *ResponsibleController) GetV1GetResponsible(c *gin.Context) {
@@ -62,7 +62,7 @@ func (rh *ResponsibleController) GetV1GetResponsible(c *gin.Context) {
 func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 	cpf := c.Param("cpf")
 	var data map[string]interface{}
-	if err := c.BindJSON(data); err != nil {
+	if err := c.BindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
@@ -99,45 +99,3 @@ func (rh *ResponsibleController) DeleteV1DeleteResponsbile(c *gin.Context) {
 	c.SetCookie("token", "", -1, "/", c.Request.Host, false, true)
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
-
-/*func (rh *ResponsibleController) SaveCard(c *gin.Context) {
-	var input entity.Responsible
-
-	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
-		return
-	}
-
-	paymentMethod, err := rh.responsibleUseCase.CreatePaymentMethod(c, &input.CreditCard.CardToken)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao buscar método de pagamento na stripe"))
-		return
-	}
-
-	input.PaymentMethodId = paymentMethod.ID
-
-	// get user to get customer id
-	responsible, err := rh.responsibleUseCase.Get(c, &input.CPF)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao buscar chave do cliente na stripe"))
-		return
-	}
-
-	input.CustomerId = responsible.CustomerId
-
-	_, err = rh.responsibleUseCase.AttachPaymentMethod(c, &input.CustomerId, &input.PaymentMethodId, input.CreditCard.Default)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao criar método de pagamento no stripe"))
-		return
-	}
-
-	err = rh.responsibleUseCase.SaveCard(c, &input.CPF, &input.CreditCard.CardToken, &paymentMethod.ID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao registrar cartão na stripe"))
-		return
-	}
-
-	c.JSON(http.StatusNoContent, http.NoBody)
-}
-*/

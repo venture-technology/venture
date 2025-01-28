@@ -48,7 +48,7 @@ func (gduc *GetDriverUseCase) GetDriver(cnh string) (value.GetDriver, error) {
 		Phone:  driver.Phone,
 		Car: fmt.Sprintf(
 			"%s, %s",
-			driver.Car.Model,
+			driver.Car.Name,
 			driver.Car.Year,
 		),
 		ProfileImage: driver.ProfileImage,

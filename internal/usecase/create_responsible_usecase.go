@@ -36,7 +36,7 @@ func (cruc *CreateResponsibleUseCase) CreateResponsible(responsible *entity.Resp
 	if err != nil {
 		return err
 	}
-	// todo: create payment method
+
 	paymentMethod, err := cruc.CreatePaymentMethod(responsible.CardToken)
 	if err != nil {
 		return err

@@ -20,7 +20,14 @@ func (cr ContractRepositoryImpl) Create(contract *entity.Contract) error {
 
 func (cr ContractRepositoryImpl) Get(id uuid.UUID) (*entity.Contract, error) {
 	var contract entity.Contract
-	err := cr.Postgres.Client().Where("record = ?", id).First(&contract).Error
+	err := cr.Postgres.Client().
+		Where("record = ?", id).
+		Preload("Driver", "cnh = ?", "driver_id").
+		Preload("Kid", "rg = ?", "kid_id").
+		Preload("Responsible", "cpf = ?", "responsible_id").
+		Preload("School", "cnpj = ?", "school_id").
+		First(&contract).Error
+
 	if err != nil {
 		return nil, err
 	}
@@ -68,15 +75,6 @@ func (cr ContractRepositoryImpl) Expired(id uuid.UUID) error {
 		return err
 	}
 	return nil
-}
-
-func (cr ContractRepositoryImpl) GetSimpleContractByTitle(title *string) (*entity.Contract, error) {
-	var contract entity.Contract
-	err := cr.Postgres.Client().Where("title_stripe_subscription = ?", *title).First(&contract).Error
-	if err != nil {
-		return nil, err
-	}
-	return &contract, nil
 }
 
 func (cr ContractRepositoryImpl) Update(id uuid.UUID, attributes map[string]interface{}) error {

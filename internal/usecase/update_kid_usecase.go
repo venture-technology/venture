@@ -1,26 +1,25 @@
 package usecase
 
 import (
-	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
 
-type CreateChildUseCase struct {
+type UpdateKidUseCase struct {
 	repositories *persistence.PostgresRepositories
 	logger       contracts.Logger
 }
 
-func NewCreateChildUseCase(
+func NewUpdateKidUseCase(
 	repositories *persistence.PostgresRepositories,
 	logger contracts.Logger,
-) *CreateChildUseCase {
-	return &CreateChildUseCase{
+) *UpdateKidUseCase {
+	return &UpdateKidUseCase{
 		repositories: repositories,
 		logger:       logger,
 	}
 }
 
-func (ccuc *CreateChildUseCase) CreateChild(child *entity.Child) error {
-	return ccuc.repositories.ChildRepository.Create(child)
+func (ucuc *UpdateKidUseCase) UpdateKid(rg string, attributes map[string]interface{}) error {
+	return ucuc.repositories.KidRepository.Update(rg, attributes)
 }

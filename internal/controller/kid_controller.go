@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,26 +10,27 @@ import (
 	"github.com/venture-technology/venture/internal/usecase"
 )
 
-type ChildController struct {
+type KidController struct {
 }
 
-func NewChildController() *ChildController {
-	return &ChildController{}
+func NewKidController() *KidController {
+	return &KidController{}
 }
 
-func (ch *ChildController) PostV1CreateChild(c *gin.Context) {
-	var input entity.Child
-	if err := c.BindJSON(&input); err != nil {
+func (ch *KidController) PostV1CreateKid(c *gin.Context) {
+	var requestParams entity.Kid
+	if err := c.BindJSON(&requestParams); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
+		infra.App.Logger.Infof(fmt.Sprintf("error: %v", err.Error()))
 		return
 	}
 
-	usecase := usecase.NewCreateChildUseCase(
+	usecase := usecase.NewCreateKidUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	err := usecase.CreateChild(&input)
+	err := usecase.CreateKid(&requestParams)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao criar novo filho"})
 		return
@@ -37,43 +39,43 @@ func (ch *ChildController) PostV1CreateChild(c *gin.Context) {
 	c.JSON(http.StatusCreated, http.NoBody)
 }
 
-func (ch *ChildController) GetV1GetChild(c *gin.Context) {
+func (ch *KidController) GetV1GetKid(c *gin.Context) {
 	rg := c.Param("rg")
 
-	usecase := usecase.NewGetChildUseCase(
+	usecase := usecase.NewGetKidUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	child, err := usecase.GetChild(&rg)
+	kid, err := usecase.GetKid(&rg)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "filho não encontrado"})
 		return
 	}
 
-	c.JSON(http.StatusOK, child)
+	c.JSON(http.StatusOK, kid)
 }
 
-func (ch *ChildController) GetV1ListChildren(c *gin.Context) {
+func (ch *KidController) GetV1ListKids(c *gin.Context) {
 	cpf := c.Param("cpf")
 
-	usecase := usecase.NewListChildrenUseCase(
+	usecase := usecase.NewListKidsUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	children, err := usecase.ListChildren(&cpf)
+	kids, err := usecase.ListKids(&cpf)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "filho não encontrado"})
 		return
 	}
 
-	c.JSON(http.StatusOK, children)
+	c.JSON(http.StatusOK, kids)
 }
 
-func (ch *ChildController) PatchV1UpdateController(c *gin.Context) {
+func (ch *KidController) PatchV1UpdateController(c *gin.Context) {
 	rg := c.Param("rg")
 	var data map[string]interface{}
 	if err := c.BindJSON(&data); err != nil {
@@ -81,12 +83,12 @@ func (ch *ChildController) PatchV1UpdateController(c *gin.Context) {
 		return
 	}
 
-	usecase := usecase.NewUpdateChildUseCase(
+	usecase := usecase.NewUpdateKidUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	err := usecase.UpdateChild(rg, data)
+	err := usecase.UpdateKid(rg, data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno ao atualizar informações"})
 		return
@@ -95,15 +97,15 @@ func (ch *ChildController) PatchV1UpdateController(c *gin.Context) {
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
 
-func (ch *ChildController) DeleteV1DeleteChild(c *gin.Context) {
+func (ch *KidController) DeleteV1DeleteKid(c *gin.Context) {
 	rg := c.Param("rg")
 
-	usecase := usecase.NewDeleteChildUseCase(
+	usecase := usecase.NewDeleteKidUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	err := usecase.DeleteChild(&rg)
+	err := usecase.DeleteKid(&rg)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar filho"})
 		return

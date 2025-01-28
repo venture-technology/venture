@@ -41,8 +41,8 @@ func buildSchoolListContracts(contracts *entity.Contract) value.SchoolListContra
 		Record:    contracts.Record,
 		Status:    contracts.Status,
 		Amount:    contracts.Amount,
-		ChildName: contracts.Child.Name,
-		Period:    contracts.Child.Shift,
+		KidName:   contracts.Kid.Name,
+		Period:    contracts.Kid.Shift,
 		CreatedAt: contracts.CreatedAt,
 		ExpireAt:  contracts.ExpireAt,
 		Driver: value.GetDriverContract{
@@ -59,10 +59,10 @@ func buildSchoolListContracts(contracts *entity.Contract) value.SchoolListContra
 			ProfileImage: contracts.Driver.ProfileImage,
 		},
 		Responsible: value.GetParentContract{
-			ID:    contracts.Child.Responsible.ID,
-			Name:  contracts.Child.Responsible.Name,
-			Email: contracts.Child.Responsible.Email,
-			Phone: contracts.Child.Responsible.Phone,
+			ID:    contracts.Kid.Responsible.ID,
+			Name:  contracts.Kid.Responsible.Name,
+			Email: contracts.Kid.Responsible.Email,
+			Phone: contracts.Kid.Responsible.Phone,
 		},
 	}
 }

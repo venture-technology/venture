@@ -30,7 +30,7 @@ Content-Type: application/json
       "zip": "08120000"
     }
   },
-  "child": {
+  "kid": {
     "name": "Felipe Fernandes",
     "rg": "350912713",
     "responsible": {

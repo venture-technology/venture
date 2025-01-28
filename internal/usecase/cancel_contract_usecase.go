@@ -3,9 +3,31 @@ package usecase
 import (
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
+	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
+
+var cancelSeat = map[string]func(ccuc *CancelContractUseCase, contract *entity.Contract) error{
+	"morning": func(ccuc *CancelContractUseCase, contract *entity.Contract) error {
+		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
+			"seats_remaining": contract.Driver.Seats.Remaining + 1,
+			"seats_morning":   contract.Driver.Seats.Morning + 1,
+		})
+	},
+	"afternoon": func(ccuc *CancelContractUseCase, contract *entity.Contract) error {
+		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
+			"seats_remaining": contract.Driver.Seats.Remaining + 1,
+			"seats_afternoon": contract.Driver.Seats.Afternoon + 1,
+		})
+	},
+	"night": func(ccuc *CancelContractUseCase, contract *entity.Contract) error {
+		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
+			"seats_remaining": contract.Driver.Seats.Remaining + 1,
+			"seats_night":     contract.Driver.Seats.Night + 1,
+		})
+	},
+}
 
 type CancelContractUseCase struct {
 	repositories *persistence.PostgresRepositories
@@ -47,5 +69,5 @@ func (ccuc *CancelContractUseCase) CancelContract(id uuid.UUID) error {
 		return err
 	}
 
-	return nil
+	return cancelSeat[contract.Kid.Shift](ccuc, contract)
 }

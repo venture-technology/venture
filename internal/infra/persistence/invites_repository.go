@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
+	"github.com/venture-technology/venture/pkg/realtime"
 )
 
 type InviteRepositoryImpl struct {
@@ -36,7 +37,10 @@ func (ir InviteRepositoryImpl) FindAllByCnpj(cnpj string) ([]entity.Invite, erro
 }
 
 func (ir InviteRepositoryImpl) Accept(uuid uuid.UUID) error {
-	return ir.Postgres.Client().Model(&entity.Invite{}).Where("uuid = ?", uuid).Update("status", "accepted").Error
+	return ir.Postgres.Client().Model(&entity.Invite{}).Where("uuid = ?", uuid).Updates(map[string]interface{}{
+		"status":      "accepted",
+		"accepted_at": realtime.Now(),
+	}).Error
 }
 
 func (ir InviteRepositoryImpl) Decline(uuid uuid.UUID) error {

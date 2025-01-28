@@ -13,7 +13,7 @@ type Responsible struct {
 	Password        string    `json:"password,omitempty" validate:"required"`
 	CPF             string    `json:"cpf,omitempty" validate:"required" example:"44000000000"` // sem pontuação
 	Address         Address   `gorm:"embedded" json:"address,omitempty" validate:"required"`
-	CardToken       string    `json:"token,omitempty"` // credit card token on create responsible
+	CardToken       string    `json:"card_token,omitempty"` // credit card token on create responsible
 	CustomerId      string    `json:"customer_id,omitempty"`
 	PaymentMethodId string    `json:"payment_method_id,omitempty"`
 	Phone           string    `json:"phone,omitempty" validate:"required" example:"+55 11 123456789"` // o telefone deve seguir este mesmo formato
