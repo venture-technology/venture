@@ -5,21 +5,21 @@ import (
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
 
-type DeleteChildUseCase struct {
+type DeleteKidUseCase struct {
 	repositories *persistence.PostgresRepositories
 	logger       contracts.Logger
 }
 
-func NewDeleteChildUseCase(
+func NewDeleteKidUseCase(
 	repositories *persistence.PostgresRepositories,
 	logger contracts.Logger,
-) *DeleteChildUseCase {
-	return &DeleteChildUseCase{
+) *DeleteKidUseCase {
+	return &DeleteKidUseCase{
 		repositories: repositories,
 		logger:       logger,
 	}
 }
 
-func (dcuc *DeleteChildUseCase) DeleteChild(rg *string) error {
-	return dcuc.repositories.ChildRepository.Delete(rg)
+func (dcuc *DeleteKidUseCase) DeleteKid(rg *string) error {
+	return dcuc.repositories.KidRepository.Delete(rg)
 }

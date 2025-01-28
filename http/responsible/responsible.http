@@ -13,7 +13,9 @@ Content-Type: application/json
         "zip": "08538300",
         "complement": "Manaca, bloco 1, apto 12"
     },
-    "card": {},
+    "card": {
+        
+    },
     "phone": "+55 11 930577222"
 }
 
