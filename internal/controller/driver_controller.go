@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,14 +20,13 @@ func NewDriverController() *DriverController {
 }
 
 func (dh *DriverController) PostV1Create(c *gin.Context) {
-	var input entity.Driver
-
-	if err := c.BindJSON(&input); err != nil {
+	var requestParams entity.Driver
+	if err := c.BindJSON(&requestParams); err != nil {
+		infra.App.Logger.Errorf(fmt.Sprintf("error on bind json: %v", err))
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
-
-	input.Password = utils.MakeHash(input.Password)
+	requestParams.Password = utils.MakeHash(requestParams.Password)
 
 	usecase := usecase.NewCreateDriverUseCase(
 		&infra.App.Repositories,
@@ -34,13 +34,13 @@ func (dh *DriverController) PostV1Create(c *gin.Context) {
 		infra.App.Bucket,
 	)
 
-	err := usecase.CreateDriver(&input)
+	err := usecase.CreateDriver(&requestParams)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realziar a criação do qrcode"))
 		return
 	}
 
-	c.JSON(http.StatusCreated, input)
+	c.JSON(http.StatusCreated, requestParams)
 }
 
 func (dh *DriverController) GetV1GetDriver(c *gin.Context) {
@@ -64,7 +64,7 @@ func (dh *DriverController) GetV1GetDriver(c *gin.Context) {
 func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
 	cnh := c.Param("cnh")
 	var data map[string]interface{}
-	if err := c.BindJSON(data); err != nil {
+	if err := c.BindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
