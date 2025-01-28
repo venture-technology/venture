@@ -8,25 +8,7 @@ import (
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
 
-type CancelContractUseCase struct {
-	repositories *persistence.PostgresRepositories
-	logger       contracts.Logger
-	adapters     adapters.Adapters
-}
-
-func NewCancelContractUseCase(
-	repositories *persistence.PostgresRepositories,
-	logger contracts.Logger,
-	adapters adapters.Adapters,
-) *CancelContractUseCase {
-	return &CancelContractUseCase{
-		repositories: repositories,
-		logger:       logger,
-		adapters:     adapters,
-	}
-}
-
-var seatsEvent = map[string]func(ccuc *CancelContractUseCase, contract *entity.Contract) error{
+var cancelSeat = map[string]func(ccuc *CancelContractUseCase, contract *entity.Contract) error{
 	"morning": func(ccuc *CancelContractUseCase, contract *entity.Contract) error {
 		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
 			"seats_remaining": contract.Driver.Seats.Remaining + 1,
@@ -45,6 +27,24 @@ var seatsEvent = map[string]func(ccuc *CancelContractUseCase, contract *entity.C
 			"seats_night":     contract.Driver.Seats.Night + 1,
 		})
 	},
+}
+
+type CancelContractUseCase struct {
+	repositories *persistence.PostgresRepositories
+	logger       contracts.Logger
+	adapters     adapters.Adapters
+}
+
+func NewCancelContractUseCase(
+	repositories *persistence.PostgresRepositories,
+	logger contracts.Logger,
+	adapters adapters.Adapters,
+) *CancelContractUseCase {
+	return &CancelContractUseCase{
+		repositories: repositories,
+		logger:       logger,
+		adapters:     adapters,
+	}
 }
 
 func (ccuc *CancelContractUseCase) CancelContract(id uuid.UUID) error {
@@ -69,5 +69,5 @@ func (ccuc *CancelContractUseCase) CancelContract(id uuid.UUID) error {
 		return err
 	}
 
-	return seatsEvent[contract.Child.Shift](ccuc, contract)
+	return cancelSeat[contract.Kid.Shift](ccuc, contract)
 }
