@@ -18,8 +18,8 @@ func NewKidController() *KidController {
 }
 
 func (ch *KidController) PostV1CreateKid(c *gin.Context) {
-	var input entity.Kid
-	if err := c.BindJSON(&input); err != nil {
+	var requestParams entity.Kid
+	if err := c.BindJSON(&requestParams); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		infra.App.Logger.Infof(fmt.Sprintf("error: %v", err.Error()))
 		return
@@ -30,7 +30,7 @@ func (ch *KidController) PostV1CreateKid(c *gin.Context) {
 		infra.App.Logger,
 	)
 
-	err := usecase.CreateKid(&input)
+	err := usecase.CreateKid(&requestParams)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao criar novo filho"})
 		return
