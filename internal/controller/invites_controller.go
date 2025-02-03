@@ -18,8 +18,8 @@ func NewInviteController() *InviteController {
 }
 
 func (ih *InviteController) PostV1SendInvite(c *gin.Context) {
-	var input entity.Invite
-	if err := c.BindJSON(&input); err != nil {
+	var requestParams entity.Invite
+	if err := c.BindJSON(&requestParams); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
@@ -29,7 +29,7 @@ func (ih *InviteController) PostV1SendInvite(c *gin.Context) {
 		infra.App.Logger,
 	)
 
-	err := usecase.SendInvite(&input)
+	err := usecase.SendInvite(&requestParams)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno no servidor"})
 		return

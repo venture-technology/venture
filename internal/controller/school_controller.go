@@ -18,32 +18,32 @@ func NewSchoolController() *SchoolController {
 }
 
 func (sh *SchoolController) PostV1CreateSchool(c *gin.Context) {
-	var input entity.School
-	if err := c.BindJSON(&input); err != nil {
+	var requestParams entity.School
+	if err := c.BindJSON(&requestParams); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
-	validatecnpj := input.ValidateCnpj()
+	validatecnpj := requestParams.ValidateCnpj()
 	if !validatecnpj {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "cnpj é inválido"})
 		return
 	}
 
-	input.Password = utils.MakeHash(input.Password)
+	requestParams.Password = utils.MakeHash(requestParams.Password)
 
 	usecase := usecase.NewCreateSchoolUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	err := usecase.CreateSchool(&input)
+	err := usecase.CreateSchool(&requestParams)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao tentar criar escola"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, input)
+	c.JSON(http.StatusCreated, requestParams)
 }
 
 func (sh *SchoolController) GetV1GetSchool(c *gin.Context) {
