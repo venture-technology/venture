@@ -7,7 +7,7 @@ import (
 
 type V1Controllers struct {
 	Responsible *controller.ResponsibleController
-	Child       *controller.ChildController
+	Kid         *controller.KidController
 	School      *controller.SchoolController
 	Driver      *controller.DriverController
 	Invite      *controller.InviteController
@@ -19,7 +19,7 @@ func NewV1Controller() *V1Controllers {
 	return &V1Controllers{
 		Invite:      controller.NewInviteController(),
 		Responsible: controller.NewResponsibleController(),
-		Child:       controller.NewChildController(),
+		Kid:         controller.NewKidController(),
 		School:      controller.NewSchoolController(),
 		Driver:      controller.NewDriverController(),
 		Partner:     controller.NewPartnerController(),
@@ -33,11 +33,11 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.PATCH("/responsible/:cpf", route.Responsible.PatchV1UpdateResponsible)
 	group.DELETE("/responsible/:cpf", route.Responsible.DeleteV1DeleteResponsbile)
 
-	group.POST("/child", route.Child.PostV1CreateChild)
-	group.GET("/child/:rg", route.Child.GetV1GetChild)
-	group.GET("/:cpf/child", route.Child.GetV1ListChildren)
-	group.PATCH("/child/:rg", route.Child.PatchV1UpdateController)
-	group.DELETE("/child/:rg", route.Child.DeleteV1DeleteChild)
+	group.POST("/kid", route.Kid.PostV1CreateKid)
+	group.GET("/kid/:rg", route.Kid.GetV1GetKid)
+	group.GET("/:cpf/kid", route.Kid.GetV1ListKids)
+	group.PATCH("/kid/:rg", route.Kid.PatchV1UpdateController)
+	group.DELETE("/kid/:rg", route.Kid.DeleteV1DeleteKid)
 
 	group.POST("/school", route.School.PostV1CreateSchool)
 	group.GET("/school", route.School.GetV1ListSchool)
@@ -52,7 +52,7 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 
 	group.POST("/invite", route.Invite.PostV1SendInvite)
 	group.GET("/driver/invite/:cnh", route.Invite.GetV1DriverListInvite)
-	group.GET("/school/invite/:cnpj", route.Invite.GetV1DriverListInvite)
+	group.GET("/school/invite/:cnpj", route.Invite.GetV1SchoolListInvite)
 	group.PATCH("/invite/:id/accept", route.Invite.PatchV1AcceptInvite)
 	group.DELETE("/invite/:id/decline", route.Invite.DeleteV1DeclineInvite)
 

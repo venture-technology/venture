@@ -20,7 +20,7 @@ type Contract struct {
 	Status             string                 `json:"status" validate:"oneof='currently' 'canceled' 'expired'"`
 	Driver             Driver                 `json:"driver"`
 	School             School                 `json:"school"`
-	Child              Child                  `json:"child"`
+	Kid                Kid                    `json:"kid"`
 	StripeSubscription StripeSubscription     `json:"stripe"`
 	Invoices           map[string]InvoiceInfo `json:"invoices"`
 	Amount             float64                `json:"amount" validate:"required"`

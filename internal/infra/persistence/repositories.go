@@ -3,7 +3,7 @@ package persistence
 import "github.com/venture-technology/venture/internal/domain/repository"
 
 type PostgresRepositories struct {
-	ChildRepository       repository.ChildRepository
+	KidRepository         repository.KidRepository
 	ResponsibleRepository repository.ResponsiblesibleRepository
 	SchoolRepository      repository.SchoolRepository
 	DriverRepository      repository.DriverRepository

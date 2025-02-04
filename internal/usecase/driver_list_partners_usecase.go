@@ -37,7 +37,7 @@ func (dlpuc *DriverListPartnersUseCase) DriverListPartners(cnh string) ([]value.
 
 func buildDriverListPartner(partners entity.Partner) value.DriverListPartners {
 	return value.DriverListPartners{
-		ID:    partners.ID,
+		ID:    partners.Record,
 		Name:  partners.School.Name,
 		Email: partners.School.Email,
 		Phone: partners.School.Phone,

@@ -38,14 +38,14 @@ func (slpuc *SchoolListPartnersUseCase) SchoolListPartners(cnpj string) ([]value
 
 func buildSchoolListPartner(partners entity.Partner) value.SchoolListPartners {
 	return value.SchoolListPartners{
-		ID:     partners.ID,
+		ID:     partners.Record,
 		Name:   partners.Driver.Name,
 		Email:  partners.Driver.Email,
 		Phone:  partners.Driver.Phone,
 		QrCode: partners.Driver.QrCode,
 		Car: fmt.Sprintf(
 			"%s, %s",
-			partners.Driver.Car.Model,
+			partners.Driver.Car.Name,
 			partners.Driver.Car.Year,
 		),
 		ProfileImage: partners.Driver.ProfileImage,

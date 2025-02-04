@@ -11,6 +11,27 @@ import (
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
+var createSeat = map[string]func(ccuc *CreateContractUseCase, contract *entity.Contract) error{
+	"morning": func(ccuc *CreateContractUseCase, contract *entity.Contract) error {
+		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
+			"seats_remaining": contract.Driver.Seats.Remaining - 1,
+			"seats_morning":   contract.Driver.Seats.Morning - 1,
+		})
+	},
+	"afternoon": func(ccuc *CreateContractUseCase, contract *entity.Contract) error {
+		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
+			"seats_remaining": contract.Driver.Seats.Remaining - 1,
+			"seats_afternoon": contract.Driver.Seats.Afternoon - 1,
+		})
+	},
+	"night": func(ccuc *CreateContractUseCase, contract *entity.Contract) error {
+		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
+			"seats_remaining": contract.Driver.Seats.Remaining - 1,
+			"seats_night":     contract.Driver.Seats.Night - 1,
+		})
+	},
+}
+
 type CreateContractUseCase struct {
 	repositories *persistence.PostgresRepositories
 	logger       contracts.Logger
@@ -30,12 +51,7 @@ func NewCreateContractUseCase(
 }
 
 func (ccuc *CreateContractUseCase) CreateContract(contract *entity.Contract) error {
-	responsible := contract.Child.Responsible
-	err := validateAttrs(&contract.Driver, &responsible)
-	if err != nil {
-		return err
-	}
-
+	var err error
 	contract.Amount, err = ccuc.calcAmount(contract)
 	if err != nil {
 		return err
@@ -50,12 +66,17 @@ func (ccuc *CreateContractUseCase) CreateContract(contract *entity.Contract) err
 		return err
 	}
 
-	return ccuc.repositories.ContractRepository.Create(contract)
+	err = ccuc.repositories.ContractRepository.Create(contract)
+	if err != nil {
+		return err
+	}
+
+	return createSeat[contract.Kid.Shift](ccuc, contract)
 }
 
 func (ccuc *CreateContractUseCase) calcAmount(contract *entity.Contract) (float64, error) {
 	dist, err := ccuc.adapters.AddressService.GetDistance(
-		buildResponsibleAddress(&contract.Child.Responsible),
+		buildResponsibleAddress(&contract.Kid.Responsible),
 		buildSchoolAddress(&contract.School),
 	)
 	if err != nil {
@@ -90,14 +111,6 @@ func (ccuc *CreateContractUseCase) createStripeItems(contract *entity.Contract) 
 
 	contract.Record = id
 	return contract, nil
-}
-
-func validateAttrs(driver *entity.Driver, responsible *entity.Responsible) error {
-	hasCar := driver.HasCar()
-	if !hasCar {
-		return fmt.Errorf("driver %s need car register", driver.CNH)
-	}
-	return nil
 }
 
 func buildResponsibleAddress(responsible *entity.Responsible) string {
