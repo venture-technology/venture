@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,8 +21,8 @@ func NewDriverController() *DriverController {
 
 func (dh *DriverController) PostV1Create(c *gin.Context) {
 	var requestParams entity.Driver
-
 	if err := c.BindJSON(&requestParams); err != nil {
+		infra.App.Logger.Errorf(fmt.Sprintf("error on bind json: %v", err))
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
@@ -64,7 +65,7 @@ func (dh *DriverController) GetV1GetDriver(c *gin.Context) {
 func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
 	cnh := c.Param("cnh")
 	var data map[string]interface{}
-	if err := c.BindJSON(data); err != nil {
+	if err := c.BindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}

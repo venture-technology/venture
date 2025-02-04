@@ -80,6 +80,7 @@ func getScheduleDriver(driver *entity.Driver) (string, error) {
 }
 
 func fillSeats(driver *entity.Driver) {
+	driver.Seats.Remaining = driver.Car.Capacity
 	var seatMap = map[string]func(driver *entity.Driver){
 		"1": func(driver *entity.Driver) {
 			driver.Seats.Morning = driver.Car.Capacity
@@ -108,6 +109,5 @@ func fillSeats(driver *entity.Driver) {
 			driver.Seats.Night = driver.Car.Capacity / 3
 		},
 	}
-
 	seatMap[driver.Schedule](driver)
 }
