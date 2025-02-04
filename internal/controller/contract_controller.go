@@ -122,7 +122,6 @@ func (coh *ContractController) GetV1ListDriverContract(c *gin.Context) {
 }
 
 func (coh *ContractController) PatchV1CancelContract(c *gin.Context) {
-
 	id := c.Param("id")
 
 	uuid, err := uuid.Parse(id)
@@ -147,7 +146,6 @@ func (coh *ContractController) PatchV1CancelContract(c *gin.Context) {
 }
 
 func (coh *ContractController) PatchV1ExpiredContract(c *gin.Context) {
-
 	id := c.Param("id")
 
 	uuid, err := uuid.Parse(id)

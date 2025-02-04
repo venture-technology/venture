@@ -26,6 +26,7 @@ func (dh *DriverController) PostV1Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
+
 	requestParams.Password = utils.MakeHash(requestParams.Password)
 
 	usecase := usecase.NewCreateDriverUseCase(

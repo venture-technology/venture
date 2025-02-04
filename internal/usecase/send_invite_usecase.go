@@ -22,9 +22,6 @@ func NewSendInviteUseCase(
 }
 
 func (siuc *SendInviteUseCase) SendInvite(invite *entity.Invite) error {
-	err := siuc.repositories.InviteRepository.Create(invite)
-	if err != nil {
-		return err
-	}
-	return nil
+	invite.Status = "pending"
+	return siuc.repositories.InviteRepository.Create(invite)
 }

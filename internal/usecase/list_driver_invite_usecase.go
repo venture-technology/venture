@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"fmt"
+
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
@@ -24,29 +26,29 @@ func NewListDriverInvitesUseCase(
 }
 
 func (lsiuc *ListDriverInvitesUseCase) ListDriverInvites(cnh string) ([]value.DriverListInvite, error) {
-	invites, err := lsiuc.repositories.InviteRepository.FindAllByCnh(cnh)
+	schools, err := lsiuc.repositories.InviteRepository.FindAllByCnh(cnh)
 	if err != nil {
 		return nil, err
 	}
+	lsiuc.logger.Infof(fmt.Sprintf("ListDriverInvitesUseCase.ListDriverInvites: %v", schools))
 	response := []value.DriverListInvite{}
-	for _, invite := range invites {
-		response = append(response, buildDriverListInvites(invite))
+	for _, school := range schools {
+		response = append(response, buildDriverListInvites(school))
 	}
 	return response, nil
 }
 
-func buildDriverListInvites(invites entity.Invite) value.DriverListInvite {
+func buildDriverListInvites(schools entity.School) value.DriverListInvite {
 	return value.DriverListInvite{
-		ID:           invites.ID,
-		Email:        invites.School.Email,
-		Name:         invites.School.Name,
-		Phone:        invites.School.Phone,
-		ProfileImage: invites.School.ProfileImage,
+		Email:        schools.Email,
+		Name:         schools.Name,
+		Phone:        schools.Phone,
+		ProfileImage: schools.ProfileImage,
 		Address: utils.BuildAddress(
-			invites.School.Address.Street,
-			invites.School.Address.Number,
-			invites.School.Address.Complement,
-			invites.School.Address.Zip,
+			schools.Address.Street,
+			schools.Address.Number,
+			schools.Address.Complement,
+			schools.Address.Zip,
 		),
 	}
 }
