@@ -23,23 +23,23 @@ func NewListSchoolInvitesUseCase(
 }
 
 func (lsiuc *ListSchoolInvitesUseCase) ListSchoolInvites(cnpj string) ([]value.SchoolListInvite, error) {
-	invites, err := lsiuc.repositories.InviteRepository.FindAllByCnpj(cnpj)
+	drivers, err := lsiuc.repositories.InviteRepository.FindAllByCnpj(cnpj)
 	if err != nil {
 		return nil, err
 	}
 	response := []value.SchoolListInvite{}
-	for _, invite := range invites {
-		response = append(response, buildSchoolListInvites(invite))
+	for _, driver := range drivers {
+		response = append(response, buildSchoolListInvites(driver))
 	}
 	return response, nil
 }
 
-func buildSchoolListInvites(invites entity.Invite) value.SchoolListInvite {
+func buildSchoolListInvites(drivers entity.Driver) value.SchoolListInvite {
 	return value.SchoolListInvite{
-		ID:           invites.ID,
-		Email:        invites.Driver.Email,
-		Name:         invites.Driver.Name,
-		Phone:        invites.Driver.Phone,
-		ProfileImage: invites.Driver.ProfileImage,
+		ID:           drivers.ID,
+		Email:        drivers.Email,
+		Name:         drivers.Name,
+		Phone:        drivers.Phone,
+		ProfileImage: drivers.ProfileImage,
 	}
 }

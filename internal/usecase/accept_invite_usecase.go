@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -21,6 +20,6 @@ func NewAcceptInviteUseCase(
 	}
 }
 
-func (aiuc *AcceptInviteUseCase) AcceptInvite(uuid uuid.UUID) error {
-	return aiuc.repositories.InviteRepository.Accept(uuid)
+func (aiuc *AcceptInviteUseCase) AcceptInvite(id string) error {
+	return aiuc.repositories.InviteRepository.Accept(id)
 }

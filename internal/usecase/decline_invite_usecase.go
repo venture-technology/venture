@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -21,6 +20,6 @@ func NewDeclineInviteUseCase(
 	}
 }
 
-func (diuc *DeclineInviteUseCase) DeclineInvite(id uuid.UUID) error {
+func (diuc *DeclineInviteUseCase) DeclineInvite(id string) error {
 	return diuc.repositories.InviteRepository.Decline(id)
 }
