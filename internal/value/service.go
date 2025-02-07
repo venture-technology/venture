@@ -98,22 +98,24 @@ type DriverListInvite struct {
 }
 
 type SchoolListPartners struct {
-	ID           int    `json:"id"`
-	Name         string `json:"name"`
-	Email        string `json:"email"`
-	QrCode       string `json:"qrcode"`
-	Phone        string `json:"phone"`
-	Car          string `json:"car"`
-	ProfileImage string `json:"profile_image"`
+	ID           int       `json:"id"`
+	Name         string    `json:"name"`
+	Email        string    `json:"email"`
+	QrCode       string    `json:"qrcode"`
+	Phone        string    `json:"phone"`
+	Car          string    `json:"car"`
+	ProfileImage string    `json:"profile_image"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type DriverListPartners struct {
-	ID           int    `json:"id"`
-	Name         string `json:"name"`
-	Email        string `json:"email"`
-	Address      string `json:"address"`
-	Phone        string `json:"phone"`
-	ProfileImage string `json:"profile_image"`
+	ID           int       `json:"id"`
+	Name         string    `json:"name"`
+	Email        string    `json:"email"`
+	Address      string    `json:"address"`
+	Phone        string    `json:"phone"`
+	ProfileImage string    `json:"profile_image"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type GetContract struct {
