@@ -48,5 +48,6 @@ func buildDriverListPartner(partners entity.Partner) value.DriverListPartners {
 			partners.School.Address.Zip,
 		),
 		ProfileImage: partners.School.ProfileImage,
+		CreatedAt:    partners.CreatedAt,
 	}
 }
