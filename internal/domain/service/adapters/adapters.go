@@ -29,3 +29,8 @@ type PaymentsService interface {
 
 	FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error)
 }
+
+type AgreementService interface {
+	Auth() (string, error)
+	CreateAgreement(contract *entity.Contract) error
+}

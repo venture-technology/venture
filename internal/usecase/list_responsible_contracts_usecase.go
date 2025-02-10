@@ -28,6 +28,8 @@ func NewListResponsibleContractsUseCase(
 }
 
 func (lruc *ListResponsibleContractsUseCase) ListResponsibleContracts(cpf *string) ([]value.ResponsibleListContracts, error) {
+	// 1. buscar contrato no s3
+	// 2. adicionar contrato no retorno
 	contracts, err := lruc.repositories.ContractRepository.FindAllByCpf(cpf)
 	if err != nil {
 		return []value.ResponsibleListContracts{}, err

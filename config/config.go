@@ -18,6 +18,7 @@ type Config struct {
 	GoogleCloudSecret GoogleCloudSecret `yaml:"google-cloud-secret"`
 	StripeEnv         StripeEnv         `yaml:"stripe-env"`
 	Admin             Admin             `yaml:"admin"`
+	Agreement         Agreement         `yaml:"agreement"`
 }
 
 type Server struct {
@@ -72,6 +73,11 @@ type StripeEnv struct {
 type Admin struct {
 	ApiKey string `yaml:"apikey"`
 	Port   string `yaml:"port"`
+}
+
+type Agreement struct {
+	ApiKey    string `yaml:"apikey"`
+	SecretKey string `yaml:"secretkey"`
 }
 
 var config *Config

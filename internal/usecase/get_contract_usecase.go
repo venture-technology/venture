@@ -28,6 +28,8 @@ func NewGetContractUseCase(
 }
 
 func (gcuc *GetContractUseCase) GetContract(uuid uuid.UUID) (value.GetContract, error) {
+	// 1. buscar contrato no s3
+	// 2. adicionar contrato no retorno
 	contract, err := gcuc.repositories.ContractRepository.Get(uuid)
 	if err != nil {
 		return value.GetContract{}, err

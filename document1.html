@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrato</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .assinatura {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .assinatura div {
+            width: 45%;
+            text-align: center;
+        }
+        .assinatura div p {
+            border-top: 1px solid #000;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Contrato de Prestação de Serviços</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+    <div class="assinatura">
+        <div>
+            <p>Assinatura da Plataforma: {{.NomePlataforma}}</p>
+        </div>
+        <div>
+            <p>Assinatura do Responsável: {{.NomeCliente}}</p>
+        </div>
+    </div>
+</body>
+</html>

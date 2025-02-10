@@ -120,6 +120,7 @@ type DriverListPartners struct {
 
 type GetContract struct {
 	ID          int                           `json:"id"`
+	Contract    string                        `json:"contract"`
 	Status      string                        `json:"status"`
 	KidName     string                        `json:"kid_name"`
 	Period      string                        `json:"period"`
@@ -160,6 +161,7 @@ type SchoolListContracts struct {
 
 type ResponsibleListContracts struct {
 	ID        int               `json:"id"`
+	Contract  string            `json:"contract"`
 	Status    string            `json:"status"`
 	KidName   string            `json:"kid_name"`
 	Period    string            `json:"period"`
@@ -190,6 +192,7 @@ type GetSchoolContract struct {
 
 type GetParentContract struct {
 	ID           int    `json:"id"`
+	Contract     string `json:"contract"`
 	Name         string `json:"name"`
 	Email        string `json:"email"`
 	Address      string `json:"address"`
@@ -199,6 +202,7 @@ type GetParentContract struct {
 
 type GetKidContract struct {
 	ID           int    `json:"id"`
+	Contract     string `json:"contract"`
 	Name         string `json:"name"`
 	Period       string `json:"period"`
 	ProfileImage string `json:"profile_image"`

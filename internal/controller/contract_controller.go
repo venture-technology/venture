@@ -18,6 +18,28 @@ func NewContractController() *ContractController {
 	return &ContractController{}
 }
 
+func (coh *ContractController) PostV1AcceptContract(c *gin.Context) {
+	var requestParams entity.Contract
+	if err := c.BindJSON(&requestParams); err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
+
+	usecase := usecase.NewAcceptContractUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		infra.App.Adapters,
+	)
+
+	err := usecase.AcceptContract(&requestParams)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"))
+		return
+	}
+
+	c.JSON(http.StatusCreated, requestParams)
+}
+
 func (coh *ContractController) PostV1CreateContract(c *gin.Context) {
 	var requestParams entity.Contract
 	if err := c.BindJSON(&requestParams); err != nil {
