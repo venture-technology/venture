@@ -29,6 +29,6 @@ type PaymentsService interface {
 	ListInvoices(contractId string) (map[string]entity.InvoiceInfo, error)
 	// this calc is used to calculate the remaining value of the subscription
 	CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64
-	//fine responsible when cancel subcription
+	// fine responsible when cancel subcription
 	FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error)
 }
