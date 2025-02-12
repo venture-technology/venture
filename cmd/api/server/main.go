@@ -4,15 +4,57 @@ import (
 	"fmt"
 	"net/http"
 
+	"database/sql"
+	"os"
+
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 	v1 "github.com/venture-technology/venture/cmd/api/server/routes/v1"
 	"github.com/venture-technology/venture/config"
+	"github.com/venture-technology/venture/internal/controller"
+	"github.com/venture-technology/venture/internal/domain/repository"
 	"github.com/venture-technology/venture/internal/domain/service/auth"
 	"github.com/venture-technology/venture/internal/setup"
+	"github.com/venture-technology/venture/internal/usecase"
 	"github.com/venture-technology/venture/internal/value"
 )
 
 func main() {
+
+	// Verifica se a chave do Stripe está definida
+	stripeKey := os.Getenv("STRIPE_SECRET_KEY")
+	if stripeKey == "" {
+		panic("STRIPE_SECRET_KEY environment variable is not set")
+	}
+
+	// Conecta ao banco de dados PostgreSQL
+	connStr := os.Getenv("POSTGRES_CONN_STR")
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	// Testa a conexão com o banco de dados
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	// Inicializa repositório, use case e controlador
+	responsibleRepo := repository.NewResponsibleRepository(db)
+	responsibleUseCase := usecase.NewResponsibleUseCase(responsibleRepo)
+	responsibleController := controller.NewResponsibleController(responsibleUseCase)
+
+	// Configura o Gin
+	r := gin.Default()
+
+	// Rota para deletar o responsável
+	r.DELETE("/responsibles/:id", responsibleController.DeleteResponsible)
+
+	// Inicia o servidor
+	r.Run(":9999")
+
 	envs, err := config.Load("../../../config/config.yaml")
 	if err != nil {
 		envs, err = config.Load("config/config.yaml")

@@ -62,7 +62,7 @@ func (rh *ResponsibleController) GetV1GetResponsible(c *gin.Context) {
 func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 	cpf := c.Param("cpf")
 	var data map[string]interface{}
-	if err := c.BindJSON(data); err != nil {
+	if err := c.BindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
