@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrato de Prestação de Serviço</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .contract-section {
+            margin-bottom: 20px;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Contrato de Prestação de Serviço</h1>
+    <p><strong>Data:</strong> {{ .DateTime }}</p>
+    
+    <div class="contract-section">
+        <h2>1. Partes</h2>
+        <p><strong>Contratante (Responsável):</strong> {{.Contract.Responsible.Name}}, CPF: {{.Contract.Responsible.Name}}, residente em {{.Contract.Responsible.Address.Street}}, {{.Contract.Responsible.Address.Number}}, CEP: {{.Contract.Responsible.Address.Zip}}, telefone: {{.Contract.Responsible.Phone}}, email: {{.Contract.Responsible.Email}}</p>
+        <p><strong>Contratado (Motorista):</strong> {{.Contract.Driver.Name}}, CPF: {{.Contract.Driver.CPF}}</p>
+    </div>
+    
+    <div class="contract-section">
+        <h2>2. Objeto</h2>
+        <p>O presente contrato tem por objetivo a prestação de serviço de transporte escolar, onde o motorista <span class="highlight">{{.Contract.Driver.Name}}</span> compromete-se a transportar o estudante <span class="highlight">{{.Contract.Kid.Name}}</span> do endereço do responspavel </span> até a escola <span class="highlight">{{.Contract.School.Name}}</span> situada em <span class="highlight">{{.Contract.School.Address.Street}}, {{.Contract.School.Address.Number}}, CEP: {{.Contract.School.Address.Zip}}</span>, todos os dias letivos.</p>
+    </div>
+    
+    <div class="contract-section">
+        <h2>3. Pagamento</h2>
+        <p>O valor mensal do serviço é de <span class="highlight">R$ {{printf "%.2f" .Contract.Amount}}</span>, totalizando um montante anual de <span class="highlight">R$ {{printf "%.2f" .Contract.AnualAmount}}</span> pagos em 12 parcelas.</p>
+    </div>
+    
+    <div class="contract-section">
+        <h2>4. Vigência</h2>
+        <p>O presente contrato terá duração de 12 meses, a contar da data de assinatura. A quebra deste é possível apenas pelo Responsável e caso tal fato, venha a acontecer. O mesmo sofrerá uma multa de 40% dos valores restantes da parcela</p>
+    </div>
+    
+    <div class="contract-section">
+        <h2>5. Assinaturas</h2>
+        <p>O presente contrato é firmado pelas partes abaixo:</p>
+        <p><strong>Responsável:</strong> {{.Contract.Responsible.Name}}</p>
+        <p><strong>Motorista:</strong> {{.Contract.Driver.Name}}</p>
+        <p><strong>Testemunha:</strong> __________________________</p>
+    </div>
+</body>
+</html>
