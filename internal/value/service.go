@@ -219,3 +219,10 @@ var Schedules = map[string]string{
 	"afternoon, night":   "6",
 	"all":                "7",
 }
+
+type CreateContractRequestParams struct {
+	DriverCNH      string `json:"driver_cnh"`
+	KidRG          string `json:"kid_rg"`
+	ResponsibleCPF string `json:"responsible_cpf"`
+	SchoolCNPJ     string `json:"school_cnpj"`
+}
