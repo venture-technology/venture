@@ -61,6 +61,7 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.DELETE("/partner/:id", route.Partner.DeleteV1DeletePartner)
 
 	group.POST("/contract", route.Contract.PostV1CreateContract)
+	group.POST("/contract/:id/accept", route.Contract.PostV1AcceptContract)
 	group.GET("/contract/:id", route.Contract.GetV1GetContract)
 	group.GET("/driver/contract/:cnh", route.Contract.GetV1ListDriverContract)
 	group.GET("/school/contract/:cnpj", route.Contract.GetV1ListContractSchool)
