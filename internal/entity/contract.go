@@ -21,13 +21,16 @@ type Contract struct {
 	Driver             Driver                 `json:"driver"`
 	School             School                 `json:"school"`
 	Kid                Kid                    `json:"kid"`
+	Responsible        Responsible            `json:"responsible"`
 	StripeSubscription StripeSubscription     `json:"stripe"`
 	Invoices           map[string]InvoiceInfo `json:"invoices"`
 	Amount             float64                `json:"amount" validate:"required"`
+	AnualAmount        float64                `json:"anual_amount"`
 	Months             int64                  `json:"months,omitempty"`
 	CreatedAt          time.Time              `json:"created_at,omitempty"`
 	UpdatedAt          time.Time              `json:"updated_at,omitempty"`
 	ExpireAt           time.Time              `json:"expire_at"`
+	ContractUrl        string                 `json:"contract_url,omitempty"`
 }
 
 type InvoiceInfo struct {
@@ -46,4 +49,13 @@ type SubscriptionInfo struct {
 
 func (c *Contract) ValidateAmount() bool {
 	return c.Amount != 0
+}
+
+// contract property is a contract struct with dropbox data, like signed url, pdf contract and etc.
+type ContractProperty struct {
+	URL      string    `json:"url"` // S3 Link to Dropbox Download and use to sign
+	UUID     string    `json:"uuid"`
+	Time     time.Time `json:"time"`
+	DateTime string    `json:"date_time"`
+	Contract Contract  `json:"contract"`
 }
