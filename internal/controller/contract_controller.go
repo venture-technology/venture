@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,7 @@ import (
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/infra"
 	"github.com/venture-technology/venture/internal/usecase"
+	"github.com/venture-technology/venture/internal/value"
 )
 
 type ContractController struct {
@@ -19,19 +21,44 @@ func NewContractController() *ContractController {
 }
 
 func (coh *ContractController) PostV1CreateContract(c *gin.Context) {
+	var requestParams value.CreateContractRequestParams
+	if err := c.BindJSON(&requestParams); err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
+
+	infra.App.Logger.Infof(fmt.Sprintf("requestParams: %v", requestParams))
+
+	usecase := usecase.NewCreateContractUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		infra.App.Adapters,
+		infra.App.Bucket,
+	)
+
+	response, err := usecase.CreateContract(&requestParams)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"))
+		return
+	}
+
+	c.JSON(http.StatusCreated, response)
+}
+
+func (coh *ContractController) PostV1AcceptContract(c *gin.Context) {
 	var requestParams entity.Contract
 	if err := c.BindJSON(&requestParams); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
-	usecase := usecase.NewCreateContractUseCase(
+	usecase := usecase.NewAcceptContractUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 		infra.App.Adapters,
 	)
 
-	err := usecase.CreateContract(&requestParams)
+	err := usecase.AcceptContract(&requestParams)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"))
 		return
