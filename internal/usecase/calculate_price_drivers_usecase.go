@@ -60,7 +60,7 @@ func (cpuc *CalculatePriceDriversUseCase) CalculatePrice(
 		),
 	)
 
-	drivers, err := cpuc.repositories.PartnerRepository.FindAllByCnpjWithSeatsRemaining(schoolCNPJ)
+	drivers, err := cpuc.repositories.PartnerRepository.FindAllByCnpj(schoolCNPJ)
 	if err != nil {
 		cpuc.logger.Infof(fmt.Sprintf("error getting drivers: %v", err))
 		return nil, err
@@ -68,7 +68,9 @@ func (cpuc *CalculatePriceDriversUseCase) CalculatePrice(
 
 	response := []value.ListDriverToCalcPrice{}
 	for _, driver := range drivers {
-		response = append(response, buildListDriverWithAmount(driver, *distance))
+		if driver.Driver.Seats.Remaining > 0 {
+			response = append(response, buildListDriverWithAmount(driver, *distance))
+		}
 	}
 	return response, nil
 
