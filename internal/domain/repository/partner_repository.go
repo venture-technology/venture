@@ -7,7 +7,6 @@ import (
 type PartnerRepository interface {
 	Get(id string) (*entity.Partner, error)
 	FindAllByCnpj(cnpj string) ([]entity.Partner, error)
-	FindAllByCnpjWithSeatsRemaining(cnpj string) ([]entity.Partner, error)
 	FindAllByCnh(cnh string) ([]entity.Partner, error)
 	ArePartner(cnh, cnpj string) (bool, error)
 	Delete(id string) error
