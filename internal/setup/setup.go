@@ -5,6 +5,7 @@ import (
 
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/domain/service/addresses"
+	"github.com/venture-technology/venture/internal/domain/service/agreements"
 	"github.com/venture-technology/venture/internal/domain/service/decorator"
 	"github.com/venture-technology/venture/internal/domain/service/payments"
 	"github.com/venture-technology/venture/internal/infra"
@@ -80,6 +81,6 @@ func (s Setup) Adapters() {
 		AddressAdapter: addresses.NewGoogleAdapter(s.app.Config),
 		Cache:          s.app.Cache,
 	}
-
 	s.app.Adapters.PaymentsService = payments.NewStripeAdapter(s.app.Config)
+	s.app.Adapters.AgreementService = agreements.NewAgreementService(s.app.Config, s.app.Logger)
 }

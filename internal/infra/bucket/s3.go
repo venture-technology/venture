@@ -81,3 +81,36 @@ func (s3Impl *S3Impl) List(path string) ([]string, error) {
 	// remove the first link from the list, because it is the path itself
 	return links[1:], nil
 }
+
+func (s3Impl *S3Impl) SaveWithType(path, filaneme string, file []byte, contentType string) (string, error) {
+	svc := s3.New(s3Impl.sess)
+
+	filename := fmt.Sprintf("%s/%s", path, filaneme)
+
+	_, err := svc.PutObject(&s3.PutObjectInput{
+		Bucket:      aws.String(s3Impl.config.Cloud.BucketName),
+		Key:         aws.String(filename),
+		Body:        bytes.NewReader(file),
+		ACL:         aws.String("public-read"),
+		ContentType: aws.String(contentType),
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", s3Impl.config.Cloud.BucketName, filename)
+	return url, nil
+}
+
+func (s3Impl *S3Impl) PDF() string {
+	return "application/pdf"
+}
+
+func (s3Impl *S3Impl) HTML() string {
+	return "text/html"
+}
+
+func (s3Impl *S3Impl) PNG() string {
+	return "image/png"
+}

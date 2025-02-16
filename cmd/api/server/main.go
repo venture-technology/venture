@@ -28,6 +28,7 @@ func main() {
 	setup.Repositories()
 	setup.Bucket()
 	setup.Email()
+	setup.Adapters()
 
 	setup.Finish()
 

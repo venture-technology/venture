@@ -1,132 +1,163 @@
 package usecase
 
 import (
+	"bytes"
 	"fmt"
+	"text/template"
 
+	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
+	"github.com/venture-technology/venture/internal/domain/service/agreements"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
+	"github.com/venture-technology/venture/internal/value"
+	"github.com/venture-technology/venture/pkg/realtime"
 	"github.com/venture-technology/venture/pkg/utils"
 )
-
-var createSeat = map[string]func(ccuc *CreateContractUseCase, contract *entity.Contract) error{
-	"morning": func(ccuc *CreateContractUseCase, contract *entity.Contract) error {
-		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
-			"seats_remaining": contract.Driver.Seats.Remaining - 1,
-			"seats_morning":   contract.Driver.Seats.Morning - 1,
-		})
-	},
-	"afternoon": func(ccuc *CreateContractUseCase, contract *entity.Contract) error {
-		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
-			"seats_remaining": contract.Driver.Seats.Remaining - 1,
-			"seats_afternoon": contract.Driver.Seats.Afternoon - 1,
-		})
-	},
-	"night": func(ccuc *CreateContractUseCase, contract *entity.Contract) error {
-		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
-			"seats_remaining": contract.Driver.Seats.Remaining - 1,
-			"seats_night":     contract.Driver.Seats.Night - 1,
-		})
-	},
-}
 
 type CreateContractUseCase struct {
 	repositories *persistence.PostgresRepositories
 	logger       contracts.Logger
 	adapters     adapters.Adapters
+	S3           contracts.S3Iface
 }
 
 func NewCreateContractUseCase(
 	repositories *persistence.PostgresRepositories,
 	logger contracts.Logger,
 	adapters adapters.Adapters,
+	S3 contracts.S3Iface,
 ) *CreateContractUseCase {
 	return &CreateContractUseCase{
 		repositories: repositories,
 		logger:       logger,
 		adapters:     adapters,
+		S3:           S3,
 	}
 }
 
-func (ccuc *CreateContractUseCase) CreateContract(contract *entity.Contract) error {
-	var err error
-	contract.Amount, err = ccuc.calcAmount(contract)
-	if err != nil {
-		return err
-	}
-
-	if hasAmount := contract.ValidateAmount(); !hasAmount {
-		return fmt.Errorf("contract amount is invalid")
-	}
-
-	contract, err = ccuc.createStripeItems(contract)
-	if err != nil {
-		return err
-	}
-
-	err = ccuc.repositories.ContractRepository.Create(contract)
-	if err != nil {
-		return err
-	}
-
-	return createSeat[contract.Kid.Shift](ccuc, contract)
-}
-
-func (ccuc *CreateContractUseCase) calcAmount(contract *entity.Contract) (float64, error) {
-	dist, err := ccuc.adapters.AddressService.GetDistance(
-		buildResponsibleAddress(&contract.Kid.Responsible),
-		buildSchoolAddress(&contract.School),
+func (ccuc *CreateContractUseCase) CreateContract(
+	requestParams *value.CreateContractRequestParams,
+) (agreements.ContractRequest, error) {
+	htmlFile, err := ccuc.adapters.AgreementService.GetAgreementHtml(
+		"../../../internal/domain/service/agreements/template/agreement.html",
 	)
 	if err != nil {
-		return 0, err
+		ccuc.logger.Infof(fmt.Sprintf("error getting agreement html file: %v", err.Error()))
+		return agreements.ContractRequest{}, err
 	}
-	return utils.CalculateContract(*dist, float64(contract.Driver.Amount)), nil
+
+	contractProperty, err := ccuc.SetContractProperty(*requestParams)
+	if err != nil {
+		ccuc.logger.Infof(fmt.Sprintf("error setting contract property: %v", err))
+		return agreements.ContractRequest{}, err
+	}
+
+	pdfData, err := ccuc.ConvertPDFtoHTML(htmlFile, contractProperty)
+	if err != nil {
+		ccuc.logger.Infof(fmt.Sprintf("error converting pdf to html: %v", err))
+		return agreements.ContractRequest{}, err
+	}
+
+	contractProperty.URL, err = ccuc.S3.SaveWithType("contracts", contractProperty.UUID, pdfData, ccuc.S3.PDF())
+	if err != nil {
+		return agreements.ContractRequest{}, err
+	}
+
+	request, err := ccuc.adapters.AgreementService.SignatureRequest(contractProperty)
+	if err != nil {
+		ccuc.logger.Infof(fmt.Sprintf("error sending signature request: %v", err))
+		return agreements.ContractRequest{}, err
+	}
+
+	return request, nil
 }
 
-func (ccuc *CreateContractUseCase) createStripeItems(contract *entity.Contract) (*entity.Contract, error) {
-	prodt, err := ccuc.adapters.PaymentsService.CreateProduct(contract)
+func (ccuc *CreateContractUseCase) ConvertPDFtoHTML(htmlFile []byte, contractProperty entity.ContractProperty) ([]byte, error) {
+	tmpl, err := template.New("webpage").Parse(string(htmlFile))
 	if err != nil {
 		return nil, err
 	}
 
-	contract.StripeSubscription.Product = prodt.ID
-	pr, err := ccuc.adapters.PaymentsService.CreatePrice(contract)
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, contractProperty)
 	if err != nil {
 		return nil, err
 	}
 
-	contract.StripeSubscription.Price = pr.ID
-	subs, err := ccuc.adapters.PaymentsService.CreateSubscription(contract)
+	pdf, err := wkhtmltopdf.NewPDFGenerator()
 	if err != nil {
 		return nil, err
 	}
 
-	contract.StripeSubscription.ID = subs.ID
-	id, err := uuid.NewV7()
+	pdf.AddPage(wkhtmltopdf.NewPageReader(bytes.NewReader([]byte(buf.String()))))
+	err = pdf.Create()
 	if err != nil {
 		return nil, err
 	}
 
-	contract.Record = id
-	return contract, nil
+	pdfData := pdf.Bytes()
+
+	return pdfData, nil
 }
 
-func buildResponsibleAddress(responsible *entity.Responsible) string {
-	return fmt.Sprintf(
-		"%s,%s,%s",
-		responsible.Address.Street,
-		responsible.Address.Number,
-		responsible.Address.Zip,
+func (ccuc *CreateContractUseCase) SetContractProperty(requestParams value.CreateContractRequestParams) (entity.ContractProperty, error) {
+	driver, err := ccuc.repositories.DriverRepository.Get(requestParams.DriverCNH)
+	if err != nil {
+		return entity.ContractProperty{}, err
+	}
+
+	school, err := ccuc.repositories.SchoolRepository.Get(requestParams.SchoolCNPJ)
+	if err != nil {
+		return entity.ContractProperty{}, err
+	}
+
+	kid, err := ccuc.repositories.KidRepository.Get(&requestParams.KidRG)
+	if err != nil {
+		return entity.ContractProperty{}, err
+	}
+
+	responsible, err := ccuc.repositories.ResponsibleRepository.Get(requestParams.ResponsibleCPF)
+	if err != nil {
+		return entity.ContractProperty{}, err
+	}
+
+	distance, err := ccuc.adapters.AddressService.GetDistance(
+		utils.BuildAddress(
+			responsible.Address.Street,
+			responsible.Address.Number,
+			responsible.Address.Complement,
+			responsible.Address.Zip,
+		),
+		utils.BuildAddress(
+			school.Address.Street,
+			school.Address.Number,
+			school.Address.Complement,
+			school.Address.Zip,
+		),
 	)
-}
+	if err != nil {
+		return entity.ContractProperty{}, err
+	}
 
-func buildSchoolAddress(school *entity.School) string {
-	return fmt.Sprintf(
-		"%s,%s,%s",
-		school.Address.Street,
-		school.Address.Number,
-		school.Address.Zip,
-	)
+	contractValue := utils.CalculateContract(*distance, driver.Amount)
+	if contractValue == 0 {
+		return entity.ContractProperty{}, err
+	}
+
+	return entity.ContractProperty{
+		UUID: uuid.New().String(),
+		Contract: entity.Contract{
+			Driver:      *driver,
+			School:      *school,
+			Kid:         *kid,
+			Responsible: *responsible,
+			Amount:      contractValue,
+			AnualAmount: contractValue * 12,
+		},
+		Time:     realtime.Now(),
+		DateTime: realtime.Now().Format("02/01/2006"),
+	}, nil
 }
