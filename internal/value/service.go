@@ -85,10 +85,8 @@ type ListDriverToCalcPrice struct {
 	ID           int       `json:"id"`
 	Name         string    `json:"name"`
 	Email        string    `json:"email"`
-	QrCode       string    `json:"qrcode"`
 	Amount       float64   `json:"amount"`
 	Phone        string    `json:"phone"`
-	Car          string    `json:"car"`
 	ProfileImage string    `json:"profile_image"`
 	CreatedAt    time.Time `json:"created_at"`
 	PriceTotal   float64   `json:"price_total"` // this field is used to calculate the total price of the driver getting distance from responsible and school
