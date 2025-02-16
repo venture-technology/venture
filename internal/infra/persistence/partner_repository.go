@@ -48,26 +48,6 @@ func (pr PartnerRepositoryImpl) FindAllByCnpj(cnpj string) ([]entity.Partner, er
 	return partners, nil
 }
 
-func (pr PartnerRepositoryImpl) FindAllByCnpjWithSeatsRemaining(cnpj string) ([]entity.Partner, error) {
-	var partners []entity.Partner
-
-	err := pr.Postgres.Client().Where("school_id = ?", cnpj).Find(&partners).Error
-	if err != nil {
-		return nil, err
-	}
-
-	for i := range partners {
-		var driver entity.Driver
-		err := pr.Postgres.Client().Where("cnh = ? AND seats_remaining > 0", partners[i].DriverID).First(&driver).Error
-		if err != nil {
-			continue
-		}
-		partners[i].Driver = driver
-	}
-
-	return partners, nil
-}
-
 func (pr PartnerRepositoryImpl) FindAllByCnh(cnh string) ([]entity.Partner, error) {
 	var partners []entity.Partner
 
