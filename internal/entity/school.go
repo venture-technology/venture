@@ -3,7 +3,6 @@ package entity
 import (
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
@@ -18,11 +17,6 @@ type School struct {
 	ProfileImage string    `json:"profile_image,omitempty"`
 	CreatedAt    time.Time `json:"created_at,omitempty"`
 	UpdatedAt    time.Time `json:"updated_at,omitempty"`
-}
-
-type ClaimsSchool struct {
-	School School `json:"school"`
-	jwt.StandardClaims
 }
 
 func (s *School) ValidateCnpj() bool {

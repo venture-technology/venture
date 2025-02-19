@@ -2,8 +2,6 @@ package entity
 
 import (
 	"time"
-
-	"github.com/dgrijalva/jwt-go"
 )
 
 type Responsible struct {
@@ -20,9 +18,4 @@ type Responsible struct {
 	ProfileImage    string    `json:"profile_image,omitempty"`
 	CreatedAt       time.Time `json:"created_at,omitempty"`
 	UpdatedAt       time.Time `json:"updated_at,omitempty"`
-}
-
-type ClaimsResponsible struct {
-	Responsible Responsible `json:"responsible"`
-	jwt.StandardClaims
 }

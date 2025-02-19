@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
@@ -54,9 +53,4 @@ func (d *Driver) ValidateCnh() error {
 
 func (d *Driver) HasCar() bool {
 	return d.Car != (Car{})
-}
-
-type ClaimsDriver struct {
-	Driver Driver `json:"driver"`
-	jwt.StandardClaims
 }
