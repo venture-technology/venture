@@ -1,0 +1,1 @@
+ALTER TABLE drivers ADD COLUMN accessibility BOOLEAN DEFAULT false;

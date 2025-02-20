@@ -57,28 +57,30 @@ type ListSchool struct {
 }
 
 type GetDriver struct {
-	ID           int            `json:"id"`
-	Name         string         `json:"name"`
-	Email        string         `json:"email"`
-	QrCode       string         `json:"qrcode"`
-	Amount       float64        `json:"amount"`
-	Phone        string         `json:"phone"`
-	Car          string         `json:"car"`
-	ProfileImage string         `json:"profile_image"`
-	CreatedAt    time.Time      `json:"created_at"`
-	Gallery      map[int]string `json:"gallery"`
+	ID            int            `json:"id"`
+	Name          string         `json:"name"`
+	Email         string         `json:"email"`
+	QrCode        string         `json:"qrcode"`
+	Amount        float64        `json:"amount"`
+	Phone         string         `json:"phone"`
+	Car           string         `json:"car"`
+	ProfileImage  string         `json:"profile_image"`
+	CreatedAt     time.Time      `json:"created_at"`
+	Gallery       map[int]string `json:"gallery"`
+	Accessibility bool           `json:"accessibility"`
 }
 
 type ListDriver struct {
-	ID           int       `json:"id"`
-	Name         string    `json:"name"`
-	Email        string    `json:"email"`
-	QrCode       string    `json:"qrcode"`
-	Amount       float64   `json:"amount"`
-	Phone        string    `json:"phone"`
-	Car          string    `json:"car"`
-	ProfileImage string    `json:"profile_image"`
-	CreatedAt    time.Time `json:"created_at"`
+	ID            int       `json:"id"`
+	Name          string    `json:"name"`
+	Email         string    `json:"email"`
+	QrCode        string    `json:"qrcode"`
+	Amount        float64   `json:"amount"`
+	Phone         string    `json:"phone"`
+	Car           string    `json:"car"`
+	ProfileImage  string    `json:"profile_image"`
+	CreatedAt     time.Time `json:"created_at"`
+	Accessibility bool      `json:"accessibility"`
 }
 
 type SchoolListInvite struct {
