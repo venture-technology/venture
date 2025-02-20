@@ -47,24 +47,27 @@ func (coh *ContractController) PostV1CreateContract(c *gin.Context) {
 
 func (coh *ContractController) PostV1AcceptContract(c *gin.Context) {
 	var requestParams entity.Contract
+
+	infra.App.Logger.Infof(fmt.Sprintf("requestParams: %v", c.Request.Body))
+
 	if err := c.BindJSON(&requestParams); err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
-	usecase := usecase.NewAcceptContractUseCase(
-		&infra.App.Repositories,
-		infra.App.Logger,
-		infra.App.Adapters,
-	)
+	// usecase := usecase.NewAcceptContractUseCase(
+	// 	&infra.App.Repositories,
+	// 	infra.App.Logger,
+	// 	infra.App.Adapters,
+	// )
 
-	err := usecase.AcceptContract(&requestParams)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"))
-		return
-	}
+	// err := usecase.AcceptContract(&requestParams)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"))
+	// 	return
+	// }
 
-	c.JSON(http.StatusCreated, requestParams)
+	c.JSON(http.StatusOK, requestParams)
 }
 
 func (coh *ContractController) GetV1GetContract(c *gin.Context) {
