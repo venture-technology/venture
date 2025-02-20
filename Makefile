@@ -14,3 +14,16 @@ deploy: build send send-service
 		&& sudo systemctl restart venture-api \
 	'
 
+send-nginx-config:
+	rsync nginx.conf root@$(HOST_REMOTE_SERVER_IP):~/config-venture
+
+deploy-http-server:
+	ssh -t root@$(HOST_REMOTE_SERVER_IP) '\
+		sudo mv /etc/nginx/sites-available/site.conf /etc/nginx/sites-available/site.conf.bak \
+		&& sudo mv ~/config-venture/nginx.conf /etc/nginx/sites-available/site.conf \
+	'
+
+deploy-nginx: send-nginx-config deploy-http-server
+	ssh -t root@$(HOST_REMOTE_SERVER_IP) '\
+		service restart nginx \
+	'
