@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/infra"
 	"github.com/venture-technology/venture/internal/usecase"
@@ -46,7 +45,7 @@ func (coh *ContractController) PostV1CreateContract(c *gin.Context) {
 }
 
 func (coh *ContractController) PostV1AcceptContract(c *gin.Context) {
-	var requestParams entity.Contract
+	var requestParams interface{}
 
 	infra.App.Logger.Infof(fmt.Sprintf("requestParams: %v", c.Request.Body))
 
