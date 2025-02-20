@@ -66,7 +66,7 @@ func (coh *ContractController) PostV1AcceptContract(c *gin.Context) {
 	// 	return
 	// }
 
-	c.JSON(http.StatusOK, requestParams)
+	c.JSON(http.StatusOK, "Hello API Event Received")
 }
 
 func (coh *ContractController) GetV1GetContract(c *gin.Context) {
