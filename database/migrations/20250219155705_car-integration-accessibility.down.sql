@@ -1,0 +1,1 @@
+ALTER TABLE drivers DROP COLUMN accessibility 

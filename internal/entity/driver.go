@@ -26,6 +26,7 @@ type Driver struct {
 	UpdatedAt       time.Time `json:"updated_at,omitempty"`
 	Schedule        string    `json:"schedule,omitempty"`
 	Seats           Seats     `gorm:"embedded" json:"seats,omitempty"`
+	Accessibility   bool      `json:"accessibility"`
 }
 
 type Car struct {
