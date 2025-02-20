@@ -18,6 +18,7 @@ type Config struct {
 	GoogleCloudSecret GoogleCloudSecret `yaml:"google-cloud-secret"`
 	StripeEnv         StripeEnv         `yaml:"stripe-env"`
 	Admin             Admin             `yaml:"admin"`
+	Dropbox           Dropbox           `yaml:"dropbox"`
 }
 
 type Server struct {
@@ -70,8 +71,14 @@ type StripeEnv struct {
 }
 
 type Admin struct {
-	ApiKey string `yaml:"apikey"`
-	Port   string `yaml:"port"`
+	ApiKey     string `yaml:"apikey"`
+	Port       string `yaml:"port"`
+	AdminEmail string `yaml:"email"`
+}
+
+type Dropbox struct {
+	ApiKey                   string `yaml:"apikey"`
+	SignatureRequestEndpoint string `yaml:"signature-request-endpoint"`
 }
 
 var config *Config

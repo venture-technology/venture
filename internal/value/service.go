@@ -83,6 +83,17 @@ type ListDriver struct {
 	Accessibility bool      `json:"accessibility"`
 }
 
+type ListDriverToCalcPrice struct {
+	ID           int       `json:"id"`
+	Name         string    `json:"name"`
+	Email        string    `json:"email"`
+	Amount       float64   `json:"amount"`
+	Phone        string    `json:"phone"`
+	ProfileImage string    `json:"profile_image"`
+	CreatedAt    time.Time `json:"created_at"`
+	PriceTotal   float64   `json:"price_total"` // this field is used to calculate the total price of the driver getting distance from responsible and school
+}
+
 type SchoolListInvite struct {
 	ID           int    `json:"id"`
 	Name         string `json:"name"`
@@ -220,4 +231,16 @@ var Schedules = map[string]string{
 	"morning, night":     "5",
 	"afternoon, night":   "6",
 	"all":                "7",
+}
+
+type CreateContractRequestParams struct {
+	DriverCNH      string `json:"driver_cnh"`
+	KidRG          string `json:"kid_rg"`
+	ResponsibleCPF string `json:"responsible_cpf"`
+	SchoolCNPJ     string `json:"school_cnpj"`
+}
+
+type CalculatePriceDriverOutput struct {
+	Price  float64       `json:"price"`
+	Driver entity.Driver `json:"driver"`
 }

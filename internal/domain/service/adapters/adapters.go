@@ -2,12 +2,14 @@ package adapters
 
 import (
 	"github.com/stripe/stripe-go/v79"
+	"github.com/venture-technology/venture/internal/domain/service/agreements"
 	"github.com/venture-technology/venture/internal/entity"
 )
 
 type Adapters struct {
-	AddressService  AddressService
-	PaymentsService PaymentsService
+	AddressService   AddressService
+	PaymentsService  PaymentsService
+	AgreementService AgreementService
 }
 
 type AddressService interface {
@@ -31,4 +33,11 @@ type PaymentsService interface {
 	CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64
 	// fine responsible when cancel subcription
 	FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error)
+}
+
+type AgreementService interface {
+	SignatureRequest(contract entity.ContractProperty) (agreements.ContractRequest, error)
+	// this function is used to get the html file of the agreement
+	// the param is variable because can be used to get the html file from different applications
+	GetAgreementHtml(path string) ([]byte, error)
 }

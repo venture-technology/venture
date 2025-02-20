@@ -13,6 +13,7 @@ type V1Controllers struct {
 	Invite      *controller.InviteController
 	Partner     *controller.PartnerController
 	Contract    *controller.ContractController
+	Price       *controller.PriceController
 }
 
 func NewV1Controller() *V1Controllers {
@@ -24,6 +25,7 @@ func NewV1Controller() *V1Controllers {
 		Driver:      controller.NewDriverController(),
 		Partner:     controller.NewPartnerController(),
 		Contract:    controller.NewContractController(),
+		Price:       controller.NewPriceController(),
 	}
 }
 
@@ -61,10 +63,13 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.DELETE("/partner/:id", route.Partner.DeleteV1DeletePartner)
 
 	group.POST("/contract", route.Contract.PostV1CreateContract)
+	group.POST("/contract/:id/accept", route.Contract.PostV1AcceptContract)
 	group.GET("/contract/:id", route.Contract.GetV1GetContract)
 	group.GET("/driver/contract/:cnh", route.Contract.GetV1ListDriverContract)
 	group.GET("/school/contract/:cnpj", route.Contract.GetV1ListContractSchool)
 	group.GET("/responsible/contract/:cpf", route.Contract.GetV1ListResponsibleContract)
 	group.PATCH("/contract/:id/cancel", route.Contract.PatchV1CancelContract)
 	group.PATCH("/contract/:id/expired", route.Contract.PatchV1ExpiredContract)
+
+	group.GET("/price/:cpf/:cnpj", route.Price.GetV1PriceDriver)
 }
