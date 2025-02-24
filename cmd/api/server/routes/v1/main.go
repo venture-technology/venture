@@ -1,13 +1,8 @@
 package v1
 
 import (
-	"fmt"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/venture-technology/venture/internal/controller"
-	"github.com/venture-technology/venture/internal/exceptions"
-	"github.com/venture-technology/venture/internal/infra"
 )
 
 type V1Controllers struct {
@@ -19,6 +14,7 @@ type V1Controllers struct {
 	Partner     *controller.PartnerController
 	Contract    *controller.ContractController
 	Price       *controller.PriceController
+	Webhook     *controller.WebhookController
 }
 
 func NewV1Controller() *V1Controllers {
@@ -31,6 +27,7 @@ func NewV1Controller() *V1Controllers {
 		Partner:     controller.NewPartnerController(),
 		Contract:    controller.NewContractController(),
 		Price:       controller.NewPriceController(),
+		Webhook:     controller.NewWebhookController(),
 	}
 }
 
@@ -75,18 +72,7 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.PATCH("/contract/:id/cancel", route.Contract.PatchV1CancelContract)
 	group.PATCH("/contract/:id/expired", route.Contract.PatchV1ExpiredContract)
 
-	group.POST("/webhook/events", func(httpContext *gin.Context) {
-		requestBody, err := httpContext.GetRawData()
-		if err != nil {
-			httpContext.JSON(http.StatusInternalServerError, exceptions.InvalidBodyContentResponseError(err))
-			return
-		}
-
-		infra.App.Logger.Infof(fmt.Sprintf("requestParams: %s", string(requestBody)))
-
-		httpContext.Header("Content-Type", "text/plain")
-		httpContext.String(http.StatusOK, "Hello API Event Received")
-	})
+	group.POST("/webhook/events", route.Webhook.PostV1WebhookEvents)
 
 	group.GET("/price/:cpf/:cnpj", route.Price.GetV1PriceDriver)
 }
