@@ -21,7 +21,8 @@ func (wh *WebhookController) PostV1WebhookEvents(httpContext *gin.Context) {
 	var eventWrapper agreements.EventWrapper
 
 	if err := httpContext.BindJSON(&eventWrapper); err != nil {
-		httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid JSON"})
+		return
 	}
 
 	usecase := usecase.NewWebhookEventsUseCase(
