@@ -2,6 +2,7 @@ package agreements
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -48,8 +49,10 @@ func (as *AgreementService) SignatureRequest(contract entity.ContractProperty) (
 		return ContractRequest{}, err
 	}
 
+	auth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:", apiKey)))
+
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", apiKey))
+	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", auth))
 
 	client := &http.Client{}
 	resp, err := client.Do(req)

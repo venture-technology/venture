@@ -1,8 +1,13 @@
 package v1
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/venture-technology/venture/internal/controller"
+	"github.com/venture-technology/venture/internal/exceptions"
+	"github.com/venture-technology/venture/internal/infra"
 )
 
 type V1Controllers struct {
@@ -70,7 +75,29 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.PATCH("/contract/:id/cancel", route.Contract.PatchV1CancelContract)
 	group.PATCH("/contract/:id/expired", route.Contract.PatchV1ExpiredContract)
 
-	group.POST("/webhook/contract/accept", route.Contract.PostV1AcceptContract)
+	group.POST("/webhook/events", func(httpContext *gin.Context) {
+		var requestParams interface{}
+
+		if err := httpContext.BindJSON(&requestParams); err != nil {
+			httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+			return
+		}
+
+		requestBody, err := httpContext.GetRawData()
+		if err != nil {
+			httpContext.JSON(http.StatusInternalServerError, err)
+			return
+		}
+
+		infra.App.Logger.Infof(fmt.Sprintf("requestParams: %s", string(requestBody)))
+
+		if err := httpContext.BindJSON(&requestParams); err != nil {
+			httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+			return
+		}
+
+		httpContext.JSON(http.StatusOK, requestParams)
+	})
 
 	group.GET("/price/:cpf/:cnpj", route.Price.GetV1PriceDriver)
 }
