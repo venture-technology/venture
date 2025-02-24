@@ -53,3 +53,18 @@ type ContractRequest struct {
 	ExpiresAt int64 `json:"expires_at"`
 	TestMode  bool  `json:"test_mode"`
 }
+
+type Event struct {
+	EventTime     string        `json:"event_time"`
+	EventType     string        `json:"event_type"`
+	EventHash     string        `json:"event_hash"`
+	EventMetadata EventMetadata `json:"event_metadata"`
+}
+
+type EventMetadata struct {
+	ReportedForAccountID string `json:"reported_for_account_id"`
+}
+
+type EventWrapper struct {
+	Event Event `json:"event"`
+}
