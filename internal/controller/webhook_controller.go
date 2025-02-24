@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,10 +20,16 @@ func NewWebhookController() *WebhookController {
 }
 
 func (wh *WebhookController) PostV1WebhookEvents(httpContext *gin.Context) {
-	var eventWrapper agreements.EventWrapper
+	bodyReceived := httpContext.PostForm("json")
+	if bodyReceived == "" {
+		httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(fmt.Errorf("empty body")))
+		return
+	}
 
-	if err := httpContext.BindJSON(&eventWrapper); err != nil {
-		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid JSON"})
+	var event agreements.EventWrapper
+	if err := json.Unmarshal([]byte(bodyReceived), &event); err != nil {
+		infra.App.Logger.Infof(fmt.Sprintf("unmarshall error: %s", err.Error()))
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao desserializar JSON"})
 		return
 	}
 
@@ -30,11 +38,21 @@ func (wh *WebhookController) PostV1WebhookEvents(httpContext *gin.Context) {
 		infra.App.Logger,
 	)
 
-	_, err := usecase.Execute(eventWrapper)
+	_, err := usecase.Execute(event)
 	if err != nil {
+		infra.App.Logger.Infof(fmt.Sprintf("usecase error: %s", err.Error()))
 		httpContext.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "error handling webhook event"))
 		return
 	}
+
+	requestBody, err := httpContext.GetRawData()
+	if err != nil {
+		httpContext.JSON(http.StatusInternalServerError, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
+
+	infra.App.Logger.Infof(fmt.Sprintf("event: %v", event))
+	infra.App.Logger.Infof(fmt.Sprintf("requestParams: %s", string(requestBody)))
 
 	httpContext.Header("Content-Type", "text/plain")
 	httpContext.String(http.StatusOK, "Hello API Event Received")
