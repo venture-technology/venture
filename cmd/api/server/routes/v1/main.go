@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -78,20 +79,15 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.POST("/webhook/events", func(httpContext *gin.Context) {
 		var requestParams interface{}
 
-		if err := httpContext.BindJSON(&requestParams); err != nil {
-			httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
-			return
-		}
-
 		requestBody, err := httpContext.GetRawData()
 		if err != nil {
-			httpContext.JSON(http.StatusInternalServerError, err)
+			httpContext.JSON(http.StatusInternalServerError, exceptions.InvalidBodyContentResponseError(err))
 			return
 		}
 
 		infra.App.Logger.Infof(fmt.Sprintf("requestParams: %s", string(requestBody)))
 
-		if err := httpContext.BindJSON(&requestParams); err != nil {
+		if err := json.Unmarshal(requestBody, &requestParams); err != nil {
 			httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 			return
 		}
