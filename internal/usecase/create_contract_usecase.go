@@ -41,6 +41,24 @@ func NewCreateContractUseCase(
 func (ccuc *CreateContractUseCase) CreateContract(
 	requestParams *value.CreateContractRequestParams,
 ) (agreements.ContractRequest, error) {
+	tempContractData := entity.TempContract{
+		DriverCNH:      requestParams.DriverCNH,
+		KidRG:          requestParams.KidRG,
+		SchoolCNPJ:     requestParams.SchoolCNPJ,
+		ResponsibleCPF: requestParams.ResponsibleCPF,
+	}
+
+	alreadyExists, err := ccuc.repositories.TempContractRepository.GetByEveryone(&tempContractData)
+	if err != nil {
+		ccuc.logger.Infof(fmt.Sprintf("error getting temp contract: %v", err.Error()))
+		return agreements.ContractRequest{}, err
+	}
+
+	if alreadyExists {
+		ccuc.logger.Infof(fmt.Sprintf("temp contract already exists"))
+		return agreements.ContractRequest{}, fmt.Errorf("temp contract already exists")
+	}
+
 	htmlFile, err := ccuc.adapters.AgreementService.GetAgreementHtml(
 		"../../../internal/domain/service/agreements/template/agreement.html",
 	)
