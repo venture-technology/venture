@@ -39,9 +39,7 @@ func (tcr TempContractRepositoryImpl) GetByEveryone(tempContract *entity.TempCon
 
 	query := tcr.Postgres.Client().
 		Model(&entity.TempContract{}).
-		Where("driver_cnh = ?", tempContract.DriverCNH).
 		Where("kid_rg = ?", tempContract.KidRG).
-		Where("school_cnpj = ?", tempContract.SchoolCNPJ).
 		Where("responsible_cpf = ?", tempContract.ResponsibleCPF).
 		Where("(status = 'pending' AND expired_at > ?) OR (status = 'accepted' AND created_at >= ?)",
 			now,        // Para "pending", só listar se ainda não expirou
