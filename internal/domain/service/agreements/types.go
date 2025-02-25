@@ -68,3 +68,20 @@ type EventMetadata struct {
 type EventWrapper struct {
 	Event Event `json:"event"`
 }
+
+type SignatureRequest struct {
+	SignatureRequestID string      `json:"signature_request_id"`
+	Metadata           Metadata    `json:"metadata"`
+	Signatures         []Signature `json:"signatures"`
+}
+
+type Signature struct {
+	SignatureID        string `json:"signature_id"`
+	SignerEmailAddress string `json:"signer_email_address"`
+	SignerName         string `json:"signer_name`
+	StatusCode         string `json:"status_code"`
+	SignedAt           string `json:"signed_at"`
+	HasPin             bool   `json:"has_pin"`
+	HasSmsAuth         bool   `json:"has_sms_auth"`
+	HasSmsDelivery     bool   `json:"has_sms_delivery"`
+}
