@@ -2,6 +2,13 @@ package agreements
 
 import "time"
 
+const (
+	TemporaryContractPending  = "pending"
+	TemporaryContractExpired  = "expired"
+	TemporaryContractCanceled = "canceled"
+	TemporaryContractAccepted = "accepted"
+)
+
 type Signer struct {
 	EmailAddress string `json:"email_address"`
 	Name         string `json:"name"`
@@ -67,4 +74,18 @@ type EventMetadata struct {
 
 type EventWrapper struct {
 	Event Event `json:"event"`
+}
+
+type SignatureResponse struct {
+	SignatureRequest struct {
+		Metadata           Metadata `json:"metadata"`
+		SignatureRequestID string   `json:"signature_request_id"`
+		SigningURL         string   `json:"signing_url"`
+		CreatedAt          int64    `json:"created_at"`
+		Signatures         []struct {
+			SignatureID string `json:"signature_id"`
+			SignerEmail string `json:"signer_email_address"`
+			SignerName  string `json:"signer_name"`
+		} `json:"signatures"`
+	} `json:"signature_request"`
 }

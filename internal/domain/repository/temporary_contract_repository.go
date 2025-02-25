@@ -1,0 +1,15 @@
+package repository
+
+import (
+	"github.com/google/uuid"
+	"github.com/venture-technology/venture/internal/entity"
+)
+
+type TempContractRepository interface {
+	Create(contract *entity.TempContract) error
+	Get(uuid uuid.UUID) (*entity.TempContract, error)
+	GetByEveryone(contract *entity.TempContract) (bool, error)
+	Expire(uuid uuid.UUID) error
+	Cancel(uuid uuid.UUID) error
+	Accept(uuid uuid.UUID) error
+}
