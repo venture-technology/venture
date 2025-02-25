@@ -1,0 +1,97 @@
+package persistence
+
+import (
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/venture-technology/venture/internal/entity"
+	"github.com/venture-technology/venture/internal/infra/contracts"
+)
+
+type TempContractRepositoryImpl struct {
+	Postgres contracts.PostgresIface
+}
+
+func (tcr TempContractRepositoryImpl) Create(tempContract *entity.TempContract) error {
+	err := tcr.Postgres.Client().Create(&tempContract).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (tcr TempContractRepositoryImpl) Get(uuid uuid.UUID) (*entity.TempContract, error) {
+	var tempContract entity.TempContract
+	err := tcr.Postgres.Client().
+		Where("uuid = ?", uuid).
+		First(&tempContract).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return &tempContract, nil
+}
+
+func (tcr TempContractRepositoryImpl) GetByEveryone(tempContract *entity.TempContract) (bool, error) {
+	var count int64
+	now := time.Now().Unix()
+	oneYearAgo := now - (365 * 24 * 60 * 60)
+
+	query := tcr.Postgres.Client().
+		Model(&entity.TempContract{}).
+		Where("driver_cnh = ?", tempContract.DriverCNH).
+		Where("kid_rg = ?", tempContract.KidRG).
+		Where("school_cnpj = ?", tempContract.SchoolCNPJ).
+		Where("responsible_cpf = ?", tempContract.ResponsibleCPF).
+		Where("(status = 'pending' AND expired_at > ?) OR (status = 'accepted' AND created_at >= ?)",
+			now,        // Para "pending", só listar se ainda não expirou
+			oneYearAgo, // Para "accepted", só listar se foi criado nos últimos 365 dias
+		).
+		Count(&count).
+		Error
+
+	if query != nil {
+		return false, query
+	}
+
+	return count > 0, nil
+}
+
+func (tcr TempContractRepositoryImpl) Expire(uuid uuid.UUID) error {
+	err := tcr.Postgres.Client().
+		Model(&entity.TempContract{}).
+		Where("uuid = ?", uuid).
+		Update("status", "expired").
+		Error
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (tcr TempContractRepositoryImpl) Cancel(uuid uuid.UUID) error {
+	err := tcr.Postgres.Client().
+		Model(&entity.TempContract{}).
+		Where("uuid = ?", uuid).
+		Update("status", "canceled").
+		Error
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (tcr TempContractRepositoryImpl) Accept(uuid uuid.UUID) error {
+	err := tcr.Postgres.Client().
+		Model(&entity.TempContract{}).
+		Where("uuid = ?", uuid).
+		Update("status", "accepted").
+		Error
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
