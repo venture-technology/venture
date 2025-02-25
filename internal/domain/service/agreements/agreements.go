@@ -13,22 +13,26 @@ import (
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
+	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/pkg/realtime"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type AgreementService struct {
-	config config.Config
-	logger contracts.Logger
+	config       config.Config
+	logger       contracts.Logger
+	repositories *persistence.PostgresRepositories
 }
 
 func NewAgreementService(
 	config config.Config,
 	logger contracts.Logger,
+	repositories *persistence.PostgresRepositories,
 ) *AgreementService {
 	return &AgreementService{
-		config: config,
-		logger: logger,
+		config:       config,
+		logger:       logger,
+		repositories: repositories,
 	}
 }
 
@@ -62,9 +66,24 @@ func (as *AgreementService) SignatureRequest(contract entity.ContractProperty) (
 	}
 	defer resp.Body.Close()
 
-	_, err = io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		as.logger.Infof(fmt.Sprintf("error to check payload: %v", err))
+		return ContractRequest{}, err
+	}
+
+	var signatureResponse SignatureResponse
+	err = json.Unmarshal(body, &signatureResponse)
+	if err != nil {
+		as.logger.Infof(fmt.Sprintf("error unmarshalling response: %v", err))
+		return ContractRequest{}, err
+	}
+
+	tempContract := as.buildTemporaryContract(signatureResponse)
+
+	err = as.repositories.TempContractRepository.Create(tempContract)
+	if err != nil {
+		as.logger.Infof(fmt.Sprintf("error creating temporary contract: %v", err))
 		return ContractRequest{}, err
 	}
 
@@ -175,5 +194,20 @@ func (as *AgreementService) MappingContractInfo(contract entity.ContractProperty
 }
 
 func (as *AgreementService) GetExpireTime() int64 {
-	return realtime.Now().Add(7 * 24 * time.Hour).Unix()
+	return realtime.Now().Add(2 * 24 * time.Hour).Unix()
+}
+
+func (as *AgreementService) buildTemporaryContract(signatureResponse SignatureResponse) *entity.TempContract {
+	return &entity.TempContract{
+		SigningURL:         signatureResponse.SignatureRequest.SigningURL,
+		SignatureRequestID: signatureResponse.SignatureRequest.SignatureRequestID,
+		CreatedAt:          signatureResponse.SignatureRequest.CreatedAt,
+		ExpiredAt:          as.GetExpireTime(),
+		Status:             TemporaryContractPending,
+		DriverCNH:          signatureResponse.SignatureRequest.Metadata.Keys.DriverID,
+		ResponsibleCPF:     signatureResponse.SignatureRequest.Metadata.Keys.ResponsibleID,
+		KidRG:              signatureResponse.SignatureRequest.Metadata.Keys.KidID,
+		SchoolCNPJ:         signatureResponse.SignatureRequest.Metadata.Keys.SchoolID,
+		UUID:               signatureResponse.SignatureRequest.Metadata.Keys.UUID,
+	}
 }
