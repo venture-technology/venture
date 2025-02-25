@@ -51,6 +51,7 @@ func (s Setup) Repositories() {
 	s.app.Repositories.PartnerRepository = persistence.PartnerRepositoryImpl{Postgres: s.app.Postgres}
 	s.app.Repositories.ResponsibleRepository = persistence.ResponsibleRepositoryImpl{Postgres: s.app.Postgres}
 	s.app.Repositories.SchoolRepository = persistence.SchoolRepositoryImpl{Postgres: s.app.Postgres}
+	s.app.Repositories.TempContractRepository = persistence.TempContractRepositoryImpl{Postgres: s.app.Postgres}
 }
 
 // Cache need started before SQL Database.
@@ -82,5 +83,5 @@ func (s Setup) Adapters() {
 		Cache:          s.app.Cache,
 	}
 	s.app.Adapters.PaymentsService = payments.NewStripeAdapter(s.app.Config)
-	s.app.Adapters.AgreementService = agreements.NewAgreementService(s.app.Config, s.app.Logger)
+	s.app.Adapters.AgreementService = agreements.NewAgreementService(s.app.Config, s.app.Logger, &s.app.Repositories)
 }
