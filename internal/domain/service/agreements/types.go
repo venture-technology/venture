@@ -12,7 +12,6 @@ const (
 type Signer struct {
 	EmailAddress string `json:"email_address"`
 	Name         string `json:"name"`
-	Order        int    `json:"order"`
 }
 
 type Metadata struct {
