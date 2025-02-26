@@ -40,5 +40,7 @@ func (gsuc *GetSchoolUseCase) GetSchool(cnpj string) (value.GetSchool, error) {
 		),
 		ProfileImage: school.ProfileImage,
 		CreatedAt:    school.CreatedAt,
+		States:       school.States,
+		City:         school.City,
 	}, nil
 }

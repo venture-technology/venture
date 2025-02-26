@@ -36,10 +36,13 @@ func (gduc *ListDriverFromSchoolUseCase) ListDriverFromSchool(cnpj string) ([]va
 
 func buildListDriver(partner entity.Partner) value.ListDriver {
 	return value.ListDriver{
-		ID:           partner.Driver.ID,
-		Name:         partner.Driver.Name,
-		Email:        partner.Driver.Email,
-		Phone:        partner.Driver.Phone,
-		ProfileImage: partner.Driver.ProfileImage,
+		ID:            partner.Driver.ID,
+		Name:          partner.Driver.Name,
+		Email:         partner.Driver.Email,
+		Phone:         partner.Driver.Phone,
+		ProfileImage:  partner.Driver.ProfileImage,
+		Accessibility: partner.Driver.Accessibility,
+		States:        partner.Driver.States,
+		City:          partner.Driver.City,
 	}
 }

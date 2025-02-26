@@ -49,5 +49,7 @@ func buildListSchool(school entity.School) value.ListSchool {
 			school.Address.Complement,
 			school.Address.Zip,
 		),
+		City:   school.City,
+		States: school.States,
 	}
 }
