@@ -17,6 +17,8 @@ type School struct {
 	ProfileImage string    `json:"profile_image,omitempty"`
 	CreatedAt    time.Time `json:"created_at,omitempty"`
 	UpdatedAt    time.Time `json:"updated_at,omitempty"`
+	City         string    `json:"city"`
+	States       string    `json:"states"`
 }
 
 func (s *School) ValidateCnpj() bool {

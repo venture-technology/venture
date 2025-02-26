@@ -42,5 +42,7 @@ func (gruc *GetResponsibleUseCase) GetResponsible(cpf string) (value.GetResponsi
 		ProfileImage:    responsible.ProfileImage,
 		PaymentMethodId: responsible.PaymentMethodId,
 		CreatedAt:       responsible.CreatedAt,
+		States:          responsible.States,
+		City:            responsible.City,
 	}, nil
 }

@@ -27,6 +27,8 @@ type Driver struct {
 	Schedule        string    `json:"schedule,omitempty"`
 	Seats           Seats     `gorm:"embedded" json:"seats,omitempty"`
 	Accessibility   bool      `json:"accessibility"`
+	City            string    `json:"city"`
+	States          string    `json:"states"`
 }
 
 type Car struct {

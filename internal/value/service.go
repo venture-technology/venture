@@ -17,6 +17,8 @@ type GetResponsible struct {
 	ProfileImage    string    `json:"profile_image"`
 	PaymentMethodId string    `json:"payment_method_id"`
 	CreatedAt       time.Time `json:"created_at"`
+	City            string    `json:"city"`
+	States          string    `json:"states"`
 }
 
 type GetKid struct {
@@ -44,6 +46,8 @@ type GetSchool struct {
 	Phone        string    `json:"phone"`
 	ProfileImage string    `json:"profile_image"`
 	CreatedAt    time.Time `json:"created_at"`
+	City         string    `json:"city"`
+	States       string    `json:"states"`
 }
 
 type ListSchool struct {
@@ -54,6 +58,8 @@ type ListSchool struct {
 	Phone        string    `json:"phone"`
 	ProfileImage string    `json:"profile_image"`
 	CreatedAt    time.Time `json:"created_at"`
+	City         string    `json:"city"`
+	States       string    `json:"states"`
 }
 
 type GetDriver struct {
@@ -68,6 +74,8 @@ type GetDriver struct {
 	CreatedAt     time.Time      `json:"created_at"`
 	Gallery       map[int]string `json:"gallery"`
 	Accessibility bool           `json:"accessibility"`
+	City          string         `json:"city"`
+	States        string         `json:"states"`
 }
 
 type ListDriver struct {
@@ -81,6 +89,8 @@ type ListDriver struct {
 	ProfileImage  string    `json:"profile_image"`
 	CreatedAt     time.Time `json:"created_at"`
 	Accessibility bool      `json:"accessibility"`
+	City          string    `json:"city"`
+	States        string    `json:"states"`
 }
 
 type ListDriverToCalcPrice struct {
