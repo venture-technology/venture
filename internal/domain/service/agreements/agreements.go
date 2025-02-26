@@ -108,12 +108,10 @@ func (as *AgreementService) MappingContractInfo(contract entity.ContractProperty
 			{
 				EmailAddress: contract.Contract.Driver.Email,
 				Name:         contract.Contract.Driver.Name,
-				Order:        0,
 			},
 			{
 				EmailAddress: contract.Contract.Kid.Responsible.Email,
 				Name:         contract.Contract.Kid.Responsible.Name,
-				Order:        1,
 			},
 		},
 		CCEmailAddresses: []string{as.config.Admin.AdminEmail},
