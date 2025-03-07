@@ -6,30 +6,30 @@ import (
 )
 
 type V1Controllers struct {
-	Responsible        *controller.ResponsibleController
-	Kid                *controller.KidController
-	School             *controller.SchoolController
-	Driver             *controller.DriverController
-	Invite             *controller.InviteController
-	Partner            *controller.PartnerController
-	Contract           *controller.ContractController
-	Price              *controller.PriceController
-	Webhook            *controller.WebhookController
-	PendingResponsible *controller.PendingResponsibleController
+	Responsible       *controller.ResponsibleController
+	Kid               *controller.KidController
+	School            *controller.SchoolController
+	Driver            *controller.DriverController
+	Invite            *controller.InviteController
+	Partner           *controller.PartnerController
+	Contract          *controller.ContractController
+	Price             *controller.PriceController
+	Webhook           *controller.WebhookController
+	TemporaryContract *controller.TemporaryContractController
 }
 
 func NewV1Controller() *V1Controllers {
 	return &V1Controllers{
-		Invite:             controller.NewInviteController(),
-		Responsible:        controller.NewResponsibleController(),
-		Kid:                controller.NewKidController(),
-		School:             controller.NewSchoolController(),
-		Driver:             controller.NewDriverController(),
-		Partner:            controller.NewPartnerController(),
-		Contract:           controller.NewContractController(),
-		Price:              controller.NewPriceController(),
-		Webhook:            controller.NewWebhookController(),
-		PendingResponsible: controller.NewPendingResponsibleController(),
+		Invite:            controller.NewInviteController(),
+		Responsible:       controller.NewResponsibleController(),
+		Kid:               controller.NewKidController(),
+		School:            controller.NewSchoolController(),
+		Driver:            controller.NewDriverController(),
+		Partner:           controller.NewPartnerController(),
+		Contract:          controller.NewContractController(),
+		Price:             controller.NewPriceController(),
+		Webhook:           controller.NewWebhookController(),
+		TemporaryContract: controller.NewTemporaryContractController(),
 	}
 }
 
@@ -78,5 +78,5 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 
 	group.GET("/price/:cpf/:cnpj", route.Price.GetV1PriceDriver)
 
-	group.GET("/temp_contracts/:cpf", route.PendingResponsible.GetV1TempContracts)
+	group.GET("/temp_contracts/:cpf", route.TemporaryContract.GetV1TempContracts)
 }

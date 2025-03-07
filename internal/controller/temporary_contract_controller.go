@@ -8,14 +8,14 @@ import (
 	"github.com/venture-technology/venture/internal/usecase"
 )
 
-type PendingResponsibleController struct {
+type TemporaryContractController struct {
 }
 
-func NewPendingResponsibleController() *PendingResponsibleController {
-	return &PendingResponsibleController{}
+func NewTemporaryContractController() *TemporaryContractController {
+	return &TemporaryContractController{}
 }
 
-func (pr *PendingResponsibleController) GetV1TempContracts(c *gin.Context) {
+func (tc *TemporaryContractController) GetV1TempContracts(c *gin.Context) {
 	cpf := c.Param("cpf")
 
 	usecase := usecase.NewGetTempContractsUseCase(

@@ -7,13 +7,11 @@ import (
 	"github.com/venture-technology/venture/internal/value"
 )
 
-// Estrutura do Use Case
 type GetTempContractsUseCase struct {
 	Repositories *persistence.PostgresRepositories
 	Logger       contracts.Logger
 }
 
-// Função para criar uma nova instância do Use Case
 func NewGetTempContractsUseCase(repos *persistence.PostgresRepositories, log contracts.Logger) *GetTempContractsUseCase {
 	return &GetTempContractsUseCase{
 		Repositories: repos,
@@ -21,10 +19,8 @@ func NewGetTempContractsUseCase(repos *persistence.PostgresRepositories, log con
 	}
 }
 
-// Método para executar a lógica de negócio
 func (gtcuc *GetTempContractsUseCase) GetTempContracts(cpf string) ([]value.GetTempContracts, error) {
 
-	// Buscar os contratos pendentes no PostgresRepositories
 	contracts, err := gtcuc.Repositories.TempContractRepository.FindAllByResponsible(&cpf)
 	if err != nil {
 		return []value.GetTempContracts{}, err
