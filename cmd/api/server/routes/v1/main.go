@@ -6,28 +6,30 @@ import (
 )
 
 type V1Controllers struct {
-	Responsible *controller.ResponsibleController
-	Kid         *controller.KidController
-	School      *controller.SchoolController
-	Driver      *controller.DriverController
-	Invite      *controller.InviteController
-	Partner     *controller.PartnerController
-	Contract    *controller.ContractController
-	Price       *controller.PriceController
-	Webhook     *controller.WebhookController
+	Responsible        *controller.ResponsibleController
+	Kid                *controller.KidController
+	School             *controller.SchoolController
+	Driver             *controller.DriverController
+	Invite             *controller.InviteController
+	Partner            *controller.PartnerController
+	Contract           *controller.ContractController
+	Price              *controller.PriceController
+	Webhook            *controller.WebhookController
+	PendingResponsible *controller.PendingResponsibleController
 }
 
 func NewV1Controller() *V1Controllers {
 	return &V1Controllers{
-		Invite:      controller.NewInviteController(),
-		Responsible: controller.NewResponsibleController(),
-		Kid:         controller.NewKidController(),
-		School:      controller.NewSchoolController(),
-		Driver:      controller.NewDriverController(),
-		Partner:     controller.NewPartnerController(),
-		Contract:    controller.NewContractController(),
-		Price:       controller.NewPriceController(),
-		Webhook:     controller.NewWebhookController(),
+		Invite:             controller.NewInviteController(),
+		Responsible:        controller.NewResponsibleController(),
+		Kid:                controller.NewKidController(),
+		School:             controller.NewSchoolController(),
+		Driver:             controller.NewDriverController(),
+		Partner:            controller.NewPartnerController(),
+		Contract:           controller.NewContractController(),
+		Price:              controller.NewPriceController(),
+		Webhook:            controller.NewWebhookController(),
+		PendingResponsible: controller.NewPendingResponsibleController(),
 	}
 }
 
@@ -75,4 +77,6 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.POST("/webhook/events", route.Webhook.PostV1WebhookEvents)
 
 	group.GET("/price/:cpf/:cnpj", route.Price.GetV1PriceDriver)
+
+	group.GET("/temp_contracts/:cpf", route.PendingResponsible.GetV1TempContracts)
 }

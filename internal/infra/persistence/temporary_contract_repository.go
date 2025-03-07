@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 )
@@ -92,4 +93,19 @@ func (tcr TempContractRepositoryImpl) Accept(uuid uuid.UUID) error {
 		return err
 	}
 	return nil
+}
+
+func (tcr TempContractRepositoryImpl) FindAllByResponsible(cpf *string) ([]entity.TempContract, error) {
+	var contracts []entity.TempContract
+
+	if cpf == nil {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	err := tcr.Postgres.Client().Where("responsible_cpf = ?", cpf).Find(&contracts).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return contracts, nil
 }
