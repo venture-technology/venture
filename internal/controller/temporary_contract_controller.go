@@ -31,3 +31,20 @@ func (tc *TemporaryContractController) GetV1TempContracts(c *gin.Context) {
 
 	c.JSON(http.StatusOK, contracts)
 }
+
+func (tc *TemporaryContractController) GetV1DriverTempContracts(c *gin.Context) {
+	cnh := c.Param("cnh")
+
+	usecase := usecase.NewGetTempContractsDriverUseCase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	contracts, err := usecase.GetDriverTempContracts(cnh)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao buscar contratos"})
+		return
+	}
+
+	c.JSON(http.StatusOK, contracts)
+}

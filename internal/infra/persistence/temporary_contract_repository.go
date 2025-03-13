@@ -109,3 +109,18 @@ func (tcr TempContractRepositoryImpl) FindAllByResponsible(cpf *string) ([]entit
 
 	return contracts, nil
 }
+
+func (tcr TempContractRepositoryImpl) FindAllByDriver(cnh *string) ([]entity.TempContract, error) {
+	var contracts []entity.TempContract
+
+	if cnh == nil {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	err := tcr.Postgres.Client().Where("driver_cnh = ?", cnh).Find(&contracts).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return contracts, nil
+}
