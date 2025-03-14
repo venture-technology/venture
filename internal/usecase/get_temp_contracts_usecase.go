@@ -37,7 +37,7 @@ func buildTempContracts(TempContract *entity.TempContract) value.GetTempContract
 		ID:                    TempContract.ID,
 		SigningURL:            TempContract.SigningURL,
 		Status:                TempContract.Status,
-		DriverCNH:             TempContract.Status,
+		DriverCNH:             TempContract.DriverCNH,
 		SchoolCNPJ:            TempContract.SchoolCNPJ,
 		KidRG:                 TempContract.KidRG,
 		ResponsibleCPF:        TempContract.ResponsibleCPF,

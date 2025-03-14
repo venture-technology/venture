@@ -12,8 +12,8 @@ type TempContractRepository interface {
 	//para verificar se todos os objetos do contrato existem
 	//
 	//{responsible, driver e kid}
-	FindAllByDriver(cnh *string) ([]entity.TempContract, error)
 	GetByEveryone(contract *entity.TempContract) (bool, error)
+	FindAllByDriver(cnh *string) ([]entity.TempContract, error)
 	Expire(uuid uuid.UUID) error
 	Cancel(uuid uuid.UUID) error
 	Accept(uuid uuid.UUID) error
