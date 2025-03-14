@@ -86,6 +86,36 @@ func (_m *TempContractRepository) Expire(_a0 uuid.UUID) error {
 	return r0
 }
 
+// FindAllByDriver provides a mock function with given fields: cnh
+func (_m *TempContractRepository) FindAllByDriver(cnh *string) ([]entity.TempContract, error) {
+	ret := _m.Called(cnh)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FindAllByDriver")
+	}
+
+	var r0 []entity.TempContract
+	var r1 error
+	if rf, ok := ret.Get(0).(func(*string) ([]entity.TempContract, error)); ok {
+		return rf(cnh)
+	}
+	if rf, ok := ret.Get(0).(func(*string) []entity.TempContract); ok {
+		r0 = rf(cnh)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.TempContract)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(*string) error); ok {
+		r1 = rf(cnh)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // FindAllByResponsible provides a mock function with given fields: cpf
 func (_m *TempContractRepository) FindAllByResponsible(cpf *string) ([]entity.TempContract, error) {
 	ret := _m.Called(cpf)
