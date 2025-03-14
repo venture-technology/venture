@@ -121,7 +121,9 @@ func (ccuc *CreateContractUseCase) ConvertPDFtoHTML(htmlFile []byte, contractPro
 	return pdfData, nil
 }
 
-func (ccuc *CreateContractUseCase) SetContractProperty(requestParams value.CreateContractRequestParams) (entity.ContractProperty, error) {
+func (ccuc *CreateContractUseCase) SetContractProperty(
+	requestParams value.CreateContractRequestParams,
+) (entity.ContractProperty, error) {
 	driver, err := ccuc.repositories.DriverRepository.Get(requestParams.DriverCNH)
 	if err != nil {
 		return entity.ContractProperty{}, err
