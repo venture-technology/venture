@@ -78,5 +78,7 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 
 	group.GET("/price/:cpf/:cnpj", route.Price.GetV1PriceDriver)
 
-	group.GET("/temp_contracts/:cpf", route.TemporaryContract.GetV1TempContracts)
+	group.GET("/temp_contracts/responsible/:cpf", route.TemporaryContract.GetV1TempContracts)
+	group.GET("/temp_contracts/driver/:cnh", route.TemporaryContract.GetV1DriverTempContracts)
+
 }

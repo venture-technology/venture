@@ -7,32 +7,32 @@ import (
 	"github.com/venture-technology/venture/internal/value"
 )
 
-type GetTempContractsUseCase struct {
+type GetTempContractsDriverUseCase struct {
 	Repositories *persistence.PostgresRepositories
 	Logger       contracts.Logger
 }
 
-func NewGetTempContractsUseCase(repos *persistence.PostgresRepositories, log contracts.Logger) *GetTempContractsUseCase {
-	return &GetTempContractsUseCase{
+func NewGetTempContractsDriverUseCase(repos *persistence.PostgresRepositories, log contracts.Logger) *GetTempContractsDriverUseCase {
+	return &GetTempContractsDriverUseCase{
 		Repositories: repos,
 		Logger:       log,
 	}
 }
 
-func (gtcuc *GetTempContractsUseCase) GetTempContracts(cpf string) ([]value.GetTempContracts, error) {
+func (gtcduc *GetTempContractsDriverUseCase) GetDriverTempContracts(cnh string) ([]value.GetTempContracts, error) {
 
-	contracts, err := gtcuc.Repositories.TempContractRepository.FindAllByResponsible(&cpf)
+	contracts, err := gtcduc.Repositories.TempContractRepository.FindAllByDriver(&cnh)
 	if err != nil {
 		return []value.GetTempContracts{}, err
 	}
 	response := []value.GetTempContracts{}
 	for _, contract := range contracts {
-		response = append(response, buildTempContracts(&contract))
+		response = append(response, buildDriverTempContracts(&contract))
 	}
 	return response, nil
 }
 
-func buildTempContracts(TempContract *entity.TempContract) value.GetTempContracts {
+func buildDriverTempContracts(TempContract *entity.TempContract) value.GetTempContracts {
 	return value.GetTempContracts{
 		ID:                    TempContract.ID,
 		SigningURL:            TempContract.SigningURL,

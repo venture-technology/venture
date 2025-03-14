@@ -13,6 +13,7 @@ type TempContractRepository interface {
 	//
 	//{responsible, driver e kid}
 	GetByEveryone(contract *entity.TempContract) (bool, error)
+	FindAllByDriver(cnh *string) ([]entity.TempContract, error)
 	Expire(uuid uuid.UUID) error
 	Cancel(uuid uuid.UUID) error
 	Accept(uuid uuid.UUID) error
