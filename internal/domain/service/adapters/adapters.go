@@ -33,6 +33,10 @@ type PaymentsService interface {
 	CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64
 	// fine responsible when cancel subcription
 	FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error)
+	CreateCustomer(responsible *entity.Responsible) (string, error)
+	CreatePaymentMethod(token string) (*stripe.PaymentMethod, error)
+	AttachCardToResponsible(customerID, paymentMethodID string) (*stripe.PaymentMethod, error)
+	DeleteStripeUser(customerId string) (*stripe.Customer, error)
 }
 
 type AgreementService interface {
@@ -40,4 +44,5 @@ type AgreementService interface {
 	// this function is used to get the html file of the agreement
 	// the param is variable because can be used to get the html file from different applications
 	GetAgreementHtml(path string) ([]byte, error)
+	HandleCallbackVerification() (any, error)
 }
