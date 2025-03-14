@@ -28,7 +28,7 @@ func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
 	usecase := usecase.NewCreateResponsibleUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
-		infra.App.Config,
+		infra.App.Adapters,
 	)
 
 	requestParams.Password = utils.MakeHash(requestParams.Password)
@@ -87,7 +87,7 @@ func (rh *ResponsibleController) DeleteV1DeleteResponsbile(c *gin.Context) {
 	usecase := usecase.NewDeleteResponsibleUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
-		infra.App.Config,
+		infra.App.Adapters,
 	)
 
 	// buscando customerid do responsible
