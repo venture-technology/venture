@@ -28,6 +28,7 @@ func (wh *WebhookController) PostV1WebhookEvents(httpContext *gin.Context) {
 	usecase := usecase.NewWebhookEventsUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
+		infra.App.Adapters,
 	)
 
 	_, err := usecase.Execute(eventWrapper)

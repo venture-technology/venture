@@ -209,3 +209,7 @@ func (as *AgreementService) buildTemporaryContract(signatureResponse SignatureRe
 		UUID:               signatureResponse.SignatureRequest.Metadata.Keys.UUID,
 	}
 }
+
+func (as *AgreementService) HandleCallbackVerification() (any, error) {
+	return true, nil
+}

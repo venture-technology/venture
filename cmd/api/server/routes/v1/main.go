@@ -74,11 +74,11 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.PATCH("/contract/:id/cancel", route.Contract.PatchV1CancelContract)
 	group.PATCH("/contract/:id/expired", route.Contract.PatchV1ExpiredContract)
 
-	group.POST("/webhook/events", route.Webhook.PostV1WebhookEvents)
+	group.POST("/webhook/signature/events", route.Webhook.PostV1WebhookEvents)
 
 	group.GET("/price/:cpf/:cnpj", route.Price.GetV1PriceDriver)
 
-	group.GET("/temp_contracts/responsible/:cpf", route.TemporaryContract.GetV1TempContracts)
+	group.GET("/temp_contracts/responsible/:cpf", route.TemporaryContract.GetV1ResponsibleTempContracts)
 	group.GET("/temp_contracts/driver/:cnh", route.TemporaryContract.GetV1DriverTempContracts)
 
 }

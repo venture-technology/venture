@@ -4,7 +4,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 )
 
-type ResponsiblesibleRepository interface {
+type ResponsibleRepository interface {
 	Create(responsible *entity.Responsible) error
 	Get(cpf string) (*entity.Responsible, error)
 	Update(cpf string, attributes map[string]interface{}) error

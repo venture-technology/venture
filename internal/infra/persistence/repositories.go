@@ -4,7 +4,7 @@ import "github.com/venture-technology/venture/internal/domain/repository"
 
 type PostgresRepositories struct {
 	KidRepository          repository.KidRepository
-	ResponsibleRepository  repository.ResponsiblesibleRepository
+	ResponsibleRepository  repository.ResponsibleRepository
 	SchoolRepository       repository.SchoolRepository
 	DriverRepository       repository.DriverRepository
 	PartnerRepository      repository.PartnerRepository

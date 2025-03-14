@@ -5,8 +5,10 @@ import (
 	"time"
 
 	"github.com/stripe/stripe-go/v79"
+	"github.com/stripe/stripe-go/v79/customer"
 	"github.com/stripe/stripe-go/v79/invoice"
 	"github.com/stripe/stripe-go/v79/paymentintent"
+	"github.com/stripe/stripe-go/v79/paymentmethod"
 	"github.com/stripe/stripe-go/v79/price"
 	"github.com/stripe/stripe-go/v79/product"
 	"github.com/stripe/stripe-go/v79/subscription"
@@ -189,6 +191,85 @@ func (su *StripeAdapter) FineResponsible(contract *entity.Contract, amountFine i
 	}
 
 	return paym, nil
+}
+
+func (su *StripeAdapter) CreateCustomer(
+	responsible *entity.Responsible,
+) (string, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
+
+	params := &stripe.CustomerParams{
+		Name:  stripe.String(responsible.Name),
+		Email: stripe.String(responsible.Email),
+		Phone: stripe.String(responsible.Phone),
+	}
+
+	resp, err := customer.New(params)
+	if err != nil {
+		return "", err
+	}
+
+	return resp.ID, nil
+}
+
+func (su *StripeAdapter) CreatePaymentMethod(
+	token string,
+) (*stripe.PaymentMethod, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
+
+	params := &stripe.PaymentMethodParams{
+		Type: stripe.String(string(stripe.PaymentMethodTypeCard)),
+		Card: &stripe.PaymentMethodCardParams{
+			Token: stripe.String(token),
+		},
+	}
+
+	pm, err := paymentmethod.New(params)
+	if err != nil {
+		fmt.Println("Erro ao criar método de pagamento:", err)
+		return nil, err
+	}
+
+	return pm, nil
+}
+
+func (su *StripeAdapter) AttachCardToResponsible(
+	customerID,
+	paymentMethodID string,
+) (*stripe.PaymentMethod, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
+
+	params := &stripe.PaymentMethodAttachParams{
+		Customer: &customerID,
+	}
+	pm, err := paymentmethod.Attach(paymentMethodID, params)
+	if err != nil {
+		return nil, err
+	}
+
+	updateParams := &stripe.CustomerParams{
+		InvoiceSettings: &stripe.CustomerInvoiceSettingsParams{
+			DefaultPaymentMethod: stripe.String(pm.ID),
+		},
+	}
+
+	_, err = customer.Update(customerID, updateParams)
+	if err != nil {
+		return nil, err
+	}
+
+	return pm, nil
+}
+
+func (su *StripeAdapter) DeleteStripeUser(customerId string) (*stripe.Customer, error) {
+	stripe.Key = su.config.StripeEnv.SecretKey
+
+	c, err := customer.Del(customerId, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
 }
 
 func quantityInvoicesPaid(invoices map[string]entity.InvoiceInfo) uint64 {
