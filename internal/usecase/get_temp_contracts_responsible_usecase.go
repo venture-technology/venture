@@ -7,19 +7,19 @@ import (
 	"github.com/venture-technology/venture/internal/value"
 )
 
-type GetTempContractsUseCase struct {
+type GetTempContractsResponsibleUseCase struct {
 	Repositories *persistence.PostgresRepositories
 	Logger       contracts.Logger
 }
 
-func NewGetTempContractsUseCase(repos *persistence.PostgresRepositories, log contracts.Logger) *GetTempContractsUseCase {
-	return &GetTempContractsUseCase{
+func NewGetTempContractsResponsibleUseCase(repos *persistence.PostgresRepositories, log contracts.Logger) *GetTempContractsResponsibleUseCase {
+	return &GetTempContractsResponsibleUseCase{
 		Repositories: repos,
 		Logger:       log,
 	}
 }
 
-func (gtcuc *GetTempContractsUseCase) GetTempContracts(cpf string) ([]value.GetTempContracts, error) {
+func (gtcuc *GetTempContractsResponsibleUseCase) GetResponsibleTempContracts(cpf string) ([]value.GetTempContracts, error) {
 	contracts, err := gtcuc.Repositories.TempContractRepository.FindAllByResponsible(&cpf)
 	if err != nil {
 		return []value.GetTempContracts{}, err

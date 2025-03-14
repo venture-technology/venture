@@ -11,14 +11,14 @@ import (
 	"github.com/venture-technology/venture/mocks"
 )
 
-func TestGetTempContractsUseCase_GetTempContracts(t *testing.T) {
+func TestGetTempContractsResponsibleUseCase_GetResponsibleTempContracts(t *testing.T) {
 	cpf := "123"
 
 	t.Run("if repository returns error", func(t *testing.T) {
 		repository := mocks.NewTempContractRepository(t)
 		logger := mocks.NewLogger(t)
 
-		usecase := NewGetTempContractsUseCase(
+		usecase := NewGetTempContractsResponsibleUseCase(
 			&persistence.PostgresRepositories{
 				TempContractRepository: repository,
 			},
@@ -27,7 +27,7 @@ func TestGetTempContractsUseCase_GetTempContracts(t *testing.T) {
 
 		repository.On("FindAllByResponsible", mock.Anything).Return([]entity.TempContract{}, errors.New("database error"))
 
-		_, err := usecase.GetTempContracts(cpf)
+		_, err := usecase.GetResponsibleTempContracts(cpf)
 
 		assert.EqualError(t, err, "database error")
 	})
@@ -36,7 +36,7 @@ func TestGetTempContractsUseCase_GetTempContracts(t *testing.T) {
 		repository := mocks.NewTempContractRepository(t)
 		logger := mocks.NewLogger(t)
 
-		usecase := NewGetTempContractsUseCase(
+		usecase := NewGetTempContractsResponsibleUseCase(
 			&persistence.PostgresRepositories{
 				TempContractRepository: repository,
 			},
@@ -45,7 +45,7 @@ func TestGetTempContractsUseCase_GetTempContracts(t *testing.T) {
 
 		repository.On("FindAllByResponsible", mock.Anything).Return([]entity.TempContract{}, nil)
 
-		_, err := usecase.GetTempContracts(cpf)
+		_, err := usecase.GetResponsibleTempContracts(cpf)
 
 		assert.Nil(t, err)
 	})

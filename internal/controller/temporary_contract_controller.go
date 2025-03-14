@@ -15,15 +15,15 @@ func NewTemporaryContractController() *TemporaryContractController {
 	return &TemporaryContractController{}
 }
 
-func (tc *TemporaryContractController) GetV1TempContracts(c *gin.Context) {
+func (tc *TemporaryContractController) GetV1ResponsibleTempContracts(c *gin.Context) {
 	cpf := c.Param("cpf")
 
-	usecase := usecase.NewGetTempContractsUseCase(
+	usecase := usecase.NewGetTempContractsResponsibleUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	contracts, err := usecase.GetTempContracts(cpf)
+	contracts, err := usecase.GetResponsibleTempContracts(cpf)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao buscar contratos"})
 		return
