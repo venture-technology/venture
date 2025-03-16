@@ -61,7 +61,7 @@ func TestCreateResponsibleUsecase_CreateResponsible(t *testing.T) {
 		assert.EqualError(t, err, "payment method creation error")
 	})
 
-	t.Run("if create responsible on reposiutory returns error", func(t *testing.T) {
+	t.Run("if create responsible on repository returns error", func(t *testing.T) {
 		repository := mocks.NewResponsibleRepository(t)
 		payments := mocks.NewPaymentsService(t)
 		logger := mocks.NewLogger(t)
