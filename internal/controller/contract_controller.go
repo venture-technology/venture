@@ -33,6 +33,7 @@ func (coh *ContractController) PostV1CreateContract(c *gin.Context) {
 		infra.App.Logger,
 		infra.App.Adapters,
 		infra.App.Bucket,
+		infra.App.Converters,
 	)
 
 	response, err := usecase.CreateContract(&requestParams)
@@ -91,7 +92,6 @@ func (coh *ContractController) GetV1ListResponsibleContract(c *gin.Context) {
 	usecase := usecase.NewListResponsibleContractsUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
-		infra.App.Adapters,
 	)
 
 	contracts, err := usecase.ListResponsibleContracts(cpf)

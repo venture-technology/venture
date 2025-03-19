@@ -1,11 +1,8 @@
 package usecase
 
 import (
-	"bytes"
 	"fmt"
-	"text/template"
 
-	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/domain/service/agreements"
@@ -22,6 +19,7 @@ type CreateContractUseCase struct {
 	logger       contracts.Logger
 	adapters     adapters.Adapters
 	S3           contracts.S3Iface
+	converter    contracts.Converters
 }
 
 func NewCreateContractUseCase(
@@ -29,12 +27,14 @@ func NewCreateContractUseCase(
 	logger contracts.Logger,
 	adapters adapters.Adapters,
 	S3 contracts.S3Iface,
+	converter contracts.Converters,
 ) *CreateContractUseCase {
 	return &CreateContractUseCase{
 		repositories: repositories,
 		logger:       logger,
 		adapters:     adapters,
 		S3:           S3,
+		converter:    converter,
 	}
 }
 
@@ -73,13 +73,18 @@ func (ccuc *CreateContractUseCase) CreateContract(
 		return agreements.ContractRequest{}, err
 	}
 
-	pdfData, err := ccuc.ConvertPDFtoHTML(htmlFile, contractProperty)
+	pdfData, err := ccuc.converter.ConvertPDFtoHTML(htmlFile, contractProperty)
 	if err != nil {
 		ccuc.logger.Infof(fmt.Sprintf("error converting pdf to html: %v", err))
 		return agreements.ContractRequest{}, err
 	}
 
-	contractProperty.URL, err = ccuc.S3.SaveWithType("contracts", contractProperty.UUID, pdfData, ccuc.S3.PDF())
+	contractProperty.URL, err = ccuc.S3.SaveWithType(
+		"contracts",
+		contractProperty.UUID,
+		pdfData,
+		ccuc.S3.PDF(),
+	)
 	if err != nil {
 		return agreements.ContractRequest{}, err
 	}
@@ -91,34 +96,6 @@ func (ccuc *CreateContractUseCase) CreateContract(
 	}
 
 	return request, nil
-}
-
-func (ccuc *CreateContractUseCase) ConvertPDFtoHTML(htmlFile []byte, contractProperty entity.ContractProperty) ([]byte, error) {
-	tmpl, err := template.New("webpage").Parse(string(htmlFile))
-	if err != nil {
-		return nil, err
-	}
-
-	var buf bytes.Buffer
-	err = tmpl.Execute(&buf, contractProperty)
-	if err != nil {
-		return nil, err
-	}
-
-	pdf, err := wkhtmltopdf.NewPDFGenerator()
-	if err != nil {
-		return nil, err
-	}
-
-	pdf.AddPage(wkhtmltopdf.NewPageReader(bytes.NewReader([]byte(buf.String()))))
-	err = pdf.Create()
-	if err != nil {
-		return nil, err
-	}
-
-	pdfData := pdf.Bytes()
-
-	return pdfData, nil
 }
 
 func (ccuc *CreateContractUseCase) SetContractProperty(

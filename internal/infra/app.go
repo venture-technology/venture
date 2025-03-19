@@ -15,6 +15,7 @@ type Application struct {
 	Email        contracts.SESIface
 	Logger       contracts.Logger
 	Adapters     adapters.Adapters
+	Converters   contracts.Converters
 	Config       config.Config
 }
 
