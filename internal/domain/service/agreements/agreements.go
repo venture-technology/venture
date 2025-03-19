@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
@@ -106,12 +107,12 @@ func (as *AgreementService) MappingContractInfo(contract entity.ContractProperty
 		Message: "Por favor, reveja o contrato para assinatura e utilização dos serviços prestados pelo motorista",
 		Signers: []Signer{
 			{
-				EmailAddress: contract.Contract.Driver.Email,
-				Name:         contract.Contract.Driver.Name,
+				EmailAddress: contract.ContractParams.Driver.Email,
+				Name:         contract.ContractParams.Driver.Name,
 			},
 			{
-				EmailAddress: contract.Contract.Kid.Responsible.Email,
-				Name:         contract.Contract.Kid.Responsible.Name,
+				EmailAddress: contract.ContractParams.Kid.Responsible.Email,
+				Name:         contract.ContractParams.Kid.Responsible.Name,
 			},
 		},
 		CCEmailAddresses: []string{as.config.Admin.AdminEmail},
@@ -139,32 +140,32 @@ func (as *AgreementService) MappingContractInfo(contract entity.ContractProperty
 				Time               time.Time `json:"time"`
 			}{
 				UUID:             contract.UUID,
-				DriverID:         contract.Contract.Driver.CNH,
-				DriverName:       contract.Contract.Driver.Name,
-				ResponsibleID:    contract.Contract.Kid.Responsible.CPF,
-				ResponsibleName:  contract.Contract.Kid.Responsible.Name,
-				ResponsibleCPF:   contract.Contract.Kid.Responsible.CPF,
-				ResponsibleEmail: contract.Contract.Kid.Responsible.Email,
-				ResponsiblePhone: contract.Contract.Kid.Responsible.Phone,
+				DriverID:         contract.ContractParams.Driver.CNH,
+				DriverName:       contract.ContractParams.Driver.Name,
+				ResponsibleID:    contract.ContractParams.Kid.Responsible.CPF,
+				ResponsibleName:  contract.ContractParams.Kid.Responsible.Name,
+				ResponsibleCPF:   contract.ContractParams.Kid.Responsible.CPF,
+				ResponsibleEmail: contract.ContractParams.Kid.Responsible.Email,
+				ResponsiblePhone: contract.ContractParams.Kid.Responsible.Phone,
 				ResponsibleAddr: utils.BuildAddress(
-					contract.Contract.Kid.Responsible.Address.Street,
-					contract.Contract.Kid.Responsible.Address.Number,
-					contract.Contract.Kid.Responsible.Address.Complement,
-					contract.Contract.Kid.Responsible.Address.Zip,
+					contract.ContractParams.Kid.Responsible.Address.Street,
+					contract.ContractParams.Kid.Responsible.Address.Number,
+					contract.ContractParams.Kid.Responsible.Address.Complement,
+					contract.ContractParams.Kid.Responsible.Address.Zip,
 				),
-				KidID:      contract.Contract.Kid.RG,
-				KidName:    contract.Contract.Kid.Name,
-				SchoolID:   contract.Contract.School.CNPJ,
-				SchoolName: contract.Contract.School.Name,
+				KidID:      contract.ContractParams.Kid.RG,
+				KidName:    contract.ContractParams.Kid.Name,
+				SchoolID:   contract.ContractParams.School.CNPJ,
+				SchoolName: contract.ContractParams.School.Name,
 				SchoolAddr: utils.BuildAddress(
-					contract.Contract.School.Address.Street,
-					contract.Contract.School.Address.Number,
-					contract.Contract.School.Address.Complement,
-					contract.Contract.School.Address.Zip,
+					contract.ContractParams.School.Address.Street,
+					contract.ContractParams.School.Address.Number,
+					contract.ContractParams.School.Address.Complement,
+					contract.ContractParams.School.Address.Zip,
 				),
 				DateTime:           contract.Time.Format("02/01/2006"),
-				AmountContract:     contract.Contract.Amount,
-				AnualContractValue: contract.Contract.Amount * 12,
+				AmountContract:     contract.ContractParams.Amount,
+				AnualContractValue: contract.ContractParams.Amount * 12,
 				Time:               contract.Time,
 			},
 		},
@@ -212,4 +213,29 @@ func (as *AgreementService) buildTemporaryContract(signatureResponse SignatureRe
 
 func (as *AgreementService) HandleCallbackVerification() (any, error) {
 	return true, nil
+}
+
+func (as *AgreementService) SignatureRequestAllSigned(httpContext *gin.Context) (ASRASOutput, error) {
+	var requestParams SignatureRequestAllSigned
+
+	if err := httpContext.BindJSON(&requestParams); err != nil {
+		return ASRASOutput{}, fmt.Errorf("invalid body")
+	}
+
+	return ASRASOutput{
+		Contract: entity.Contract{
+			UUID:           requestParams.SignatureRequest.Metadata.Keys.UUID,
+			Status:         "currently",
+			SigningURL:     requestParams.SigningURL,
+			DriverCNH:      requestParams.SignatureRequest.Metadata.Keys.DriverID,
+			SchoolCNPJ:     requestParams.SignatureRequest.Metadata.Keys.SchoolID,
+			KidRG:          requestParams.SignatureRequest.Metadata.Keys.KidID,
+			ResponsibleCPF: requestParams.SignatureRequest.Metadata.Keys.ResponsibleID,
+			CreatedAt:      requestParams.CreatedAt,
+			ExpireAt:       realtime.Now().Add(365 * 24 * time.Hour).Unix(),
+			Amount:         requestParams.SignatureRequest.Metadata.Keys.AmountContract,
+			AnualAmount:    requestParams.SignatureRequest.Metadata.Keys.AnualContractValue,
+		},
+		Signatures: requestParams.Signatures,
+	}, nil
 }

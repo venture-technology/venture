@@ -1,6 +1,10 @@
 package agreements
 
-import "time"
+import (
+	"time"
+
+	"github.com/venture-technology/venture/internal/entity"
+)
 
 const (
 	TemporaryContractPending  = "pending"
@@ -87,4 +91,32 @@ type SignatureResponse struct {
 			SignerName  string `json:"signer_name"`
 		} `json:"signatures"`
 	} `json:"signature_request"`
+}
+
+type Signature struct {
+	SignatureID string `json:"signature_id"`
+	SignerEmail string `json:"signer_email_address"`
+	SignerName  string `json:"signer_name"`
+	SignedAt    int64  `json:"signed_at"'`
+}
+
+type SignatureRequest struct {
+	Metadata           Metadata `json:"metadata"`
+	SignatureRequestID string   `json:"signature_request_id"`
+}
+
+type SignatureRequestAllSigned struct {
+	SignatureRequest SignatureRequest `json:"signature_request"`
+	SigningURL       string           `json:"signing_url"`
+	CreatedAt        int64            `json:"created_at"`
+	Signatures       []Signature      `json:"signatures"`
+	Event            Event            `json:"event"`
+}
+
+// Agreement Signature Request All Signed Input
+//
+// Receive body and mapping contract and temp_contract to do business logic
+type ASRASOutput struct {
+	Contract   entity.Contract `json:"contract"`
+	Signatures []Signature     `json:"signatures"`
 }
