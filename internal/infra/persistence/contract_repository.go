@@ -1,21 +1,96 @@
 package persistence
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
+	"github.com/venture-technology/venture/pkg/realtime"
 )
 
 type ContractRepositoryImpl struct {
 	Postgres contracts.PostgresIface
 }
 
-func (cr ContractRepositoryImpl) Create(contract *entity.Contract) error {
-	err := cr.Postgres.Client().Create(&contract).Error
-	if err != nil {
+func (cr ContractRepositoryImpl) Accept(contract *entity.Contract) error {
+	tx := cr.Postgres.Client().Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		} else if tx.Error != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// creation of contract
+	if err := tx.Create(&contract).Error; err != nil {
 		return err
 	}
-	return nil
+
+	var kid entity.Kid
+	if err := tx.Where("rg = ?", contract.KidRG).First(&kid).Error; err != nil {
+		return err
+	}
+
+	var driver entity.Driver
+	if err := tx.Where("cnh = ?", contract.DriverCNH).First(&driver).Error; err != nil {
+		return err
+	}
+
+	// update of driver's seats
+	createSeats := map[string]func(driver entity.Driver) error{
+		"morning": func(driver entity.Driver) error {
+			attributes := make(map[string]interface{})
+			attributes["updated_at"] = realtime.Now().UTC()
+			attributes["seats_remaining"] = driver.Seats.Remaining - 1
+			attributes["seats_morning"] = driver.Seats.Morning - 1
+			return tx.Model(&entity.Driver{}).
+				Where("cnh = ?", contract.DriverCNH).
+				UpdateColumns(attributes).Error
+		},
+		"afternoon": func(driver entity.Driver) error {
+			attributes := make(map[string]interface{})
+			attributes["updated_at"] = realtime.Now().UTC()
+			attributes["seats_remaining"] = driver.Seats.Remaining - 1
+			attributes["seats_afternoon"] = driver.Seats.Afternoon - 1
+			return tx.Model(&entity.Driver{}).
+				Where("cnh = ?", contract.DriverCNH).
+				UpdateColumns(attributes).Error
+		},
+		"night": func(driver entity.Driver) error {
+			attributes := make(map[string]interface{})
+			attributes["updated_at"] = realtime.Now().UTC()
+			attributes["seats_remaining"] = driver.Seats.Remaining - 1
+			attributes["seats_night"] = driver.Seats.Night - 1
+			return tx.Model(&entity.Driver{}).
+				Where("cnh = ?", contract.DriverCNH).
+				UpdateColumns(attributes).Error
+		},
+	}
+
+	updateFunc, exists := createSeats[kid.Shift]
+	if !exists {
+		return fmt.Errorf("invalid shift: %s", kid.Shift)
+	}
+
+	if err := updateFunc(driver); err != nil {
+		return err
+	}
+
+	// change status of temp_contract
+	if err := tx.Model(&entity.TempContract{}).
+		Where("uuid = ?", contract.UUID).
+		Update("status = accepted").Error; err != nil {
+		return err
+	}
+
+	return tx.Commit().Error
 }
 
 func (cr ContractRepositoryImpl) Get(id uuid.UUID) (*entity.Contract, error) {
