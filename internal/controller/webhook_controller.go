@@ -31,7 +31,7 @@ func (wh *WebhookController) PostV1WebhookEvents(httpContext *gin.Context) {
 		infra.App.Adapters,
 	)
 
-	_, err := usecase.Execute(eventWrapper)
+	_, err := usecase.Execute(httpContext, eventWrapper)
 	if err != nil {
 		httpContext.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "error handling webhook event"))
 		return

@@ -48,3 +48,20 @@ func (tc *TemporaryContractController) GetV1DriverTempContracts(c *gin.Context) 
 
 	c.JSON(http.StatusOK, contracts)
 }
+
+func (tc *TemporaryContractController) PostV1CancelTempContracts(httpContext *gin.Context) {
+	uuid := httpContext.Param("uuid")
+
+	usecase := usecase.NewCancelTempContractUsecase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+	)
+
+	err := usecase.CancelTempContract(uuid)
+	if err != nil {
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao buscar contratos"})
+		return
+	}
+
+	httpContext.JSON(http.StatusOK, http.NoBody)
+}
