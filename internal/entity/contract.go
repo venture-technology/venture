@@ -68,3 +68,27 @@ type ContractProperty struct {
 	DateTime       string         `json:"date_time"`
 	ContractParams ContractParams `json:"contract"`
 }
+
+// a way to return currently contracts made little bit of sql queries
+type EnableContract struct {
+	ID                   int         `gorm:"primary_key;auto_increment" json:"id"`
+	UUID                 string      `json:"record,omitempty"`
+	Status               string      `json:"status" validate:"oneof='currently' 'canceled' 'expired'"`
+	StripeSubscriptionID string      `json:"stripe_subscription_id"`
+	StripePriceID        string      `json:"stripe_price_id"`
+	StripeProductID      string      `json:"stripe_product_id"`
+	SigningURL           string      `json:"dropbox_signing_url`
+	DriverCNH            string      `json:"driver_cnh"`
+	SchoolCNPJ           string      `json:"school_cnpj"`
+	KidRG                string      `json:"kid_rg"`
+	ResponsibleCPF       string      `json:"responsible_cpf"`
+	CreatedAt            int64       `json:"created_at,omitempty"`
+	UpdatedAt            int64       `json:"updated_at,omitempty"`
+	ExpireAt             int64       `json:"expire_at"`
+	Amount               float64     `json:"amount" validate:"required"`
+	AnualAmount          float64     `json:"anual_amount"`
+	Driver               Driver      `json:"driver"`
+	School               School      `json:"school"`
+	Kid                  Kid         `json:"kid"`
+	Responsible          Responsible `json:"responsible"`
+}
