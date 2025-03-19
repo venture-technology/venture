@@ -23,8 +23,8 @@ func NewListDriverContractsUseCase(
 	}
 }
 
-func (ldcuc *ListDriverContractsUseCase) ListDriverContracts(cnh *string) ([]value.DriverListContracts, error) {
-	contracts, err := ldcuc.repositories.ContractRepository.FindAllByCnh(cnh)
+func (ldcuc *ListDriverContractsUseCase) ListDriverContracts(cnh string) ([]value.DriverListContracts, error) {
+	contracts, err := ldcuc.repositories.ContractRepository.GetByDriver(cnh)
 	if err != nil {
 		return []value.DriverListContracts{}, err
 	}
@@ -35,10 +35,10 @@ func (ldcuc *ListDriverContractsUseCase) ListDriverContracts(cnh *string) ([]val
 	return response, nil
 }
 
-func buildDriverListContracts(contracts *entity.Contract) value.DriverListContracts {
+func buildDriverListContracts(contracts *entity.EnableContract) value.DriverListContracts {
 	return value.DriverListContracts{
 		ID:     contracts.ID,
-		Record: contracts.Record,
+		UUID:   contracts.UUID,
 		Status: contracts.Status,
 		Amount: contracts.Amount,
 		School: value.GetSchoolContract{
@@ -53,26 +53,26 @@ func buildDriverListContracts(contracts *entity.Contract) value.DriverListContra
 			Phone:        contracts.School.Phone,
 			ProfileImage: contracts.School.ProfileImage,
 		},
+		Responsible: value.GetParentContract{
+			ID:    contracts.Responsible.ID,
+			Name:  contracts.Responsible.Name,
+			Email: contracts.Responsible.Email,
+			Address: utils.BuildAddress(
+				contracts.Responsible.Address.Street,
+				contracts.Responsible.Address.Number,
+				contracts.Responsible.Address.Complement,
+				contracts.Responsible.Address.Zip,
+			),
+			Phone:        contracts.Responsible.Phone,
+			ProfileImage: contracts.Responsible.ProfileImage,
+		},
 		Kid: value.GetKidContract{
 			ID:           contracts.Kid.ID,
 			Name:         contracts.Kid.Name,
 			Period:       contracts.Kid.Shift,
 			ProfileImage: contracts.Kid.ProfileImage,
 		},
-		Responsible: value.GetParentContract{
-			ID:           contracts.Kid.Responsible.ID,
-			Name:         contracts.Kid.Responsible.Name,
-			Phone:        contracts.Kid.Responsible.Phone,
-			Email:        contracts.Kid.Responsible.Email,
-			ProfileImage: contracts.Kid.Responsible.ProfileImage,
-			Address: utils.BuildAddress(
-				contracts.Kid.Responsible.Address.Street,
-				contracts.Kid.Responsible.Address.Number,
-				contracts.Kid.Responsible.Address.Complement,
-				contracts.Kid.Responsible.Address.Zip,
-			),
-		},
 		CreatedAt: contracts.CreatedAt,
-		ExpireAt:  contracts.ExpireAt,
+		ExpireAt:  contracts.UpdatedAt,
 	}
 }

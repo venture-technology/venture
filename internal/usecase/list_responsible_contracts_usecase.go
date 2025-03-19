@@ -27,8 +27,8 @@ func NewListResponsibleContractsUseCase(
 	}
 }
 
-func (lruc *ListResponsibleContractsUseCase) ListResponsibleContracts(cpf *string) ([]value.ResponsibleListContracts, error) {
-	contracts, err := lruc.repositories.ContractRepository.FindAllByCpf(cpf)
+func (lruc *ListResponsibleContractsUseCase) ListResponsibleContracts(cpf string) ([]value.ResponsibleListContracts, error) {
+	contracts, err := lruc.repositories.ContractRepository.GetByResponsible(cpf)
 	if err != nil {
 		return []value.ResponsibleListContracts{}, err
 	}
@@ -39,12 +39,16 @@ func (lruc *ListResponsibleContractsUseCase) ListResponsibleContracts(cpf *strin
 	return response, nil
 }
 
-func buildResponsibleListContracts(contracts *entity.Contract) value.ResponsibleListContracts {
+func buildResponsibleListContracts(contracts *entity.EnableContract) value.ResponsibleListContracts {
 	return value.ResponsibleListContracts{
-		ID:     contracts.ID,
-		Record: contracts.Record,
-		Status: contracts.Status,
-		Amount: contracts.Amount,
+		ID:        contracts.ID,
+		UUID:      contracts.UUID,
+		Status:    contracts.Status,
+		KidName:   contracts.Kid.Name,
+		Period:    contracts.Kid.Shift,
+		Amount:    contracts.Amount,
+		CreatedAt: contracts.CreatedAt,
+		ExpireAt:  contracts.ExpireAt,
 		School: value.GetSchoolContract{
 			ID:   contracts.School.ID,
 			Name: contracts.School.Name,
@@ -58,21 +62,11 @@ func buildResponsibleListContracts(contracts *entity.Contract) value.Responsible
 			ProfileImage: contracts.School.ProfileImage,
 		},
 		Driver: value.GetDriverContract{
-			ID:    contracts.Driver.ID,
-			Name:  contracts.Driver.Name,
-			Email: contracts.Driver.Email,
-			Address: utils.BuildAddress(
-				contracts.Driver.Address.Street,
-				contracts.Driver.Address.Number,
-				contracts.Driver.Address.Complement,
-				contracts.Driver.Address.Zip,
-			),
+			ID:           contracts.Driver.ID,
+			Name:         contracts.Driver.Name,
+			Email:        contracts.Driver.Email,
 			Phone:        contracts.Driver.Phone,
 			ProfileImage: contracts.Driver.ProfileImage,
 		},
-		KidName:   contracts.Kid.Name,
-		Period:    contracts.Kid.Shift,
-		CreatedAt: contracts.CreatedAt,
-		ExpireAt:  contracts.ExpireAt,
 	}
 }
