@@ -2,8 +2,6 @@ package entity
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type StripeSubscription struct {
@@ -14,10 +12,7 @@ type StripeSubscription struct {
 	Product     string `json:"product_id"`
 }
 
-type Contract struct {
-	ID                 int                    `gorm:"primary_key;auto_increment" json:"id"`
-	Record             uuid.UUID              `json:"record,omitempty"`
-	Status             string                 `json:"status" validate:"oneof='currently' 'canceled' 'expired'"`
+type ContractParams struct {
 	Driver             Driver                 `json:"driver"`
 	School             School                 `json:"school"`
 	Kid                Kid                    `json:"kid"`
@@ -26,11 +21,25 @@ type Contract struct {
 	Invoices           map[string]InvoiceInfo `json:"invoices"`
 	Amount             float64                `json:"amount" validate:"required"`
 	AnualAmount        float64                `json:"anual_amount"`
-	Months             int64                  `json:"months,omitempty"`
-	CreatedAt          time.Time              `json:"created_at,omitempty"`
-	UpdatedAt          time.Time              `json:"updated_at,omitempty"`
-	ExpireAt           time.Time              `json:"expire_at"`
-	ContractUrl        string                 `json:"contract_url,omitempty"`
+}
+
+type Contract struct {
+	ID                   int     `gorm:"primary_key;auto_increment" json:"id"`
+	UUID                 string  `json:"record,omitempty"`
+	Status               string  `json:"status" validate:"oneof='currently' 'canceled' 'expired'"`
+	StripeSubscriptionID string  `json:"stripe_subscription_id"`
+	StripePriceID        string  `json:"stripe_price_id"`
+	StripeProductID      string  `json:"stripe_product_id"`
+	SigningURL           string  `json:"dropbox_signing_url`
+	DriverCNH            string  `json:"driver_cnh"`
+	SchoolCNPJ           string  `json:"school_cnpj"`
+	KidRG                string  `json:"kid_rg"`
+	ResponsibleCPF       string  `json:"responsible_cpf"`
+	CreatedAt            int64   `json:"created_at,omitempty"`
+	UpdatedAt            int64   `json:"updated_at,omitempty"`
+	ExpireAt             int64   `json:"expire_at"`
+	Amount               float64 `json:"amount" validate:"required"`
+	AnualAmount          float64 `json:"anual_amount"`
 }
 
 type InvoiceInfo struct {
@@ -53,9 +62,9 @@ func (c *Contract) ValidateAmount() bool {
 
 // contract property is a contract struct with dropbox data, like signed url, pdf contract and etc.
 type ContractProperty struct {
-	URL      string    `json:"url"` // S3 Link to Dropbox Download and use to sign
-	UUID     string    `json:"uuid"`
-	Time     time.Time `json:"time"`
-	DateTime string    `json:"date_time"`
-	Contract Contract  `json:"contract"`
+	URL            string         `json:"url"` // S3 Link to Dropbox Download and use to sign
+	UUID           string         `json:"uuid"`
+	Time           time.Time      `json:"time"`
+	DateTime       string         `json:"date_time"`
+	ContractParams ContractParams `json:"contract"`
 }
