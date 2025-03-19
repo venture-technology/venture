@@ -17,7 +17,7 @@ func NewWebhookController() *WebhookController {
 	return &WebhookController{}
 }
 
-func (wh *WebhookController) PostV1WebhookEvents(httpContext *gin.Context) {
+func (wh *WebhookController) PostV1WebhookSignatureEvents(httpContext *gin.Context) {
 	var eventWrapper agreements.EventWrapper
 
 	if err := httpContext.BindJSON(&eventWrapper); err != nil {
@@ -25,7 +25,7 @@ func (wh *WebhookController) PostV1WebhookEvents(httpContext *gin.Context) {
 		return
 	}
 
-	usecase := usecase.NewWebhookEventsUseCase(
+	usecase := usecase.NewWebhookSignatureEventsUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 		infra.App.Adapters,
@@ -39,4 +39,8 @@ func (wh *WebhookController) PostV1WebhookEvents(httpContext *gin.Context) {
 
 	httpContext.Header("Content-Type", "text/plain")
 	httpContext.String(http.StatusOK, "Hello API Event Received")
+}
+
+func (wh *WebhookController) PostV1WebhookPaymentsEvents(httpContext *gin.Context) {
+	httpContext.JSON(http.StatusOK, gin.H{"message": "Hello API Event Received"})
 }
