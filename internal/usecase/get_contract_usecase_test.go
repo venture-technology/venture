@@ -13,75 +13,77 @@ import (
 	"github.com/venture-technology/venture/mocks"
 )
 
-func TestGetContractUsecase_GetContract(t *testing.T) {
-	uuid := uuid.New()
-	contract := entity.Contract{}
+func TestGetContracatUsecase_GetContract(t *testing.T) {
+	var uuid uuid.UUID
 
-	t.Run("if repository returns error", func(t *testing.T) {
+	t.Run("get contract repository return error", func(t *testing.T) {
 		repository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
-		payments := mocks.NewPaymentsService(t)
+		ps := mocks.NewPaymentsService(t)
 
-		usecase := NewGetContractUseCase(
+		repository.On("GetByUUID", mock.Anything).Return(nil, errors.New("database error"))
+
+		uc := NewGetContractUseCase(
 			&persistence.PostgresRepositories{
 				ContractRepository: repository,
 			},
 			logger,
 			adapters.Adapters{
-				PaymentsService: payments,
+				PaymentsService: ps,
 			},
 		)
 
-		repository.On("Get", mock.Anything).Return(&contract, errors.New("database error"))
-
-		_, err := usecase.GetContract(uuid)
+		_, err := uc.GetContract(uuid)
 
 		assert.EqualError(t, err, "database error")
+		assert.Error(t, err)
 	})
 
-	t.Run("when list invoices returns error", func(t *testing.T) {
+	t.Run("list invoices return error", func(t *testing.T) {
 		repository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
-		payments := mocks.NewPaymentsService(t)
+		ps := mocks.NewPaymentsService(t)
 
-		usecase := NewGetContractUseCase(
+		repository.On("GetByUUID", mock.Anything).Return(&entity.EnableContract{}, nil)
+		ps.On("ListInvoices", mock.Anything).Return(nil, errors.New("payment service error"))
+
+		uc := NewGetContractUseCase(
 			&persistence.PostgresRepositories{
 				ContractRepository: repository,
 			},
 			logger,
 			adapters.Adapters{
-				PaymentsService: payments,
+				PaymentsService: ps,
 			},
 		)
 
-		repository.On("Get", mock.Anything).Return(&contract, nil)
-		payments.On("ListInvoices", mock.Anything).Return(map[string]entity.InvoiceInfo{}, errors.New("invoice list error"))
+		_, err := uc.GetContract(uuid)
 
-		_, err := usecase.GetContract(uuid)
-
-		assert.EqualError(t, err, "invoice list error")
+		assert.EqualError(t, err, "payment service error")
+		assert.Error(t, err)
 	})
 
-	t.Run("if list return success", func(t *testing.T) {
+	t.Run("get contract usecase return success", func(t *testing.T) {
 		repository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
-		payments := mocks.NewPaymentsService(t)
+		ps := mocks.NewPaymentsService(t)
 
-		usecase := NewGetContractUseCase(
+		repository.On("GetByUUID", mock.Anything).Return(&entity.EnableContract{}, nil)
+		ps.On("ListInvoices", mock.Anything).Return(nil, nil)
+
+		uc := NewGetContractUseCase(
 			&persistence.PostgresRepositories{
 				ContractRepository: repository,
 			},
 			logger,
 			adapters.Adapters{
-				PaymentsService: payments,
+				PaymentsService: ps,
 			},
 		)
 
-		repository.On("Get", mock.Anything).Return(&contract, nil)
-		payments.On("ListInvoices", mock.Anything).Return(map[string]entity.InvoiceInfo{}, nil)
+		_, err := uc.GetContract(uuid)
 
-		_, err := usecase.GetContract(uuid)
-
+		assert.NoError(t, err)
 		assert.Nil(t, err)
 	})
 }

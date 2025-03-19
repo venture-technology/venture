@@ -11,42 +11,42 @@ import (
 	"github.com/venture-technology/venture/mocks"
 )
 
-func TestListSchoolContractUsecase_ListSchoolContract(t *testing.T) {
-	cnpj := "123"
-
-	t.Run("if repository returns error", func(t *testing.T) {
-		repository := mocks.NewContractRepository(t)
+func TestListSchoolContractsUsecase_ListSchoolContracts(t *testing.T) {
+	t.Run("get contract repository return error", func(t *testing.T) {
+		contractRepository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
-		usecase := NewListSchoolContractUseCase(
+		contractRepository.On("GetBySchool", mock.Anything).Return([]entity.EnableContract{}, errors.New("database error"))
+
+		uc := NewListSchoolContractUseCase(
 			&persistence.PostgresRepositories{
-				ContractRepository: repository,
+				ContractRepository: contractRepository,
 			},
 			logger,
 		)
 
-		repository.On("FindAllByCnpj", mock.Anything).Return([]entity.Contract{}, errors.New("database error"))
-
-		_, err := usecase.ListSchoolContract(&cnpj)
+		_, err := uc.ListSchoolContract("123456789")
 
 		assert.EqualError(t, err, "database error")
+		assert.Error(t, err)
 	})
 
-	t.Run("if list returns sucess", func(t *testing.T) {
-		repository := mocks.NewContractRepository(t)
+	t.Run("list school contracts return success", func(t *testing.T) {
+		contractRepository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
-		usecase := NewListSchoolContractUseCase(
+		contractRepository.On("GetBySchool", mock.Anything).Return([]entity.EnableContract{}, nil)
+
+		uc := NewListSchoolContractUseCase(
 			&persistence.PostgresRepositories{
-				ContractRepository: repository,
+				ContractRepository: contractRepository,
 			},
 			logger,
 		)
 
-		repository.On("FindAllByCnpj", mock.Anything).Return([]entity.Contract{}, nil)
-
-		_, err := usecase.ListSchoolContract(&cnpj)
+		_, err := uc.ListSchoolContract("123456789")
 
 		assert.NoError(t, err)
+		assert.Nil(t, err)
 	})
 }
