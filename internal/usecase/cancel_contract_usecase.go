@@ -26,12 +26,7 @@ func NewCancelContractUseCase(
 }
 
 func (ccuc *CancelContractUseCase) CancelContract(uuid uuid.UUID) error {
-	contract, err := ccuc.repositories.ContractRepository.Get(uuid)
-	if err != nil {
-		return err
-	}
-
-	responsible, err := ccuc.repositories.ResponsibleRepository.Get(contract.ResponsibleCPF)
+	contract, err := ccuc.repositories.ContractRepository.GetByUUID(uuid)
 	if err != nil {
 		return err
 	}
@@ -43,7 +38,7 @@ func (ccuc *CancelContractUseCase) CancelContract(uuid uuid.UUID) error {
 
 	fine := ccuc.adapters.PaymentsService.CalculateRemainingValueSubscription(invoices, contract.Amount)
 
-	_, err = ccuc.adapters.PaymentsService.FineResponsible(responsible.CustomerId, responsible.PaymentMethodId, int64(fine))
+	_, err = ccuc.adapters.PaymentsService.FineResponsible(contract.Responsible.CustomerId, contract.Responsible.PaymentMethodId, int64(fine))
 	if err != nil {
 		return err
 	}
