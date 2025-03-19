@@ -14,6 +14,24 @@ type ContractRepository struct {
 	mock.Mock
 }
 
+// Accept provides a mock function with given fields: contract
+func (_m *ContractRepository) Accept(contract *entity.Contract) error {
+	ret := _m.Called(contract)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Accept")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*entity.Contract) error); ok {
+		r0 = rf(contract)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Cancel provides a mock function with given fields: _a0
 func (_m *ContractRepository) Cancel(_a0 uuid.UUID) error {
 	ret := _m.Called(_a0)
@@ -25,24 +43,6 @@ func (_m *ContractRepository) Cancel(_a0 uuid.UUID) error {
 	var r0 error
 	if rf, ok := ret.Get(0).(func(uuid.UUID) error); ok {
 		r0 = rf(_a0)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// Create provides a mock function with given fields: contract
-func (_m *ContractRepository) Create(contract *entity.Contract) error {
-	ret := _m.Called(contract)
-
-	if len(ret) == 0 {
-		panic("no return value specified for Create")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(*entity.Contract) error); ok {
-		r0 = rf(contract)
 	} else {
 		r0 = ret.Error(0)
 	}

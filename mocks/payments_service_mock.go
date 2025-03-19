@@ -120,9 +120,9 @@ func (_m *PaymentsService) CreatePaymentMethod(token string) (*stripe.PaymentMet
 	return r0, r1
 }
 
-// CreatePrice provides a mock function with given fields: contract
-func (_m *PaymentsService) CreatePrice(contract *entity.Contract) (*stripe.Price, error) {
-	ret := _m.Called(contract)
+// CreatePrice provides a mock function with given fields: stripeProductID, amount
+func (_m *PaymentsService) CreatePrice(stripeProductID string, amount float64) (*stripe.Price, error) {
+	ret := _m.Called(stripeProductID, amount)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreatePrice")
@@ -130,19 +130,19 @@ func (_m *PaymentsService) CreatePrice(contract *entity.Contract) (*stripe.Price
 
 	var r0 *stripe.Price
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*entity.Contract) (*stripe.Price, error)); ok {
-		return rf(contract)
+	if rf, ok := ret.Get(0).(func(string, float64) (*stripe.Price, error)); ok {
+		return rf(stripeProductID, amount)
 	}
-	if rf, ok := ret.Get(0).(func(*entity.Contract) *stripe.Price); ok {
-		r0 = rf(contract)
+	if rf, ok := ret.Get(0).(func(string, float64) *stripe.Price); ok {
+		r0 = rf(stripeProductID, amount)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*stripe.Price)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(*entity.Contract) error); ok {
-		r1 = rf(contract)
+	if rf, ok := ret.Get(1).(func(string, float64) error); ok {
+		r1 = rf(stripeProductID, amount)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -180,9 +180,9 @@ func (_m *PaymentsService) CreateProduct(contract *entity.Contract) (*stripe.Pro
 	return r0, r1
 }
 
-// CreateSubscription provides a mock function with given fields: contract
-func (_m *PaymentsService) CreateSubscription(contract *entity.Contract) (*stripe.Subscription, error) {
-	ret := _m.Called(contract)
+// CreateSubscription provides a mock function with given fields: customerID, stripePriceID
+func (_m *PaymentsService) CreateSubscription(customerID string, stripePriceID string) (*stripe.Subscription, error) {
+	ret := _m.Called(customerID, stripePriceID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateSubscription")
@@ -190,19 +190,19 @@ func (_m *PaymentsService) CreateSubscription(contract *entity.Contract) (*strip
 
 	var r0 *stripe.Subscription
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*entity.Contract) (*stripe.Subscription, error)); ok {
-		return rf(contract)
+	if rf, ok := ret.Get(0).(func(string, string) (*stripe.Subscription, error)); ok {
+		return rf(customerID, stripePriceID)
 	}
-	if rf, ok := ret.Get(0).(func(*entity.Contract) *stripe.Subscription); ok {
-		r0 = rf(contract)
+	if rf, ok := ret.Get(0).(func(string, string) *stripe.Subscription); ok {
+		r0 = rf(customerID, stripePriceID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*stripe.Subscription)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(*entity.Contract) error); ok {
-		r1 = rf(contract)
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(customerID, stripePriceID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -270,9 +270,9 @@ func (_m *PaymentsService) DeleteSubscription(contract *entity.Contract) (*strip
 	return r0, r1
 }
 
-// FineResponsible provides a mock function with given fields: contract, amountFine
-func (_m *PaymentsService) FineResponsible(contract *entity.Contract, amountFine int64) (*stripe.PaymentIntent, error) {
-	ret := _m.Called(contract, amountFine)
+// FineResponsible provides a mock function with given fields: customerId, paymentMethodId, amountFine
+func (_m *PaymentsService) FineResponsible(customerId string, paymentMethodId string, amountFine int64) (*stripe.PaymentIntent, error) {
+	ret := _m.Called(customerId, paymentMethodId, amountFine)
 
 	if len(ret) == 0 {
 		panic("no return value specified for FineResponsible")
@@ -280,19 +280,19 @@ func (_m *PaymentsService) FineResponsible(contract *entity.Contract, amountFine
 
 	var r0 *stripe.PaymentIntent
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*entity.Contract, int64) (*stripe.PaymentIntent, error)); ok {
-		return rf(contract, amountFine)
+	if rf, ok := ret.Get(0).(func(string, string, int64) (*stripe.PaymentIntent, error)); ok {
+		return rf(customerId, paymentMethodId, amountFine)
 	}
-	if rf, ok := ret.Get(0).(func(*entity.Contract, int64) *stripe.PaymentIntent); ok {
-		r0 = rf(contract, amountFine)
+	if rf, ok := ret.Get(0).(func(string, string, int64) *stripe.PaymentIntent); ok {
+		r0 = rf(customerId, paymentMethodId, amountFine)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*stripe.PaymentIntent)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(*entity.Contract, int64) error); ok {
-		r1 = rf(contract, amountFine)
+	if rf, ok := ret.Get(1).(func(string, string, int64) error); ok {
+		r1 = rf(customerId, paymentMethodId, amountFine)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -390,9 +390,9 @@ func (_m *PaymentsService) ListInvoices(contractId string) (map[string]entity.In
 	return r0, r1
 }
 
-// ListSubscriptions provides a mock function with given fields: contract
-func (_m *PaymentsService) ListSubscriptions(contract *entity.Contract) ([]entity.SubscriptionInfo, error) {
-	ret := _m.Called(contract)
+// ListSubscriptions provides a mock function with given fields: responsible
+func (_m *PaymentsService) ListSubscriptions(responsible *entity.Responsible) ([]entity.SubscriptionInfo, error) {
+	ret := _m.Called(responsible)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListSubscriptions")
@@ -400,19 +400,19 @@ func (_m *PaymentsService) ListSubscriptions(contract *entity.Contract) ([]entit
 
 	var r0 []entity.SubscriptionInfo
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*entity.Contract) ([]entity.SubscriptionInfo, error)); ok {
-		return rf(contract)
+	if rf, ok := ret.Get(0).(func(*entity.Responsible) ([]entity.SubscriptionInfo, error)); ok {
+		return rf(responsible)
 	}
-	if rf, ok := ret.Get(0).(func(*entity.Contract) []entity.SubscriptionInfo); ok {
-		r0 = rf(contract)
+	if rf, ok := ret.Get(0).(func(*entity.Responsible) []entity.SubscriptionInfo); ok {
+		r0 = rf(responsible)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]entity.SubscriptionInfo)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(*entity.Contract) error); ok {
-		r1 = rf(contract)
+	if rf, ok := ret.Get(1).(func(*entity.Responsible) error); ok {
+		r1 = rf(responsible)
 	} else {
 		r1 = ret.Error(1)
 	}
