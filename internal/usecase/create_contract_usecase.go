@@ -169,7 +169,7 @@ func (ccuc *CreateContractUseCase) SetContractProperty(
 
 	return entity.ContractProperty{
 		UUID: uuid.New().String(),
-		Contract: entity.Contract{
+		ContractParams: entity.ContractParams{
 			Driver:      *driver,
 			School:      *school,
 			Kid:         *kid,

@@ -3,31 +3,9 @@ package usecase
 import (
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
-	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
-
-var cancelSeat = map[string]func(ccuc *CancelContractUseCase, contract *entity.Contract) error{
-	"morning": func(ccuc *CancelContractUseCase, contract *entity.Contract) error {
-		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
-			"seats_remaining": contract.Driver.Seats.Remaining + 1,
-			"seats_morning":   contract.Driver.Seats.Morning + 1,
-		})
-	},
-	"afternoon": func(ccuc *CancelContractUseCase, contract *entity.Contract) error {
-		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
-			"seats_remaining": contract.Driver.Seats.Remaining + 1,
-			"seats_afternoon": contract.Driver.Seats.Afternoon + 1,
-		})
-	},
-	"night": func(ccuc *CancelContractUseCase, contract *entity.Contract) error {
-		return ccuc.repositories.DriverRepository.Update(contract.Driver.CNH, map[string]interface{}{
-			"seats_remaining": contract.Driver.Seats.Remaining + 1,
-			"seats_night":     contract.Driver.Seats.Night + 1,
-		})
-	},
-}
 
 type CancelContractUseCase struct {
 	repositories *persistence.PostgresRepositories
@@ -47,27 +25,28 @@ func NewCancelContractUseCase(
 	}
 }
 
-func (ccuc *CancelContractUseCase) CancelContract(id uuid.UUID) error {
-	contract, err := ccuc.repositories.ContractRepository.Get(id)
+func (ccuc *CancelContractUseCase) CancelContract(uuid uuid.UUID) error {
+	contract, err := ccuc.repositories.ContractRepository.Get(uuid)
 	if err != nil {
 		return err
 	}
 
-	invoices, err := ccuc.adapters.PaymentsService.ListInvoices(contract.StripeSubscription.ID)
+	responsible, err := ccuc.repositories.ResponsibleRepository.Get(contract.ResponsibleCPF)
+	if err != nil {
+		return err
+	}
+
+	invoices, err := ccuc.adapters.PaymentsService.ListInvoices(contract.StripeSubscriptionID)
 	if err != nil {
 		return err
 	}
 
 	fine := ccuc.adapters.PaymentsService.CalculateRemainingValueSubscription(invoices, contract.Amount)
-	_, err = ccuc.adapters.PaymentsService.FineResponsible(contract, int64(fine))
-	if err != nil {
-		return nil
-	}
 
-	err = ccuc.repositories.ContractRepository.Cancel(id)
+	_, err = ccuc.adapters.PaymentsService.FineResponsible(responsible.CustomerId, responsible.PaymentMethodId, int64(fine))
 	if err != nil {
 		return err
 	}
 
-	return cancelSeat[contract.Kid.Shift](ccuc, contract)
+	return ccuc.repositories.ContractRepository.Cancel(uuid)
 }
