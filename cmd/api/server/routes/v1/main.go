@@ -74,15 +74,15 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 
 	// contract
 	group.POST("/contract", route.Contract.PostV1CreateContract)
-	// group.GET("/contract/:id", route.Contract.GetV1GetContract)
-	// group.GET("/driver/contract/:cnh", route.Contract.GetV1ListDriverContract)
-	// group.GET("/school/contract/:cnpj", route.Contract.GetV1ListContractSchool)
-	// group.GET("/responsible/contract/:cpf", route.Contract.GetV1ListResponsibleContract)
+	group.GET("/contract/:id", route.Contract.GetV1GetContract)
+	group.GET("/driver/contract/:cnh", route.Contract.GetV1ListDriverContract)
+	group.GET("/school/contract/:cnpj", route.Contract.GetV1ListContractSchool)
+	group.GET("/responsible/contract/:cpf", route.Contract.GetV1ListResponsibleContract)
 	group.PATCH("/contract/:id/cancel", route.Contract.PostV1CancelContract)
 
 	// webhook
-	group.POST("/webhook/signature/events", route.Webhook.PostV1WebhookEvents)
-	group.POST("/webhook/payments/events")
+	group.POST("/webhook/signature/events", route.Webhook.PostV1WebhookSignatureEvents)
+	group.POST("/webhook/payments/events", route.Webhook.PostV1WebhookPaymentsEvents)
 
 	// price
 	group.GET("/price/:cpf/:cnpj", route.Price.GetV1PriceDriver)
