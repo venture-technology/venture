@@ -6,7 +6,7 @@ import (
 )
 
 type ContractRepository interface {
-	Create(contract *entity.Contract) error
+	Accept(contract *entity.Contract) error
 	Get(uuid uuid.UUID) (*entity.Contract, error)
 	FindAllByCnpj(cnpj *string) ([]entity.Contract, error)
 	FindAllByCpf(cpf *string) ([]entity.Contract, error)
