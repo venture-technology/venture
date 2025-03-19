@@ -7,11 +7,11 @@ import (
 
 type ContractRepository interface {
 	Accept(contract *entity.Contract) error
-	Get(uuid uuid.UUID) (*entity.Contract, error)
-	FindAllByCnpj(cnpj *string) ([]entity.Contract, error)
-	FindAllByCpf(cpf *string) ([]entity.Contract, error)
-	FindAllByCnh(cnh *string) ([]entity.Contract, error)
 	Cancel(uuid uuid.UUID) error
 	Expired(uuid uuid.UUID) error
 	Update(uuid uuid.UUID, attributes map[string]interface{}) error
+	GetByUUID(id uuid.UUID) (*entity.EnableContract, error)
+	GetBySchool(cnpj string) ([]entity.EnableContract, error)
+	GetByDriver(cnh string) ([]entity.EnableContract, error)
+	GetByResponsible(cpf string) ([]entity.EnableContract, error)
 }
