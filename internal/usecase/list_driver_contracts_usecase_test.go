@@ -16,7 +16,7 @@ func TestListDriverContractsUsecase_ListDriverContracts(t *testing.T) {
 		repository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
-		repository.On("GetByDriver", mock.Anything).Return([]entity.EnableContract{}, errors.New("database error"))
+		repository.On("GetByDriver", mock.Anything).Return([]entity.Contract{}, errors.New("database error"))
 
 		uc := NewListDriverContractsUseCase(
 			&persistence.PostgresRepositories{
@@ -35,7 +35,7 @@ func TestListDriverContractsUsecase_ListDriverContracts(t *testing.T) {
 		repository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
-		repository.On("GetByDriver", mock.Anything).Return([]entity.EnableContract{}, nil)
+		repository.On("GetByDriver", mock.Anything).Return([]entity.Contract{}, nil)
 
 		uc := NewListDriverContractsUseCase(
 			&persistence.PostgresRepositories{

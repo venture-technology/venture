@@ -16,7 +16,7 @@ func TestListResponsibleContractsUsecase_ListResponsibleContracts(t *testing.T) 
 		repository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
-		repository.On("GetByResponsible", mock.Anything).Return([]entity.EnableContract{}, errors.New("database error"))
+		repository.On("GetByResponsible", mock.Anything).Return([]entity.Contract{}, errors.New("database error"))
 
 		uc := NewListResponsibleContractsUseCase(
 			&persistence.PostgresRepositories{
@@ -35,7 +35,7 @@ func TestListResponsibleContractsUsecase_ListResponsibleContracts(t *testing.T) 
 		repository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
-		repository.On("GetByResponsible", mock.Anything).Return([]entity.EnableContract{}, nil)
+		repository.On("GetByResponsible", mock.Anything).Return([]entity.Contract{}, nil)
 
 		uc := NewListResponsibleContractsUseCase(
 			&persistence.PostgresRepositories{

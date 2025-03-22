@@ -44,7 +44,7 @@ func TestGetContracatUsecase_GetContract(t *testing.T) {
 		logger := mocks.NewLogger(t)
 		ps := mocks.NewPaymentsService(t)
 
-		repository.On("GetByUUID", mock.Anything).Return(&entity.EnableContract{}, nil)
+		repository.On("GetByUUID", mock.Anything).Return(&entity.Contract{}, nil)
 		ps.On("ListInvoices", mock.Anything).Return(nil, errors.New("payment service error"))
 
 		uc := NewGetContractUseCase(
@@ -68,7 +68,7 @@ func TestGetContracatUsecase_GetContract(t *testing.T) {
 		logger := mocks.NewLogger(t)
 		ps := mocks.NewPaymentsService(t)
 
-		repository.On("GetByUUID", mock.Anything).Return(&entity.EnableContract{}, nil)
+		repository.On("GetByUUID", mock.Anything).Return(&entity.Contract{}, nil)
 		ps.On("ListInvoices", mock.Anything).Return(nil, nil)
 
 		uc := NewGetContractUseCase(

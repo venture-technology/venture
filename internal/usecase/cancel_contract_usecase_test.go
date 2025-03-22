@@ -44,7 +44,7 @@ func TestCancelContractUsecase_CancelContract(t *testing.T) {
 		logger := mocks.NewLogger(t)
 		ps := mocks.NewPaymentsService(t)
 
-		repository.On("GetByUUID", mock.Anything).Return(&entity.EnableContract{}, nil)
+		repository.On("GetByUUID", mock.Anything).Return(&entity.Contract{}, nil)
 		ps.On("ListInvoices", mock.Anything).Return(nil, errors.New("list invoices error"))
 
 		uc := NewCancelContractUseCase(
@@ -68,7 +68,7 @@ func TestCancelContractUsecase_CancelContract(t *testing.T) {
 		logger := mocks.NewLogger(t)
 		ps := mocks.NewPaymentsService(t)
 
-		repository.On("GetByUUID", mock.Anything).Return(&entity.EnableContract{}, nil)
+		repository.On("GetByUUID", mock.Anything).Return(&entity.Contract{}, nil)
 		ps.On("ListInvoices", mock.Anything).Return(map[string]entity.InvoiceInfo{}, nil)
 		ps.On("CalculateRemainingValueSubscription", mock.Anything, mock.Anything).Return(float64(0))
 		ps.On("FineResponsible", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New("fine responsible error"))
@@ -94,7 +94,7 @@ func TestCancelContractUsecase_CancelContract(t *testing.T) {
 		logger := mocks.NewLogger(t)
 		ps := mocks.NewPaymentsService(t)
 
-		repository.On("GetByUUID", mock.Anything).Return(&entity.EnableContract{}, nil)
+		repository.On("GetByUUID", mock.Anything).Return(&entity.Contract{}, nil)
 		ps.On("ListInvoices", mock.Anything).Return(map[string]entity.InvoiceInfo{}, nil)
 		ps.On("CalculateRemainingValueSubscription", mock.Anything, mock.Anything).Return(float64(0))
 		ps.On("FineResponsible", mock.Anything, mock.Anything, mock.Anything).Return(nil, nil)
@@ -121,7 +121,7 @@ func TestCancelContractUsecase_CancelContract(t *testing.T) {
 		logger := mocks.NewLogger(t)
 		ps := mocks.NewPaymentsService(t)
 
-		repository.On("GetByUUID", mock.Anything).Return(&entity.EnableContract{}, nil)
+		repository.On("GetByUUID", mock.Anything).Return(&entity.Contract{}, nil)
 		ps.On("ListInvoices", mock.Anything).Return(map[string]entity.InvoiceInfo{}, nil)
 		ps.On("CalculateRemainingValueSubscription", mock.Anything, mock.Anything).Return(float64(0))
 		ps.On("FineResponsible", mock.Anything, mock.Anything, mock.Anything).Return(nil, nil)

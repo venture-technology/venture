@@ -16,7 +16,7 @@ func TestListSchoolContractsUsecase_ListSchoolContracts(t *testing.T) {
 		contractRepository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
-		contractRepository.On("GetBySchool", mock.Anything).Return([]entity.EnableContract{}, errors.New("database error"))
+		contractRepository.On("GetBySchool", mock.Anything).Return([]entity.Contract{}, errors.New("database error"))
 
 		uc := NewListSchoolContractUseCase(
 			&persistence.PostgresRepositories{
@@ -35,7 +35,7 @@ func TestListSchoolContractsUsecase_ListSchoolContracts(t *testing.T) {
 		contractRepository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
-		contractRepository.On("GetBySchool", mock.Anything).Return([]entity.EnableContract{}, nil)
+		contractRepository.On("GetBySchool", mock.Anything).Return([]entity.Contract{}, nil)
 
 		uc := NewListSchoolContractUseCase(
 			&persistence.PostgresRepositories{

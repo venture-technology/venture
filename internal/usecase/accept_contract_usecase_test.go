@@ -15,12 +15,63 @@ import (
 )
 
 func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
+	t.Run("get contract already exists repository return error", func(t *testing.T) {
+		rr := mocks.NewResponsibleRepository(t)
+		cr := mocks.NewContractRepository(t)
+		logger := mocks.NewLogger(t)
+		ps := mocks.NewPaymentsService(t)
+
+		cr.On("ContractAlreadyExist", mock.Anything).Return(false, errors.New("contract already exists error"))
+
+		uc := NewAcceptContractUseCase(
+			&persistence.PostgresRepositories{
+				ResponsibleRepository: rr,
+				ContractRepository:    cr,
+			},
+			logger,
+			adapters.Adapters{
+				PaymentsService: ps,
+			},
+		)
+
+		err := uc.AcceptContract(agreements.ASRASOutput{})
+
+		assert.EqualError(t, err, "contract already exists error")
+		assert.Error(t, err)
+	})
+
+	t.Run("if contract already exists", func(t *testing.T) {
+		rr := mocks.NewResponsibleRepository(t)
+		cr := mocks.NewContractRepository(t)
+		logger := mocks.NewLogger(t)
+		ps := mocks.NewPaymentsService(t)
+
+		cr.On("ContractAlreadyExist", mock.Anything).Return(true, nil)
+
+		uc := NewAcceptContractUseCase(
+			&persistence.PostgresRepositories{
+				ResponsibleRepository: rr,
+				ContractRepository:    cr,
+			},
+			logger,
+			adapters.Adapters{
+				PaymentsService: ps,
+			},
+		)
+
+		err := uc.AcceptContract(agreements.ASRASOutput{})
+
+		assert.EqualError(t, err, "contract already exists")
+		assert.Error(t, err)
+	})
+
 	t.Run("get responsible repository return error", func(t *testing.T) {
 		rr := mocks.NewResponsibleRepository(t)
 		cr := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 		ps := mocks.NewPaymentsService(t)
 
+		cr.On("ContractAlreadyExist", mock.Anything).Return(false, nil)
 		rr.On("Get", mock.Anything).Return(nil, errors.New("responsible get error"))
 
 		uc := NewAcceptContractUseCase(
@@ -46,6 +97,7 @@ func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
 		logger := mocks.NewLogger(t)
 		ps := mocks.NewPaymentsService(t)
 
+		cr.On("ContractAlreadyExist", mock.Anything).Return(false, nil)
 		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
 		ps.On("CreateProduct", mock.Anything).Return(&stripe.Product{}, errors.New("stripe create product error"))
 
@@ -72,6 +124,7 @@ func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
 		logger := mocks.NewLogger(t)
 		ps := mocks.NewPaymentsService(t)
 
+		cr.On("ContractAlreadyExist", mock.Anything).Return(false, nil)
 		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
 		ps.On("CreateProduct", mock.Anything).Return(&stripe.Product{}, nil)
 		ps.On("CreatePrice", mock.Anything, mock.Anything).Return(&stripe.Price{}, errors.New("stripe create price error"))
@@ -99,6 +152,7 @@ func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
 		logger := mocks.NewLogger(t)
 		ps := mocks.NewPaymentsService(t)
 
+		cr.On("ContractAlreadyExist", mock.Anything).Return(false, nil)
 		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
 		ps.On("CreateProduct", mock.Anything).Return(&stripe.Product{}, nil)
 		ps.On("CreatePrice", mock.Anything, mock.Anything).Return(&stripe.Price{}, nil)
@@ -128,6 +182,7 @@ func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
 		ps := mocks.NewPaymentsService(t)
 		tcr := mocks.NewTempContractRepository(t)
 
+		cr.On("ContractAlreadyExist", mock.Anything).Return(false, nil)
 		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
 		ps.On("CreateProduct", mock.Anything).Return(&stripe.Product{}, nil)
 		ps.On("CreatePrice", mock.Anything, mock.Anything).Return(&stripe.Price{}, nil)
@@ -171,6 +226,7 @@ func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
 		ps := mocks.NewPaymentsService(t)
 		tcr := mocks.NewTempContractRepository(t)
 
+		cr.On("ContractAlreadyExist", mock.Anything).Return(false, nil)
 		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
 		ps.On("CreateProduct", mock.Anything).Return(&stripe.Product{}, nil)
 		ps.On("CreatePrice", mock.Anything, mock.Anything).Return(&stripe.Price{}, nil)
@@ -215,6 +271,7 @@ func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
 		ps := mocks.NewPaymentsService(t)
 		tcr := mocks.NewTempContractRepository(t)
 
+		cr.On("ContractAlreadyExist", mock.Anything).Return(false, nil)
 		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
 		ps.On("CreateProduct", mock.Anything).Return(&stripe.Product{}, nil)
 		ps.On("CreatePrice", mock.Anything, mock.Anything).Return(&stripe.Price{}, nil)
