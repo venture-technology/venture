@@ -35,7 +35,7 @@ func (ldcuc *ListDriverContractsUseCase) ListDriverContracts(cnh string) ([]valu
 	return response, nil
 }
 
-func buildDriverListContracts(contracts *entity.EnableContract) value.DriverListContracts {
+func buildDriverListContracts(contracts *entity.Contract) value.DriverListContracts {
 	return value.DriverListContracts{
 		ID:     contracts.ID,
 		UUID:   contracts.UUID,
