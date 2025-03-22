@@ -23,8 +23,8 @@ func NewListSchoolContractUseCase(
 	}
 }
 
-func (lscuc *ListSchoolContractUseCase) ListSchoolContract(cnpj *string) ([]value.SchoolListContracts, error) {
-	contracts, err := lscuc.repositories.ContractRepository.FindAllByCnpj(cnpj)
+func (lscuc *ListSchoolContractUseCase) ListSchoolContract(cnpj string) ([]value.SchoolListContracts, error) {
+	contracts, err := lscuc.repositories.ContractRepository.GetBySchool(cnpj)
 	if err != nil {
 		return nil, err
 	}
@@ -38,31 +38,32 @@ func (lscuc *ListSchoolContractUseCase) ListSchoolContract(cnpj *string) ([]valu
 func buildSchoolListContracts(contracts *entity.Contract) value.SchoolListContracts {
 	return value.SchoolListContracts{
 		ID:        contracts.ID,
-		Record:    contracts.Record,
 		Status:    contracts.Status,
-		Amount:    contracts.Amount,
 		KidName:   contracts.Kid.Name,
 		Period:    contracts.Kid.Shift,
+		Amount:    contracts.Amount,
+		UUID:      contracts.UUID,
 		CreatedAt: contracts.CreatedAt,
 		ExpireAt:  contracts.ExpireAt,
 		Driver: value.GetDriverContract{
-			ID:    contracts.Driver.ID,
-			Name:  contracts.Driver.Name,
-			Email: contracts.Driver.Email,
-			Address: utils.BuildAddress(
-				contracts.Driver.Address.Street,
-				contracts.Driver.Address.Number,
-				contracts.Driver.Address.Complement,
-				contracts.Driver.Address.Zip,
-			),
+			ID:           contracts.Driver.ID,
+			Name:         contracts.Driver.Name,
+			Email:        contracts.Driver.Email,
 			Phone:        contracts.Driver.Phone,
 			ProfileImage: contracts.Driver.ProfileImage,
 		},
 		Responsible: value.GetParentContract{
-			ID:    contracts.Kid.Responsible.ID,
-			Name:  contracts.Kid.Responsible.Name,
-			Email: contracts.Kid.Responsible.Email,
-			Phone: contracts.Kid.Responsible.Phone,
+			ID:           contracts.Responsible.ID,
+			Name:         contracts.Responsible.Name,
+			Email:        contracts.Responsible.Email,
+			Phone:        contracts.Responsible.Phone,
+			ProfileImage: contracts.Responsible.ProfileImage,
+			Address: utils.BuildAddress(
+				contracts.Responsible.Address.Street,
+				contracts.Responsible.Address.Number,
+				contracts.Responsible.Address.Complement,
+				contracts.Responsible.Address.Zip,
+			),
 		},
 	}
 }

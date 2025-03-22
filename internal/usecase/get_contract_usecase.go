@@ -28,60 +28,61 @@ func NewGetContractUseCase(
 }
 
 func (gcuc *GetContractUseCase) GetContract(uuid uuid.UUID) (value.GetContract, error) {
-	contract, err := gcuc.repositories.ContractRepository.Get(uuid)
+	contract, err := gcuc.repositories.ContractRepository.GetByUUID(uuid)
 	if err != nil {
 		return value.GetContract{}, err
 	}
-	invoices, err := gcuc.adapters.PaymentsService.ListInvoices(contract.StripeSubscription.ID)
+	invoices, err := gcuc.adapters.PaymentsService.ListInvoices(contract.StripeSubscriptionID)
 	if err != nil {
 		return value.GetContract{}, err
 	}
 	return value.GetContract{
-		ID:        contract.ID,
-		Status:    contract.Status,
-		KidName:   contract.Kid.Name,
-		Period:    contract.Kid.Shift,
-		Amount:    contract.Amount,
-		Record:    contract.Record,
-		CreatedAt: contract.CreatedAt,
-		ExpireAt:  contract.ExpireAt,
-		Driver: value.GetDriverContract{
-			ID:    contract.Driver.ID,
-			Name:  contract.Driver.Name,
-			Email: contract.Driver.Email,
-			Address: utils.BuildAddress(
-				contract.Driver.Address.Street,
-				contract.Driver.Address.Number,
-				contract.Driver.Address.Complement,
-				contract.Driver.Address.Zip,
-			),
-			Phone:        contract.Driver.Phone,
-			ProfileImage: contract.Driver.ProfileImage,
-		},
-		School: value.GetSchoolContract{
-			ID:   contract.School.ID,
-			Name: contract.School.Name,
-			Address: utils.BuildAddress(
-				contract.School.Address.Street,
-				contract.School.Address.Number,
-				contract.School.Address.Complement,
-				contract.School.Address.Zip,
-			),
-			Phone:        contract.School.Phone,
-			ProfileImage: contract.School.ProfileImage,
-		},
-		Responsible: value.GetParentContract{
-			ID:    contract.Kid.Responsible.ID,
-			Name:  contract.Kid.Responsible.Name,
-			Email: contract.Kid.Responsible.Email,
-			Address: utils.BuildAddress(
-				contract.Kid.Responsible.Address.Street,
-				contract.Kid.Responsible.Address.Number,
-				contract.Kid.Responsible.Address.Complement,
-				contract.Kid.Responsible.Address.Zip,
-			),
-			Phone:        contract.Kid.Responsible.Phone,
-			ProfileImage: contract.Kid.Responsible.ProfileImage,
+		Contract: value.GetContractOutput{
+			ID:                   contract.ID,
+			UUID:                 contract.UUID,
+			Status:               contract.Status,
+			SigningURL:           contract.SigningURL,
+			StripeSubscriptionID: contract.StripeSubscriptionID,
+			CreatedAt:            contract.CreatedAt,
+			ExpiredAt:            contract.ExpireAt,
+			Driver: value.GetDriverContract{
+				ID:           contract.Driver.ID,
+				Name:         contract.Driver.Name,
+				Email:        contract.Driver.Email,
+				Phone:        contract.Driver.Phone,
+				ProfileImage: contract.Driver.ProfileImage,
+			},
+			Responsible: value.GetParentContract{
+				ID:    contract.Responsible.ID,
+				Name:  contract.Responsible.Name,
+				Email: contract.Responsible.Email,
+				Address: utils.BuildAddress(
+					contract.Responsible.Address.Street,
+					contract.Responsible.Address.Number,
+					contract.Responsible.Address.Complement,
+					contract.Responsible.Address.Zip,
+				),
+				Phone:        contract.Responsible.Phone,
+				ProfileImage: contract.Responsible.ProfileImage,
+			},
+			Kid: value.GetKidContract{
+				ID:           contract.Kid.ID,
+				Name:         contract.Kid.Name,
+				Period:       contract.Kid.Shift,
+				ProfileImage: contract.Kid.ProfileImage,
+			},
+			School: value.GetSchoolContract{
+				ID:   contract.School.ID,
+				Name: contract.School.Name,
+				Address: utils.BuildAddress(
+					contract.School.Address.Street,
+					contract.School.Address.Number,
+					contract.School.Address.Complement,
+					contract.School.Address.Zip,
+				),
+				Phone:        contract.School.Phone,
+				ProfileImage: contract.School.ProfileImage,
+			},
 		},
 		Invoices: invoices,
 	}, nil

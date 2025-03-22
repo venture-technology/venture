@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
@@ -23,7 +24,7 @@ func TestWebhookEventsUsecase_Execute(t *testing.T) {
 			},
 		}
 
-		usecase := NewWebhookEventsUseCase(
+		usecase := NewWebhookSignatureEventsUseCase(
 			&persistence.PostgresRepositories{},
 			logger,
 			adapters.Adapters{
@@ -31,7 +32,7 @@ func TestWebhookEventsUsecase_Execute(t *testing.T) {
 			},
 		)
 
-		resp, err := usecase.Execute(event)
+		resp, err := usecase.Execute(&gin.Context{}, event)
 
 		assert.EqualError(t, err, "event type not used")
 		assert.Nil(t, resp)
@@ -47,7 +48,7 @@ func TestWebhookEventsUsecase_Execute(t *testing.T) {
 			},
 		}
 
-		usecase := NewWebhookEventsUseCase(
+		usecase := NewWebhookSignatureEventsUseCase(
 			&persistence.PostgresRepositories{},
 			logger,
 			adapters.Adapters{
@@ -58,9 +59,35 @@ func TestWebhookEventsUsecase_Execute(t *testing.T) {
 		agreementService.On("HandleCallbackVerification").Return(false, errors.New("handle callback verification error"))
 		logger.On("Errorf", mock.Anything, mock.Anything)
 
-		_, err := usecase.Execute(event)
+		_, err := usecase.Execute(&gin.Context{}, event)
 
 		assert.EqualError(t, err, "handle callback verification error")
+	})
+
+	t.Run("receive signature request all signed webhook and returns fail", func(t *testing.T) {
+		logger := mocks.NewLogger(t)
+		agreementService := mocks.NewAgreementService(t)
+
+		event := agreements.EventWrapper{
+			Event: agreements.Event{
+				EventType: "signature_request_all_signed",
+			},
+		}
+
+		usecase := NewWebhookSignatureEventsUseCase(
+			&persistence.PostgresRepositories{},
+			logger,
+			adapters.Adapters{
+				AgreementService: agreementService,
+			},
+		)
+
+		agreementService.On("SignatureRequestAllSigned", mock.Anything).Return(agreements.ASRASOutput{}, errors.New("signature request all signed error"))
+		logger.On("Errorf", mock.Anything, mock.Anything)
+
+		_, err := usecase.Execute(&gin.Context{}, event)
+
+		assert.EqualError(t, err, "signature request all signed error")
 	})
 
 	t.Run("receive callback test webhook and returns sucess", func(t *testing.T) {
@@ -73,7 +100,7 @@ func TestWebhookEventsUsecase_Execute(t *testing.T) {
 			},
 		}
 
-		usecase := NewWebhookEventsUseCase(
+		usecase := NewWebhookSignatureEventsUseCase(
 			&persistence.PostgresRepositories{},
 			logger,
 			adapters.Adapters{
@@ -84,7 +111,7 @@ func TestWebhookEventsUsecase_Execute(t *testing.T) {
 		agreementService.On("HandleCallbackVerification").Return(true, nil)
 		logger.On("Infof", mock.Anything, mock.Anything)
 
-		_, err := usecase.Execute(event)
+		_, err := usecase.Execute(&gin.Context{}, event)
 
 		assert.Nil(t, err)
 	})

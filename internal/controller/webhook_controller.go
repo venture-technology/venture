@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"bytes"
+	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,26 +20,40 @@ func NewWebhookController() *WebhookController {
 	return &WebhookController{}
 }
 
-func (wh *WebhookController) PostV1WebhookEvents(httpContext *gin.Context) {
+func (wh *WebhookController) PostV1WebhookSignatureEvents(httpContext *gin.Context) {
+	bodyBytes, err := io.ReadAll(httpContext.Request.Body)
+	if err != nil {
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "Erro ao ler o corpo da requisição"})
+		return
+	}
+	httpContext.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
 	var eventWrapper agreements.EventWrapper
 
 	if err := httpContext.BindJSON(&eventWrapper); err != nil {
 		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid JSON"})
 		return
 	}
+	httpContext.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
-	usecase := usecase.NewWebhookEventsUseCase(
+	infra.App.Logger.Infof(fmt.Sprintf("Received webhook event: %v", eventWrapper))
+
+	usecase := usecase.NewWebhookSignatureEventsUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 		infra.App.Adapters,
 	)
 
-	_, err := usecase.Execute(eventWrapper)
+	_, err = usecase.Execute(httpContext, eventWrapper)
 	if err != nil {
-		httpContext.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "error handling webhook event"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "error handling webhook event"))
 		return
 	}
 
 	httpContext.Header("Content-Type", "text/plain")
 	httpContext.String(http.StatusOK, "Hello API Event Received")
+}
+
+func (wh *WebhookController) PostV1WebhookPaymentsEvents(httpContext *gin.Context) {
+	httpContext.JSON(http.StatusOK, gin.H{"message": "Hello API Event Received"})
 }

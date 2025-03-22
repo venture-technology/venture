@@ -3,7 +3,6 @@ package persistence
 import (
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
@@ -21,7 +20,7 @@ func (tcr TempContractRepositoryImpl) Create(tempContract *entity.TempContract) 
 	return nil
 }
 
-func (tcr TempContractRepositoryImpl) Get(uuid uuid.UUID) (*entity.TempContract, error) {
+func (tcr TempContractRepositoryImpl) Get(uuid string) (*entity.TempContract, error) {
 	var tempContract entity.TempContract
 	err := tcr.Postgres.Client().
 		Where("uuid = ?", uuid).
@@ -56,7 +55,7 @@ func (tcr TempContractRepositoryImpl) GetByEveryone(tempContract *entity.TempCon
 	return count > 0, nil
 }
 
-func (tcr TempContractRepositoryImpl) Expire(uuid uuid.UUID) error {
+func (tcr TempContractRepositoryImpl) Expire(uuid string) error {
 	err := tcr.Postgres.Client().
 		Model(&entity.TempContract{}).
 		Where("uuid = ?", uuid).
@@ -69,7 +68,7 @@ func (tcr TempContractRepositoryImpl) Expire(uuid uuid.UUID) error {
 	return nil
 }
 
-func (tcr TempContractRepositoryImpl) Cancel(uuid uuid.UUID) error {
+func (tcr TempContractRepositoryImpl) Cancel(uuid string) error {
 	err := tcr.Postgres.Client().
 		Model(&entity.TempContract{}).
 		Where("uuid = ?", uuid).
@@ -82,7 +81,7 @@ func (tcr TempContractRepositoryImpl) Cancel(uuid uuid.UUID) error {
 	return nil
 }
 
-func (tcr TempContractRepositoryImpl) Accept(uuid uuid.UUID) error {
+func (tcr TempContractRepositoryImpl) Accept(uuid string) error {
 	err := tcr.Postgres.Client().
 		Model(&entity.TempContract{}).
 		Where("uuid = ?", uuid).
@@ -123,4 +122,17 @@ func (tcr TempContractRepositoryImpl) FindAllByDriver(cnh *string) ([]entity.Tem
 	}
 
 	return contracts, nil
+}
+
+func (tcr TempContractRepositoryImpl) Update(
+	uuid string,
+	attrs map[string]interface{},
+) error {
+	err := tcr.Postgres.Client().
+		Model(&entity.TempContract{}).
+		Where("uuid = ?", uuid).
+		UpdateColumns(attrs).
+		Error
+
+	return err
 }

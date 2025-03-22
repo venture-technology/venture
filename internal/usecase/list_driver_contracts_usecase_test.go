@@ -12,41 +12,41 @@ import (
 )
 
 func TestListDriverContractsUsecase_ListDriverContracts(t *testing.T) {
-	cnh := "123"
-
-	t.Run("if repository returns error", func(t *testing.T) {
+	t.Run("get contract repository return error", func(t *testing.T) {
 		repository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
-		usecase := NewListDriverContractsUseCase(
+		repository.On("GetByDriver", mock.Anything).Return([]entity.Contract{}, errors.New("database error"))
+
+		uc := NewListDriverContractsUseCase(
 			&persistence.PostgresRepositories{
 				ContractRepository: repository,
 			},
 			logger,
 		)
 
-		repository.On("FindAllByCnh", mock.Anything).Return([]entity.Contract{}, errors.New("database error"))
-
-		_, err := usecase.ListDriverContracts(&cnh)
+		_, err := uc.ListDriverContracts("123456789")
 
 		assert.EqualError(t, err, "database error")
+		assert.Error(t, err)
 	})
 
-	t.Run("if list returns sucess", func(t *testing.T) {
+	t.Run("list driver contracts return success", func(t *testing.T) {
 		repository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
-		usecase := NewListDriverContractsUseCase(
+		repository.On("GetByDriver", mock.Anything).Return([]entity.Contract{}, nil)
+
+		uc := NewListDriverContractsUseCase(
 			&persistence.PostgresRepositories{
 				ContractRepository: repository,
 			},
 			logger,
 		)
 
-		repository.On("FindAllByCnh", mock.Anything).Return([]entity.Contract{}, nil)
-
-		_, err := usecase.ListDriverContracts(&cnh)
+		_, err := uc.ListDriverContracts("123456789")
 
 		assert.NoError(t, err)
+		assert.Nil(t, err)
 	})
 }

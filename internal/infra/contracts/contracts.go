@@ -41,3 +41,7 @@ type Logger interface {
 	Infof(format string, args ...zap.Field)
 	Errorf(format string, args ...zap.Field)
 }
+
+type Converters interface {
+	ConvertPDFtoHTML(htmlFile []byte, contractProperty entity.ContractProperty) ([]byte, error)
+}

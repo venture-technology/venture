@@ -6,6 +6,8 @@ import (
 	agreements "github.com/venture-technology/venture/internal/domain/service/agreements"
 	entity "github.com/venture-technology/venture/internal/entity"
 
+	gin "github.com/gin-gonic/gin"
+
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -95,6 +97,34 @@ func (_m *AgreementService) SignatureRequest(contract entity.ContractProperty) (
 
 	if rf, ok := ret.Get(1).(func(entity.ContractProperty) error); ok {
 		r1 = rf(contract)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SignatureRequestAllSigned provides a mock function with given fields: _a0
+func (_m *AgreementService) SignatureRequestAllSigned(_a0 *gin.Context) (agreements.ASRASOutput, error) {
+	ret := _m.Called(_a0)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SignatureRequestAllSigned")
+	}
+
+	var r0 agreements.ASRASOutput
+	var r1 error
+	if rf, ok := ret.Get(0).(func(*gin.Context) (agreements.ASRASOutput, error)); ok {
+		return rf(_a0)
+	}
+	if rf, ok := ret.Get(0).(func(*gin.Context) agreements.ASRASOutput); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Get(0).(agreements.ASRASOutput)
+	}
+
+	if rf, ok := ret.Get(1).(func(*gin.Context) error); ok {
+		r1 = rf(_a0)
 	} else {
 		r1 = ret.Error(1)
 	}

@@ -14,6 +14,24 @@ type ContractRepository struct {
 	mock.Mock
 }
 
+// Accept provides a mock function with given fields: contract
+func (_m *ContractRepository) Accept(contract *entity.Contract) error {
+	ret := _m.Called(contract)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Accept")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*entity.Contract) error); ok {
+		r0 = rf(contract)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Cancel provides a mock function with given fields: _a0
 func (_m *ContractRepository) Cancel(_a0 uuid.UUID) error {
 	ret := _m.Called(_a0)
@@ -32,22 +50,32 @@ func (_m *ContractRepository) Cancel(_a0 uuid.UUID) error {
 	return r0
 }
 
-// Create provides a mock function with given fields: contract
-func (_m *ContractRepository) Create(contract *entity.Contract) error {
-	ret := _m.Called(contract)
+// ContractAlreadyExist provides a mock function with given fields: _a0
+func (_m *ContractRepository) ContractAlreadyExist(_a0 string) (bool, error) {
+	ret := _m.Called(_a0)
 
 	if len(ret) == 0 {
-		panic("no return value specified for Create")
+		panic("no return value specified for ContractAlreadyExist")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(*entity.Contract) error); ok {
-		r0 = rf(contract)
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (bool, error)); ok {
+		return rf(_a0)
+	}
+	if rf, ok := ret.Get(0).(func(string) bool); ok {
+		r0 = rf(_a0)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(bool)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(_a0)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Expired provides a mock function with given fields: _a0
@@ -68,20 +96,20 @@ func (_m *ContractRepository) Expired(_a0 uuid.UUID) error {
 	return r0
 }
 
-// FindAllByCnh provides a mock function with given fields: cnh
-func (_m *ContractRepository) FindAllByCnh(cnh *string) ([]entity.Contract, error) {
+// GetByDriver provides a mock function with given fields: cnh
+func (_m *ContractRepository) GetByDriver(cnh string) ([]entity.Contract, error) {
 	ret := _m.Called(cnh)
 
 	if len(ret) == 0 {
-		panic("no return value specified for FindAllByCnh")
+		panic("no return value specified for GetByDriver")
 	}
 
 	var r0 []entity.Contract
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*string) ([]entity.Contract, error)); ok {
+	if rf, ok := ret.Get(0).(func(string) ([]entity.Contract, error)); ok {
 		return rf(cnh)
 	}
-	if rf, ok := ret.Get(0).(func(*string) []entity.Contract); ok {
+	if rf, ok := ret.Get(0).(func(string) []entity.Contract); ok {
 		r0 = rf(cnh)
 	} else {
 		if ret.Get(0) != nil {
@@ -89,7 +117,7 @@ func (_m *ContractRepository) FindAllByCnh(cnh *string) ([]entity.Contract, erro
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(*string) error); ok {
+	if rf, ok := ret.Get(1).(func(string) error); ok {
 		r1 = rf(cnh)
 	} else {
 		r1 = ret.Error(1)
@@ -98,50 +126,20 @@ func (_m *ContractRepository) FindAllByCnh(cnh *string) ([]entity.Contract, erro
 	return r0, r1
 }
 
-// FindAllByCnpj provides a mock function with given fields: cnpj
-func (_m *ContractRepository) FindAllByCnpj(cnpj *string) ([]entity.Contract, error) {
-	ret := _m.Called(cnpj)
-
-	if len(ret) == 0 {
-		panic("no return value specified for FindAllByCnpj")
-	}
-
-	var r0 []entity.Contract
-	var r1 error
-	if rf, ok := ret.Get(0).(func(*string) ([]entity.Contract, error)); ok {
-		return rf(cnpj)
-	}
-	if rf, ok := ret.Get(0).(func(*string) []entity.Contract); ok {
-		r0 = rf(cnpj)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]entity.Contract)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(*string) error); ok {
-		r1 = rf(cnpj)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// FindAllByCpf provides a mock function with given fields: cpf
-func (_m *ContractRepository) FindAllByCpf(cpf *string) ([]entity.Contract, error) {
+// GetByResponsible provides a mock function with given fields: cpf
+func (_m *ContractRepository) GetByResponsible(cpf string) ([]entity.Contract, error) {
 	ret := _m.Called(cpf)
 
 	if len(ret) == 0 {
-		panic("no return value specified for FindAllByCpf")
+		panic("no return value specified for GetByResponsible")
 	}
 
 	var r0 []entity.Contract
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*string) ([]entity.Contract, error)); ok {
+	if rf, ok := ret.Get(0).(func(string) ([]entity.Contract, error)); ok {
 		return rf(cpf)
 	}
-	if rf, ok := ret.Get(0).(func(*string) []entity.Contract); ok {
+	if rf, ok := ret.Get(0).(func(string) []entity.Contract); ok {
 		r0 = rf(cpf)
 	} else {
 		if ret.Get(0) != nil {
@@ -149,7 +147,7 @@ func (_m *ContractRepository) FindAllByCpf(cpf *string) ([]entity.Contract, erro
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(*string) error); ok {
+	if rf, ok := ret.Get(1).(func(string) error); ok {
 		r1 = rf(cpf)
 	} else {
 		r1 = ret.Error(1)
@@ -158,21 +156,51 @@ func (_m *ContractRepository) FindAllByCpf(cpf *string) ([]entity.Contract, erro
 	return r0, r1
 }
 
-// Get provides a mock function with given fields: _a0
-func (_m *ContractRepository) Get(_a0 uuid.UUID) (*entity.Contract, error) {
-	ret := _m.Called(_a0)
+// GetBySchool provides a mock function with given fields: cnpj
+func (_m *ContractRepository) GetBySchool(cnpj string) ([]entity.Contract, error) {
+	ret := _m.Called(cnpj)
 
 	if len(ret) == 0 {
-		panic("no return value specified for Get")
+		panic("no return value specified for GetBySchool")
+	}
+
+	var r0 []entity.Contract
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) ([]entity.Contract, error)); ok {
+		return rf(cnpj)
+	}
+	if rf, ok := ret.Get(0).(func(string) []entity.Contract); ok {
+		r0 = rf(cnpj)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.Contract)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(cnpj)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetByUUID provides a mock function with given fields: id
+func (_m *ContractRepository) GetByUUID(id uuid.UUID) (*entity.Contract, error) {
+	ret := _m.Called(id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByUUID")
 	}
 
 	var r0 *entity.Contract
 	var r1 error
 	if rf, ok := ret.Get(0).(func(uuid.UUID) (*entity.Contract, error)); ok {
-		return rf(_a0)
+		return rf(id)
 	}
 	if rf, ok := ret.Get(0).(func(uuid.UUID) *entity.Contract); ok {
-		r0 = rf(_a0)
+		r0 = rf(id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*entity.Contract)
@@ -180,7 +208,7 @@ func (_m *ContractRepository) Get(_a0 uuid.UUID) (*entity.Contract, error) {
 	}
 
 	if rf, ok := ret.Get(1).(func(uuid.UUID) error); ok {
-		r1 = rf(_a0)
+		r1 = rf(id)
 	} else {
 		r1 = ret.Error(1)
 	}

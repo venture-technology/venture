@@ -27,6 +27,7 @@ func main() {
 	setup.Bucket()
 	setup.Email()
 	setup.Adapters()
+	setup.Converters()
 
 	setup.Finish()
 
@@ -39,22 +40,8 @@ func setupServer(config *config.Config) *gin.Engine {
 	router := gin.Default()
 	router.GET("/status", getStatus)
 
-	// router.POST("/hs-account-events", func(httpContext *gin.Context) {
-	// 	requestBody, err := httpContext.GetRawData()
-	// 	if err != nil {
-	// 		httpContext.JSON(http.StatusInternalServerError, exceptions.InvalidBodyContentResponseError(err))
-	// 		return
-	// 	}
-
-	// 	infra.App.Logger.Infof(fmt.Sprintf("requestParams: %s", string(requestBody)))
-
-	// 	httpContext.Header("Content-Type", "text/plain")
-	// 	httpContext.String(http.StatusOK, "Hello API Event Received")
-	// })
-
 	apisV1 := router.Group("/api/v1")
 	apisV1.Use(configHeaders())
-	// apisV1.Use(middleware.AuthMiddleware(config))
 	v1.NewV1Controller().V1Routes(apisV1)
 
 	return router
