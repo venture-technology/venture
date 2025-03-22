@@ -101,15 +101,15 @@ type Signature struct {
 }
 
 type SignatureRequest struct {
-	Metadata           Metadata `json:"metadata"`
-	SignatureRequestID string   `json:"signature_request_id"`
+	Metadata           Metadata    `json:"metadata"`
+	CreatedAt          int64       `json:"created_at"`
+	SigningURL         string      `json:"signing_url"`
+	Signatures         []Signature `json:"signatures"`
+	SignatureRequestID string      `json:"signature_request_id"`
 }
 
 type SignatureRequestAllSigned struct {
 	SignatureRequest SignatureRequest `json:"signature_request"`
-	SigningURL       string           `json:"signing_url"`
-	CreatedAt        int64            `json:"created_at"`
-	Signatures       []Signature      `json:"signatures"`
 	Event            Event            `json:"event"`
 }
 
