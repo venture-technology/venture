@@ -10,8 +10,11 @@ type ContractRepository interface {
 	Cancel(uuid uuid.UUID) error
 	Expired(uuid uuid.UUID) error
 	Update(uuid uuid.UUID, attributes map[string]interface{}) error
-	GetByUUID(id uuid.UUID) (*entity.EnableContract, error)
-	GetBySchool(cnpj string) ([]entity.EnableContract, error)
-	GetByDriver(cnh string) ([]entity.EnableContract, error)
-	GetByResponsible(cpf string) ([]entity.EnableContract, error)
+	GetByUUID(id uuid.UUID) (*entity.Contract, error)
+	GetBySchool(cnpj string) ([]entity.Contract, error)
+	GetByDriver(cnh string) ([]entity.Contract, error)
+	GetByResponsible(cpf string) ([]entity.Contract, error)
+
+	// Check if a contract already exists
+	ContractAlreadyExist(uuid string) (bool, error)
 }

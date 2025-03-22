@@ -86,7 +86,7 @@ func (cr ContractRepositoryImpl) Accept(contract *entity.Contract) error {
 	// change status of temp_contract
 	if err := tx.Model(&entity.TempContract{}).
 		Where("uuid = ?", contract.UUID).
-		Update("status = accepted").Error; err != nil {
+		Update("status", "accepted").Error; err != nil {
 		return err
 	}
 
@@ -108,7 +108,13 @@ func (cr ContractRepositoryImpl) Cancel(id uuid.UUID) error {
 		}
 	}()
 
-	err := tx.Model(&entity.Contract{}).Where("record = ?", id).Update("status", "canceled").Error
+	err := tx.Model(&entity.Contract{}).
+		Where("uuid = ?", id).
+		UpdateColumns(map[string]interface{}{
+			"status":     "canceled",
+			"updated_at": realtime.Now().UTC().Unix(),
+		}).Debug().Error
+
 	if err != nil {
 		return err
 	}
@@ -167,6 +173,10 @@ func (cr ContractRepositoryImpl) Cancel(id uuid.UUID) error {
 		return err
 	}
 
+	if err := tx.Commit().Error; err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -185,7 +195,7 @@ func (cr ContractRepositoryImpl) Expired(id uuid.UUID) error {
 		}
 	}()
 
-	err := tx.Model(&entity.Contract{}).Where("record = ?", id).Update("status", "expired").Error
+	err := tx.Model(&entity.Contract{}).Where("uuid = ?", id).Update("status", "expired").Error
 	if err != nil {
 		return err
 	}
@@ -248,15 +258,15 @@ func (cr ContractRepositoryImpl) Expired(id uuid.UUID) error {
 }
 
 func (cr ContractRepositoryImpl) Update(id uuid.UUID, attributes map[string]interface{}) error {
-	err := cr.Postgres.Client().Model(&entity.Contract{}).Where("record = ?", id).Updates(attributes).Error
+	err := cr.Postgres.Client().Model(&entity.Contract{}).Where("uuid = ?", id).Updates(attributes).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (cr ContractRepositoryImpl) GetByUUID(id uuid.UUID) (*entity.EnableContract, error) {
-	var contract entity.EnableContract
+func (cr ContractRepositoryImpl) GetByUUID(id uuid.UUID) (*entity.Contract, error) {
+	var contract entity.Contract
 
 	err := cr.Postgres.Client().
 		Preload("Responsible").
@@ -273,8 +283,8 @@ func (cr ContractRepositoryImpl) GetByUUID(id uuid.UUID) (*entity.EnableContract
 	return &contract, nil
 }
 
-func (cr ContractRepositoryImpl) GetBySchool(cnpj string) ([]entity.EnableContract, error) {
-	var contracts []entity.EnableContract
+func (cr ContractRepositoryImpl) GetBySchool(cnpj string) ([]entity.Contract, error) {
+	var contracts []entity.Contract
 
 	err := cr.Postgres.Client().
 		Preload("Responsible").
@@ -291,8 +301,8 @@ func (cr ContractRepositoryImpl) GetBySchool(cnpj string) ([]entity.EnableContra
 	return contracts, nil
 }
 
-func (cr ContractRepositoryImpl) GetByDriver(cnh string) ([]entity.EnableContract, error) {
-	var contracts []entity.EnableContract
+func (cr ContractRepositoryImpl) GetByDriver(cnh string) ([]entity.Contract, error) {
+	var contracts []entity.Contract
 
 	err := cr.Postgres.Client().
 		Preload("Responsible").
@@ -309,8 +319,8 @@ func (cr ContractRepositoryImpl) GetByDriver(cnh string) ([]entity.EnableContrac
 	return contracts, nil
 }
 
-func (cr ContractRepositoryImpl) GetByResponsible(cpf string) ([]entity.EnableContract, error) {
-	var contracts []entity.EnableContract
+func (cr ContractRepositoryImpl) GetByResponsible(cpf string) ([]entity.Contract, error) {
+	var contracts []entity.Contract
 
 	err := cr.Postgres.Client().
 		Preload("Responsible").
@@ -325,4 +335,19 @@ func (cr ContractRepositoryImpl) GetByResponsible(cpf string) ([]entity.EnableCo
 	}
 
 	return contracts, nil
+}
+
+func (cr ContractRepositoryImpl) ContractAlreadyExist(uuid string) (bool, error) {
+	var count int64
+
+	err := cr.Postgres.Client().Model(&entity.Contract{}).Where("uuid = ?", uuid).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+
+	if count > 0 {
+		return true, nil
+	}
+
+	return false, nil
 }
