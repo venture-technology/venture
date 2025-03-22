@@ -45,7 +45,7 @@ func buildDriverTempContracts(TempContract *entity.TempContract) value.GetTempCo
 		UUID:                  TempContract.UUID,
 		CreatedAt:             TempContract.CreatedAt,
 		ExpiredAt:             TempContract.ExpiredAt,
-		DriverAssignedAt:      TempContract.DriverAssignedAt.Int64,
-		ResponsibleAssignedAt: TempContract.ResponsibleAssignedAt.Int64,
+		DriverAssignedAt:      TempContract.DriverSignedAt.Int64,
+		ResponsibleAssignedAt: TempContract.ResponsibleSignedAt.Int64,
 	}
 }
