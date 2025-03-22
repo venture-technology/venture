@@ -35,7 +35,7 @@ func (lruc *ListResponsibleContractsUseCase) ListResponsibleContracts(cpf string
 	return response, nil
 }
 
-func buildResponsibleListContracts(contracts *entity.EnableContract) value.ResponsibleListContracts {
+func buildResponsibleListContracts(contracts *entity.Contract) value.ResponsibleListContracts {
 	return value.ResponsibleListContracts{
 		ID:        contracts.ID,
 		UUID:      contracts.UUID,

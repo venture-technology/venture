@@ -35,7 +35,7 @@ func (lscuc *ListSchoolContractUseCase) ListSchoolContract(cnpj string) ([]value
 	return response, nil
 }
 
-func buildSchoolListContracts(contracts *entity.EnableContract) value.SchoolListContracts {
+func buildSchoolListContracts(contracts *entity.Contract) value.SchoolListContracts {
 	return value.SchoolListContracts{
 		ID:        contracts.ID,
 		Status:    contracts.Status,
