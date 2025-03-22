@@ -2,6 +2,7 @@ package payments
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/stripe/stripe-go/v79"
@@ -161,15 +162,17 @@ func (su *StripeAdapter) ListInvoices(contractId string) (map[string]entity.Invo
 	for i.Next() {
 		charge := i.Invoice()
 		createdTime := time.Unix(charge.Created, 0)
-		month := createdTime.Month().String()
+		month := strings.ToLower(createdTime.Month().String())
+		amount := su.GetAmountFromInvoice(charge)
 		invoiceInfo := entity.InvoiceInfo{
-			ID:              charge.ID,
-			Status:          string(charge.Status),
-			AmountDue:       charge.AmountDue,
-			AmountRemaining: charge.AmountRemaining * 100,
-			Month:           month,
-			Date:            createdTime.Format("01/06"),
+			ID:          charge.ID,
+			Status:      string(charge.Status),
+			Amount:      amount,
+			AmountCents: int64(amount) * 100,
+			Month:       month,
+			Date:        createdTime.Format("01/06"),
 		}
+
 		invoices[month] = invoiceInfo
 	}
 
@@ -178,6 +181,15 @@ func (su *StripeAdapter) ListInvoices(contractId string) (map[string]entity.Invo
 	}
 
 	return invoices, nil
+}
+
+func (su *StripeAdapter) GetAmountFromInvoice(charge *stripe.Invoice) float64 {
+	amount := charge.AmountDue
+	if charge.AmountDue == 0 {
+		amount = charge.AmountRemaining
+	}
+
+	return float64(amount) / 100
 }
 
 func (su *StripeAdapter) CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64 {
