@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"fmt"
+
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/domain/service/agreements"
 	"github.com/venture-technology/venture/internal/entity"
@@ -46,6 +48,15 @@ func (ccuc *AcceptContractUseCase) AcceptContract(asras agreements.ASRASOutput) 
 }
 
 func (ccuc *AcceptContractUseCase) createStripeItems(contract *entity.Contract) (*entity.Contract, error) {
+	alreadyExists, err := ccuc.repositories.ContractRepository.ContractAlreadyExist(contract.UUID)
+	if err != nil {
+		return nil, err
+	}
+
+	if alreadyExists {
+		return nil, fmt.Errorf("contract already exists")
+	}
+
 	responsible, err := ccuc.repositories.ResponsibleRepository.Get(contract.ResponsibleCPF)
 	if err != nil {
 		return nil, err
