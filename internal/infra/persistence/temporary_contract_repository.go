@@ -129,7 +129,7 @@ func (tcr TempContractRepositoryImpl) Update(
 	attrs map[string]interface{},
 ) error {
 	err := tcr.Postgres.Client().
-		Model(&entity.Driver{}).
+		Model(&entity.TempContract{}).
 		Where("uuid = ?", uuid).
 		UpdateColumns(attrs).
 		Error
