@@ -73,6 +73,10 @@ func (as *AgreementService) SignatureRequest(contract entity.ContractProperty) (
 		return ContractRequest{}, err
 	}
 
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return ContractRequest{}, fmt.Errorf("unexpected status code from signature platform: %d", resp.StatusCode)
+	}
+
 	var signatureResponse SignatureResponse
 	err = json.Unmarshal(body, &signatureResponse)
 	if err != nil {
@@ -217,6 +221,12 @@ func (as *AgreementService) HandleCallbackVerification() (any, error) {
 
 func (as *AgreementService) SignatureRequestAllSigned(httpContext *gin.Context) (ASRASOutput, error) {
 	var requestParams SignatureRequestAllSigned
+	bodyBytes, err := io.ReadAll(httpContext.Request.Body)
+	if err != nil {
+		as.logger.Errorf(err.Error())
+	}
+
+	httpContext.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 	if err := httpContext.BindJSON(&requestParams); err != nil {
 		return ASRASOutput{}, fmt.Errorf("invalid body")
@@ -226,16 +236,16 @@ func (as *AgreementService) SignatureRequestAllSigned(httpContext *gin.Context) 
 		Contract: entity.Contract{
 			UUID:           requestParams.SignatureRequest.Metadata.Keys.UUID,
 			Status:         "currently",
-			SigningURL:     requestParams.SigningURL,
+			SigningURL:     requestParams.SignatureRequest.SigningURL,
 			DriverCNH:      requestParams.SignatureRequest.Metadata.Keys.DriverID,
 			SchoolCNPJ:     requestParams.SignatureRequest.Metadata.Keys.SchoolID,
 			KidRG:          requestParams.SignatureRequest.Metadata.Keys.KidID,
 			ResponsibleCPF: requestParams.SignatureRequest.Metadata.Keys.ResponsibleID,
-			CreatedAt:      requestParams.CreatedAt,
+			CreatedAt:      requestParams.SignatureRequest.CreatedAt,
 			ExpireAt:       realtime.Now().Add(365 * 24 * time.Hour).Unix(),
 			Amount:         requestParams.SignatureRequest.Metadata.Keys.AmountContract,
 			AnualAmount:    requestParams.SignatureRequest.Metadata.Keys.AnualContractValue,
 		},
-		Signatures: requestParams.Signatures,
+		Signatures: requestParams.SignatureRequest.Signatures,
 	}, nil
 }
