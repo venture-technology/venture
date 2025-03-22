@@ -39,7 +39,7 @@ func (dr DriverRepositoryImpl) Delete(cnh string) error {
 	return dr.Postgres.Client().Where("cnh = ?", cnh).Delete(&entity.Driver{}).Error
 }
 
-func (dr DriverRepositoryImpl) FindByEmail(email string) (*entity.Driver, error) {
+func (dr DriverRepositoryImpl) GetByEmail(email string) (*entity.Driver, error) {
 	var driver entity.Driver
 	result := dr.Postgres.Client().Where("email = ?", email).First(&driver)
 	return &driver, result.Error

@@ -62,7 +62,7 @@ func (rr ResponsibleRepositoryImpl) Auth(responsible *entity.Responsible) (*enti
 	return &responsibleData, nil
 }
 
-func (rr ResponsibleRepositoryImpl) FindByEmail(email string) (*entity.Responsible, error) {
+func (rr ResponsibleRepositoryImpl) GetByEmail(email string) (*entity.Responsible, error) {
 	var responsible entity.Responsible
 	err := rr.Postgres.Client().Where("email = ?", email).First(&responsible).Error
 	if err != nil {

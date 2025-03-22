@@ -11,5 +11,5 @@ type ResponsibleRepository interface {
 	Delete(cpf string) error
 	SaveCard(cpf, cardToken, paymentMethodId string) error
 	Auth(responsible *entity.Responsible) (*entity.Responsible, error)
-	FindByEmail(email string) (*entity.Responsible, error)
+	GetByEmail(email string) (*entity.Responsible, error)
 }

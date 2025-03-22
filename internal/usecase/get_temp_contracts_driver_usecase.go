@@ -21,7 +21,7 @@ func NewGetTempContractsDriverUseCase(repos *persistence.PostgresRepositories, l
 
 func (gtcduc *GetTempContractsDriverUseCase) GetDriverTempContracts(cnh string) ([]value.GetTempContracts, error) {
 
-	contracts, err := gtcduc.Repositories.TempContractRepository.FindAllByDriver(&cnh)
+	contracts, err := gtcduc.Repositories.TempContractRepository.GetByDriver(&cnh)
 	if err != nil {
 		return []value.GetTempContracts{}, err
 	}

@@ -45,7 +45,7 @@ func (sr SchoolRepositoryImpl) Delete(cnpj string) error {
 	return sr.Postgres.Client().Delete(&entity.School{}, "cnpj = ?", cnpj).Error
 }
 
-func (sr SchoolRepositoryImpl) FindByEmail(email string) (*entity.School, error) {
+func (sr SchoolRepositoryImpl) GetByEmail(email string) (*entity.School, error) {
 	var school entity.School
 	err := sr.Postgres.Client().Where("email = ?", email).First(&school).Error
 	if err != nil {

@@ -25,7 +25,7 @@ func TestGetTempContractsResponsibleUseCase_GetResponsibleTempContracts(t *testi
 			logger,
 		)
 
-		repository.On("FindAllByResponsible", mock.Anything).Return([]entity.TempContract{}, errors.New("database error"))
+		repository.On("GetByResponsible", mock.Anything).Return([]entity.TempContract{}, errors.New("database error"))
 
 		_, err := usecase.GetResponsibleTempContracts(cpf)
 
@@ -43,7 +43,7 @@ func TestGetTempContractsResponsibleUseCase_GetResponsibleTempContracts(t *testi
 			logger,
 		)
 
-		repository.On("FindAllByResponsible", mock.Anything).Return([]entity.TempContract{}, nil)
+		repository.On("GetByResponsible", mock.Anything).Return([]entity.TempContract{}, nil)
 
 		_, err := usecase.GetResponsibleTempContracts(cpf)
 
