@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"bytes"
+	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,12 +21,22 @@ func NewWebhookController() *WebhookController {
 }
 
 func (wh *WebhookController) PostV1WebhookSignatureEvents(httpContext *gin.Context) {
+	bodyBytes, err := io.ReadAll(httpContext.Request.Body)
+	if err != nil {
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "Erro ao ler o corpo da requisição"})
+		return
+	}
+	httpContext.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
 	var eventWrapper agreements.EventWrapper
 
 	if err := httpContext.BindJSON(&eventWrapper); err != nil {
 		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid JSON"})
 		return
 	}
+	httpContext.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+	infra.App.Logger.Infof(fmt.Sprintf("Received webhook event: %v", eventWrapper))
 
 	usecase := usecase.NewWebhookSignatureEventsUseCase(
 		&infra.App.Repositories,
@@ -31,9 +44,9 @@ func (wh *WebhookController) PostV1WebhookSignatureEvents(httpContext *gin.Conte
 		infra.App.Adapters,
 	)
 
-	_, err := usecase.Execute(httpContext, eventWrapper)
+	_, err = usecase.Execute(httpContext, eventWrapper)
 	if err != nil {
-		httpContext.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "error handling webhook event"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "error handling webhook event"))
 		return
 	}
 
