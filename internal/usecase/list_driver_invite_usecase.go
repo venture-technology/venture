@@ -26,7 +26,7 @@ func NewListDriverInvitesUseCase(
 }
 
 func (lsiuc *ListDriverInvitesUseCase) ListDriverInvites(cnh string) ([]value.DriverListInvite, error) {
-	schools, err := lsiuc.repositories.InviteRepository.FindAllByCnh(cnh)
+	schools, err := lsiuc.repositories.InviteRepository.GetByDriver(cnh)
 	if err != nil {
 		return nil, err
 	}

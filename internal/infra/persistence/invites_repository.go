@@ -23,12 +23,12 @@ func (ir InviteRepositoryImpl) Get(id string) (*entity.Invite, error) {
 	return &invite, nil
 }
 
-func (ir InviteRepositoryImpl) FindAllByCnh(cnh string) ([]entity.School, error) {
+func (ir InviteRepositoryImpl) GetByDriver(cnh string) ([]entity.School, error) {
 	var schools []entity.School
 
 	err := ir.Postgres.Client().
-		Select(`schools.id AS school_id, schools.name, schools.email, schools.phone, 
-            schools.profile_image, schools.cnpj, schools.created_at, schools.updated_at, 
+		Select(`schools.id AS school_id, schools.name, schools.email, schools.phone,
+            schools.profile_image, schools.cnpj, schools.created_at, schools.updated_at,
             schools.street, schools.number, schools.zip, schools.complement`).
 		Table("invites").
 		Joins("JOIN schools ON invites.requester = schools.cnpj").
@@ -38,13 +38,13 @@ func (ir InviteRepositoryImpl) FindAllByCnh(cnh string) ([]entity.School, error)
 	return schools, err
 }
 
-func (ir InviteRepositoryImpl) FindAllByCnpj(cnpj string) ([]entity.Driver, error) {
+func (ir InviteRepositoryImpl) GetBySchool(cnpj string) ([]entity.Driver, error) {
 	var drivers []entity.Driver
 
 	err := ir.Postgres.Client().
 		Select(`
 			drivers.id, drivers.name, drivers.email, drivers.phone, drivers.profile_image,
-			drivers.cpf, drivers.cnh, drivers.qr_code, drivers.municipal_record, drivers.schedule, 
+			drivers.cpf, drivers.cnh, drivers.qr_code, drivers.municipal_record, drivers.schedule,
 			drivers.amount, drivers.created_at, drivers.updated_at,
 			drivers.pix_key,
 			drivers.street, drivers.number, drivers.zip, drivers.complement,

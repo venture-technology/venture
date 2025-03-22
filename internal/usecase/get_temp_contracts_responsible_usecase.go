@@ -20,7 +20,7 @@ func NewGetTempContractsResponsibleUseCase(repos *persistence.PostgresRepositori
 }
 
 func (gtcuc *GetTempContractsResponsibleUseCase) GetResponsibleTempContracts(cpf string) ([]value.GetTempContracts, error) {
-	contracts, err := gtcuc.Repositories.TempContractRepository.FindAllByResponsible(&cpf)
+	contracts, err := gtcuc.Repositories.TempContractRepository.GetByResponsible(&cpf)
 	if err != nil {
 		return []value.GetTempContracts{}, err
 	}
