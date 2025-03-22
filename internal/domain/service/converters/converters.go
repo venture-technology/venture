@@ -11,11 +11,11 @@ import (
 type Converter struct {
 }
 
-func NewConverter() Converter {
-	return Converter{}
+func NewConverter() *Converter {
+	return &Converter{}
 }
 
-func (c Converter) ConvertPDFtoHTML(htmlFile []byte, contractProperty entity.ContractProperty) ([]byte, error) {
+func (c *Converter) ConvertPDFtoHTML(htmlFile []byte, contractProperty entity.ContractProperty) ([]byte, error) {
 	tmpl, err := template.New("webpage").Parse(string(htmlFile))
 	if err != nil {
 		return nil, err
