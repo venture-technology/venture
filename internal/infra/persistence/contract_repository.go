@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
+	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/realtime"
 )
 
@@ -45,7 +46,7 @@ func (cr ContractRepositoryImpl) Accept(contract *entity.Contract) error {
 
 	// update of driver's seats
 	createSeats := map[string]func(driver entity.Driver) error{
-		"morning": func(driver entity.Driver) error {
+		value.MorningShift: func(driver entity.Driver) error {
 			attributes := make(map[string]interface{})
 			attributes["updated_at"] = realtime.Now().UTC()
 			attributes["seats_remaining"] = driver.Seats.Remaining - 1
@@ -54,7 +55,7 @@ func (cr ContractRepositoryImpl) Accept(contract *entity.Contract) error {
 				Where("cnh = ?", contract.DriverCNH).
 				UpdateColumns(attributes).Error
 		},
-		"afternoon": func(driver entity.Driver) error {
+		value.AfternoonShift: func(driver entity.Driver) error {
 			attributes := make(map[string]interface{})
 			attributes["updated_at"] = realtime.Now().UTC()
 			attributes["seats_remaining"] = driver.Seats.Remaining - 1
@@ -63,7 +64,7 @@ func (cr ContractRepositoryImpl) Accept(contract *entity.Contract) error {
 				Where("cnh = ?", contract.DriverCNH).
 				UpdateColumns(attributes).Error
 		},
-		"night": func(driver entity.Driver) error {
+		value.NightShift: func(driver entity.Driver) error {
 			attributes := make(map[string]interface{})
 			attributes["updated_at"] = realtime.Now().UTC()
 			attributes["seats_remaining"] = driver.Seats.Remaining - 1
@@ -86,7 +87,7 @@ func (cr ContractRepositoryImpl) Accept(contract *entity.Contract) error {
 	// change status of temp_contract
 	if err := tx.Model(&entity.TempContract{}).
 		Where("uuid = ?", contract.UUID).
-		Update("status", "accepted").Error; err != nil {
+		Update("status", value.TempContractAccepted).Error; err != nil {
 		return err
 	}
 
@@ -111,7 +112,7 @@ func (cr ContractRepositoryImpl) Cancel(id uuid.UUID) error {
 	err := tx.Model(&entity.Contract{}).
 		Where("uuid = ?", id).
 		UpdateColumns(map[string]interface{}{
-			"status":     "canceled",
+			"status":     value.ContractCanceled,
 			"updated_at": realtime.Now().UTC().Unix(),
 		}).Debug().Error
 
@@ -195,7 +196,7 @@ func (cr ContractRepositoryImpl) Expired(id uuid.UUID) error {
 		}
 	}()
 
-	err := tx.Model(&entity.Contract{}).Where("uuid = ?", id).Update("status", "expired").Error
+	err := tx.Model(&entity.Contract{}).Where("uuid = ?", id).Update("status", value.TempContractExpired).Error
 	if err != nil {
 		return err
 	}
@@ -273,7 +274,7 @@ func (cr ContractRepositoryImpl) GetByUUID(id uuid.UUID) (*entity.Contract, erro
 		Preload("Driver").
 		Preload("Kid").
 		Preload("School").
-		Where("uuid = ? AND status = ?", id, "currently").
+		Where("uuid = ? AND status = ?", id, value.ContractCurrently).
 		First(&contract).Error
 
 	if err != nil {
@@ -291,7 +292,7 @@ func (cr ContractRepositoryImpl) GetBySchool(cnpj string) ([]entity.Contract, er
 		Preload("Driver").
 		Preload("Kid").
 		Preload("School").
-		Where("school_cnpj = ? AND status = ?", cnpj, "currently").
+		Where("school_cnpj = ? AND status = ?", cnpj, value.ContractCurrently).
 		Find(&contracts).Error
 
 	if err != nil {
@@ -309,7 +310,7 @@ func (cr ContractRepositoryImpl) GetByDriver(cnh string) ([]entity.Contract, err
 		Preload("Driver").
 		Preload("Kid").
 		Preload("School").
-		Where("driver_cnh = ? AND status = ?", cnh, "currently").
+		Where("driver_cnh = ? AND status = ?", cnh, value.ContractCurrently).
 		Find(&contracts).Error
 
 	if err != nil {
@@ -327,7 +328,7 @@ func (cr ContractRepositoryImpl) GetByResponsible(cpf string) ([]entity.Contract
 		Preload("Driver").
 		Preload("Kid").
 		Preload("School").
-		Where("responsible_cpf = ? AND status = ?", cpf, "currently").
+		Where("responsible_cpf = ? AND status = ?", cpf, value.ContractCurrently).
 		Find(&contracts).Error
 
 	if err != nil {
