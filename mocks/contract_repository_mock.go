@@ -126,6 +126,36 @@ func (_m *ContractRepository) GetByDriver(cnh string) ([]entity.Contract, error)
 	return r0, r1
 }
 
+// GetByKid provides a mock function with given fields: rg
+func (_m *ContractRepository) GetByKid(rg string) (*entity.Contract, error) {
+	ret := _m.Called(rg)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByKid")
+	}
+
+	var r0 *entity.Contract
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (*entity.Contract, error)); ok {
+		return rf(rg)
+	}
+	if rf, ok := ret.Get(0).(func(string) *entity.Contract); ok {
+		r0 = rf(rg)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*entity.Contract)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(rg)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetByResponsible provides a mock function with given fields: cpf
 func (_m *ContractRepository) GetByResponsible(cpf string) ([]entity.Contract, error) {
 	ret := _m.Called(cpf)
@@ -209,6 +239,34 @@ func (_m *ContractRepository) GetByUUID(id uuid.UUID) (*entity.Contract, error) 
 
 	if rf, ok := ret.Get(1).(func(uuid.UUID) error); ok {
 		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// KidHasContract provides a mock function with given fields: rg
+func (_m *ContractRepository) KidHasContract(rg string) (bool, error) {
+	ret := _m.Called(rg)
+
+	if len(ret) == 0 {
+		panic("no return value specified for KidHasContract")
+	}
+
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (bool, error)); ok {
+		return rf(rg)
+	}
+	if rf, ok := ret.Get(0).(func(string) bool); ok {
+		r0 = rf(rg)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(rg)
 	} else {
 		r1 = ret.Error(1)
 	}
