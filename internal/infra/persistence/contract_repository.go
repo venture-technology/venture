@@ -352,3 +352,39 @@ func (cr ContractRepositoryImpl) ContractAlreadyExist(uuid string) (bool, error)
 
 	return false, nil
 }
+
+func (cr ContractRepositoryImpl) GetByKid(rg string) (*entity.Contract, error) {
+	var contracts entity.Contract
+
+	err := cr.Postgres.Client().
+		Preload("Responsible").
+		Preload("Driver").
+		Preload("Kid").
+		Preload("School").
+		Where("kid_rg = ? AND status = ?", rg, value.ContractCurrently).
+		Find(&contracts).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &contracts, nil
+}
+
+func (cr ContractRepositoryImpl) KidHasContract(rg string) (bool, error) {
+	var count int64
+
+	err := cr.Postgres.Client().
+		Model(&entity.Contract{}).
+		Where("kid_rg = ? AND status = ?", rg, value.ContractCurrently).
+		Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+
+	if count > 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
