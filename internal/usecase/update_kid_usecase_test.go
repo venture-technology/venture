@@ -87,18 +87,44 @@ func TestUpdateKidUsecase_UpdateKid(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("when repository returns error", func(t *testing.T) {
-		repository := mocks.NewKidRepository(t)
+	t.Run("when kid has contract already currentyl", func(t *testing.T) {
+		kidRepository := mocks.NewKidRepository(t)
+		contractRepository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
 		usecase := NewUpdateKidUseCase(
 			&persistence.PostgresRepositories{
-				KidRepository: repository,
+				KidRepository:      kidRepository,
+				ContractRepository: contractRepository,
 			},
 			logger,
 		)
 
-		repository.On("Update", mock.Anything, mock.Anything).Return(errors.New("database error"))
+		contractRepository.On("KidHasContract", mock.Anything).Return(true, nil)
+
+		err := usecase.UpdateKid("123", map[string]interface{}{
+			"shift": "morning",
+		})
+
+		assert.EqualError(t, err, "impossivel trocar horario possuindo contrato, contate o atendimento")
+		assert.Error(t, err)
+	})
+
+	t.Run("when repository update kid returns error", func(t *testing.T) {
+		kidRepository := mocks.NewKidRepository(t)
+		contractRepository := mocks.NewContractRepository(t)
+		logger := mocks.NewLogger(t)
+
+		usecase := NewUpdateKidUseCase(
+			&persistence.PostgresRepositories{
+				KidRepository:      kidRepository,
+				ContractRepository: contractRepository,
+			},
+			logger,
+		)
+
+		contractRepository.On("KidHasContract", mock.Anything).Return(false, nil)
+		kidRepository.On("Update", mock.Anything, mock.Anything).Return(errors.New("database error"))
 
 		err := usecase.UpdateKid("123", map[string]interface{}{
 			"shift": "afternoon",
@@ -107,18 +133,21 @@ func TestUpdateKidUsecase_UpdateKid(t *testing.T) {
 		assert.EqualError(t, err, "database error")
 	})
 
-	t.Run("when proxy give success with shift", func(t *testing.T) {
-		repository := mocks.NewKidRepository(t)
+	t.Run("when proxy to update kid give success with shift", func(t *testing.T) {
+		kidRepository := mocks.NewKidRepository(t)
+		contractRepository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
 		usecase := NewUpdateKidUseCase(
 			&persistence.PostgresRepositories{
-				KidRepository: repository,
+				KidRepository:      kidRepository,
+				ContractRepository: contractRepository,
 			},
 			logger,
 		)
 
-		repository.On("Update", mock.Anything, mock.Anything).Return(nil)
+		contractRepository.On("KidHasContract", mock.Anything).Return(false, nil)
+		kidRepository.On("Update", mock.Anything, mock.Anything).Return(nil)
 
 		err := usecase.UpdateKid("123", map[string]interface{}{
 			"shift": "afternoon",
@@ -127,18 +156,20 @@ func TestUpdateKidUsecase_UpdateKid(t *testing.T) {
 		assert.Nil(t, err)
 	})
 
-	t.Run("when proxy give success without shift", func(t *testing.T) {
-		repository := mocks.NewKidRepository(t)
+	t.Run("when proxy to update kid give success without shift", func(t *testing.T) {
+		kidRepository := mocks.NewKidRepository(t)
+		contractRepository := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 
 		usecase := NewUpdateKidUseCase(
 			&persistence.PostgresRepositories{
-				KidRepository: repository,
+				KidRepository:      kidRepository,
+				ContractRepository: contractRepository,
 			},
 			logger,
 		)
 
-		repository.On("Update", mock.Anything, mock.Anything).Return(nil)
+		kidRepository.On("Update", mock.Anything, mock.Anything).Return(nil)
 
 		err := usecase.UpdateKid("123", map[string]interface{}{
 			"attendance_permission": false,

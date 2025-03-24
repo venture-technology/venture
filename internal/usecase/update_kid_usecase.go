@@ -41,6 +41,17 @@ func (ucuc *UpdateKidUseCase) UpdateKid(rg string, attributes map[string]interfa
 		if err != nil {
 			return err
 		}
+
+		// checando se esse kid já tem contrato
+		kidHasContract, err := ucuc.repositories.ContractRepository.KidHasContract(rg)
+		if err != nil {
+			return err
+		}
+
+		if kidHasContract {
+			return fmt.Errorf("impossivel trocar horario possuindo contrato, contate o atendimento")
+		}
+
 	}
 
 	return ucuc.repositories.KidRepository.Update(rg, attributes)
