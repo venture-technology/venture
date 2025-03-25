@@ -66,12 +66,12 @@ func (_m *TempContractRepository) Expire(uuid string) error {
 	return r0
 }
 
-// FindAllByDriver provides a mock function with given fields: cnh
-func (_m *TempContractRepository) FindAllByDriver(cnh *string) ([]entity.TempContract, error) {
+// GetByDriver provides a mock function with given fields: cnh
+func (_m *TempContractRepository) GetByDriver(cnh *string) ([]entity.TempContract, error) {
 	ret := _m.Called(cnh)
 
 	if len(ret) == 0 {
-		panic("no return value specified for FindAllByDriver")
+		panic("no return value specified for GetByDriver")
 	}
 
 	var r0 []entity.TempContract
@@ -96,12 +96,12 @@ func (_m *TempContractRepository) FindAllByDriver(cnh *string) ([]entity.TempCon
 	return r0, r1
 }
 
-// FindAllByResponsible provides a mock function with given fields: cpf
-func (_m *TempContractRepository) FindAllByResponsible(cpf *string) ([]entity.TempContract, error) {
+// GetByResponsible provides a mock function with given fields: cpf
+func (_m *TempContractRepository) GetByResponsible(cpf *string) ([]entity.TempContract, error) {
 	ret := _m.Called(cpf)
 
 	if len(ret) == 0 {
-		panic("no return value specified for FindAllByResponsible")
+		panic("no return value specified for GetByResponsible")
 	}
 
 	var r0 []entity.TempContract

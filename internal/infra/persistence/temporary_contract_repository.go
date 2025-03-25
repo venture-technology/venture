@@ -94,7 +94,7 @@ func (tcr TempContractRepositoryImpl) Accept(uuid string) error {
 	return nil
 }
 
-func (tcr TempContractRepositoryImpl) FindAllByResponsible(cpf *string) ([]entity.TempContract, error) {
+func (tcr TempContractRepositoryImpl) GetByResponsible(cpf *string) ([]entity.TempContract, error) {
 	var contracts []entity.TempContract
 
 	if cpf == nil {
@@ -109,7 +109,7 @@ func (tcr TempContractRepositoryImpl) FindAllByResponsible(cpf *string) ([]entit
 	return contracts, nil
 }
 
-func (tcr TempContractRepositoryImpl) FindAllByDriver(cnh *string) ([]entity.TempContract, error) {
+func (tcr TempContractRepositoryImpl) GetByDriver(cnh *string) ([]entity.TempContract, error) {
 	var contracts []entity.TempContract
 
 	if cnh == nil {

@@ -78,12 +78,12 @@ func (_m *ResponsibleRepository) Delete(cpf string) error {
 	return r0
 }
 
-// FindByEmail provides a mock function with given fields: email
-func (_m *ResponsibleRepository) FindByEmail(email string) (*entity.Responsible, error) {
+// GetByEmail provides a mock function with given fields: email
+func (_m *ResponsibleRepository) GetByEmail(email string) (*entity.Responsible, error) {
 	ret := _m.Called(email)
 
 	if len(ret) == 0 {
-		panic("no return value specified for FindByEmail")
+		panic("no return value specified for GetByEmail")
 	}
 
 	var r0 *entity.Responsible

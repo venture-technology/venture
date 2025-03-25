@@ -78,12 +78,12 @@ func (_m *SchoolRepository) FindAll() ([]entity.School, error) {
 	return r0, r1
 }
 
-// FindByEmail provides a mock function with given fields: email
-func (_m *SchoolRepository) FindByEmail(email string) (*entity.School, error) {
+// GetByEmail provides a mock function with given fields: email
+func (_m *SchoolRepository) GetByEmail(email string) (*entity.School, error) {
 	ret := _m.Called(email)
 
 	if len(ret) == 0 {
-		panic("no return value specified for FindByEmail")
+		panic("no return value specified for GetByEmail")
 	}
 
 	var r0 *entity.School

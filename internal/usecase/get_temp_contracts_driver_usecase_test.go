@@ -25,7 +25,7 @@ func TestGetTempContractsDriverUseCase_GetDriverTempContracts(t *testing.T) {
 			logger,
 		)
 
-		repository.On("FindAllByDriver", mock.Anything).Return([]entity.TempContract{}, errors.New("database error"))
+		repository.On("GetByDriver", mock.Anything).Return([]entity.TempContract{}, errors.New("database error"))
 
 		_, err := usecase.GetDriverTempContracts(cnh)
 
@@ -43,7 +43,7 @@ func TestGetTempContractsDriverUseCase_GetDriverTempContracts(t *testing.T) {
 			logger,
 		)
 
-		repository.On("FindAllByDriver", mock.Anything).Return([]entity.TempContract{}, nil)
+		repository.On("GetByDriver", mock.Anything).Return([]entity.TempContract{}, nil)
 
 		_, err := usecase.GetDriverTempContracts(cnh)
 		assert.Nil(t, err)

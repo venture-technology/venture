@@ -9,5 +9,5 @@ type DriverRepository interface {
 	Get(cnh string) (*entity.Driver, error)
 	Update(cnh string, attributes map[string]interface{}) error
 	Delete(cnh string) error
-	FindByEmail(email string) (*entity.Driver, error)
+	GetByEmail(email string) (*entity.Driver, error)
 }

@@ -24,7 +24,7 @@ func NewDriverListPartnersUseCase(
 }
 
 func (dlpuc *DriverListPartnersUseCase) DriverListPartners(cnh string) ([]value.DriverListPartners, error) {
-	partners, err := dlpuc.repositories.PartnerRepository.FindAllByCnh(cnh)
+	partners, err := dlpuc.repositories.PartnerRepository.GetByDriver(cnh)
 	if err != nil {
 		return nil, err
 	}

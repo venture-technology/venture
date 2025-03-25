@@ -23,7 +23,7 @@ func NewListSchoolInvitesUseCase(
 }
 
 func (lsiuc *ListSchoolInvitesUseCase) ListSchoolInvites(cnpj string) ([]value.SchoolListInvite, error) {
-	drivers, err := lsiuc.repositories.InviteRepository.FindAllByCnpj(cnpj)
+	drivers, err := lsiuc.repositories.InviteRepository.GetBySchool(cnpj)
 	if err != nil {
 		return nil, err
 	}

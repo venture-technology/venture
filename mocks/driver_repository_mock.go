@@ -48,12 +48,12 @@ func (_m *DriverRepository) Delete(cnh string) error {
 	return r0
 }
 
-// FindByEmail provides a mock function with given fields: email
-func (_m *DriverRepository) FindByEmail(email string) (*entity.Driver, error) {
+// GetByEmail provides a mock function with given fields: email
+func (_m *DriverRepository) GetByEmail(email string) (*entity.Driver, error) {
 	ret := _m.Called(email)
 
 	if len(ret) == 0 {
-		panic("no return value specified for FindByEmail")
+		panic("no return value specified for GetByEmail")
 	}
 
 	var r0 *entity.Driver
