@@ -260,7 +260,7 @@ func TestCreateContractUsecase_CreateContract(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("get disntace address service return error", func(t *testing.T) {
+	t.Run("get distance address service return error", func(t *testing.T) {
 		tcr := mocks.NewTempContractRepository(t)
 		dr := mocks.NewDriverRepository(t)
 		sc := mocks.NewSchoolRepository(t)

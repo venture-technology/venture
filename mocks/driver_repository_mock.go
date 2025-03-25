@@ -48,36 +48,6 @@ func (_m *DriverRepository) Delete(cnh string) error {
 	return r0
 }
 
-// FindByEmail provides a mock function with given fields: email
-func (_m *DriverRepository) FindByEmail(email string) (*entity.Driver, error) {
-	ret := _m.Called(email)
-
-	if len(ret) == 0 {
-		panic("no return value specified for FindByEmail")
-	}
-
-	var r0 *entity.Driver
-	var r1 error
-	if rf, ok := ret.Get(0).(func(string) (*entity.Driver, error)); ok {
-		return rf(email)
-	}
-	if rf, ok := ret.Get(0).(func(string) *entity.Driver); ok {
-		r0 = rf(email)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.Driver)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(email)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // Get provides a mock function with given fields: cnh
 func (_m *DriverRepository) Get(cnh string) (*entity.Driver, error) {
 	ret := _m.Called(cnh)
@@ -101,6 +71,36 @@ func (_m *DriverRepository) Get(cnh string) (*entity.Driver, error) {
 
 	if rf, ok := ret.Get(1).(func(string) error); ok {
 		r1 = rf(cnh)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetByEmail provides a mock function with given fields: email
+func (_m *DriverRepository) GetByEmail(email string) (*entity.Driver, error) {
+	ret := _m.Called(email)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByEmail")
+	}
+
+	var r0 *entity.Driver
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (*entity.Driver, error)); ok {
+		return rf(email)
+	}
+	if rf, ok := ret.Get(0).(func(string) *entity.Driver); ok {
+		r0 = rf(email)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*entity.Driver)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(email)
 	} else {
 		r1 = ret.Error(1)
 	}
