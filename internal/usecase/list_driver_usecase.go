@@ -23,7 +23,7 @@ func NewListDriverFromSchoolUseCase(
 }
 
 func (gduc *ListDriverFromSchoolUseCase) ListDriverFromSchool(cnpj string) ([]value.ListDriver, error) {
-	drivers, err := gduc.repositories.PartnerRepository.FindAllByCnpj(cnpj)
+	drivers, err := gduc.repositories.PartnerRepository.GetBySchool(cnpj)
 	if err != nil {
 		return []value.ListDriver{}, err
 	}

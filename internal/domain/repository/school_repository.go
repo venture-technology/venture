@@ -10,5 +10,5 @@ type SchoolRepository interface {
 	FindAll() ([]entity.School, error)
 	Update(cnpj string, attributes map[string]interface{}) error
 	Delete(cnpj string) error
-	FindByEmail(email string) (*entity.School, error)
+	GetByEmail(email string) (*entity.School, error)
 }

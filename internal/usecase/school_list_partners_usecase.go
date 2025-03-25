@@ -25,7 +25,7 @@ func NewSchoolListPartnersUseCase(
 }
 
 func (slpuc *SchoolListPartnersUseCase) SchoolListPartners(cnpj string) ([]value.SchoolListPartners, error) {
-	partners, err := slpuc.repositories.PartnerRepository.FindAllByCnpj(cnpj)
+	partners, err := slpuc.repositories.PartnerRepository.GetBySchool(cnpj)
 	if err != nil {
 		return nil, err
 	}

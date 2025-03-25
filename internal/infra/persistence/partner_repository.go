@@ -28,7 +28,7 @@ func (pr PartnerRepositoryImpl) Get(id string) (*entity.Partner, error) {
 	return &partner, nil
 }
 
-func (pr PartnerRepositoryImpl) FindAllByCnpj(cnpj string) ([]entity.Partner, error) {
+func (pr PartnerRepositoryImpl) GetBySchool(cnpj string) ([]entity.Partner, error) {
 	var partners []entity.Partner
 
 	err := pr.Postgres.Client().Where("school_id = ?", cnpj).Find(&partners).Error
@@ -48,7 +48,7 @@ func (pr PartnerRepositoryImpl) FindAllByCnpj(cnpj string) ([]entity.Partner, er
 	return partners, nil
 }
 
-func (pr PartnerRepositoryImpl) FindAllByCnh(cnh string) ([]entity.Partner, error) {
+func (pr PartnerRepositoryImpl) GetByDriver(cnh string) ([]entity.Partner, error) {
 	var partners []entity.Partner
 
 	err := pr.Postgres.Client().Where("driver_id = ?", cnh).Find(&partners).Error

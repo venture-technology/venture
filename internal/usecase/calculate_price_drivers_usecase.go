@@ -60,7 +60,7 @@ func (cpuc *CalculatePriceDriversUseCase) CalculatePrice(
 		),
 	)
 
-	drivers, err := cpuc.repositories.PartnerRepository.FindAllByCnpj(schoolCNPJ)
+	drivers, err := cpuc.repositories.PartnerRepository.GetBySchool(schoolCNPJ)
 	if err != nil {
 		cpuc.logger.Infof(fmt.Sprintf("error getting drivers: %v", err))
 		return nil, err

@@ -48,14 +48,22 @@ func (_m *DriverRepository) Delete(cnh string) error {
 	return r0
 }
 
-// Get provides a mock function with given fields: cnh
+// GetByEmail provides a mock function with given fields: email
+func (_m *DriverRepository) GetByEmail(email string) (*entity.Driver, error) {
+	ret := _m.Called(email)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByEmail")
+	}
+  
+  // Get provides a mock function with given fields: cnh
 func (_m *DriverRepository) Get(cnh string) (*entity.Driver, error) {
 	ret := _m.Called(cnh)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Get")
-	}
-
+  }
+    
 	var r0 *entity.Driver
 	var r1 error
 	if rf, ok := ret.Get(0).(func(string) (*entity.Driver, error)); ok {
