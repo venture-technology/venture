@@ -15,7 +15,12 @@ type ContractRepository interface {
 	GetByDriver(cnh string) ([]entity.Contract, error)
 	GetByResponsible(cpf string) ([]entity.Contract, error)
 	GetByKid(rg string) (*entity.Contract, error)
-	KidHasContract(rg string) (bool, error)
+	KidHasEnableContract(rg string) (bool, error)
+	ResponsibleHasEnableContract(cpf string) (bool, error)
+	DriverHasEnableContract(cnh string) (bool, error)
+	SchoolHasEnableContract(cnpj string) (bool, error)
+
+	GetNumberOfEnableContractsByDriver(cnh string) (int64, error)
 
 	// Check if a contract already exists
 	ContractAlreadyExist(uuid string) (bool, error)

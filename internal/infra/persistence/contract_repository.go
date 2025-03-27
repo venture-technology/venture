@@ -371,7 +371,7 @@ func (cr ContractRepositoryImpl) GetByKid(rg string) (*entity.Contract, error) {
 	return &contracts, nil
 }
 
-func (cr ContractRepositoryImpl) KidHasContract(rg string) (bool, error) {
+func (cr ContractRepositoryImpl) KidHasEnableContract(rg string) (bool, error) {
 	var count int64
 
 	err := cr.Postgres.Client().
@@ -387,4 +387,72 @@ func (cr ContractRepositoryImpl) KidHasContract(rg string) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func (cr ContractRepositoryImpl) ResponsibleHasEnableContract(cpf string) (bool, error) {
+	var count int64
+
+	err := cr.Postgres.Client().
+		Model(&entity.Contract{}).
+		Where("responsible_cpf = ? AND status = ?", cpf, value.ContractCurrently).
+		Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+
+	if count > 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (cr ContractRepositoryImpl) DriverHasEnableContract(cnh string) (bool, error) {
+	var count int64
+
+	err := cr.Postgres.Client().
+		Model(&entity.Contract{}).
+		Where("driver_cnh = ? AND status = ?", cnh, value.ContractCurrently).
+		Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+
+	if count > 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (cr ContractRepositoryImpl) SchoolHasEnableContract(cnpj string) (bool, error) {
+	var count int64
+
+	err := cr.Postgres.Client().
+		Model(&entity.Contract{}).
+		Where("school_cnpj = ? AND status = ?", cnpj, value.ContractCurrently).
+		Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+
+	if count > 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (cr ContractRepositoryImpl) GetNumberOfContractByDriver(cnh string) (int64, error) {
+	var count int64
+
+	err := cr.Postgres.Client().
+		Model(&entity.Contract{}).
+		Where("driver_cnh = ? AND status = ?", cnh, value.ContractCurrently).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }
