@@ -31,9 +31,14 @@ func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
 		infra.App.Adapters,
 	)
 
-	requestParams.Password = utils.MakeHash(requestParams.Password)
+	hash, err := utils.MakeHash(requestParams.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+	requestParams.Password = hash
 
-	err := usecase.CreateResponsible(&requestParams)
+	err = usecase.CreateResponsible(&requestParams)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar criar responsável"))
 		return
