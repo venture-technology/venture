@@ -4,6 +4,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
+	"github.com/venture-technology/venture/internal/value"
 )
 
 type SendInviteUseCase struct {
@@ -22,6 +23,6 @@ func NewSendInviteUseCase(
 }
 
 func (siuc *SendInviteUseCase) SendInvite(invite *entity.Invite) error {
-	invite.Status = "pending"
+	invite.Status = value.InvitePending
 	return siuc.repositories.InviteRepository.Create(invite)
 }

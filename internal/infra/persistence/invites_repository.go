@@ -3,6 +3,7 @@ package persistence
 import (
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
+	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/realtime"
 )
 
@@ -63,7 +64,7 @@ func (ir InviteRepositoryImpl) Accept(id string) error {
 	tx := ir.Postgres.Client().Begin() // Inicia a transação
 
 	if err := tx.Model(&entity.Invite{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"status":      "accepted",
+		"status":      value.InviteAccepted,
 		"accepted_at": realtime.Now(),
 	}).Error; err != nil {
 		tx.Rollback()

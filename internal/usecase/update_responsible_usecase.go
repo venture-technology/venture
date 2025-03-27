@@ -3,6 +3,8 @@ package usecase
 import (
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
+	"github.com/venture-technology/venture/internal/value"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type UpdateResponsibleUseCase struct {
@@ -21,5 +23,10 @@ func NewUpdateResponsibleUseCase(
 }
 
 func (uruc *UpdateResponsibleUseCase) UpdateResponsible(cpf string, attributes map[string]interface{}) error {
+	err := utils.ValidateUpdate(attributes, value.ResponsibleAllowedKeys)
+	if err != nil {
+		return err
+	}
+
 	return uruc.repositories.ResponsibleRepository.Update(cpf, attributes)
 }

@@ -15,6 +15,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
+	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/realtime"
 	"github.com/venture-technology/venture/pkg/utils"
 )
@@ -235,7 +236,7 @@ func (as *AgreementService) SignatureRequestAllSigned(httpContext *gin.Context) 
 	return ASRASOutput{
 		Contract: entity.Contract{
 			UUID:           requestParams.SignatureRequest.Metadata.Keys.UUID,
-			Status:         "currently",
+			Status:         value.ContractCurrently,
 			SigningURL:     requestParams.SignatureRequest.SigningURL,
 			DriverCNH:      requestParams.SignatureRequest.Metadata.Keys.DriverID,
 			SchoolCNPJ:     requestParams.SignatureRequest.Metadata.Keys.SchoolID,

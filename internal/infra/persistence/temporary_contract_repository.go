@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
+	"github.com/venture-technology/venture/internal/value"
 )
 
 type TempContractRepositoryImpl struct {
@@ -59,7 +60,7 @@ func (tcr TempContractRepositoryImpl) Expire(uuid string) error {
 	err := tcr.Postgres.Client().
 		Model(&entity.TempContract{}).
 		Where("uuid = ?", uuid).
-		Update("status", "expired").
+		Update("status", value.TempContractExpired).
 		Error
 
 	if err != nil {
@@ -72,7 +73,7 @@ func (tcr TempContractRepositoryImpl) Cancel(uuid string) error {
 	err := tcr.Postgres.Client().
 		Model(&entity.TempContract{}).
 		Where("uuid = ?", uuid).
-		Update("status", "canceled").
+		Update("status", value.TempContractCanceled).
 		Error
 
 	if err != nil {
@@ -85,7 +86,7 @@ func (tcr TempContractRepositoryImpl) Accept(uuid string) error {
 	err := tcr.Postgres.Client().
 		Model(&entity.TempContract{}).
 		Where("uuid = ?", uuid).
-		Update("status", "accepted").
+		Update("status", value.TempContractAccepted).
 		Error
 
 	if err != nil {

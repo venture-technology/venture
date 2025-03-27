@@ -11,6 +11,25 @@ import (
 )
 
 func TestUpdateResponsibleUsecase_UpdateResponsible(t *testing.T) {
+	t.Run("if someone try send unknown field to update", func(t *testing.T) {
+		repository := mocks.NewResponsibleRepository(t)
+		logger := mocks.NewLogger(t)
+
+		usecase := NewUpdateResponsibleUseCase(
+			&persistence.PostgresRepositories{
+				ResponsibleRepository: repository,
+			},
+			logger,
+		)
+
+		err := usecase.UpdateResponsible("123", map[string]interface{}{
+			"cpf": "123",
+		})
+
+		assert.EqualError(t, err, "chaves não permitidas: cpf")
+		assert.Error(t, err)
+	})
+
 	t.Run("when repository returns error", func(t *testing.T) {
 		repository := mocks.NewResponsibleRepository(t)
 		logger := mocks.NewLogger(t)
