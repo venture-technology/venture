@@ -7,6 +7,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra"
 	"github.com/venture-technology/venture/internal/usecase"
+	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
@@ -48,7 +49,7 @@ func (sh *SchoolController) PostV1CreateSchool(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, requestParams)
+	c.JSON(http.StatusCreated, value.MapSchoolEntityToResponse(requestParams))
 }
 
 func (sh *SchoolController) GetV1GetSchool(c *gin.Context) {

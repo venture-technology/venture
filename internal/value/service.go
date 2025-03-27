@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/venture-technology/venture/internal/entity"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type GetResponsible struct {
@@ -271,4 +272,120 @@ type GetTempContracts struct {
 	ExpiredAt             int64  `json:"expires_at"`               // epoch time
 	DriverAssignedAt      int64  `json:"driver_assigned_at"`       // epoch time
 	ResponsibleAssignedAt int64  `json:"responsibles_assigned_at"` // epoch time
+}
+
+type CreateDriver struct {
+	ID              int          `json:"id"`
+	Name            string       `json:"name,omitempty" validate:"required"`
+	Email           string       `json:"email,omitempty" validate:"required"`
+	CNH             string       `json:"cnh,omitempty" validate:"required"`
+	QrCode          string       `json:"qrcode,omitempty"`
+	PixKey          string       `json:"pix_key,omitempty"`
+	Address         string       `json:"address,omitempty" validate:"required"`
+	Amount          float64      `json:"amount,omitempty" validate:"required"`
+	Phone           string       `json:"phone,omitempty" validate:"required" example:"+55 11 123456789"`
+	MunicipalRecord string       `json:"municipal_record,omitempty" validate:"required"`
+	Car             entity.Car   `json:"car,omitempty" validate:"required"`
+	ProfileImage    string       `json:"profile_image,omitempty"`
+	CreatedAt       time.Time    `json:"created_at,omitempty"`
+	UpdatedAt       time.Time    `json:"updated_at,omitempty"`
+	Schedule        string       `json:"schedule,omitempty"`
+	Seats           entity.Seats `json:"seats,omitempty"`
+	Accessibility   bool         `json:"accessibility"`
+	City            string       `json:"city"`
+	States          string       `json:"states"`
+}
+
+type CreateResponse struct {
+	ID           int       `json:"id,omitempty"`
+	Name         string    `json:"name,omitempty" validate:"required"`
+	Email        string    `json:"email,omitempty" validate:"required"`
+	CPF          string    `json:"cpf,omitempty" validate:"required" example:"44000000000"` // sem pontuação
+	Address      string    `json:"address,omitempty" validate:"required"`
+	Phone        string    `json:"phone,omitempty" validate:"required" example:"+55 11 123456789"` // o telefone deve seguir este mesmo formato
+	ProfileImage string    `json:"profile_image,omitempty"`
+	CreatedAt    time.Time `json:"created_at,omitempty"`
+	UpdatedAt    time.Time `json:"updated_at,omitempty"`
+	City         string    `json:"city"`
+	States       string    `json:"states"`
+}
+
+type CreateSchool struct {
+	ID           int       `json:"id,omitempty"`
+	Name         string    `json:"name,omitempty" validate:"required"`
+	CNPJ         string    `json:"cnpj,omitempty" validate:"required"`
+	Email        string    `json:"email,omitempty" validate:"required"`
+	Address      string    `json:"address,omitempty" validate:"required"`
+	Phone        string    `json:"phone,omitempty" validate:"required" example:"+55 11 123456789"`
+	ProfileImage string    `json:"profile_image,omitempty"`
+	CreatedAt    time.Time `json:"created_at,omitempty"`
+	UpdatedAt    time.Time `json:"updated_at,omitempty"`
+	City         string    `json:"city"`
+	States       string    `json:"states"`
+}
+
+func MapSchoolEntityToResponse(school entity.School) CreateSchool {
+	return CreateSchool{
+		ID:    school.ID,
+		Name:  school.Name,
+		CNPJ:  school.CNPJ,
+		Email: school.Email,
+		Address: utils.BuildAddress(
+			school.Address.Street,
+			school.Address.Number,
+			school.Address.Complement,
+			school.Address.Zip,
+		),
+		Phone:        school.Phone,
+		ProfileImage: school.ProfileImage,
+		City:         school.City,
+		States:       school.States,
+	}
+}
+
+func MapResponsibleEntityToResponse(responsible entity.Responsible) CreateResponse {
+	return CreateResponse{
+		ID:    responsible.ID,
+		Name:  responsible.Name,
+		Email: responsible.Email,
+		CPF:   responsible.CPF,
+		Address: utils.BuildAddress(
+			responsible.Address.Street,
+			responsible.Address.Number,
+			responsible.Address.Complement,
+			responsible.Address.Zip,
+		),
+		Phone:        responsible.Phone,
+		ProfileImage: responsible.ProfileImage,
+		City:         responsible.City,
+		States:       responsible.States,
+	}
+}
+
+func MapDriverEntityToResponse(driver entity.Driver) CreateDriver {
+	return CreateDriver{
+		ID:     driver.ID,
+		Name:   driver.Name,
+		Email:  driver.Email,
+		CNH:    driver.CNH,
+		QrCode: driver.QrCode,
+		Address: utils.BuildAddress(
+			driver.Address.Street,
+			driver.Address.Number,
+			driver.Address.Complement,
+			driver.Address.Zip,
+		),
+		Amount:          driver.Amount,
+		Phone:           driver.Phone,
+		MunicipalRecord: driver.MunicipalRecord,
+		Car:             driver.Car,
+		ProfileImage:    driver.ProfileImage,
+		CreatedAt:       driver.CreatedAt,
+		UpdatedAt:       driver.UpdatedAt,
+		Schedule:        driver.Schedule,
+		Seats:           driver.Seats,
+		Accessibility:   driver.Accessibility,
+		City:            driver.City,
+		States:          driver.States,
+	}
 }
