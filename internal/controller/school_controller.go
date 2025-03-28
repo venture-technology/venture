@@ -7,6 +7,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra"
 	"github.com/venture-technology/venture/internal/usecase"
+	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
@@ -30,20 +31,25 @@ func (sh *SchoolController) PostV1CreateSchool(c *gin.Context) {
 		return
 	}
 
-	requestParams.Password = utils.MakeHash(requestParams.Password)
+	hash, err := utils.MakeHash(requestParams.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+	requestParams.Password = hash
 
 	usecase := usecase.NewCreateSchoolUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	err := usecase.CreateSchool(&requestParams)
+	err = usecase.CreateSchool(&requestParams)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao tentar criar escola"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, requestParams)
+	c.JSON(http.StatusCreated, value.MapSchoolEntityToResponse(requestParams))
 }
 
 func (sh *SchoolController) GetV1GetSchool(c *gin.Context) {
