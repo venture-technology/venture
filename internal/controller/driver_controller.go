@@ -107,3 +107,37 @@ func (dh *DriverController) DeleteV1DeleteDriver(c *gin.Context) {
 	c.SetCookie("token", "", -1, "/", c.Request.Host, false, true)
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
+
+func (dh *DriverController) PostV1LoginDriver(httpContext *gin.Context) {
+	var requestParams entity.Driver
+	if err := httpContext.BindJSON(&requestParams); err != nil {
+		infra.App.Logger.Errorf(fmt.Sprintf("error on bind json: %v", err))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
+
+	err := requestParams.ValidateLogin()
+	if err != nil {
+		httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
+
+	usecase := usecase.NewDriverLoginUsecase(
+		&infra.App.Repositories,
+		infra.App.Logger,
+		infra.App.Config,
+	)
+
+	token, err := usecase.LoginDriver(requestParams.Email, requestParams.Password)
+	if err != nil {
+		if err.Error() == "user not found" {
+			httpContext.JSON(http.StatusUnauthorized, exceptions.InvalidBodyContentResponseError(err))
+			return
+		}
+		httpContext.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar login"))
+		return
+	}
+
+	httpContext.SetCookie("token", token, 3600*24*30, "/", httpContext.Request.Host, false, true)
+	httpContext.JSON(http.StatusOK, gin.H{"token": token})
+}

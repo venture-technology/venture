@@ -1,7 +1,10 @@
 package entity
 
 import (
+	"fmt"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 type Responsible struct {
@@ -20,4 +23,21 @@ type Responsible struct {
 	UpdatedAt       time.Time `json:"updated_at,omitempty"`
 	City            string    `json:"city"`
 	States          string    `json:"states"`
+}
+
+type ClaimsResponsible struct {
+	Responsible Responsible `json:"responsible"`
+	jwt.StandardClaims
+}
+
+func (r *Responsible) ValidateLogin() error {
+	if r.Email == "" {
+		return fmt.Errorf("email is required")
+	}
+
+	if r.Password == "" {
+		return fmt.Errorf("password is required")
+	}
+
+	return nil
 }
