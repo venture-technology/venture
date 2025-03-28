@@ -29,6 +29,8 @@ type Driver struct {
 	Accessibility   bool      `json:"accessibility"`
 	City            string    `json:"city"`
 	States          string    `json:"states"`
+	Descriptions    string    `json:"descriptions"`
+	Biography       string    `json:"biography"`
 }
 
 type Car struct {
