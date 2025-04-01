@@ -78,6 +78,34 @@ func (_m *ContractRepository) ContractAlreadyExist(_a0 string) (bool, error) {
 	return r0, r1
 }
 
+// DriverHasEnableContract provides a mock function with given fields: cnh
+func (_m *ContractRepository) DriverHasEnableContract(cnh string) (bool, error) {
+	ret := _m.Called(cnh)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DriverHasEnableContract")
+	}
+
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (bool, error)); ok {
+		return rf(cnh)
+	}
+	if rf, ok := ret.Get(0).(func(string) bool); ok {
+		r0 = rf(cnh)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(cnh)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Expired provides a mock function with given fields: _a0
 func (_m *ContractRepository) Expired(_a0 uuid.UUID) error {
 	ret := _m.Called(_a0)
@@ -119,6 +147,36 @@ func (_m *ContractRepository) GetByDriver(cnh string) ([]entity.Contract, error)
 
 	if rf, ok := ret.Get(1).(func(string) error); ok {
 		r1 = rf(cnh)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetByKid provides a mock function with given fields: rg
+func (_m *ContractRepository) GetByKid(rg string) (*entity.Contract, error) {
+	ret := _m.Called(rg)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetByKid")
+	}
+
+	var r0 *entity.Contract
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (*entity.Contract, error)); ok {
+		return rf(rg)
+	}
+	if rf, ok := ret.Get(0).(func(string) *entity.Contract); ok {
+		r0 = rf(rg)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*entity.Contract)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(rg)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -209,6 +267,118 @@ func (_m *ContractRepository) GetByUUID(id uuid.UUID) (*entity.Contract, error) 
 
 	if rf, ok := ret.Get(1).(func(uuid.UUID) error); ok {
 		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetNumberOfEnableContractsByDriver provides a mock function with given fields: cnh
+func (_m *ContractRepository) GetNumberOfEnableContractsByDriver(cnh string) (int64, error) {
+	ret := _m.Called(cnh)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetNumberOfEnableContractsByDriver")
+	}
+
+	var r0 int64
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (int64, error)); ok {
+		return rf(cnh)
+	}
+	if rf, ok := ret.Get(0).(func(string) int64); ok {
+		r0 = rf(cnh)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(cnh)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// KidHasEnableContract provides a mock function with given fields: rg
+func (_m *ContractRepository) KidHasEnableContract(rg string) (bool, error) {
+	ret := _m.Called(rg)
+
+	if len(ret) == 0 {
+		panic("no return value specified for KidHasEnableContract")
+	}
+
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (bool, error)); ok {
+		return rf(rg)
+	}
+	if rf, ok := ret.Get(0).(func(string) bool); ok {
+		r0 = rf(rg)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(rg)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ResponsibleHasEnableContract provides a mock function with given fields: cpf
+func (_m *ContractRepository) ResponsibleHasEnableContract(cpf string) (bool, error) {
+	ret := _m.Called(cpf)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ResponsibleHasEnableContract")
+	}
+
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (bool, error)); ok {
+		return rf(cpf)
+	}
+	if rf, ok := ret.Get(0).(func(string) bool); ok {
+		r0 = rf(cpf)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(cpf)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SchoolHasEnableContract provides a mock function with given fields: cnpj
+func (_m *ContractRepository) SchoolHasEnableContract(cnpj string) (bool, error) {
+	ret := _m.Called(cnpj)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SchoolHasEnableContract")
+	}
+
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (bool, error)); ok {
+		return rf(cnpj)
+	}
+	if rf, ok := ret.Get(0).(func(string) bool); ok {
+		r0 = rf(cnpj)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(cnpj)
 	} else {
 		r1 = ret.Error(1)
 	}
