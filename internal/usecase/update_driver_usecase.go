@@ -26,12 +26,18 @@ func NewUpdateDriverUseCase(
 }
 
 func (uduc *UpdateDriverUseCase) UpdateDriver(cnh string, attributes map[string]interface{}) error {
-	driver, err := uduc.repositories.DriverRepository.Get(cnh)
+	err := utils.ValidateUpdate(attributes, value.DriverAllowedKeys)
 	if err != nil {
 		return err
 	}
 
-	err = utils.ValidateUpdate(attributes, value.DriverAllowedKeys)
+	fields := []string{"street", "number", "complement", "zip"}
+	err = utils.ValidateRequiredGroup(attributes, fields)
+	if err != nil {
+		return err
+	}
+
+	driver, err := uduc.repositories.DriverRepository.Get(cnh)
 	if err != nil {
 		return err
 	}
