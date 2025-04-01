@@ -9,6 +9,7 @@ import (
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/infra"
 	"github.com/venture-technology/venture/internal/usecase"
+	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
@@ -27,7 +28,12 @@ func (dh *DriverController) PostV1Create(c *gin.Context) {
 		return
 	}
 
-	requestParams.Password = utils.MakeHash(requestParams.Password)
+	hash, err := utils.MakeHash(requestParams.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+	requestParams.Password = hash
 
 	usecase := usecase.NewCreateDriverUseCase(
 		&infra.App.Repositories,
@@ -35,13 +41,13 @@ func (dh *DriverController) PostV1Create(c *gin.Context) {
 		infra.App.Bucket,
 	)
 
-	err := usecase.CreateDriver(&requestParams)
+	err = usecase.CreateDriver(&requestParams)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realziar a criação do qrcode"))
 		return
 	}
 
-	c.JSON(http.StatusCreated, requestParams)
+	c.JSON(http.StatusCreated, value.MapDriverEntityToResponse(requestParams))
 }
 
 func (dh *DriverController) GetV1GetDriver(c *gin.Context) {
