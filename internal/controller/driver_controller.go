@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/venture-technology/venture/internal/domain/service/middleware"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/infra"
@@ -76,12 +77,27 @@ func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
 		return
 	}
 
+	middleware := middleware.NewDriverMiddleware(
+		infra.App.Config,
+	)
+
+	middlewareResponse, err := middleware.GetDriverFromMiddleware(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		return
+	}
+
+	if middlewareResponse.Driver.CNH != cnh {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
+		return
+	}
+
 	usecase := usecase.NewUpdateDriverUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	err := usecase.UpdateDriver(cnh, data)
+	err = usecase.UpdateDriver(cnh, data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao realizar atualização das informações do motorista"))
 		return
@@ -93,12 +109,27 @@ func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
 func (dh *DriverController) DeleteV1DeleteDriver(c *gin.Context) {
 	cnh := c.Param("cnh")
 
+	middleware := middleware.NewDriverMiddleware(
+		infra.App.Config,
+	)
+
+	middlewareResponse, err := middleware.GetDriverFromMiddleware(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		return
+	}
+
+	if middlewareResponse.Driver.CNH != cnh {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
+		return
+	}
+
 	usecase := usecase.NewDeleteDriverUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	err := usecase.DeleteDriver(cnh)
+	err = usecase.DeleteDriver(cnh)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar motorista"})
 		return

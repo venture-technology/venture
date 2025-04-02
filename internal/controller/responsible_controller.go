@@ -86,7 +86,7 @@ func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 	}
 
 	if middlewareResponse.Responsible.CPF != cpf {
-		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(fmt.Errorf("não é permitido atualizar o responsável de outro usuário")))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
 		return
 	}
 
@@ -118,7 +118,7 @@ func (rh *ResponsibleController) DeleteV1DeleteResponsbile(c *gin.Context) {
 	}
 
 	if middlewareResponse.Responsible.CPF != cpf {
-		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(fmt.Errorf("não é permitido atualizar o responsável de outro usuário")))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
 		return
 	}
 

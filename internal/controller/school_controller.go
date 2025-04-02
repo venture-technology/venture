@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/venture-technology/venture/internal/domain/service/middleware"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/infra"
@@ -94,12 +95,27 @@ func (sh *SchoolController) PatchV1UpdateSchool(c *gin.Context) {
 		return
 	}
 
+	middleware := middleware.NewSchoolMiddleware(
+		infra.App.Config,
+	)
+
+	middlewareResponse, err := middleware.GetSchoolFromMiddleware(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		return
+	}
+
+	if middlewareResponse.School.CNPJ != cnpj {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
+		return
+	}
+
 	usecase := usecase.NewUpdateSchoolUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	err := usecase.UpdateSchool(cnpj, data)
+	err = usecase.UpdateSchool(cnpj, data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno de servidor ao atualizar as informações da escola"})
 		return
@@ -111,12 +127,27 @@ func (sh *SchoolController) PatchV1UpdateSchool(c *gin.Context) {
 func (sh *SchoolController) DeleteV1DeleteSchool(c *gin.Context) {
 	cnpj := c.Param("cnpj")
 
+	middleware := middleware.NewSchoolMiddleware(
+		infra.App.Config,
+	)
+
+	middlewareResponse, err := middleware.GetSchoolFromMiddleware(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		return
+	}
+
+	if middlewareResponse.School.CNPJ != cnpj {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
+		return
+	}
+
 	usecase := usecase.NewDeleteSchoolUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	err := usecase.DeleteSchool(cnpj)
+	err = usecase.DeleteSchool(cnpj)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar escola"})
 		return
