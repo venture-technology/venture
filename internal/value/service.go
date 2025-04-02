@@ -7,6 +7,32 @@ import (
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
+const (
+	// contract statuses
+
+	ContractCurrently = "currently"
+	ContractCanceled  = "canceled"
+	ContractExpired   = "expired"
+
+	// temp contract statuses
+
+	TempContractPending  = "pending"
+	TempContractAccepted = "accepted"
+	TempContractCanceled = "canceled"
+	TempContractExpired  = "expired"
+
+	// shifts
+
+	MorningShift   = "morning"
+	AfternoonShift = "afternoon"
+	NightShift     = "night"
+
+	// invite
+
+	InviteAccepted = "accepted"
+	InvitePending  = "pending"
+)
+
 type GetResponsible struct {
 	ID              int       `json:"id"`
 	Name            string    `json:"name"`
@@ -246,6 +272,58 @@ var Schedules = map[string]string{
 	"morning, night":     "5",
 	"afternoon, night":   "6",
 	"all":                "7",
+}
+
+var ResponsibleAllowedKeys = map[string]bool{
+	"name":          true,
+	"email":         true,
+	"password":      true,
+	"street":        true,
+	"number":        true,
+	"zip":           true,
+	"complement":    true,
+	"phone":         true,
+	"city":          true,
+	"states":        true,
+	"profile_image": true,
+}
+
+// para alterar schedule ou municipal_record deve entrar em contato com atendimento
+var DriverAllowedKeys = map[string]bool{
+	"name":          true,
+	"email":         true,
+	"password":      true,
+	"street":        true,
+	"number":        true,
+	"zip":           true,
+	"complement":    true,
+	"phone":         true,
+	"city":          true,
+	"states":        true,
+	"pix_key":       true,
+	"amount":        true,
+	"profile_image": true,
+	"car_name":      true,
+	"car_year":      true,
+	"car_capacity":  true,
+}
+
+var SchoollAllowedKeys = map[string]bool{
+	"name":          true,
+	"email":         true,
+	"password":      true,
+	"profile_image": true,
+}
+
+var KidAllowedKeys = map[string]bool{
+	"shift":                 true,
+	"attendance_permission": true,
+}
+
+var Shifts = map[string]string{
+	"morning":   MorningShift,
+	"afternoon": AfternoonShift,
+	"night":     NightShift,
 }
 
 type CreateContractRequestParams struct {

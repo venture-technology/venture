@@ -74,5 +74,3 @@ type ContractProperty struct {
 	DateTime       string         `json:"date_time"`
 	ContractParams ContractParams `json:"contract"`
 }
-
-// a way to return currently contracts made little bit of sql queries
