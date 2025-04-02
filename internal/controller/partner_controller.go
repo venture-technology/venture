@@ -25,7 +25,7 @@ func (ph *PartnerController) GetV1DriverListPartners(c *gin.Context) {
 
 	partners, err := usecase.DriverListPartners(cnh)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "parceiro não encontrado"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -42,7 +42,7 @@ func (ph *PartnerController) GetV1SchoolListPartners(c *gin.Context) {
 
 	partners, err := usecase.SchoolListPartners(cnpj)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "parceiro não encontrado"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -59,7 +59,7 @@ func (ph *PartnerController) DeleteV1DeletePartner(c *gin.Context) {
 
 	err := usecase.DeletePartner(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "parceiro não encontrado"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
