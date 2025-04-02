@@ -443,7 +443,7 @@ func (cr ContractRepositoryImpl) SchoolHasEnableContract(cnpj string) (bool, err
 	return false, nil
 }
 
-func (cr ContractRepositoryImpl) GetNumberOfContractByDriver(cnh string) (int64, error) {
+func (cr ContractRepositoryImpl) GetNumberOfEnableContractsByDriver(cnh string) (int64, error) {
 	var count int64
 
 	err := cr.Postgres.Client().
@@ -455,4 +455,19 @@ func (cr ContractRepositoryImpl) GetNumberOfContractByDriver(cnh string) (int64,
 	}
 
 	return count, nil
+}
+
+func (cr ContractRepositoryImpl) PartnerHasEnableContract(id string) ([]entity.Contract, error) {
+	var contracts []entity.Contract
+
+	err := cr.Postgres.Client().
+		Joins("JOIN partners ON partners.driver_id = contracts.driver_cnh AND partners.school_id = contracts.school_cnpj").
+		Where("partners.record = ? AND status = ?", id, value.ContractCurrently).
+		Find(&contracts).Error
+
+	if err != nil {
+		return []entity.Contract{}, err
+	}
+
+	return contracts, nil
 }

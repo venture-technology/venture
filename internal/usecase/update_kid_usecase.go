@@ -43,7 +43,7 @@ func (ucuc *UpdateKidUseCase) UpdateKid(rg string, attributes map[string]interfa
 		}
 
 		// checando se esse kid já tem contrato
-		kidHasContract, err := ucuc.repositories.ContractRepository.KidHasContract(rg)
+		kidHasContract, err := ucuc.repositories.ContractRepository.KidHasEnableContract(rg)
 		if err != nil {
 			return err
 		}
