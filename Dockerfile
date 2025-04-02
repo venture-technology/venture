@@ -25,9 +25,6 @@ COPY --from=builder /app/main .
 # Create directories for config and database
 RUN mkdir -p /app/config /app/database
 
-# Copy config.yaml from /config to /app/config/
-COPY config/config.yaml /app/config/config.yaml
-
 EXPOSE 9999
 
 CMD ["/app/main"]
