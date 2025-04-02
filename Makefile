@@ -27,3 +27,16 @@ deploy-nginx: send-nginx-config deploy-http-server
 	ssh -t root@$(HOST_REMOTE_SERVER_IP) '\
 		service restart nginx \
 	'
+
+prod-deploy-docker:
+	ssh -t root@$(HOST_REMOTE_SERVER_IP) '\
+		docker pull $(IMAGE_NAME):latest \
+		&& docker stop venture-api || true \
+		&& docker rm venture-api || true \
+		&& docker run -d \
+			--name venture-api \
+			--restart always \
+			-v ~/config:/app/config \
+			-p 9999:9999 \
+			$(IMAGE_NAME):latest \
+	'
