@@ -40,3 +40,16 @@ prod-deploy-docker:
 			-p 9999:9999 \
 			$(IMAGE_NAME):latest \
 	'
+
+qa-deploy-docker:
+	ssh -t root@$(HOST_REMOTE_SERVER_IP) '\
+		docker pull $(IMAGE_NAME):latest \
+		&& docker stop venture-api-staging || true \
+		&& docker rm venture-api-staging || true \
+		&& docker run -d \
+			--name venture-api-staging \
+			--restart always \
+			-v ~/config:/app/config \
+			-p 9998:9998 \
+			$(IMAGE_NAME):latest \
+	'
