@@ -49,6 +49,7 @@ type Seats struct {
 
 type ClaimsDriver struct {
 	Driver Driver `json:"driver"`
+	Role   string `json:"role"`
 	jwt.StandardClaims
 }
 

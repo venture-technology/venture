@@ -31,6 +31,7 @@ func (s *School) ValidateCnpj() bool {
 
 type ClaimsSchool struct {
 	School School `json:"school"`
+	Role   string `json:"role"`
 	jwt.StandardClaims
 }
 

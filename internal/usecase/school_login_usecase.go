@@ -41,6 +41,7 @@ func (sluc *SchoolLoginUsecase) LoginSchool(email, password string) (string, err
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"school": school,
+		"role":   "school",
 		"exp":    time.Now().Add(time.Hour * 240).Unix(),
 	})
 

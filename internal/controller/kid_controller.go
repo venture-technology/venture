@@ -5,7 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/venture-technology/venture/internal/domain/service/middleware"
 	"github.com/venture-technology/venture/internal/entity"
+	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/infra"
 	"github.com/venture-technology/venture/internal/usecase"
 )
@@ -59,6 +61,21 @@ func (ch *KidController) GetV1GetKid(c *gin.Context) {
 
 func (ch *KidController) GetV1ListKids(c *gin.Context) {
 	cpf := c.Param("cpf")
+
+	middleware := middleware.NewResponsibleMiddleware(
+		infra.App.Config,
+	)
+
+	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		return
+	}
+
+	if middlewareResponse.Responsible.CPF != cpf {
+		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(fmt.Errorf("não é permitido atualizar o responsável de outro usuário")))
+		return
+	}
 
 	usecase := usecase.NewListKidsUseCase(
 		&infra.App.Repositories,

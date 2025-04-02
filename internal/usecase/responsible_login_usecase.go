@@ -41,6 +41,7 @@ func (rluc *ResponsibleLoginUsecase) LoginResponsible(email, password string) (s
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"responsible": responsible,
+		"role":        "responsible",
 		"exp":         time.Now().Add(time.Hour * 240).Unix(),
 	})
 

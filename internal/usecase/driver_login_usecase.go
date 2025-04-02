@@ -41,6 +41,7 @@ func (dluc *DriverLoginUsecase) LoginDriver(email, password string) (string, err
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"driver": driver,
+		"role":   "driver",
 		"exp":    time.Now().Add(time.Hour * 240).Unix(),
 	})
 

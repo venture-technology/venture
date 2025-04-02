@@ -27,6 +27,7 @@ type Responsible struct {
 
 type ClaimsResponsible struct {
 	Responsible Responsible `json:"responsible"`
+	Role        string      `json:"role"`
 	jwt.StandardClaims
 }
 

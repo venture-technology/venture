@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/venture-technology/venture/internal/domain/service/middleware"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/infra"
@@ -74,12 +75,27 @@ func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 		return
 	}
 
+	middleware := middleware.NewResponsibleMiddleware(
+		infra.App.Config,
+	)
+
+	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		return
+	}
+
+	if middlewareResponse.Responsible.CPF != cpf {
+		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(fmt.Errorf("não é permitido atualizar o responsável de outro usuário")))
+		return
+	}
+
 	usecase := usecase.NewUpdateResponsibleUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	err := usecase.UpdateResponsible(cpf, data)
+	err = usecase.UpdateResponsible(cpf, data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar atualizar as informações do responsável na stripe"))
 		return
@@ -91,6 +107,21 @@ func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 func (rh *ResponsibleController) DeleteV1DeleteResponsbile(c *gin.Context) {
 	cpf := c.Param("cpf")
 
+	middleware := middleware.NewResponsibleMiddleware(
+		infra.App.Config,
+	)
+
+	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		return
+	}
+
+	if middlewareResponse.Responsible.CPF != cpf {
+		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(fmt.Errorf("não é permitido atualizar o responsável de outro usuário")))
+		return
+	}
+
 	usecase := usecase.NewDeleteResponsibleUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
@@ -98,7 +129,7 @@ func (rh *ResponsibleController) DeleteV1DeleteResponsbile(c *gin.Context) {
 	)
 
 	// buscando customerid do responsible
-	err := usecase.DeleteResponsible(cpf)
+	err = usecase.DeleteResponsible(cpf)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "ao tentar buscar a chave do cliente no stripe"))
 		return
