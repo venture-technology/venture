@@ -22,7 +22,6 @@ type ContractRepository interface {
 	PartnerHasEnableContract(id string) ([]entity.Contract, error)
 
 	GetNumberOfEnableContractsByDriver(cnh string) (int64, error)
-
 	// Check if a contract already exists
 	ContractAlreadyExist(uuid string) (bool, error)
 }

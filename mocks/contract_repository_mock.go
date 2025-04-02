@@ -331,22 +331,24 @@ func (_m *ContractRepository) KidHasEnableContract(rg string) (bool, error) {
 }
 
 // PartnerHasEnableContract provides a mock function with given fields: id
-func (_m *ContractRepository) PartnerHasEnableContract(id string) (bool, error) {
+func (_m *ContractRepository) PartnerHasEnableContract(id string) ([]entity.Contract, error) {
 	ret := _m.Called(id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for PartnerHasEnableContract")
 	}
 
-	var r0 bool
+	var r0 []entity.Contract
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string) (bool, error)); ok {
+	if rf, ok := ret.Get(0).(func(string) ([]entity.Contract, error)); ok {
 		return rf(id)
 	}
-	if rf, ok := ret.Get(0).(func(string) bool); ok {
+	if rf, ok := ret.Get(0).(func(string) []entity.Contract); ok {
 		r0 = rf(id)
 	} else {
-		r0 = ret.Get(0).(bool)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.Contract)
+		}
 	}
 
 	if rf, ok := ret.Get(1).(func(string) error); ok {
