@@ -49,11 +49,11 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.POST("/responsible/login", route.Responsible.PostV1LoginResponsible)
 
 	// kid
-	group.POST("/kid", rm.Middleware(), route.Kid.PostV1CreateKid)
+	group.POST("/kid/:cpf", rm.Middleware(), route.Kid.PostV1CreateKid)
 	group.GET("/kid/:rg", route.Kid.GetV1GetKid)
-	group.GET("/:cpf/kid", rm.Middleware(), route.Kid.GetV1ListKids)
-	group.PATCH("/kid/:rg", rm.Middleware(), route.Kid.PatchV1UpdateController)
-	group.DELETE("/kid/:rg", rm.Middleware(), route.Kid.DeleteV1DeleteKid)
+	group.GET("/kids/:cpf", rm.Middleware(), route.Kid.GetV1ListKids)
+	group.PATCH("/kid/:cpf/:rg", rm.Middleware(), route.Kid.PatchV1UpdateController)
+	group.DELETE("/kid/:cpf/:rg", rm.Middleware(), route.Kid.DeleteV1DeleteKid)
 
 	// school
 	group.POST("/school", route.School.PostV1CreateSchool)
