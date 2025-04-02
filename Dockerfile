@@ -28,9 +28,6 @@ RUN mkdir -p /app/config /app/database
 # Copy config.yaml from /config to /app/config/
 COPY config/config.yaml /app/config/config.yaml
 
-# Copy all .sql files from /database to /app/database/
-COPY database/*.sql /app/database/
-
 EXPOSE 9999
 
 CMD ["/app/main"]
