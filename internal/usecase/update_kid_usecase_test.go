@@ -100,7 +100,7 @@ func TestUpdateKidUsecase_UpdateKid(t *testing.T) {
 			logger,
 		)
 
-		contractRepository.On("KidHasContract", mock.Anything).Return(true, nil)
+		contractRepository.On("KidHasEnableContract", mock.Anything).Return(true, nil)
 
 		err := usecase.UpdateKid("123", map[string]interface{}{
 			"shift": "morning",
@@ -123,7 +123,7 @@ func TestUpdateKidUsecase_UpdateKid(t *testing.T) {
 			logger,
 		)
 
-		contractRepository.On("KidHasContract", mock.Anything).Return(false, nil)
+		contractRepository.On("KidHasEnableContract", mock.Anything).Return(false, nil)
 		kidRepository.On("Update", mock.Anything, mock.Anything).Return(errors.New("database error"))
 
 		err := usecase.UpdateKid("123", map[string]interface{}{
@@ -146,7 +146,7 @@ func TestUpdateKidUsecase_UpdateKid(t *testing.T) {
 			logger,
 		)
 
-		contractRepository.On("KidHasContract", mock.Anything).Return(false, nil)
+		contractRepository.On("KidHasEnableContract", mock.Anything).Return(false, nil)
 		kidRepository.On("Update", mock.Anything, mock.Anything).Return(nil)
 
 		err := usecase.UpdateKid("123", map[string]interface{}{

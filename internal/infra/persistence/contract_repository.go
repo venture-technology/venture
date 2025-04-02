@@ -443,7 +443,7 @@ func (cr ContractRepositoryImpl) SchoolHasEnableContract(cnpj string) (bool, err
 	return false, nil
 }
 
-func (cr ContractRepositoryImpl) GetNumberOfContractByDriver(cnh string) (int64, error) {
+func (cr ContractRepositoryImpl) GetNumberOfEnableContractsByDriver(cnh string) (int64, error) {
 	var count int64
 
 	err := cr.Postgres.Client().
