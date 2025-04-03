@@ -1,12 +1,13 @@
-name: QADeploy
+name: ProdDeploy
 
 on:
-  repository-dispatch:
-    types: [deploy-command]
+  push:
+    branches:
+      - master
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: ghcr.io/venture-technology/venture-staging
+  IMAGE_NAME: ghcr.io/venture-technology/venture
   COMMIT_SHA: ${{ github.sha }}
 
 jobs:
@@ -47,7 +48,7 @@ jobs:
       - name: Deploy
         env:
           HOST_REMOTE_SERVER_IP: ${{ secrets.HOST_REMOTE_SERVER_IP }}
-          IMAGE_NAME: ghcr.io/venture-technology/venture-staging
+          IMAGE_NAME: ghcr.io/venture-technology/venture
         run: |
           make prod-deploy-docker
 
