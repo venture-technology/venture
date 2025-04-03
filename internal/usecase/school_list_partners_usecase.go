@@ -38,7 +38,7 @@ func (slpuc *SchoolListPartnersUseCase) SchoolListPartners(cnpj string) ([]value
 
 func buildSchoolListPartner(partners entity.Partner) value.SchoolListPartners {
 	return value.SchoolListPartners{
-		ID:           partners.Record,
+		ID:           partners.ID,
 		Name:         partners.Driver.Name,
 		Email:        partners.Driver.Email,
 		Phone:        partners.Driver.Phone,

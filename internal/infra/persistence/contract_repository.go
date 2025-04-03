@@ -461,8 +461,8 @@ func (cr ContractRepositoryImpl) PartnerHasEnableContract(id string) ([]entity.C
 	var contracts []entity.Contract
 
 	err := cr.Postgres.Client().
-		Joins("JOIN partners ON partners.driver_id = contracts.driver_cnh AND partners.school_id = contracts.school_cnpj").
-		Where("partners.record = ? AND status = ?", id, value.ContractCurrently).
+		Joins("JOIN partners ON partners.driver_cnh = contracts.driver_cnh AND partners.school_cnpj = contracts.school_cnpj").
+		Where("partners.id = ? AND status = ?", id, value.ContractCurrently).
 		Find(&contracts).Error
 
 	if err != nil {
