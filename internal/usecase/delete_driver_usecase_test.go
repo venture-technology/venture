@@ -20,17 +20,37 @@ func TestDeleteDriverUsecase_DeleteDriver(t *testing.T) {
 		},
 	}
 
-	t.Run("if delete Driver on repository returns error", func(t *testing.T) {
+	t.Run("if contract repository returns error", func(t *testing.T) {
 		repository := mocks.NewDriverRepository(t)
 		logger := mocks.NewLogger(t)
+		cr := mocks.NewContractRepository(t)
 
 		usecase := NewDeleteDriverUseCase(
 			&persistence.PostgresRepositories{
-				DriverRepository: repository,
+				ContractRepository: cr,
+				DriverRepository:   repository,
 			},
 			logger,
 		)
+		cr.On("DriverHasEnableContract", mock.Anything).Return(true, nil)
+		err := usecase.DeleteDriver(driver.CNH)
 
+		assert.EqualError(t, err, "impossivel deletar motorista possuindo contrata ativo")
+	})
+
+	t.Run("if delete Driver on repository returns error", func(t *testing.T) {
+		repository := mocks.NewDriverRepository(t)
+		logger := mocks.NewLogger(t)
+		cr := mocks.NewContractRepository(t)
+
+		usecase := NewDeleteDriverUseCase(
+			&persistence.PostgresRepositories{
+				ContractRepository: cr,
+				DriverRepository:   repository,
+			},
+			logger,
+		)
+		cr.On("DriverHasEnableContract", mock.Anything).Return(false, nil)
 		repository.On("Delete", mock.Anything).Return(errors.New("Driver repository delete error"))
 
 		err := usecase.DeleteDriver(driver.CNH)
@@ -41,14 +61,16 @@ func TestDeleteDriverUsecase_DeleteDriver(t *testing.T) {
 	t.Run("when delete Driver return success", func(t *testing.T) {
 		repository := mocks.NewDriverRepository(t)
 		logger := mocks.NewLogger(t)
+		cr := mocks.NewContractRepository(t)
 
 		usecase := NewDeleteDriverUseCase(
 			&persistence.PostgresRepositories{
-				DriverRepository: repository,
+				ContractRepository: cr,
+				DriverRepository:   repository,
 			},
 			logger,
 		)
-
+		cr.On("DriverHasEnableContract", mock.Anything).Return(false, nil)
 		repository.On("Delete", mock.Anything).Return(nil)
 
 		err := usecase.DeleteDriver(driver.CNH)

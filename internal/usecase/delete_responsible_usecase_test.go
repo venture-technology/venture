@@ -16,13 +16,15 @@ import (
 func TestDeleteResponsibleUsecase_DeleteResponsible(t *testing.T) {
 	responsible := entity.Responsible{}
 
-	t.Run("if receive error from responsible repository get", func(t *testing.T) {
+	t.Run("if contract repository returns error", func(t *testing.T) {
 		repository := mocks.NewResponsibleRepository(t)
 		payments := mocks.NewPaymentsService(t)
 		logger := mocks.NewLogger(t)
+		cr := mocks.NewContractRepository(t)
 
 		usecase := NewDeleteResponsibleUseCase(
 			&persistence.PostgresRepositories{
+				ContractRepository:    cr,
 				ResponsibleRepository: repository,
 			},
 			logger,
@@ -30,7 +32,29 @@ func TestDeleteResponsibleUsecase_DeleteResponsible(t *testing.T) {
 				PaymentsService: payments,
 			},
 		)
+		repository.On("Get", mock.Anything).Return(&responsible, nil)
+		cr.On("ResponsibleHasEnableContract", mock.Anything).Return(true, nil)
+		err := usecase.DeleteResponsible("123")
 
+		assert.EqualError(t, err, "impossivel deletar responsavel possuindo contrato ativo")
+	})
+
+	t.Run("if receive error from responsible repository get", func(t *testing.T) {
+		repository := mocks.NewResponsibleRepository(t)
+		payments := mocks.NewPaymentsService(t)
+		logger := mocks.NewLogger(t)
+		cr := mocks.NewContractRepository(t)
+
+		usecase := NewDeleteResponsibleUseCase(
+			&persistence.PostgresRepositories{
+				ResponsibleRepository: repository,
+				ContractRepository:    cr,
+			},
+			logger,
+			adapters.Adapters{
+				PaymentsService: payments,
+			},
+		)
 		repository.On("Get", mock.Anything).Return(&responsible, errors.New("responsible repository get error"))
 
 		err := usecase.DeleteResponsible("123")
@@ -41,17 +65,19 @@ func TestDeleteResponsibleUsecase_DeleteResponsible(t *testing.T) {
 		repository := mocks.NewResponsibleRepository(t)
 		payments := mocks.NewPaymentsService(t)
 		logger := mocks.NewLogger(t)
+		cr := mocks.NewContractRepository(t)
 
 		usecase := NewDeleteResponsibleUseCase(
 			&persistence.PostgresRepositories{
 				ResponsibleRepository: repository,
+				ContractRepository:    cr,
 			},
 			logger,
 			adapters.Adapters{
 				PaymentsService: payments,
 			},
 		)
-
+		cr.On("ResponsibleHasEnableContract", mock.Anything).Return(false, nil)
 		repository.On("Get", mock.Anything).Return(&responsible, nil)
 		payments.On("DeleteStripeUser", mock.Anything).Return(&stripe.Customer{}, errors.New("delete stripe error from stripe"))
 
@@ -64,17 +90,19 @@ func TestDeleteResponsibleUsecase_DeleteResponsible(t *testing.T) {
 		repository := mocks.NewResponsibleRepository(t)
 		payments := mocks.NewPaymentsService(t)
 		logger := mocks.NewLogger(t)
+		cr := mocks.NewContractRepository(t)
 
 		usecase := NewDeleteResponsibleUseCase(
 			&persistence.PostgresRepositories{
 				ResponsibleRepository: repository,
+				ContractRepository:    cr,
 			},
 			logger,
 			adapters.Adapters{
 				PaymentsService: payments,
 			},
 		)
-
+		cr.On("ResponsibleHasEnableContract", mock.Anything).Return(false, nil)
 		repository.On("Get", mock.Anything).Return(&responsible, nil)
 		payments.On("DeleteStripeUser", mock.Anything).Return(&stripe.Customer{}, nil)
 		repository.On("Delete", mock.Anything).Return(errors.New("responsible repository delete error"))
@@ -88,17 +116,19 @@ func TestDeleteResponsibleUsecase_DeleteResponsible(t *testing.T) {
 		repository := mocks.NewResponsibleRepository(t)
 		payments := mocks.NewPaymentsService(t)
 		logger := mocks.NewLogger(t)
+		cr := mocks.NewContractRepository(t)
 
 		usecase := NewDeleteResponsibleUseCase(
 			&persistence.PostgresRepositories{
 				ResponsibleRepository: repository,
+				ContractRepository:    cr,
 			},
 			logger,
 			adapters.Adapters{
 				PaymentsService: payments,
 			},
 		)
-
+		cr.On("ResponsibleHasEnableContract", mock.Anything).Return(false, nil)
 		repository.On("Get", mock.Anything).Return(&responsible, nil)
 		payments.On("DeleteStripeUser", mock.Anything).Return(&stripe.Customer{}, nil)
 		repository.On("Delete", mock.Anything).Return(nil)
