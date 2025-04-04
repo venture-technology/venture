@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"fmt"
+
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
@@ -29,6 +31,16 @@ func (druc *DeleteResponsibleUseCase) DeleteResponsible(cpf string) error {
 	if err != nil {
 		return err
 	}
+
+	ResponsibleHasContract, err := druc.repositories.ContractRepository.ResponsibleHasEnableContract(cpf)
+	if err != nil {
+		return err
+	}
+
+	if ResponsibleHasContract {
+		return fmt.Errorf("impossivel deletar responsavel possuindo contrato ativo")
+	}
+
 	_, err = druc.adapters.PaymentsService.DeleteStripeUser(responsible.CustomerId)
 	if err != nil {
 		return err

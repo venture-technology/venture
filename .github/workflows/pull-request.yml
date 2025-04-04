@@ -24,7 +24,7 @@ jobs:
           cat <<EOF > config/config.yaml
           name: venture
           development: true
-          
+
           server:
             host: ${{ secrets.SERVER_HOST }}
             port: ${{ secrets.SERVER_PORT }}
@@ -41,7 +41,7 @@ jobs:
             region: ${{ secrets.AWS_REGION }}
             accesskey: ${{ secrets.AWS_ACCESS_KEY }}
             secretkey: ${{ secrets.AWS_SECRET_KEY }}
-            token: 
+            token:
             source: ${{ secrets.AWS_SOURCE_EMAIL }}
             bucketname: ${{ secrets.AWS_BUCKET_NAME }}
 
@@ -69,6 +69,10 @@ jobs:
 
           admin:
             apikey: ${{ secrets.ADMIN_API_KEY }}
+
+          dropbox:
+            apikey: ${{ secrets.DROPBOX_API_KEY }}
+            signature-request-endpoint: https://api.hellosign.com/v3/signature_request/send
           EOF
 
       - name: Print config.yaml for Debugging
