@@ -24,7 +24,7 @@ type Config struct {
 type Server struct {
 	Host   string `yaml:"host"`
 	Port   string `yaml:"port"`
-	Secret string `yaml:"string"`
+	Secret string `yaml:"secret"`
 }
 
 type Database struct {

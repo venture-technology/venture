@@ -318,6 +318,7 @@ var SchoollAllowedKeys = map[string]bool{
 var KidAllowedKeys = map[string]bool{
 	"shift":                 true,
 	"attendance_permission": true,
+	"profile_image":         true,
 }
 
 var Shifts = map[string]string{
