@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"fmt"
+
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -21,5 +23,13 @@ func NewDeleteDriverUseCase(
 }
 
 func (dduc *DeleteDriverUseCase) DeleteDriver(cnh string) error {
+	DriverHasContract, err := dduc.repositories.ContractRepository.DriverHasEnableContract(cnh)
+	if err != nil {
+		return err
+	}
+
+	if DriverHasContract {
+		return fmt.Errorf("impossivel deletar motorista possuindo contrata ativo")
+	}
 	return dduc.repositories.DriverRepository.Delete(cnh)
 }

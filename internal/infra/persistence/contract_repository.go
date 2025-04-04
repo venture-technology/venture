@@ -456,3 +456,18 @@ func (cr ContractRepositoryImpl) GetNumberOfEnableContractsByDriver(cnh string) 
 
 	return count, nil
 }
+
+func (cr ContractRepositoryImpl) PartnerHasEnableContract(id string) ([]entity.Contract, error) {
+	var contracts []entity.Contract
+
+	err := cr.Postgres.Client().
+		Joins("JOIN partners ON partners.driver_cnh = contracts.driver_cnh AND partners.school_cnpj = contracts.school_cnpj").
+		Where("partners.id = ? AND status = ?", id, value.ContractCurrently).
+		Find(&contracts).Error
+
+	if err != nil {
+		return []entity.Contract{}, err
+	}
+
+	return contracts, nil
+}

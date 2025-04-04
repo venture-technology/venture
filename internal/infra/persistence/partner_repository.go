@@ -12,7 +12,7 @@ type PartnerRepositoryImpl struct {
 
 func (pr PartnerRepositoryImpl) ArePartner(cnh, cnpj string) (bool, error) {
 	var partner entity.Partner
-	err := pr.Postgres.Client().Where("driver_id = ? AND school_id = ?", cnh, cnpj).First(&partner).Error
+	err := pr.Postgres.Client().Where("driver_cnh = ? AND school_cnpj = ?", cnh, cnpj).First(&partner).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
@@ -21,7 +21,7 @@ func (pr PartnerRepositoryImpl) ArePartner(cnh, cnpj string) (bool, error) {
 
 func (pr PartnerRepositoryImpl) Get(id string) (*entity.Partner, error) {
 	var partner entity.Partner
-	err := pr.Postgres.Client().Where("record = ?", id).First(&partner).Error
+	err := pr.Postgres.Client().Where("id = ?", id).First(&partner).Error
 	if err != nil {
 		return nil, err
 	}
@@ -31,14 +31,14 @@ func (pr PartnerRepositoryImpl) Get(id string) (*entity.Partner, error) {
 func (pr PartnerRepositoryImpl) GetBySchool(cnpj string) ([]entity.Partner, error) {
 	var partners []entity.Partner
 
-	err := pr.Postgres.Client().Where("school_id = ?", cnpj).Find(&partners).Error
+	err := pr.Postgres.Client().Where("school_cnpj = ?", cnpj).Find(&partners).Error
 	if err != nil {
 		return nil, err
 	}
 
 	for i := range partners {
 		var driver entity.Driver
-		err := pr.Postgres.Client().Where("cnh = ?", partners[i].DriverID).First(&driver).Error
+		err := pr.Postgres.Client().Where("cnh = ?", partners[i].DriverCNH).First(&driver).Error
 		if err != nil {
 			continue
 		}
@@ -58,7 +58,7 @@ func (pr PartnerRepositoryImpl) GetByDriver(cnh string) ([]entity.Partner, error
 
 	for i := range partners {
 		var school entity.School
-		err := pr.Postgres.Client().Where("cnpj = ?", partners[i].SchoolID).First(&school).Error
+		err := pr.Postgres.Client().Where("cnpj = ?", partners[i].SchoolCNPJ).First(&school).Error
 		if err != nil {
 			continue
 		}
@@ -75,18 +75,18 @@ func (pr PartnerRepositoryImpl) Delete(id string) error {
 	}
 
 	var partner entity.Partner
-	if err := tx.Where("record = ?", id).First(&partner).Error; err != nil {
+	if err := tx.Where("id = ?", id).First(&partner).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	if err := tx.Where("requester = ? AND guester = ?", partner.SchoolID, partner.DriverID).
+	if err := tx.Where("requester = ? AND guester = ?", partner.SchoolCNPJ, partner.DriverCNH).
 		Delete(&entity.Invite{}).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	if err := tx.Delete(&entity.Partner{}, "record = ?", id).Error; err != nil {
+	if err := tx.Delete(&entity.Partner{}, "id = ?", id).Error; err != nil {
 		tx.Rollback()
 		return err
 	}

@@ -78,8 +78,8 @@ func (ir InviteRepositoryImpl) Accept(id string) error {
 	}
 
 	partner := entity.Partner{
-		SchoolID: invite.SchoolID,
-		DriverID: invite.DriverID,
+		SchoolCNPJ: invite.SchoolID,
+		DriverCNH:  invite.DriverID,
 	}
 
 	if err := tx.Create(&partner).Error; err != nil {

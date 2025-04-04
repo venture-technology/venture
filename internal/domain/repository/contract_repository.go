@@ -19,6 +19,8 @@ type ContractRepository interface {
 	ResponsibleHasEnableContract(cpf string) (bool, error)
 	DriverHasEnableContract(cnh string) (bool, error)
 	SchoolHasEnableContract(cnpj string) (bool, error)
+	PartnerHasEnableContract(id string) ([]entity.Contract, error)
+
 	GetNumberOfEnableContractsByDriver(cnh string) (int64, error)
 	// Check if a contract already exists
 	ContractAlreadyExist(uuid string) (bool, error)
