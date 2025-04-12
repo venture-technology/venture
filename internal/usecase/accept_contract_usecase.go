@@ -3,6 +3,7 @@ package usecase
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/domain/service/agreements"
 	"github.com/venture-technology/venture/internal/entity"
@@ -34,8 +35,14 @@ func (ccuc *AcceptContractUseCase) AcceptContract(asras agreements.ASRASOutput) 
 		return err
 	}
 
+	// Faz o parse do UUID string para uuid.UUID
+	contractUUID, err := uuid.Parse(asras.Contract.UUID)
+	if err != nil {
+		return err
+	}
+
 	if err := ccuc.repositories.TempContractRepository.Update(
-		asras.Contract.UUID,
+		contractUUID,
 		map[string]interface{}{
 			"responsible_signed_at": asras.Signatures[0].SignedAt,
 			"driver_signed_at":      asras.Signatures[1].SignedAt,

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stripe/stripe-go/v79"
@@ -15,6 +16,18 @@ import (
 )
 
 func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
+	makeASRAS := func(uuidStr string) agreements.ASRASOutput {
+		return agreements.ASRASOutput{
+			Contract: entity.Contract{
+				UUID: uuidStr,
+			},
+			Signatures: []agreements.Signature{
+				{SignedAt: 1},
+				{SignedAt: 2},
+			},
+		}
+	}
+
 	t.Run("get contract already exists repository return error", func(t *testing.T) {
 		rr := mocks.NewResponsibleRepository(t)
 		cr := mocks.NewContractRepository(t)
@@ -182,12 +195,15 @@ func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
 		ps := mocks.NewPaymentsService(t)
 		tcr := mocks.NewTempContractRepository(t)
 
+		uuidStr := uuid.New().String()
+		parsedUUID, _ := uuid.Parse(uuidStr)
+
 		cr.On("ContractAlreadyExist", mock.Anything).Return(false, nil)
 		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
 		ps.On("CreateProduct", mock.Anything).Return(&stripe.Product{}, nil)
 		ps.On("CreatePrice", mock.Anything, mock.Anything).Return(&stripe.Price{}, nil)
 		ps.On("CreateSubscription", mock.Anything, mock.Anything).Return(&stripe.Subscription{}, nil)
-		tcr.On("Update", mock.Anything, map[string]interface{}{
+		tcr.On("Update", parsedUUID, map[string]interface{}{
 			"responsible_signed_at": int64(1),
 			"driver_signed_at":      int64(2),
 		}).Return(errors.New("update temp contract error"))
@@ -204,34 +220,28 @@ func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
 			},
 		)
 
-		err := uc.AcceptContract(agreements.ASRASOutput{
-			Signatures: []agreements.Signature{
-				{
-					SignedAt: 1,
-				},
-				{
-					SignedAt: 2,
-				},
-			},
-		})
+		err := uc.AcceptContract(makeASRAS(uuidStr))
 
 		assert.EqualError(t, err, "update temp contract error")
 		assert.Error(t, err)
 	})
 
-	t.Run("accept contact repository return error", func(t *testing.T) {
+	t.Run("accept contract repository return error", func(t *testing.T) {
 		rr := mocks.NewResponsibleRepository(t)
 		cr := mocks.NewContractRepository(t)
 		logger := mocks.NewLogger(t)
 		ps := mocks.NewPaymentsService(t)
 		tcr := mocks.NewTempContractRepository(t)
 
+		uuidStr := uuid.New().String()
+		parsedUUID, _ := uuid.Parse(uuidStr)
+
 		cr.On("ContractAlreadyExist", mock.Anything).Return(false, nil)
 		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
 		ps.On("CreateProduct", mock.Anything).Return(&stripe.Product{}, nil)
 		ps.On("CreatePrice", mock.Anything, mock.Anything).Return(&stripe.Price{}, nil)
 		ps.On("CreateSubscription", mock.Anything, mock.Anything).Return(&stripe.Subscription{}, nil)
-		tcr.On("Update", mock.Anything, map[string]interface{}{
+		tcr.On("Update", parsedUUID, map[string]interface{}{
 			"responsible_signed_at": int64(1),
 			"driver_signed_at":      int64(2),
 		}).Return(nil)
@@ -250,6 +260,9 @@ func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
 		)
 
 		err := uc.AcceptContract(agreements.ASRASOutput{
+			Contract: entity.Contract{
+				UUID: uuidStr,
+			},
 			Signatures: []agreements.Signature{
 				{
 					SignedAt: 1,
@@ -271,12 +284,15 @@ func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
 		ps := mocks.NewPaymentsService(t)
 		tcr := mocks.NewTempContractRepository(t)
 
+		uuidStr := uuid.New().String()
+		parsedUUID, _ := uuid.Parse(uuidStr)
+
 		cr.On("ContractAlreadyExist", mock.Anything).Return(false, nil)
 		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
 		ps.On("CreateProduct", mock.Anything).Return(&stripe.Product{}, nil)
 		ps.On("CreatePrice", mock.Anything, mock.Anything).Return(&stripe.Price{}, nil)
 		ps.On("CreateSubscription", mock.Anything, mock.Anything).Return(&stripe.Subscription{}, nil)
-		tcr.On("Update", mock.Anything, map[string]interface{}{
+		tcr.On("Update", parsedUUID, map[string]interface{}{
 			"responsible_signed_at": int64(1),
 			"driver_signed_at":      int64(2),
 		}).Return(nil)
@@ -295,6 +311,9 @@ func TestAcceptContractUsecase_AcceptContract(t *testing.T) {
 		)
 
 		err := uc.AcceptContract(agreements.ASRASOutput{
+			Contract: entity.Contract{
+				UUID: uuidStr,
+			},
 			Signatures: []agreements.Signature{
 				{
 					SignedAt: 1,
