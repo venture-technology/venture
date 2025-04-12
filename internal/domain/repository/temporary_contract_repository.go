@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/entity"
 )
 
@@ -12,7 +13,7 @@ type TempContractRepository interface {
 	//{responsible, driver e kid}
 	GetByEveryone(contract *entity.TempContract) (bool, error)
 	GetByDriver(cnh *string) ([]entity.TempContract, error)
-	Expire(uuid string) error
-	Cancel(uuid string) error
-	Update(uuid string, attrs map[string]interface{}) error
+	Expire(uuid uuid.UUID) error
+	Cancel(uuid uuid.UUID) error
+	Update(uuid uuid.UUID, attrs map[string]interface{}) error
 }

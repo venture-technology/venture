@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -20,6 +21,6 @@ func NewCancelTempContractUsecase(
 	}
 }
 
-func (ctcuc *CancelTempContractUsecase) CancelTempContract(uuid string) error {
+func (ctcuc *CancelTempContractUsecase) CancelTempContract(uuid uuid.UUID) error {
 	return ctcuc.repositories.TempContractRepository.Cancel(uuid)
 }

@@ -3,6 +3,7 @@ package persistence
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
@@ -21,7 +22,7 @@ func (tcr TempContractRepositoryImpl) Create(tempContract *entity.TempContract) 
 	return nil
 }
 
-func (tcr TempContractRepositoryImpl) Get(uuid string) (*entity.TempContract, error) {
+func (tcr TempContractRepositoryImpl) Get(uuid uuid.UUID) (*entity.TempContract, error) {
 	var tempContract entity.TempContract
 	err := tcr.Postgres.Client().
 		Where("uuid = ?", uuid).
@@ -56,7 +57,7 @@ func (tcr TempContractRepositoryImpl) GetByEveryone(tempContract *entity.TempCon
 	return count > 0, nil
 }
 
-func (tcr TempContractRepositoryImpl) Expire(uuid string) error {
+func (tcr TempContractRepositoryImpl) Expire(uuid uuid.UUID) error {
 	err := tcr.Postgres.Client().
 		Model(&entity.TempContract{}).
 		Where("uuid = ?", uuid).
@@ -69,7 +70,7 @@ func (tcr TempContractRepositoryImpl) Expire(uuid string) error {
 	return nil
 }
 
-func (tcr TempContractRepositoryImpl) Cancel(uuid string) error {
+func (tcr TempContractRepositoryImpl) Cancel(uuid uuid.UUID) error {
 	err := tcr.Postgres.Client().
 		Model(&entity.TempContract{}).
 		Where("uuid = ?", uuid).
@@ -126,7 +127,7 @@ func (tcr TempContractRepositoryImpl) GetByDriver(cnh *string) ([]entity.TempCon
 }
 
 func (tcr TempContractRepositoryImpl) Update(
-	uuid string,
+	uuid uuid.UUID,
 	attrs map[string]interface{},
 ) error {
 	err := tcr.Postgres.Client().

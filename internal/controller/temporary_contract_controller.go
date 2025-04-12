@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/infra"
 	"github.com/venture-technology/venture/internal/usecase"
 )
@@ -50,16 +51,19 @@ func (tc *TemporaryContractController) GetV1DriverTempContracts(c *gin.Context) 
 }
 
 func (tc *TemporaryContractController) PostV1CancelTempContracts(httpContext *gin.Context) {
-	uuid := httpContext.Param("uuid")
+	uuid, err := uuid.Parse(httpContext.Param("uuid"))
+	if err != nil {
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "uuid inválido"})
+		return
+	}
 
 	usecase := usecase.NewCancelTempContractUsecase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 	)
 
-	err := usecase.CancelTempContract(uuid)
-	if err != nil {
-		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao buscar contratos"})
+	if err := usecase.CancelTempContract(uuid); err != nil {
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao cancelar contrato"})
 		return
 	}
 
