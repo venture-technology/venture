@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
@@ -46,6 +47,12 @@ type Seats struct {
 	Night     int64 `gorm:"column:seats_night" json:"night,omitempty"`
 }
 
+type ClaimsDriver struct {
+	Driver Driver `json:"driver"`
+	Role   string `json:"role"`
+	jwt.StandardClaims
+}
+
 func (d *Driver) ValidateCnh() error {
 	status := utils.IsCNH(d.CNH)
 
@@ -58,4 +65,16 @@ func (d *Driver) ValidateCnh() error {
 
 func (d *Driver) HasCar() bool {
 	return d.Car != (Car{})
+}
+
+func (d *Driver) ValidateLogin() error {
+	if d.Email == "" {
+		return fmt.Errorf("email is required")
+	}
+
+	if d.Password == "" {
+		return fmt.Errorf("password is required")
+	}
+
+	return nil
 }

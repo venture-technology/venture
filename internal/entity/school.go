@@ -1,8 +1,10 @@
 package entity
 
 import (
+	"fmt"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
@@ -25,4 +27,22 @@ func (s *School) ValidateCnpj() bool {
 	cnpj := utils.IsCNPJ(s.CNPJ)
 
 	return cnpj
+}
+
+type ClaimsSchool struct {
+	School School `json:"school"`
+	Role   string `json:"role"`
+	jwt.StandardClaims
+}
+
+func (s *School) ValidateLogin() error {
+	if s.Email == "" {
+		return fmt.Errorf("email is required")
+	}
+
+	if s.Password == "" {
+		return fmt.Errorf("password is required")
+	}
+
+	return nil
 }
