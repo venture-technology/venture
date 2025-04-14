@@ -507,6 +507,138 @@
                     }
                 }
             }
+        },
+        "/temporary-contract/driver/{cnh}": {
+            "get": {
+                "description": "Retorna todos os contratos temporários associados ao CNH do motorista",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Temporary Contracts"
+                ],
+                "summary": "Busca contratos temporários de um motorista",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNH do motorista",
+                        "name": "cnh",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/value.GetTempContracts"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/temporary-contract/responsible/{cpf}": {
+            "get": {
+                "description": "Retorna todos os contratos temporários associados ao CPF do responsável",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Temporary Contracts"
+                ],
+                "summary": "Busca contratos temporários de um responsável",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CPF do responsável",
+                        "name": "cpf",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/value.GetTempContracts"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/temporary-contract/{uuid}": {
+            "post": {
+                "description": "Cancela um contrato temporário pelo UUID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Temporary Contracts"
+                ],
+                "summary": "Cancela um contrato temporário",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID do contrato temporário",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -711,6 +843,54 @@
                     "type": "string"
                 },
                 "states": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.GetTempContracts": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "epoch time",
+                    "type": "integer"
+                },
+                "driver_assigned_at": {
+                    "description": "epoch time",
+                    "type": "integer"
+                },
+                "driver_cnh": {
+                    "type": "string"
+                },
+                "expires_at": {
+                    "description": "epoch time",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "kid_rg": {
+                    "type": "string"
+                },
+                "responsible_cpf": {
+                    "type": "string"
+                },
+                "responsibles_assigned_at": {
+                    "description": "epoch time",
+                    "type": "integer"
+                },
+                "school_cnpj": {
+                    "type": "string"
+                },
+                "signature_request_id": {
+                    "type": "string"
+                },
+                "signing_url": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "uuid": {
                     "type": "string"
                 }
             }
