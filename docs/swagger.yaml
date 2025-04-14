@@ -15,6 +15,51 @@ definitions:
     - street
     - zip
     type: object
+  entity.Responsible:
+    properties:
+      address:
+        $ref: '#/definitions/entity.Address'
+      card_token:
+        description: credit card token on create responsible
+        type: string
+      city:
+        type: string
+      cpf:
+        description: sem pontuação
+        example: "44000000000"
+        type: string
+      created_at:
+        type: string
+      customer_id:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      payment_method_id:
+        type: string
+      phone:
+        description: o telefone deve seguir este mesmo formato
+        example: +55 11 123456789
+        type: string
+      profile_image:
+        type: string
+      states:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - address
+    - cpf
+    - email
+    - name
+    - password
+    - phone
+    type: object
   entity.School:
     properties:
       address:
@@ -50,6 +95,31 @@ definitions:
     - password
     - phone
     type: object
+  value.GetResponsible:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      created_at:
+        type: string
+      customer_id:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      payment_method_id:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+      states:
+        type: string
+    type: object
   value.GetSchool:
     properties:
       address:
@@ -79,6 +149,160 @@ info:
   title: Venture API
   version: "0.1"
 paths:
+  /responsible:
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo responsável com os dados fornecidos
+      parameters:
+      - description: Dados do responsável
+        in: body
+        name: responsible
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Responsible'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/value.GetResponsible'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria um novo responsável
+      tags:
+      - Responsibles
+  /responsible/{cpf}:
+    delete:
+      description: Deleta um responsável pelo CPF
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Deleta um responsável
+      tags:
+      - Responsibles
+    get:
+      description: Retorna o responsável buscado pelo seu CPF
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/value.GetResponsible'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca responsável
+      tags:
+      - Responsibles
+    patch:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um responsável pelo CPF
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      - description: Dados a serem atualizados
+        in: body
+        name: data
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualiza um responsável
+      tags:
+      - Responsibles
+  /responsible/login:
+    post:
+      consumes:
+      - application/json
+      description: Realiza o login de um responsável com email e senha
+      parameters:
+      - description: Credenciais do responsável (email e senha)
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Responsible'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login de responsável
+      tags:
+      - Responsibles
   /school:
     post:
       consumes:
