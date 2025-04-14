@@ -55,5 +55,14 @@ func (wh *WebhookController) PostV1WebhookSignatureEvents(httpContext *gin.Conte
 }
 
 func (wh *WebhookController) PostV1WebhookPaymentsEvents(httpContext *gin.Context) {
+	bodyBytes, err := io.ReadAll(httpContext.Request.Body)
+	if err != nil {
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "Erro ao ler o corpo da requisição"})
+		return
+	}
+	httpContext.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+	
+
 	httpContext.JSON(http.StatusOK, gin.H{"message": "Hello API Event Received"})
 }
