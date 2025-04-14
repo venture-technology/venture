@@ -141,6 +141,39 @@ definitions:
       states:
         type: string
     type: object
+  value.GetTempContracts:
+    properties:
+      created_at:
+        description: epoch time
+        type: integer
+      driver_assigned_at:
+        description: epoch time
+        type: integer
+      driver_cnh:
+        type: string
+      expires_at:
+        description: epoch time
+        type: integer
+      id:
+        type: integer
+      kid_rg:
+        type: string
+      responsible_cpf:
+        type: string
+      responsibles_assigned_at:
+        description: epoch time
+        type: integer
+      school_cnpj:
+        type: string
+      signature_request_id:
+        type: string
+      signing_url:
+        type: string
+      status:
+        type: string
+      uuid:
+        type: string
+    type: object
 host: localhost:9999
 info:
   contact: {}
@@ -478,4 +511,91 @@ paths:
       summary: Lista todas as escolas
       tags:
       - Schools
+  /temporary-contract/{uuid}:
+    post:
+      description: Cancela um contrato temporário pelo UUID
+      parameters:
+      - description: UUID do contrato temporário
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cancela um contrato temporário
+      tags:
+      - Temporary Contracts
+  /temporary-contract/driver/{cnh}:
+    get:
+      description: Retorna todos os contratos temporários associados ao CNH do motorista
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.GetTempContracts'
+              type: array
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca contratos temporários de um motorista
+      tags:
+      - Temporary Contracts
+  /temporary-contract/responsible/{cpf}:
+    get:
+      description: Retorna todos os contratos temporários associados ao CPF do responsável
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.GetTempContracts'
+              type: array
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca contratos temporários de um responsável
+      tags:
+      - Temporary Contracts
 swagger: "2.0"

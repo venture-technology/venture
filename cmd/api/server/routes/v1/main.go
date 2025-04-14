@@ -98,9 +98,9 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.GET("/price/:cpf/:cnpj", rm.Middleware(), route.Price.GetV1PriceDriver)
 
 	// temporary contract
-	group.GET("/temp_contracts/responsible/:cpf", rm.Middleware(), route.TemporaryContract.GetV1ResponsibleTempContracts)
-	group.GET("/temp_contracts/driver/:cnh", dm.Middleware(), route.TemporaryContract.GetV1DriverTempContracts)
-	group.POST("/temp_contracts/cancel/:uuid", rm.Middleware(), route.TemporaryContract.PostV1CancelTempContracts)
+	group.GET("/temporary-contract/responsible/:cpf", rm.Middleware(), route.TemporaryContract.GetV1ResponsibleTempContracts)
+	group.GET("/temporary-contract/driver/:cnh", dm.Middleware(), route.TemporaryContract.GetV1DriverTempContracts)
+	group.POST("/temporary-contract/cancel/:uuid", rm.Middleware(), route.TemporaryContract.PostV1CancelTempContracts)
 }
 
 func middlewares(
