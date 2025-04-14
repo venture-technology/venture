@@ -5,11 +5,21 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	v1 "github.com/venture-technology/venture/cmd/api/server/routes/v1"
 	"github.com/venture-technology/venture/config"
+	_ "github.com/venture-technology/venture/docs"
 	"github.com/venture-technology/venture/internal/setup"
 )
 
+// @title Venture API
+// @version 0.1
+// @description Venture Backend Major API
+// @termsOfService http://swagger.io/terms/
+
+// @host localhost:9999
+// @BasePath /api/v1/
 func main() {
 	envs, err := config.Load("../../../config/config.yaml")
 	if err != nil {
@@ -39,6 +49,7 @@ func main() {
 func setupServer(config *config.Config) *gin.Engine {
 	router := gin.Default()
 	router.GET("/status", getStatus)
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	apisV1 := router.Group("/api/v1")
 	apisV1.Use(configHeaders())
