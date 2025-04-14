@@ -21,6 +21,16 @@ func NewResponsibleController() *ResponsibleController {
 	return &ResponsibleController{}
 }
 
+// @Summary Cria um novo responsável
+// @Description Cria um novo responsável com os dados fornecidos
+// @Tags Responsibles
+// @Accept json
+// @Produce json
+// @Param responsible body entity.Responsible true "Dados do responsável"
+// @Success 201 {object} value.GetResponsible
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /responsible [post]
 func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
 	var requestParams entity.Responsible
 	if err := c.BindJSON(&requestParams); err != nil {
@@ -50,6 +60,14 @@ func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
 	c.JSON(http.StatusCreated, value.MapResponsibleEntityToResponse(requestParams))
 }
 
+// @Summary Busca responsável
+// @Description Retorna o responsável buscado pelo seu CPF
+// @Tags Responsibles
+// @Produce json
+// @Param cpf path string true "CPF do responsável"
+// @Success 200 {object} value.GetResponsible
+// @Failure 400 {object} map[string]string
+// @Router /responsible/{cpf} [get]
 func (rh *ResponsibleController) GetV1GetResponsible(c *gin.Context) {
 	cpf := c.Param("cpf")
 
@@ -67,6 +85,16 @@ func (rh *ResponsibleController) GetV1GetResponsible(c *gin.Context) {
 	c.JSON(http.StatusOK, responsible)
 }
 
+// @Summary Atualiza um responsável
+// @Description Atualiza os dados de um responsável pelo CPF
+// @Tags Responsibles
+// @Accept json
+// @Produce json
+// @Param cpf path string true "CPF do responsável"
+// @Param data body map[string]interface{} true "Dados a serem atualizados"
+// @Success 204
+// @Failure 400 {object} map[string]string
+// @Router /responsible/{cpf} [patch]
 func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 	cpf := c.Param("cpf")
 	var data map[string]interface{}
@@ -104,6 +132,14 @@ func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
 
+// @Summary Deleta um responsável
+// @Description Deleta um responsável pelo CPF
+// @Tags Responsibles
+// @Produce json
+// @Param cpf path string true "CPF do responsável"
+// @Success 204
+// @Failure 400 {object} map[string]string
+// @Router /responsible/{cpf} [delete]
 func (rh *ResponsibleController) DeleteV1DeleteResponsbile(c *gin.Context) {
 	cpf := c.Param("cpf")
 
@@ -128,7 +164,6 @@ func (rh *ResponsibleController) DeleteV1DeleteResponsbile(c *gin.Context) {
 		infra.App.Adapters,
 	)
 
-	// buscando customerid do responsible
 	err = usecase.DeleteResponsible(cpf)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "ao tentar buscar a chave do cliente no stripe"))
@@ -139,6 +174,17 @@ func (rh *ResponsibleController) DeleteV1DeleteResponsbile(c *gin.Context) {
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
 
+// @Summary Login de responsável
+// @Description Realiza o login de um responsável com email e senha
+// @Tags Responsibles
+// @Accept json
+// @Produce json
+// @Param credentials body entity.Responsible true "Credenciais do responsável (email e senha)"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /responsible/login [post]
 func (rh *ResponsibleController) PostV1LoginResponsible(httpContext *gin.Context) {
 	var requestParams entity.Responsible
 	if err := httpContext.BindJSON(&requestParams); err != nil {

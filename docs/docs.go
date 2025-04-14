@@ -16,6 +16,239 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/responsible": {
+            "post": {
+                "description": "Cria um novo responsável com os dados fornecidos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Responsibles"
+                ],
+                "summary": "Cria um novo responsável",
+                "parameters": [
+                    {
+                        "description": "Dados do responsável",
+                        "name": "responsible",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Responsible"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/value.GetResponsible"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/responsible/login": {
+            "post": {
+                "description": "Realiza o login de um responsável com email e senha",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Responsibles"
+                ],
+                "summary": "Login de responsável",
+                "parameters": [
+                    {
+                        "description": "Credenciais do responsável (email e senha)",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Responsible"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/responsible/{cpf}": {
+            "get": {
+                "description": "Retorna o responsável buscado pelo seu CPF",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Responsibles"
+                ],
+                "summary": "Busca responsável",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CPF do responsável",
+                        "name": "cpf",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/value.GetResponsible"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deleta um responsável pelo CPF",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Responsibles"
+                ],
+                "summary": "Deleta um responsável",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CPF do responsável",
+                        "name": "cpf",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Atualiza os dados de um responsável pelo CPF",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Responsibles"
+                ],
+                "summary": "Atualiza um responsável",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CPF do responsável",
+                        "name": "cpf",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados a serem atualizados",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/school": {
             "post": {
                 "description": "Cria uma nova escola com os dados fornecidos",
@@ -305,6 +538,69 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.Responsible": {
+            "type": "object",
+            "required": [
+                "address",
+                "cpf",
+                "email",
+                "name",
+                "password",
+                "phone"
+            ],
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/entity.Address"
+                },
+                "card_token": {
+                    "description": "credit card token on create responsible",
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "cpf": {
+                    "description": "sem pontuação",
+                    "type": "string",
+                    "example": "44000000000"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "customer_id": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "payment_method_id": {
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "o telefone deve seguir este mesmo formato",
+                    "type": "string",
+                    "example": "+55 11 123456789"
+                },
+                "profile_image": {
+                    "type": "string"
+                },
+                "states": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.School": {
             "type": "object",
             "required": [
@@ -351,6 +647,44 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.GetResponsible": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "customer_id": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "payment_method_id": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "profile_image": {
+                    "type": "string"
+                },
+                "states": {
                     "type": "string"
                 }
             }
