@@ -24,8 +24,8 @@ func NewTemporaryContractController() *TemporaryContractController {
 // @Success 200 {array} []value.GetTempContracts
 // @Failure 500 {object} map[string]string
 // @Router /temporary-contract/responsible/{cpf} [get]
-func (tc *TemporaryContractController) GetV1ResponsibleTempContracts(c *gin.Context) {
-	cpf := c.Param("cpf")
+func (tc *TemporaryContractController) GetV1ResponsibleTempContracts(httpContext *gin.Context) {
+	cpf := httpContext.Param("cpf")
 
 	usecase := usecase.NewGetTempContractsResponsibleUseCase(
 		&infra.App.Repositories,
@@ -34,11 +34,11 @@ func (tc *TemporaryContractController) GetV1ResponsibleTempContracts(c *gin.Cont
 
 	contracts, err := usecase.GetResponsibleTempContracts(cpf)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao buscar contratos"})
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao buscar contratos"})
 		return
 	}
 
-	c.JSON(http.StatusOK, contracts)
+	httpContext.JSON(http.StatusOK, contracts)
 }
 
 // @Summary Busca contratos temporários de um motorista
@@ -49,8 +49,8 @@ func (tc *TemporaryContractController) GetV1ResponsibleTempContracts(c *gin.Cont
 // @Success 200 {array} []value.GetTempContracts
 // @Failure 500 {object} map[string]string
 // @Router /temporary-contract/driver/{cnh} [get]
-func (tc *TemporaryContractController) GetV1DriverTempContracts(c *gin.Context) {
-	cnh := c.Param("cnh")
+func (tc *TemporaryContractController) GetV1DriverTempContracts(httpContext *gin.Context) {
+	cnh := httpContext.Param("cnh")
 
 	usecase := usecase.NewGetTempContractsDriverUseCase(
 		&infra.App.Repositories,
@@ -59,11 +59,11 @@ func (tc *TemporaryContractController) GetV1DriverTempContracts(c *gin.Context) 
 
 	contracts, err := usecase.GetDriverTempContracts(cnh)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao buscar contratos"})
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao buscar contratos"})
 		return
 	}
 
-	c.JSON(http.StatusOK, contracts)
+	httpContext.JSON(http.StatusOK, contracts)
 }
 
 // @Summary Cancela um contrato temporário

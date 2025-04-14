@@ -31,10 +31,10 @@ func NewResponsibleController() *ResponsibleController {
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /responsible [post]
-func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
+func (rh *ResponsibleController) PostV1CreateResponsible(httpContext *gin.Context) {
 	var requestParams entity.Responsible
-	if err := c.BindJSON(&requestParams); err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+	if err := httpContext.BindJSON(&requestParams); err != nil {
+		httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
@@ -46,18 +46,18 @@ func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
 
 	hash, err := utils.MakeHash(requestParams.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	requestParams.Password = hash
 
 	err = usecase.CreateResponsible(&requestParams)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar criar responsável"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar criar responsável"))
 		return
 	}
 
-	c.JSON(http.StatusCreated, value.MapResponsibleEntityToResponse(requestParams))
+	httpContext.JSON(http.StatusCreated, value.MapResponsibleEntityToResponse(requestParams))
 }
 
 // @Summary Busca responsável
@@ -68,8 +68,8 @@ func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
 // @Success 200 {object} value.GetResponsible
 // @Failure 400 {object} map[string]string
 // @Router /responsible/{cpf} [get]
-func (rh *ResponsibleController) GetV1GetResponsible(c *gin.Context) {
-	cpf := c.Param("cpf")
+func (rh *ResponsibleController) GetV1GetResponsible(httpContext *gin.Context) {
+	cpf := httpContext.Param("cpf")
 
 	usecase := usecase.NewGetResponsibleUseCase(
 		&infra.App.Repositories,
@@ -78,11 +78,11 @@ func (rh *ResponsibleController) GetV1GetResponsible(c *gin.Context) {
 
 	responsible, err := usecase.GetResponsible(cpf)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "responsavel não encontrado"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "responsavel não encontrado"))
 		return
 	}
 
-	c.JSON(http.StatusOK, responsible)
+	httpContext.JSON(http.StatusOK, responsible)
 }
 
 // @Summary Atualiza um responsável
@@ -95,11 +95,11 @@ func (rh *ResponsibleController) GetV1GetResponsible(c *gin.Context) {
 // @Success 204
 // @Failure 400 {object} map[string]string
 // @Router /responsible/{cpf} [patch]
-func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
-	cpf := c.Param("cpf")
+func (rh *ResponsibleController) PatchV1UpdateResponsible(httpContext *gin.Context) {
+	cpf := httpContext.Param("cpf")
 	var data map[string]interface{}
-	if err := c.BindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+	if err := httpContext.BindJSON(&data); err != nil {
+		httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
@@ -107,14 +107,14 @@ func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 		infra.App.Config,
 	)
 
-	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(c)
+	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(httpContext)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
 		return
 	}
 
 	if middlewareResponse.Responsible.CPF != cpf {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
 		return
 	}
 
@@ -125,11 +125,11 @@ func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 
 	err = usecase.UpdateResponsible(cpf, data)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar atualizar as informações do responsável na stripe"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar atualizar as informações do responsável na stripe"))
 		return
 	}
 
-	c.JSON(http.StatusNoContent, http.NoBody)
+	httpContext.JSON(http.StatusNoContent, http.NoBody)
 }
 
 // @Summary Deleta um responsável
@@ -140,21 +140,21 @@ func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 // @Success 204
 // @Failure 400 {object} map[string]string
 // @Router /responsible/{cpf} [delete]
-func (rh *ResponsibleController) DeleteV1DeleteResponsbile(c *gin.Context) {
-	cpf := c.Param("cpf")
+func (rh *ResponsibleController) DeleteV1DeleteResponsbile(httpContext *gin.Context) {
+	cpf := httpContext.Param("cpf")
 
 	middleware := middleware.NewResponsibleMiddleware(
 		infra.App.Config,
 	)
 
-	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(c)
+	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(httpContext)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
 		return
 	}
 
 	if middlewareResponse.Responsible.CPF != cpf {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
 		return
 	}
 
@@ -166,12 +166,12 @@ func (rh *ResponsibleController) DeleteV1DeleteResponsbile(c *gin.Context) {
 
 	err = usecase.DeleteResponsible(cpf)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "ao tentar buscar a chave do cliente no stripe"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "ao tentar buscar a chave do cliente no stripe"))
 		return
 	}
 
-	c.SetCookie("token", "", -1, "/", c.Request.Host, false, true)
-	c.JSON(http.StatusNoContent, http.NoBody)
+	httpContext.SetCookie("token", "", -1, "/", httpContext.Request.Host, false, true)
+	httpContext.JSON(http.StatusNoContent, http.NoBody)
 }
 
 // @Summary Login de responsável

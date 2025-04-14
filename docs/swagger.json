@@ -10,6 +10,264 @@
     "host": "localhost:9999",
     "basePath": "/api/v1/",
     "paths": {
+        "/contract": {
+            "post": {
+                "description": "Cria um novo contrato com os dados fornecidos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Contracts"
+                ],
+                "summary": "Cria um novo contrato",
+                "parameters": [
+                    {
+                        "description": "Dados do contrato",
+                        "name": "contract",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/value.CreateContractRequestParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/agreements.ContractRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/contract/driver/{cnh}": {
+            "get": {
+                "description": "Retorna todos os contratos associados ao CNH do motorista",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Contracts"
+                ],
+                "summary": "Lista contratos de um motorista",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNH do motorista",
+                        "name": "cnh",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/value.DriverListContracts"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/contract/responsible/{cpf}": {
+            "get": {
+                "description": "Retorna todos os contratos associados ao CPF do responsável",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Contracts"
+                ],
+                "summary": "Lista contratos de um responsável",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CPF do responsável",
+                        "name": "cpf",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/value.ResponsibleListContracts"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/contract/school/{cnpj}": {
+            "get": {
+                "description": "Retorna todos os contratos associados ao CNPJ da escola",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Contracts"
+                ],
+                "summary": "Lista contratos de uma escola",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNPJ da escola",
+                        "name": "cnpj",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/value.SchoolListContracts"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/contract/{id}": {
+            "get": {
+                "description": "Retorna um contrato pelo seu UUID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Contracts"
+                ],
+                "summary": "Busca um contrato",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID do contrato",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/value.GetContract"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cancela um contrato pelo UUID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Contracts"
+                ],
+                "summary": "Cancela um contrato",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID do contrato",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "contrato cancelado com sucesso",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/responsible": {
             "post": {
                 "description": "Cria um novo responsável com os dados fornecidos",
@@ -642,6 +900,153 @@
         }
     },
     "definitions": {
+        "agreements.ContractRequest": {
+            "type": "object",
+            "properties": {
+                "cc_email_addresses": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "expires_at": {
+                    "type": "integer"
+                },
+                "field_options": {
+                    "type": "object",
+                    "properties": {
+                        "date_format": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "file_urls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/agreements.Metadata"
+                },
+                "signers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/agreements.Signer"
+                    }
+                },
+                "signing_options": {
+                    "type": "object",
+                    "properties": {
+                        "default_type": {
+                            "type": "string"
+                        },
+                        "draw": {
+                            "type": "boolean"
+                        },
+                        "phone": {
+                            "type": "boolean"
+                        },
+                        "type": {
+                            "type": "boolean"
+                        },
+                        "upload": {
+                            "type": "boolean"
+                        }
+                    }
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "test_mode": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "agreements.Metadata": {
+            "type": "object",
+            "properties": {
+                "custom_id": {
+                    "type": "string"
+                },
+                "keys": {
+                    "type": "object",
+                    "properties": {
+                        "amount_contract": {
+                            "type": "number"
+                        },
+                        "anual_contract_value": {
+                            "type": "number"
+                        },
+                        "date_time": {
+                            "type": "string"
+                        },
+                        "driver_id": {
+                            "type": "string"
+                        },
+                        "driver_name": {
+                            "type": "string"
+                        },
+                        "kid_id": {
+                            "type": "string"
+                        },
+                        "kid_name": {
+                            "type": "string"
+                        },
+                        "responsible_addr": {
+                            "type": "string"
+                        },
+                        "responsible_cpf": {
+                            "type": "string"
+                        },
+                        "responsible_email": {
+                            "type": "string"
+                        },
+                        "responsible_id": {
+                            "type": "string"
+                        },
+                        "responsible_name": {
+                            "type": "string"
+                        },
+                        "responsible_phone": {
+                            "type": "string"
+                        },
+                        "school_addr": {
+                            "type": "string"
+                        },
+                        "school_id": {
+                            "type": "string"
+                        },
+                        "school_name": {
+                            "type": "string"
+                        },
+                        "time": {
+                            "type": "string"
+                        },
+                        "uuid": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "agreements.Signer": {
+            "type": "object",
+            "properties": {
+                "email_address": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.Address": {
             "type": "object",
             "required": [
@@ -660,6 +1065,29 @@
                     "type": "string"
                 },
                 "zip": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.InvoiceInfo": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "amount_cents": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "month": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -777,6 +1205,167 @@
                 }
             }
         },
+        "value.CreateContractRequestParams": {
+            "type": "object",
+            "properties": {
+                "driver_cnh": {
+                    "type": "string"
+                },
+                "kid_rg": {
+                    "type": "string"
+                },
+                "responsible_cpf": {
+                    "type": "string"
+                },
+                "school_cnpj": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.DriverListContracts": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "expire_at": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "kid": {
+                    "$ref": "#/definitions/value.GetKidContract"
+                },
+                "record": {
+                    "type": "string"
+                },
+                "responsible": {
+                    "$ref": "#/definitions/value.GetParentContract"
+                },
+                "school": {
+                    "$ref": "#/definitions/value.GetSchoolContract"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.GetContract": {
+            "type": "object",
+            "properties": {
+                "contract": {
+                    "$ref": "#/definitions/value.GetContractOutput"
+                },
+                "invoices": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/entity.InvoiceInfo"
+                    }
+                }
+            }
+        },
+        "value.GetContractOutput": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "integer"
+                },
+                "driver": {
+                    "$ref": "#/definitions/value.GetDriverContract"
+                },
+                "expired_at": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "kid": {
+                    "$ref": "#/definitions/value.GetKidContract"
+                },
+                "responsible": {
+                    "$ref": "#/definitions/value.GetParentContract"
+                },
+                "school": {
+                    "$ref": "#/definitions/value.GetSchoolContract"
+                },
+                "signing_url": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "subscription_id": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.GetDriverContract": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "profile_image": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.GetKidContract": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "profile_image": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.GetParentContract": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "profile_image": {
+                    "type": "string"
+                }
+            }
+        },
         "value.GetResponsible": {
             "type": "object",
             "properties": {
@@ -847,6 +1436,26 @@
                 }
             }
         },
+        "value.GetSchoolContract": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "profile_image": {
+                    "type": "string"
+                }
+            }
+        },
         "value.GetTempContracts": {
             "type": "object",
             "properties": {
@@ -891,6 +1500,76 @@
                     "type": "string"
                 },
                 "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.ResponsibleListContracts": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "driver": {
+                    "$ref": "#/definitions/value.GetDriverContract"
+                },
+                "expire_at": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "kid_name": {
+                    "type": "string"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "record": {
+                    "type": "string"
+                },
+                "school": {
+                    "$ref": "#/definitions/value.GetSchoolContract"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.SchoolListContracts": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "driver": {
+                    "$ref": "#/definitions/value.GetDriverContract"
+                },
+                "expire_at": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "kid_name": {
+                    "type": "string"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "record": {
+                    "type": "string"
+                },
+                "responsible": {
+                    "$ref": "#/definitions/value.GetParentContract"
+                },
+                "status": {
                     "type": "string"
                 }
             }
