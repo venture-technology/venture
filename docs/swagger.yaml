@@ -1,5 +1,101 @@
 basePath: /api/v1/
 definitions:
+  agreements.ContractRequest:
+    properties:
+      cc_email_addresses:
+        items:
+          type: string
+        type: array
+      expires_at:
+        type: integer
+      field_options:
+        properties:
+          date_format:
+            type: string
+        type: object
+      file_urls:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+      metadata:
+        $ref: '#/definitions/agreements.Metadata'
+      signers:
+        items:
+          $ref: '#/definitions/agreements.Signer'
+        type: array
+      signing_options:
+        properties:
+          default_type:
+            type: string
+          draw:
+            type: boolean
+          phone:
+            type: boolean
+          type:
+            type: boolean
+          upload:
+            type: boolean
+        type: object
+      subject:
+        type: string
+      test_mode:
+        type: boolean
+      title:
+        type: string
+    type: object
+  agreements.Metadata:
+    properties:
+      custom_id:
+        type: string
+      keys:
+        properties:
+          amount_contract:
+            type: number
+          anual_contract_value:
+            type: number
+          date_time:
+            type: string
+          driver_id:
+            type: string
+          driver_name:
+            type: string
+          kid_id:
+            type: string
+          kid_name:
+            type: string
+          responsible_addr:
+            type: string
+          responsible_cpf:
+            type: string
+          responsible_email:
+            type: string
+          responsible_id:
+            type: string
+          responsible_name:
+            type: string
+          responsible_phone:
+            type: string
+          school_addr:
+            type: string
+          school_id:
+            type: string
+          school_name:
+            type: string
+          time:
+            type: string
+          uuid:
+            type: string
+        type: object
+    type: object
+  agreements.Signer:
+    properties:
+      email_address:
+        type: string
+      name:
+        type: string
+    type: object
   entity.Address:
     properties:
       complement:
@@ -14,6 +110,21 @@ definitions:
     - number
     - street
     - zip
+    type: object
+  entity.InvoiceInfo:
+    properties:
+      amount:
+        type: number
+      amount_cents:
+        type: integer
+      date:
+        type: string
+      id:
+        type: string
+      month:
+        type: string
+      status:
+        type: string
     type: object
   entity.Responsible:
     properties:
@@ -95,6 +206,111 @@ definitions:
     - password
     - phone
     type: object
+  value.CreateContractRequestParams:
+    properties:
+      driver_cnh:
+        type: string
+      kid_rg:
+        type: string
+      responsible_cpf:
+        type: string
+      school_cnpj:
+        type: string
+    type: object
+  value.DriverListContracts:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: integer
+      expire_at:
+        type: integer
+      id:
+        type: integer
+      kid:
+        $ref: '#/definitions/value.GetKidContract'
+      record:
+        type: string
+      responsible:
+        $ref: '#/definitions/value.GetParentContract'
+      school:
+        $ref: '#/definitions/value.GetSchoolContract'
+      status:
+        type: string
+    type: object
+  value.GetContract:
+    properties:
+      contract:
+        $ref: '#/definitions/value.GetContractOutput'
+      invoices:
+        additionalProperties:
+          $ref: '#/definitions/entity.InvoiceInfo'
+        type: object
+    type: object
+  value.GetContractOutput:
+    properties:
+      created_at:
+        type: integer
+      driver:
+        $ref: '#/definitions/value.GetDriverContract'
+      expired_at:
+        type: integer
+      id:
+        type: integer
+      kid:
+        $ref: '#/definitions/value.GetKidContract'
+      responsible:
+        $ref: '#/definitions/value.GetParentContract'
+      school:
+        $ref: '#/definitions/value.GetSchoolContract'
+      signing_url:
+        type: string
+      status:
+        type: string
+      subscription_id:
+        type: string
+      uuid:
+        type: string
+    type: object
+  value.GetDriverContract:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+    type: object
+  value.GetKidContract:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      period:
+        type: string
+      profile_image:
+        type: string
+    type: object
+  value.GetParentContract:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+    type: object
   value.GetResponsible:
     properties:
       address:
@@ -141,6 +357,19 @@ definitions:
       states:
         type: string
     type: object
+  value.GetSchoolContract:
+    properties:
+      address:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+    type: object
   value.GetTempContracts:
     properties:
       created_at:
@@ -174,6 +403,52 @@ definitions:
       uuid:
         type: string
     type: object
+  value.ResponsibleListContracts:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: integer
+      driver:
+        $ref: '#/definitions/value.GetDriverContract'
+      expire_at:
+        type: integer
+      id:
+        type: integer
+      kid_name:
+        type: string
+      period:
+        type: string
+      record:
+        type: string
+      school:
+        $ref: '#/definitions/value.GetSchoolContract'
+      status:
+        type: string
+    type: object
+  value.SchoolListContracts:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: integer
+      driver:
+        $ref: '#/definitions/value.GetDriverContract'
+      expire_at:
+        type: integer
+      id:
+        type: integer
+      kid_name:
+        type: string
+      period:
+        type: string
+      record:
+        type: string
+      responsible:
+        $ref: '#/definitions/value.GetParentContract'
+      status:
+        type: string
+    type: object
 host: localhost:9999
 info:
   contact: {}
@@ -182,6 +457,176 @@ info:
   title: Venture API
   version: "0.1"
 paths:
+  /contract:
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo contrato com os dados fornecidos
+      parameters:
+      - description: Dados do contrato
+        in: body
+        name: contract
+        required: true
+        schema:
+          $ref: '#/definitions/value.CreateContractRequestParams'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/agreements.ContractRequest'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria um novo contrato
+      tags:
+      - Contracts
+  /contract/{id}:
+    get:
+      description: Retorna um contrato pelo seu UUID
+      parameters:
+      - description: UUID do contrato
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/value.GetContract'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca um contrato
+      tags:
+      - Contracts
+    post:
+      description: Cancela um contrato pelo UUID
+      parameters:
+      - description: UUID do contrato
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: contrato cancelado com sucesso
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cancela um contrato
+      tags:
+      - Contracts
+  /contract/driver/{cnh}:
+    get:
+      description: Retorna todos os contratos associados ao CNH do motorista
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.DriverListContracts'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista contratos de um motorista
+      tags:
+      - Contracts
+  /contract/responsible/{cpf}:
+    get:
+      description: Retorna todos os contratos associados ao CPF do responsável
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.ResponsibleListContracts'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista contratos de um responsável
+      tags:
+      - Contracts
+  /contract/school/{cnpj}:
+    get:
+      description: Retorna todos os contratos associados ao CNPJ da escola
+      parameters:
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.SchoolListContracts'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista contratos de uma escola
+      tags:
+      - Contracts
   /responsible:
     post:
       consumes:
