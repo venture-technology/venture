@@ -1,5 +1,55 @@
 basePath: /api/v1/
 definitions:
+  entity.Address:
+    properties:
+      complement:
+        type: string
+      number:
+        type: string
+      street:
+        type: string
+      zip:
+        type: string
+    required:
+    - number
+    - street
+    - zip
+    type: object
+  entity.School:
+    properties:
+      address:
+        $ref: '#/definitions/entity.Address'
+      city:
+        type: string
+      cnpj:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        example: +55 11 123456789
+        type: string
+      profile_image:
+        type: string
+      states:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - address
+    - cnpj
+    - email
+    - name
+    - password
+    - phone
+    type: object
   value.GetSchool:
     properties:
       address:
@@ -29,7 +79,63 @@ info:
   title: Venture API
   version: "0.1"
 paths:
+  /school:
+    post:
+      consumes:
+      - application/json
+      description: Cria uma nova escola com os dados fornecidos
+      parameters:
+      - description: Dados da escola
+        in: body
+        name: school
+        required: true
+        schema:
+          $ref: '#/definitions/entity.School'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/value.GetSchool'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria uma nova escola
+      tags:
+      - Schools
   /school/{cnpj}:
+    delete:
+      description: Deleta uma escola pelo CNPJ
+      parameters:
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Deleta uma escola
+      tags:
+      - Schools
     get:
       description: Retorna a escola buscada pelo seu documento principal
       parameters:
@@ -53,5 +159,99 @@ paths:
             type: object
       summary: Busca escola
       tags:
-      - schools
+      - Schools
+    patch:
+      consumes:
+      - application/json
+      description: Atualiza os dados de uma escola pelo CNPJ
+      parameters:
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      - description: Dados a serem atualizados
+        in: body
+        name: data
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualiza uma escola
+      tags:
+      - Schools
+  /school/login:
+    post:
+      consumes:
+      - application/json
+      description: Realiza o login de uma escola com email e senha
+      parameters:
+      - description: Credenciais da escola (email e senha)
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/entity.School'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login de escola
+      tags:
+      - Schools
+  /schools:
+    get:
+      description: Retorna uma lista de todas as escolas cadastradas
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/value.GetSchool'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista todas as escolas
+      tags:
+      - Schools
 swagger: "2.0"

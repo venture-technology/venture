@@ -21,22 +21,32 @@ func NewSchoolController() *SchoolController {
 	return &SchoolController{}
 }
 
-func (sh *SchoolController) PostV1CreateSchool(c *gin.Context) {
+// @Summary Cria uma nova escola
+// @Description Cria uma nova escola com os dados fornecidos
+// @Tags Schools
+// @Accept json
+// @Produce json
+// @Param school body entity.School true "Dados da escola"
+// @Success 201 {object} value.GetSchool
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /school [post]
+func (sh *SchoolController) PostV1CreateSchool(httpContext *gin.Context) {
 	var requestParams entity.School
-	if err := c.BindJSON(&requestParams); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
+	if err := httpContext.BindJSON(&requestParams); err != nil {
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
 	validatecnpj := requestParams.ValidateCnpj()
 	if !validatecnpj {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "cnpj é inválido"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "cnpj é inválido"})
 		return
 	}
 
 	hash, err := utils.MakeHash(requestParams.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	requestParams.Password = hash
@@ -48,23 +58,23 @@ func (sh *SchoolController) PostV1CreateSchool(c *gin.Context) {
 
 	err = usecase.CreateSchool(&requestParams)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao tentar criar escola"})
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao tentar criar escola"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, value.MapSchoolEntityToResponse(requestParams))
+	httpContext.JSON(http.StatusCreated, value.MapSchoolEntityToResponse(requestParams))
 }
 
 // @Summary Busca escola
 // @Description Retorna a escola buscada pelo seu documento principal
-// @Tags schools
+// @Tags Schools
 // @Produce json
 // @Param cnpj path string true "CNPJ da escola"
 // @Success 200 {object} value.GetSchool
 // @Failure 400 {object} map[string]string
 // @Router /school/{cnpj} [get]
-func (sh *SchoolController) GetV1GetSchool(c *gin.Context) {
-	cnpj := c.Param("cnpj")
+func (sh *SchoolController) GetV1GetSchool(httpContext *gin.Context) {
+	cnpj := httpContext.Param("cnpj")
 
 	usecase := usecase.NewGetSchoolUseCase(
 		&infra.App.Repositories,
@@ -73,14 +83,21 @@ func (sh *SchoolController) GetV1GetSchool(c *gin.Context) {
 
 	school, err := usecase.GetSchool(cnpj)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "escola não encontrada"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "escola não encontrada"})
 		return
 	}
 
-	c.JSON(http.StatusOK, school)
+	httpContext.JSON(http.StatusOK, school)
 }
 
-func (sh *SchoolController) GetV1ListSchool(c *gin.Context) {
+// @Summary Lista todas as escolas
+// @Description Retorna uma lista de todas as escolas cadastradas
+// @Tags Schools
+// @Produce json
+// @Success 200 {array} value.GetSchool
+// @Failure 400 {object} map[string]string
+// @Router /schools [get]
+func (sh *SchoolController) GetV1ListSchool(httpContext *gin.Context) {
 	usecase := usecase.NewListSchoolUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
@@ -88,18 +105,28 @@ func (sh *SchoolController) GetV1ListSchool(c *gin.Context) {
 
 	schools, err := usecase.ListSchool()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "nenhuma escola encontrada"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "nenhuma escola encontrada"})
 		return
 	}
 
-	c.JSON(http.StatusOK, schools)
+	httpContext.JSON(http.StatusOK, schools)
 }
 
-func (sh *SchoolController) PatchV1UpdateSchool(c *gin.Context) {
-	cnpj := c.Param("cnpj")
+// @Summary Atualiza uma escola
+// @Description Atualiza os dados de uma escola pelo CNPJ
+// @Tags Schools
+// @Accept json
+// @Produce json
+// @Param cnpj path string true "CNPJ da escola"
+// @Param data body map[string]interface{} true "Dados a serem atualizados"
+// @Success 204
+// @Failure 400 {object} map[string]string
+// @Router /school/{cnpj} [patch]
+func (sh *SchoolController) PatchV1UpdateSchool(httpContext *gin.Context) {
+	cnpj := httpContext.Param("cnpj")
 	var data map[string]interface{}
-	if err := c.BindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
+	if err := httpContext.BindJSON(&data); err != nil {
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
@@ -107,14 +134,14 @@ func (sh *SchoolController) PatchV1UpdateSchool(c *gin.Context) {
 		infra.App.Config,
 	)
 
-	middlewareResponse, err := middleware.GetSchoolFromMiddleware(c)
+	middlewareResponse, err := middleware.GetSchoolFromMiddleware(httpContext)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
 		return
 	}
 
 	if middlewareResponse.School.CNPJ != cnpj {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
 		return
 	}
 
@@ -125,28 +152,36 @@ func (sh *SchoolController) PatchV1UpdateSchool(c *gin.Context) {
 
 	err = usecase.UpdateSchool(cnpj, data)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno de servidor ao atualizar as informações da escola"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"message": "erro interno de servidor ao atualizar as informações da escola"})
 		return
 	}
 
-	c.JSON(http.StatusNoContent, http.NoBody)
+	httpContext.JSON(http.StatusNoContent, http.NoBody)
 }
 
-func (sh *SchoolController) DeleteV1DeleteSchool(c *gin.Context) {
-	cnpj := c.Param("cnpj")
+// @Summary Deleta uma escola
+// @Description Deleta uma escola pelo CNPJ
+// @Tags Schools
+// @Produce json
+// @Param cnpj path string true "CNPJ da escola"
+// @Success 204
+// @Failure 400 {object} map[string]string
+// @Router /school/{cnpj} [delete]
+func (sh *SchoolController) DeleteV1DeleteSchool(httpContext *gin.Context) {
+	cnpj := httpContext.Param("cnpj")
 
 	middleware := middleware.NewSchoolMiddleware(
 		infra.App.Config,
 	)
 
-	middlewareResponse, err := middleware.GetSchoolFromMiddleware(c)
+	middlewareResponse, err := middleware.GetSchoolFromMiddleware(httpContext)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
 		return
 	}
 
 	if middlewareResponse.School.CNPJ != cnpj {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
 		return
 	}
 
@@ -157,14 +192,25 @@ func (sh *SchoolController) DeleteV1DeleteSchool(c *gin.Context) {
 
 	err = usecase.DeleteSchool(cnpj)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar escola"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar escola"})
 		return
 	}
 
-	c.SetCookie("token", "", -1, "/", c.Request.Host, false, true)
-	c.JSON(http.StatusNoContent, http.NoBody)
+	httpContext.SetCookie("token", "", -1, "/", httpContext.Request.Host, false, true)
+	httpContext.JSON(http.StatusNoContent, http.NoBody)
 }
 
+// @Summary Login de escola
+// @Description Realiza o login de uma escola com email e senha
+// @Tags Schools
+// @Accept json
+// @Produce json
+// @Param credentials body entity.School true "Credenciais da escola (email e senha)"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /school/login [post]
 func (sh *SchoolController) PostV1LoginSchool(httpContext *gin.Context) {
 	var requestParams entity.School
 	if err := httpContext.BindJSON(&requestParams); err != nil {

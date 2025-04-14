@@ -10,6 +10,122 @@
     "host": "localhost:9999",
     "basePath": "/api/v1/",
     "paths": {
+        "/school": {
+            "post": {
+                "description": "Cria uma nova escola com os dados fornecidos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Schools"
+                ],
+                "summary": "Cria uma nova escola",
+                "parameters": [
+                    {
+                        "description": "Dados da escola",
+                        "name": "school",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.School"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/value.GetSchool"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/school/login": {
+            "post": {
+                "description": "Realiza o login de uma escola com email e senha",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Schools"
+                ],
+                "summary": "Login de escola",
+                "parameters": [
+                    {
+                        "description": "Credenciais da escola (email e senha)",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.School"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/school/{cnpj}": {
             "get": {
                 "description": "Retorna a escola buscada pelo seu documento principal",
@@ -17,7 +133,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "schools"
+                    "Schools"
                 ],
                 "summary": "Busca escola",
                 "parameters": [
@@ -46,10 +162,193 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "Deleta uma escola pelo CNPJ",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Schools"
+                ],
+                "summary": "Deleta uma escola",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNPJ da escola",
+                        "name": "cnpj",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Atualiza os dados de uma escola pelo CNPJ",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Schools"
+                ],
+                "summary": "Atualiza uma escola",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNPJ da escola",
+                        "name": "cnpj",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados a serem atualizados",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schools": {
+            "get": {
+                "description": "Retorna uma lista de todas as escolas cadastradas",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Schools"
+                ],
+                "summary": "Lista todas as escolas",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/value.GetSchool"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
             }
         }
     },
     "definitions": {
+        "entity.Address": {
+            "type": "object",
+            "required": [
+                "number",
+                "street",
+                "zip"
+            ],
+            "properties": {
+                "complement": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                },
+                "zip": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.School": {
+            "type": "object",
+            "required": [
+                "address",
+                "cnpj",
+                "email",
+                "name",
+                "password",
+                "phone"
+            ],
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/entity.Address"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "cnpj": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "+55 11 123456789"
+                },
+                "profile_image": {
+                    "type": "string"
+                },
+                "states": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "value.GetSchool": {
             "type": "object",
             "properties": {
