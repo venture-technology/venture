@@ -31,8 +31,8 @@ deploy-nginx: send-nginx-config deploy-http-server
 prod-deploy-docker:
 	ssh -t root@$(HOST_REMOTE_SERVER_IP) '\
 		docker pull $(IMAGE_NAME):latest \
-		&& docker stop venture-api || true \
-		&& docker rm venture-api || true \
+		&& (docker stop venture-api || true) \
+		&& (docker rm venture-api || true) \
 		&& docker run -d \
 			--name venture-api \
 			--restart always \
@@ -44,8 +44,8 @@ prod-deploy-docker:
 qa-deploy-docker:
 	ssh -t root@$(HOST_REMOTE_SERVER_IP) '\
 		docker pull $(IMAGE_NAME):latest \
-		&& docker stop venture-api-staging || true \
-		&& docker rm venture-api-staging || true \
+		&& (docker stop venture-api-staging || true) \
+		&& (docker rm venture-api-staging || true) \
 		&& docker run -d \
 			--name venture-api-staging \
 			--restart always \
