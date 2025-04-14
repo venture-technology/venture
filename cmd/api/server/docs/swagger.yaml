@@ -1,0 +1,10 @@
+basePath: /
+host: localhost:9999
+info:
+  contact: {}
+  description: Venture Backend Major API
+  termsOfService: http://swagger.io/terms/
+  title: Venture API
+  version: "0.1"
+paths: {}
+swagger: "2.0"

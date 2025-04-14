@@ -1,0 +1,13 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Venture Backend Major API",
+        "title": "Venture API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {},
+        "version": "0.1"
+    },
+    "host": "localhost:9999",
+    "basePath": "/",
+    "paths": {}
+}

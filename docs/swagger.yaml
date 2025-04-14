@@ -1,0 +1,57 @@
+basePath: /api/v1/
+definitions:
+  value.GetSchool:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+      states:
+        type: string
+    type: object
+host: localhost:9999
+info:
+  contact: {}
+  description: Venture Backend Major API
+  termsOfService: http://swagger.io/terms/
+  title: Venture API
+  version: "0.1"
+paths:
+  /school/{cnpj}:
+    get:
+      description: Retorna a escola buscada pelo seu documento principal
+      parameters:
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/value.GetSchool'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca escola
+      tags:
+      - schools
+swagger: "2.0"

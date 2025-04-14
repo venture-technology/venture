@@ -55,6 +55,14 @@ func (sh *SchoolController) PostV1CreateSchool(c *gin.Context) {
 	c.JSON(http.StatusCreated, value.MapSchoolEntityToResponse(requestParams))
 }
 
+// @Summary Busca escola
+// @Description Retorna a escola buscada pelo seu documento principal
+// @Tags schools
+// @Produce json
+// @Param cnpj path string true "CNPJ da escola"
+// @Success 200 {object} value.GetSchool
+// @Failure 400 {object} map[string]string
+// @Router /school/{cnpj} [get]
 func (sh *SchoolController) GetV1GetSchool(c *gin.Context) {
 	cnpj := c.Param("cnpj")
 
