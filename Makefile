@@ -62,3 +62,6 @@ migratedown:
 
 migrateforce:
 	go run cmd/db/migrate_force/main.go
+
+send-config-json:
+	rsync config/development.json root@$(HOST_REMOTE_SERVER_IP):~/config
