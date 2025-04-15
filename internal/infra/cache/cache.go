@@ -6,23 +6,21 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/venture-technology/venture/config"
+	"github.com/spf13/viper"
 )
 
 const CacheTTL time.Duration = 0
 
 type CacheImpl struct {
 	client *redis.Client
-	config *config.Config
 }
 
-func NewCacheImpl(config config.Config) *CacheImpl {
+func NewCacheImpl() *CacheImpl {
 	return &CacheImpl{
 		client: redis.NewClient(&redis.Options{
-			Addr:     config.Cache.Address,
-			Password: config.Cache.Password,
+			Addr:     viper.GetString("REDIS_ADDRESS"),
+			Password: viper.GetString("REDIS_PASSWORD"),
 		}),
-		config: &config,
 	}
 }
 

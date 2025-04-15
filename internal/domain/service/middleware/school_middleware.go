@@ -6,25 +6,20 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/venture-technology/venture/config"
+	"github.com/spf13/viper"
 	"github.com/venture-technology/venture/internal/entity"
 )
 
 type SchoolMiddleware struct {
-	config config.Config
 }
 
-func NewSchoolMiddleware(
-	config config.Config,
-) *SchoolMiddleware {
-	return &SchoolMiddleware{
-		config: config,
-	}
+func NewSchoolMiddleware() *SchoolMiddleware {
+	return &SchoolMiddleware{}
 }
 
 func (dm *SchoolMiddleware) Middleware() gin.HandlerFunc {
 	return func(httpContext *gin.Context) {
-		secret := []byte(dm.config.Server.Secret)
+		secret := []byte(viper.GetString("JWT_SECRET"))
 
 		cookie, err := httpContext.Cookie("token")
 		if err != nil {
@@ -75,7 +70,7 @@ func (dm *SchoolMiddleware) Middleware() gin.HandlerFunc {
 func (dm *SchoolMiddleware) GetSchoolFromMiddleware(
 	httpContext *gin.Context,
 ) (*entity.ClaimsSchool, error) {
-	secret := []byte(dm.config.Server.Secret)
+	secret := []byte(viper.GetString("JWT_SECRET"))
 
 	cookie, err := httpContext.Cookie("token")
 	if err != nil {

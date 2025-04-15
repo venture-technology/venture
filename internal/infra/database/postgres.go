@@ -6,26 +6,26 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/venture-technology/venture/config"
+	"github.com/spf13/viper"
 )
 
 type GORMImpl struct {
 	c *gorm.DB
 }
 
-func NewPGGORMImpl(config config.Config) (GORMImpl, error) {
+func NewPGGORMImpl() (GORMImpl, error) {
 	var err error
 
 	gormimpl := GORMImpl{}
 
 	DBURL := fmt.Sprintf(
 		"host=%s port=%s user=%s dbname=%s sslmode=%s password=%s",
-		config.Database.Host,
-		config.Database.Port,
-		config.Database.User,
-		config.Database.Name,
+		viper.GetString("DB_HOST"),
+		viper.GetString("DB_PORT"),
+		viper.GetString("DB_USER"),
+		viper.GetString("DB_NAME"),
 		"disable",
-		config.Database.Password,
+		viper.GetString("DB_PASSWORD"),
 	)
 
 	gormimpl.c, err = gorm.Open("postgres", DBURL)

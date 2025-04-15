@@ -10,10 +10,10 @@ import (
 
 type S3Iface interface {
 	// Save a file like png, to more performance
-	Save(path, filename string, file []byte) (string, error)
-	List(path string) ([]string, error)
+	Save(bucket, path, filename string, file []byte) (string, error)
+	List(bucket, path string) ([]string, error)
 	// Save a file like anytype file
-	SaveWithType(path, filaneme string, file []byte, contentType string) (string, error)
+	SaveWithType(bucket, path, filaneme string, file []byte, contentType string) (string, error)
 
 	// types to return
 

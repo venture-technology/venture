@@ -6,25 +6,20 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/venture-technology/venture/config"
+	"github.com/spf13/viper"
 	"github.com/venture-technology/venture/internal/entity"
 )
 
 type DriverMiddleware struct {
-	config config.Config
 }
 
-func NewDriverMiddleware(
-	config config.Config,
-) *DriverMiddleware {
-	return &DriverMiddleware{
-		config: config,
-	}
+func NewDriverMiddleware() *DriverMiddleware {
+	return &DriverMiddleware{}
 }
 
 func (dm *DriverMiddleware) Middleware() gin.HandlerFunc {
 	return func(httpContext *gin.Context) {
-		secret := []byte(dm.config.Server.Secret)
+		secret := []byte(viper.GetString("JWT_SECRET"))
 
 		cookie, err := httpContext.Cookie("token")
 		if err != nil {
@@ -75,7 +70,7 @@ func (dm *DriverMiddleware) Middleware() gin.HandlerFunc {
 func (dm *DriverMiddleware) GetDriverFromMiddleware(
 	httpContext *gin.Context,
 ) (*entity.ClaimsDriver, error) {
-	secret := []byte(dm.config.Server.Secret)
+	secret := []byte(viper.GetString("JWT_SECRET"))
 
 	cookie, err := httpContext.Cookie("token")
 	if err != nil {

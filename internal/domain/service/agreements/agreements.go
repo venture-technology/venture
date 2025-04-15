@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/venture-technology/venture/config"
+	"github.com/spf13/viper"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
@@ -21,26 +21,23 @@ import (
 )
 
 type AgreementService struct {
-	config       config.Config
 	logger       contracts.Logger
 	repositories *persistence.PostgresRepositories
 }
 
 func NewAgreementService(
-	config config.Config,
 	logger contracts.Logger,
 	repositories *persistence.PostgresRepositories,
 ) *AgreementService {
 	return &AgreementService{
-		config:       config,
 		logger:       logger,
 		repositories: repositories,
 	}
 }
 
 func (as *AgreementService) SignatureRequest(contract entity.ContractProperty) (ContractRequest, error) {
-	url := as.config.Dropbox.SignatureRequestEndpoint
-	apiKey := as.config.Dropbox.ApiKey
+	url := viper.GetString("DROPBOX_API_URL")
+	apiKey := viper.GetString("DROPBOX_SECRET_KEY")
 
 	signatureContract := as.MappingContractInfo(contract)
 	payload, err := json.Marshal(signatureContract)
@@ -120,7 +117,7 @@ func (as *AgreementService) MappingContractInfo(contract entity.ContractProperty
 				Name:         contract.ContractParams.Kid.Responsible.Name,
 			},
 		},
-		CCEmailAddresses: []string{as.config.Admin.AdminEmail},
+		CCEmailAddresses: []string{viper.GetString("DROPBOX_CC_EMAIL")},
 		FileUrls:         []string{contract.URL},
 		Metadata: Metadata{
 			CustomID: contract.UUID,

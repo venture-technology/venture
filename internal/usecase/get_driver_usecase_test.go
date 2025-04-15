@@ -55,7 +55,7 @@ func TestGetDriverUsecase_GetDriver(t *testing.T) {
 
 		repository.On("Get", mock.Anything).Return(&driver, nil)
 		images := []string{"image1.jpg", "image2.jpg"}
-		s3iface.On("List", fmt.Sprintf("%s/gallery", cnh)).Return(images, nil)
+		s3iface.On("List", mock.Anything, fmt.Sprintf("%s/gallery", cnh)).Return(images, nil)
 
 		response, err := usecase.GetDriver(cnh)
 

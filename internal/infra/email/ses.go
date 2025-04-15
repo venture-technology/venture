@@ -7,27 +7,29 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"
-	"github.com/venture-technology/venture/config"
+	"github.com/spf13/viper"
 	"github.com/venture-technology/venture/internal/entity"
 )
 
 type SesImpl struct {
-	sess   *session.Session
-	config *config.Config
+	sess *session.Session
 }
 
-func NewSesImpl(config config.Config) *SesImpl {
+func NewSesImpl() *SesImpl {
 	sess, err := session.NewSession(&aws.Config{
-		Region:      aws.String(config.Cloud.Region),
-		Credentials: credentials.NewStaticCredentials(config.Cloud.AccessKey, config.Cloud.SecretKey, config.Cloud.Token),
+		Region: aws.String(viper.GetString("AWS_REGION")),
+		Credentials: credentials.NewStaticCredentials(
+			viper.GetString("AWS_ACCESS_KEY"),
+			viper.GetString("AWS_SECRET_KEY"),
+			viper.GetString("AWS_TOKEN"),
+		),
 	})
 	if err != nil {
 		log.Fatalf("failed to create session at aws: %v", err)
 	}
 
 	return &SesImpl{
-		sess:   sess,
-		config: &config,
+		sess: sess,
 	}
 }
 
@@ -48,7 +50,7 @@ func (sesImpl *SesImpl) SendEmail(email *entity.Email) error {
 				Data: aws.String(email.Subject),
 			},
 		},
-		Source: aws.String(sesImpl.config.Cloud.Source),
+		Source: aws.String(viper.GetString("AWS_SES_EMAIL_FROM")),
 	}
 
 	_, err := svc.SendEmail(emailInput)

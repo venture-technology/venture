@@ -6,25 +6,20 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/venture-technology/venture/config"
+	"github.com/spf13/viper"
 	"github.com/venture-technology/venture/internal/entity"
 )
 
 type ResponsibleMiddleware struct {
-	config config.Config
 }
 
-func NewResponsibleMiddleware(
-	config config.Config,
-) *ResponsibleMiddleware {
-	return &ResponsibleMiddleware{
-		config: config,
-	}
+func NewResponsibleMiddleware() *ResponsibleMiddleware {
+	return &ResponsibleMiddleware{}
 }
 
 func (dm *ResponsibleMiddleware) Middleware() gin.HandlerFunc {
 	return func(httpContext *gin.Context) {
-		secret := []byte(dm.config.Server.Secret)
+		secret := []byte(viper.GetString("JWT_SECRET"))
 
 		cookie, err := httpContext.Cookie("token")
 		if err != nil {
@@ -75,7 +70,7 @@ func (dm *ResponsibleMiddleware) Middleware() gin.HandlerFunc {
 func (dm *ResponsibleMiddleware) GetResponsibleFromMiddleware(
 	httpContext *gin.Context,
 ) (*entity.ClaimsResponsible, error) {
-	secret := []byte(dm.config.Server.Secret)
+	secret := []byte(viper.GetString("JWT_SECRET"))
 
 	cookie, err := httpContext.Cookie("token")
 	if err != nil {
