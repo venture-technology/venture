@@ -53,3 +53,12 @@ qa-deploy-docker:
 			-p 9998:9998 \
 			$(IMAGE_NAME):latest \
 	'
+
+migrateup:
+	go run cmd/db/migrate_up/main.go
+
+migratedown:
+	go run cmd/db/migrate_down/main.go
+
+migrateforce:
+	go run cmd/db/migrate_force/main.go
