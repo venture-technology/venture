@@ -77,9 +77,7 @@ func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
 		return
 	}
 
-	middleware := middleware.NewDriverMiddleware(
-		infra.App.Config,
-	)
+	middleware := middleware.NewDriverMiddleware()
 
 	middlewareResponse, err := middleware.GetDriverFromMiddleware(c)
 	if err != nil {
@@ -109,9 +107,7 @@ func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
 func (dh *DriverController) DeleteV1DeleteDriver(c *gin.Context) {
 	cnh := c.Param("cnh")
 
-	middleware := middleware.NewDriverMiddleware(
-		infra.App.Config,
-	)
+	middleware := middleware.NewDriverMiddleware()
 
 	middlewareResponse, err := middleware.GetDriverFromMiddleware(c)
 	if err != nil {
@@ -156,7 +152,6 @@ func (dh *DriverController) PostV1LoginDriver(httpContext *gin.Context) {
 	usecase := usecase.NewDriverLoginUsecase(
 		&infra.App.Repositories,
 		infra.App.Logger,
-		infra.App.Config,
 	)
 
 	token, err := usecase.LoginDriver(requestParams.Email, requestParams.Password)

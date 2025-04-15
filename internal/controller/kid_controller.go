@@ -21,9 +21,7 @@ func NewKidController() *KidController {
 
 func (ch *KidController) PostV1CreateKid(c *gin.Context) {
 	cpf := c.Param("cpf")
-	middleware := middleware.NewResponsibleMiddleware(
-		infra.App.Config,
-	)
+	middleware := middleware.NewResponsibleMiddleware()
 
 	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(c)
 	if err != nil {
@@ -80,9 +78,7 @@ func (ch *KidController) GetV1GetKid(c *gin.Context) {
 func (ch *KidController) GetV1ListKids(c *gin.Context) {
 	cpf := c.Param("cpf")
 
-	middleware := middleware.NewResponsibleMiddleware(
-		infra.App.Config,
-	)
+	middleware := middleware.NewResponsibleMiddleware()
 
 	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(c)
 	if err != nil {
@@ -112,9 +108,7 @@ func (ch *KidController) GetV1ListKids(c *gin.Context) {
 
 func (ch *KidController) PatchV1UpdateController(c *gin.Context) {
 	cpf := c.Param("cpf")
-	middleware := middleware.NewResponsibleMiddleware(
-		infra.App.Config,
-	)
+	middleware := middleware.NewResponsibleMiddleware()
 
 	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(c)
 	if err != nil {
@@ -150,9 +144,7 @@ func (ch *KidController) PatchV1UpdateController(c *gin.Context) {
 
 func (ch *KidController) DeleteV1DeleteKid(c *gin.Context) {
 	cpf := c.Param("cpf")
-	middleware := middleware.NewResponsibleMiddleware(
-		infra.App.Config,
-	)
+	middleware := middleware.NewResponsibleMiddleware()
 
 	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(c)
 	if err != nil {

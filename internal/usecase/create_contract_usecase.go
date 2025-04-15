@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/google/uuid"
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
@@ -59,8 +60,14 @@ func (ccuc *CreateContractUseCase) CreateContract(
 		return agreements.ContractRequest{}, fmt.Errorf("temp contract already exists")
 	}
 
+	agreementPath, err := getHtmlPath()
+	if err != nil {
+		ccuc.logger.Infof(fmt.Sprintf("error getting html path: %v", err.Error()))
+		return agreements.ContractRequest{}, err
+	}
+
 	htmlFile, err := ccuc.adapters.AgreementService.GetAgreementHtml(
-		"../../../internal/domain/service/agreements/template/agreement.html",
+		agreementPath,
 	)
 	if err != nil {
 		ccuc.logger.Infof(fmt.Sprintf("error getting agreement html file: %v", err.Error()))
@@ -80,6 +87,7 @@ func (ccuc *CreateContractUseCase) CreateContract(
 	}
 
 	contractProperty.URL, err = ccuc.S3.SaveWithType(
+		value.GetBucketContract(),
 		"contracts",
 		contractProperty.UUID,
 		pdfData,
@@ -141,7 +149,7 @@ func (ccuc *CreateContractUseCase) SetContractProperty(
 
 	contractValue := utils.CalculateContract(*distance, driver.Amount)
 	if contractValue == 0 {
-		return entity.ContractProperty{}, err
+		return entity.ContractProperty{}, fmt.Errorf("invalid contract value")
 	}
 
 	return entity.ContractProperty{
@@ -157,4 +165,13 @@ func (ccuc *CreateContractUseCase) SetContractProperty(
 		Time:     realtime.Now(),
 		DateTime: realtime.Now().Format("02/01/2006"),
 	}, nil
+}
+
+func getHtmlPath() (string, error) {
+	root, err := utils.FindGoModRoot()
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(root, value.GetPathHTML()), nil
 }

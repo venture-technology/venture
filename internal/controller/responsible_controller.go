@@ -75,9 +75,7 @@ func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 		return
 	}
 
-	middleware := middleware.NewResponsibleMiddleware(
-		infra.App.Config,
-	)
+	middleware := middleware.NewResponsibleMiddleware()
 
 	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(c)
 	if err != nil {
@@ -107,9 +105,7 @@ func (rh *ResponsibleController) PatchV1UpdateResponsible(c *gin.Context) {
 func (rh *ResponsibleController) DeleteV1DeleteResponsbile(c *gin.Context) {
 	cpf := c.Param("cpf")
 
-	middleware := middleware.NewResponsibleMiddleware(
-		infra.App.Config,
-	)
+	middleware := middleware.NewResponsibleMiddleware()
 
 	middlewareResponse, err := middleware.GetResponsibleFromMiddleware(c)
 	if err != nil {
@@ -156,7 +152,6 @@ func (rh *ResponsibleController) PostV1LoginResponsible(httpContext *gin.Context
 	usecase := usecase.NewResponsibleLoginUsecase(
 		&infra.App.Repositories,
 		infra.App.Logger,
-		infra.App.Config,
 	)
 
 	token, err := usecase.LoginResponsible(requestParams.Email, requestParams.Password)

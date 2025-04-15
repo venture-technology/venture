@@ -8,30 +8,25 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/venture-technology/venture/config"
+	"github.com/spf13/viper"
 	"github.com/venture-technology/venture/internal/entity"
 )
 
 type GoogleAdapter struct {
-	config config.Config
 }
 
-func NewGoogleAdapter(
-	config config.Config,
-) *GoogleAdapter {
-	return &GoogleAdapter{
-		config: config,
-	}
+func NewGoogleAdapter() *GoogleAdapter {
+	return &GoogleAdapter{}
 }
 
 func (ga *GoogleAdapter) GetDistance(origin, destination string) (*float64, error) {
-	endpoint := ga.config.GoogleCloudSecret.EndpointMatrixDistance
+	endpoint := viper.GetString("GOOGLE_MATRIX_DISTANCE_API_URL")
 
 	params := url.Values{
 		"units":        {"metric"},
 		"origins":      {origin},
 		"destinations": {destination},
-		"key":          {ga.config.GoogleCloudSecret.ApiKey},
+		"key":          {viper.GetString("GOOGLE_CLOUD_SECRET_KEY")},
 	}
 
 	url := fmt.Sprintf("%s?%s", endpoint, params.Encode())

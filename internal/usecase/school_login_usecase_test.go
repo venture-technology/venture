@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/mocks"
@@ -29,11 +28,6 @@ func TestSchoolLoginUsecase_LoginSchool(t *testing.T) {
 				SchoolRepository: sr,
 			},
 			logger,
-			config.Config{
-				Server: config.Server{
-					Secret: "teste",
-				},
-			},
 		)
 
 		sr.On("GetByEmail", mock.Anything).Return(&entity.School{}, errors.New("user not found"))
@@ -52,11 +46,6 @@ func TestSchoolLoginUsecase_LoginSchool(t *testing.T) {
 				SchoolRepository: sr,
 			},
 			logger,
-			config.Config{
-				Server: config.Server{
-					Secret: "teste",
-				},
-			},
 		)
 
 		sr.On("GetByEmail", mock.Anything).Return(&entity.School{
@@ -77,11 +66,6 @@ func TestSchoolLoginUsecase_LoginSchool(t *testing.T) {
 				SchoolRepository: sr,
 			},
 			logger,
-			config.Config{
-				Server: config.Server{
-					Secret: "teste",
-				},
-			},
 		)
 
 		sr.On("GetByEmail", mock.Anything).Return(&entity.School{

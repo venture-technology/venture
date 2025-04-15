@@ -55,6 +55,44 @@ func TestCreateContractUsecase_CreateContract(t *testing.T) {
 		assert.Error(t, err)
 	})
 
+	t.Run("repo temp contract get by everyone return error", func(t *testing.T) {
+		tcr := mocks.NewTempContractRepository(t)
+		dr := mocks.NewDriverRepository(t)
+		sc := mocks.NewSchoolRepository(t)
+		kr := mocks.NewKidRepository(t)
+		rr := mocks.NewResponsibleRepository(t)
+		das := mocks.NewAddressService(t)
+		s3 := mocks.NewS3Iface(t)
+		dbs := mocks.NewAgreementService(t)
+		logger := mocks.NewLogger(t)
+		converter := mocks.NewConverters(t)
+
+		tcr.On("GetByEveryone", mock.Anything).Return(true, nil)
+		logger.On("Infof", mock.Anything, mock.Anything).Return(logger)
+
+		uc := NewCreateContractUseCase(
+			&persistence.PostgresRepositories{
+				TempContractRepository: tcr,
+				DriverRepository:       dr,
+				SchoolRepository:       sc,
+				KidRepository:          kr,
+				ResponsibleRepository:  rr,
+			},
+			logger,
+			adapters.Adapters{
+				AddressService:   das,
+				AgreementService: dbs,
+			},
+			s3,
+			converter,
+		)
+
+		_, err := uc.CreateContract(&params)
+
+		assert.EqualError(t, err, "temp contract already exists")
+		assert.Error(t, err)
+	})
+
 	t.Run("get agreement html file return error", func(t *testing.T) {
 		tcr := mocks.NewTempContractRepository(t)
 		dr := mocks.NewDriverRepository(t)
@@ -376,7 +414,7 @@ func TestCreateContractUsecase_CreateContract(t *testing.T) {
 		das.On("GetDistance", mock.Anything, mock.Anything).Return(&value, nil)
 		converter.On("ConvertPDFtoHTML", mock.Anything, mock.Anything).Return([]byte{}, nil)
 		s3.On("PDF").Return("pdf")
-		s3.On("SaveWithType", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return("", errors.New("save s3 error"))
+		s3.On("SaveWithType", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return("", errors.New("save s3 error"))
 
 		uc := NewCreateContractUseCase(
 			&persistence.PostgresRepositories{
@@ -424,7 +462,7 @@ func TestCreateContractUsecase_CreateContract(t *testing.T) {
 		das.On("GetDistance", mock.Anything, mock.Anything).Return(&value, nil)
 		converter.On("ConvertPDFtoHTML", mock.Anything, mock.Anything).Return([]byte{}, nil)
 		s3.On("PDF").Return("pdf")
-		s3.On("SaveWithType", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return("", nil)
+		s3.On("SaveWithType", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return("", nil)
 		dbs.On("SignatureRequest", mock.Anything).Return(agreements.ContractRequest{}, errors.New("signature request error"))
 		logger.On("Infof", mock.Anything, mock.Anything).Return(logger)
 
@@ -474,7 +512,7 @@ func TestCreateContractUsecase_CreateContract(t *testing.T) {
 		das.On("GetDistance", mock.Anything, mock.Anything).Return(&value, nil)
 		converter.On("ConvertPDFtoHTML", mock.Anything, mock.Anything).Return([]byte{}, nil)
 		s3.On("PDF").Return("pdf")
-		s3.On("SaveWithType", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return("", nil)
+		s3.On("SaveWithType", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return("", nil)
 		dbs.On("SignatureRequest", mock.Anything).Return(agreements.ContractRequest{}, nil)
 
 		uc := NewCreateContractUseCase(

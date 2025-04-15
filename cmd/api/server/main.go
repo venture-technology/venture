@@ -5,20 +5,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	v1 "github.com/venture-technology/venture/cmd/api/server/routes/v1"
-	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/setup"
 )
 
 func main() {
-	envs, err := config.Load("../../../config/config.yaml")
-	if err != nil {
-		envs, err = config.Load("config/config.yaml")
-		if err != nil {
-			panic(err)
-		}
-	}
-
 	setup := setup.NewSetup()
 	setup.Logger("venture-server")
 	setup.Cache()
@@ -31,12 +23,12 @@ func main() {
 
 	setup.Finish()
 
-	serverPort := envs.Server.Port
-	server := setupServer(envs)
+	serverPort := viper.GetString("SERVER_PORT")
+	server := setupServer()
 	server.Run(fmt.Sprintf(":%s", serverPort))
 }
 
-func setupServer(config *config.Config) *gin.Engine {
+func setupServer() *gin.Engine {
 	router := gin.Default()
 	router.GET("/status", getStatus)
 
