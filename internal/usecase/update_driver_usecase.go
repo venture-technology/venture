@@ -51,11 +51,11 @@ func (uduc *UpdateDriverUseCase) UpdateDriver(cnh string, attributes map[string]
 }
 
 func (uduc *UpdateDriverUseCase) validateProvincy(driver *entity.Driver, attrs map[string]interface{}) error {
-	_, exists := attrs["states"]
+	_, exists := attrs["state"]
 	if exists {
-		_, ok := attrs["states"].(string)
+		_, ok := attrs["state"].(string)
 		if !ok {
-			return fmt.Errorf("states type error")
+			return fmt.Errorf("state type error")
 		}
 
 		hasContract, err := uduc.repositories.ContractRepository.DriverHasEnableContract(driver.CNH)

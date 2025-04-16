@@ -64,7 +64,7 @@ type GetResponsible struct {
 	PaymentMethodId string    `json:"payment_method_id"`
 	CreatedAt       time.Time `json:"created_at"`
 	City            string    `json:"city"`
-	States          string    `json:"states"`
+	State           string    `json:"state"`
 }
 
 type GetKid struct {
@@ -93,7 +93,7 @@ type GetSchool struct {
 	ProfileImage string    `json:"profile_image"`
 	CreatedAt    time.Time `json:"created_at"`
 	City         string    `json:"city"`
-	States       string    `json:"states"`
+	State        string    `json:"state"`
 }
 
 type ListSchool struct {
@@ -105,7 +105,7 @@ type ListSchool struct {
 	ProfileImage string    `json:"profile_image"`
 	CreatedAt    time.Time `json:"created_at"`
 	City         string    `json:"city"`
-	States       string    `json:"states"`
+	State        string    `json:"state"`
 }
 
 type GetDriver struct {
@@ -121,7 +121,7 @@ type GetDriver struct {
 	Gallery       map[int]string `json:"gallery"`
 	Accessibility bool           `json:"accessibility"`
 	City          string         `json:"city"`
-	States        string         `json:"states"`
+	State         string         `json:"state"`
 	Descriptions  string         `json:"descriptions"`
 	Biography     string         `json:"biography"`
 }
@@ -138,7 +138,7 @@ type ListDriver struct {
 	CreatedAt     time.Time `json:"created_at"`
 	Accessibility bool      `json:"accessibility"`
 	City          string    `json:"city"`
-	States        string    `json:"states"`
+	State         string    `json:"state"`
 }
 
 type ListDriverToCalcPrice struct {
@@ -304,7 +304,7 @@ var ResponsibleAllowedKeys = map[string]bool{
 	"complement":    true,
 	"phone":         true,
 	"city":          true,
-	"states":        true,
+	"state":         true,
 	"profile_image": true,
 }
 
@@ -319,7 +319,7 @@ var DriverAllowedKeys = map[string]bool{
 	"complement":    true,
 	"phone":         true,
 	"city":          true,
-	"states":        true,
+	"state":         true,
 	"pix_key":       true,
 	"amount":        true,
 	"profile_image": true,
@@ -394,7 +394,7 @@ type CreateDriver struct {
 	Seats           entity.Seats `json:"seats,omitempty"`
 	Accessibility   bool         `json:"accessibility"`
 	City            string       `json:"city"`
-	States          string       `json:"states"`
+	State           string       `json:"state"`
 }
 
 type CreateResponse struct {
@@ -408,7 +408,7 @@ type CreateResponse struct {
 	CreatedAt    time.Time `json:"created_at,omitempty"`
 	UpdatedAt    time.Time `json:"updated_at,omitempty"`
 	City         string    `json:"city"`
-	States       string    `json:"states"`
+	State        string    `json:"state"`
 }
 
 type CreateSchool struct {
@@ -422,7 +422,7 @@ type CreateSchool struct {
 	CreatedAt    time.Time `json:"created_at,omitempty"`
 	UpdatedAt    time.Time `json:"updated_at,omitempty"`
 	City         string    `json:"city"`
-	States       string    `json:"states"`
+	State        string    `json:"state"`
 }
 
 func MapSchoolEntityToResponse(school entity.School) CreateSchool {
