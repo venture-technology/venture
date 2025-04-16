@@ -61,9 +61,16 @@ func (cr ContractRepositoryImpl) Accept(contract *entity.Contract) error {
 				"seats_morning":   driver.Seats.Morning - 1,
 				"seats_version":   driver.Seats.Version + 1,
 			}
-			return tx.Model(&entity.Driver{}).
+			result := tx.Model(&entity.Driver{}).
 				Where("cnh = ? AND seats_version = ?", contract.DriverCNH, driver.Seats.Version).
-				UpdateColumns(attributes).Error
+				UpdateColumns(attributes)
+			if result.Error != nil {
+				return result.Error
+			}
+			if result.RowsAffected == 0 {
+				return fmt.Errorf("seats_version mismatch: possible concurrent update")
+			}
+			return nil
 		},
 		value.AfternoonShift: func(driver entity.Driver) error {
 			if driver.Seats.Afternoon <= 0 {
@@ -75,9 +82,16 @@ func (cr ContractRepositoryImpl) Accept(contract *entity.Contract) error {
 				"seats_afternoon": driver.Seats.Afternoon - 1,
 				"seats_version":   driver.Seats.Version + 1,
 			}
-			return tx.Model(&entity.Driver{}).
+			result := tx.Model(&entity.Driver{}).
 				Where("cnh = ? AND seats_version = ?", contract.DriverCNH, driver.Seats.Version).
-				UpdateColumns(attributes).Error
+				UpdateColumns(attributes)
+			if result.Error != nil {
+				return result.Error
+			}
+			if result.RowsAffected == 0 {
+				return fmt.Errorf("seats_version mismatch: possible concurrent update")
+			}
+			return nil
 		},
 		value.NightShift: func(driver entity.Driver) error {
 			if driver.Seats.Night <= 0 {
@@ -89,9 +103,16 @@ func (cr ContractRepositoryImpl) Accept(contract *entity.Contract) error {
 				"seats_night":     driver.Seats.Night - 1,
 				"seats_version":   driver.Seats.Version + 1,
 			}
-			return tx.Model(&entity.Driver{}).
+			result := tx.Model(&entity.Driver{}).
 				Where("cnh = ? AND seats_version = ?", contract.DriverCNH, driver.Seats.Version).
-				UpdateColumns(attributes).Error
+				UpdateColumns(attributes)
+			if result.Error != nil {
+				return result.Error
+			}
+			if result.RowsAffected == 0 {
+				return fmt.Errorf("seats_version mismatch: possible concurrent update")
+			}
+			return nil
 		},
 	}
 
