@@ -8,7 +8,7 @@ type Address struct {
 	Zip          string `json:"zip,omitempty" validate:"required"`
 	Complement   string `json:"complement,omitempty"`
 	City         string `json:"city,omitempty" validate:"required"`
-	State        string `json:"provincy,omitempty" validate:"required"`
+	State        string `json:"state,omitempty" validate:"required"`
 	Neighborhood string `json:"neighborhood,omitempty" validate:"required"`
 }
 
