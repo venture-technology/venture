@@ -146,11 +146,12 @@ CREATE TABLE public.drivers (
     seats_morning integer,
     seats_afternoon integer,
     seats_night integer,
-    states character varying(100) DEFAULT ''::character varying,
-    city character varying(100) DEFAULT ''::character varying,
+    state character varying(100) DEFAULT ''::character varying NOT NULL,
+    city character varying(100) DEFAULT ''::character varying NOT NULL,
     accessibility boolean DEFAULT false,
     biography character varying(1000) DEFAULT ''::character varying,
-    descriptions character varying(550) DEFAULT ''::character varying
+    descriptions character varying(550) DEFAULT ''::character varying,
+    neighborhood character varying(255) DEFAULT ''::character varying NOT NULL
 );
 
 
@@ -353,8 +354,9 @@ CREATE TABLE public.responsibles (
     profile_image text DEFAULT 'null'::text,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    states character varying(100) DEFAULT ''::character varying,
-    city character varying(100) DEFAULT ''::character varying
+    state character varying(100) DEFAULT ''::character varying NOT NULL,
+    city character varying(100) DEFAULT ''::character varying NOT NULL,
+    neighborhood character varying(255) DEFAULT ''::character varying NOT NULL
 );
 
 
@@ -434,8 +436,9 @@ CREATE TABLE public.schools (
     profile_image text DEFAULT 'null'::text,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    states character varying(100) DEFAULT ''::character varying,
-    city character varying(100) DEFAULT ''::character varying
+    state character varying(100) DEFAULT ''::character varying NOT NULL,
+    city character varying(100) DEFAULT ''::character varying NOT NULL,
+    neighborhood character varying(255) DEFAULT ''::character varying NOT NULL
 );
 
 
