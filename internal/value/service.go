@@ -63,8 +63,6 @@ type GetResponsible struct {
 	ProfileImage    string    `json:"profile_image"`
 	PaymentMethodId string    `json:"payment_method_id"`
 	CreatedAt       time.Time `json:"created_at"`
-	City            string    `json:"city"`
-	State           string    `json:"state"`
 }
 
 type GetKid struct {
@@ -92,8 +90,6 @@ type GetSchool struct {
 	Phone        string    `json:"phone"`
 	ProfileImage string    `json:"profile_image"`
 	CreatedAt    time.Time `json:"created_at"`
-	City         string    `json:"city"`
-	State        string    `json:"state"`
 }
 
 type ListSchool struct {
@@ -104,8 +100,6 @@ type ListSchool struct {
 	Phone        string    `json:"phone"`
 	ProfileImage string    `json:"profile_image"`
 	CreatedAt    time.Time `json:"created_at"`
-	City         string    `json:"city"`
-	State        string    `json:"state"`
 }
 
 type GetDriver struct {
@@ -120,8 +114,6 @@ type GetDriver struct {
 	CreatedAt     time.Time      `json:"created_at"`
 	Gallery       map[int]string `json:"gallery"`
 	Accessibility bool           `json:"accessibility"`
-	City          string         `json:"city"`
-	State         string         `json:"state"`
 	Descriptions  string         `json:"descriptions"`
 	Biography     string         `json:"biography"`
 }
@@ -137,8 +129,6 @@ type ListDriver struct {
 	ProfileImage  string    `json:"profile_image"`
 	CreatedAt     time.Time `json:"created_at"`
 	Accessibility bool      `json:"accessibility"`
-	City          string    `json:"city"`
-	State         string    `json:"state"`
 }
 
 type ListDriverToCalcPrice struct {
@@ -393,8 +383,6 @@ type CreateDriver struct {
 	Schedule        string       `json:"schedule,omitempty"`
 	Seats           entity.Seats `json:"seats,omitempty"`
 	Accessibility   bool         `json:"accessibility"`
-	City            string       `json:"city"`
-	State           string       `json:"state"`
 }
 
 type CreateResponse struct {
@@ -407,8 +395,6 @@ type CreateResponse struct {
 	ProfileImage string    `json:"profile_image,omitempty"`
 	CreatedAt    time.Time `json:"created_at,omitempty"`
 	UpdatedAt    time.Time `json:"updated_at,omitempty"`
-	City         string    `json:"city"`
-	State        string    `json:"state"`
 }
 
 type CreateSchool struct {
@@ -421,8 +407,6 @@ type CreateSchool struct {
 	ProfileImage string    `json:"profile_image,omitempty"`
 	CreatedAt    time.Time `json:"created_at,omitempty"`
 	UpdatedAt    time.Time `json:"updated_at,omitempty"`
-	City         string    `json:"city"`
-	State        string    `json:"state"`
 }
 
 func MapSchoolEntityToResponse(school entity.School) CreateSchool {
