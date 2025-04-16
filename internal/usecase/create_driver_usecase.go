@@ -34,6 +34,11 @@ func (cduc *CreateDriverUseCase) CreateDriver(driver *entity.Driver) error {
 		return err
 	}
 
+	err = driver.ValidateCapacity()
+	if err != nil {
+		return err
+	}
+
 	driver, err = fillSeatCapacity(driver)
 	if err != nil {
 		return fmt.Errorf("error filling seat capacity: %w", err)
