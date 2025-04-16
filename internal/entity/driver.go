@@ -37,14 +37,15 @@ type Driver struct {
 type Car struct {
 	Name     string `gorm:"column:car_name" json:"name,omitempty" validate:"required"`
 	Year     string `gorm:"column:car_year" json:"year,omitempty" validate:"required"`
-	Capacity int64  `gorm:"column:car_capacity" json:"capacity,omitempty" validate:"required"`
+	Capacity uint   `gorm:"column:car_capacity" json:"capacity,omitempty" validate:"required"`
 }
 
 type Seats struct {
-	Remaining int64 `gorm:"column:seats_remaining" json:"remaining,omitempty"`
-	Morning   int64 `gorm:"column:seats_morning" json:"morning,omitempty"`
-	Afternoon int64 `gorm:"column:seats_afternoon" json:"afternoon,omitempty"`
-	Night     int64 `gorm:"column:seats_night" json:"night,omitempty"`
+	Remaining uint  `gorm:"column:seats_remaining" json:"remaining,omitempty"`
+	Morning   uint  `gorm:"column:seats_morning" json:"morning,omitempty"`
+	Afternoon uint  `gorm:"column:seats_afternoon" json:"afternoon,omitempty"`
+	Night     uint  `gorm:"column:seats_night" json:"night,omitempty"`
+	Version   int64 `gorm:"column:seats_version" json:"version,omitempty"`
 }
 
 type ClaimsDriver struct {
