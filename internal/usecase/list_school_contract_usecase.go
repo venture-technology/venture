@@ -5,7 +5,6 @@ import (
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type ListSchoolContractUseCase struct {
@@ -58,12 +57,7 @@ func buildSchoolListContracts(contracts *entity.Contract) value.SchoolListContra
 			Email:        contracts.Responsible.Email,
 			Phone:        contracts.Responsible.Phone,
 			ProfileImage: contracts.Responsible.ProfileImage,
-			Address: utils.BuildAddress(
-				contracts.Responsible.Address.Street,
-				contracts.Responsible.Address.Number,
-				contracts.Responsible.Address.Complement,
-				contracts.Responsible.Address.Zip,
-			),
+			Address:      contracts.Responsible.Address.GetFullAddress(),
 		},
 	}
 }

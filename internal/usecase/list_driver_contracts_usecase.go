@@ -5,7 +5,6 @@ import (
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type ListDriverContractsUseCase struct {
@@ -42,27 +41,17 @@ func buildDriverListContracts(contracts *entity.Contract) value.DriverListContra
 		Status: contracts.Status,
 		Amount: contracts.Amount,
 		School: value.GetSchoolContract{
-			ID:   contracts.School.ID,
-			Name: contracts.School.Name,
-			Address: utils.BuildAddress(
-				contracts.School.Address.Street,
-				contracts.School.Address.Number,
-				contracts.School.Address.Complement,
-				contracts.School.Address.Zip,
-			),
+			ID:           contracts.School.ID,
+			Name:         contracts.School.Name,
+			Address:      contracts.School.Address.GetFullAddress(),
 			Phone:        contracts.School.Phone,
 			ProfileImage: contracts.School.ProfileImage,
 		},
 		Responsible: value.GetParentContract{
-			ID:    contracts.Responsible.ID,
-			Name:  contracts.Responsible.Name,
-			Email: contracts.Responsible.Email,
-			Address: utils.BuildAddress(
-				contracts.Responsible.Address.Street,
-				contracts.Responsible.Address.Number,
-				contracts.Responsible.Address.Complement,
-				contracts.Responsible.Address.Zip,
-			),
+			ID:           contracts.Responsible.ID,
+			Name:         contracts.Responsible.Name,
+			Email:        contracts.Responsible.Email,
+			Address:      contracts.Responsible.Address.GetFullAddress(),
 			Phone:        contracts.Responsible.Phone,
 			ProfileImage: contracts.Responsible.ProfileImage,
 		},

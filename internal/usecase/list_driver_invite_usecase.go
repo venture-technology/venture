@@ -7,7 +7,6 @@ import (
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type ListDriverInvitesUseCase struct {
@@ -44,11 +43,6 @@ func buildDriverListInvites(schools entity.School) value.DriverListInvite {
 		Name:         schools.Name,
 		Phone:        schools.Phone,
 		ProfileImage: schools.ProfileImage,
-		Address: utils.BuildAddress(
-			schools.Address.Street,
-			schools.Address.Number,
-			schools.Address.Complement,
-			schools.Address.Zip,
-		),
+		Address:      schools.Address.GetFullAddress(),
 	}
 }

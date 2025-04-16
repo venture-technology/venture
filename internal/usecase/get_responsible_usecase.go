@@ -4,7 +4,6 @@ import (
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type GetResponsibleUseCase struct {
@@ -28,21 +27,14 @@ func (gruc *GetResponsibleUseCase) GetResponsible(cpf string) (value.GetResponsi
 		return value.GetResponsible{}, err
 	}
 	return value.GetResponsible{
-		ID:    responsible.ID,
-		Name:  responsible.Name,
-		Email: responsible.Email,
-		Phone: responsible.Phone,
-		Address: utils.BuildAddress(
-			responsible.Address.Street,
-			responsible.Address.Number,
-			responsible.Address.Complement,
-			responsible.Address.Zip,
-		),
+		ID:              responsible.ID,
+		Name:            responsible.Name,
+		Email:           responsible.Email,
+		Phone:           responsible.Phone,
+		Address:         responsible.Address.GetFullAddress(),
 		CustomerId:      responsible.CustomerId,
 		ProfileImage:    responsible.ProfileImage,
 		PaymentMethodId: responsible.PaymentMethodId,
 		CreatedAt:       responsible.CreatedAt,
-		States:          responsible.States,
-		City:            responsible.City,
 	}, nil
 }
