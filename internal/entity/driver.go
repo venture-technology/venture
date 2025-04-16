@@ -79,3 +79,15 @@ func (d *Driver) ValidateLogin() error {
 
 	return nil
 }
+
+func (d *Driver) ValidateCapacity() error {
+	if d.Car.Capacity < 30 {
+		return fmt.Errorf("capacity must be greater than 30")
+	}
+
+	if d.Car.Capacity > 300 {
+		return fmt.Errorf("capacity must be less than 300")
+	}
+
+	return nil
+}
