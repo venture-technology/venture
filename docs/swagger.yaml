@@ -126,6 +126,39 @@ definitions:
       status:
         type: string
     type: object
+  entity.Kid:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      profile_image:
+        type: string
+      responsible:
+        allOf:
+        - $ref: '#/definitions/entity.Responsible'
+        description: Chave estrangeira corretamente configurada
+      responsible_id:
+        description: responsible_id field exists to not have conflict with the responsible
+          entity
+        type: string
+      rg:
+        example: "559378847"
+        type: string
+      shift:
+        enum:
+        - matutino
+        - vespertino
+        - noturno
+        type: string
+      updated_at:
+        type: string
+    required:
+    - name
+    - rg
+    type: object
   entity.Responsible:
     properties:
       address:
@@ -285,6 +318,23 @@ definitions:
       profile_image:
         type: string
     type: object
+  value.GetKid:
+    properties:
+      address:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      period:
+        type: string
+      profile_image:
+        type: string
+      responsible_name:
+        type: string
+      rg:
+        type: string
+    type: object
   value.GetKidContract:
     properties:
       id:
@@ -401,6 +451,17 @@ definitions:
       status:
         type: string
       uuid:
+        type: string
+    type: object
+  value.ListKid:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      period:
+        type: string
+      profile_image:
         type: string
     type: object
   value.ResponsibleListContracts:
@@ -627,6 +688,166 @@ paths:
       summary: Lista contratos de uma escola
       tags:
       - Contracts
+  /kid/{cpf}:
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo filho vinculado ao CPF do responsável
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      - description: Dados do filho
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Kid'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/value.GetKid'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Criar novo filho
+      tags:
+      - Kids
+  /kid/{cpf}/{rg}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove um filho vinculado ao CPF do responsável
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      - description: RG do filho
+        in: path
+        name: rg
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Deletar filho
+      tags:
+      - Kids
+    patch:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um filho específico
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      - description: RG do filho
+        in: path
+        name: rg
+        required: true
+        type: string
+      - description: Campos para atualizar
+        in: body
+        name: body
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualizar filho
+      tags:
+      - Kids
+  /kid/{rg}:
+    get:
+      consumes:
+      - application/json
+      description: Busca um filho pelo RG
+      parameters:
+      - description: RG do filho
+        in: path
+        name: rg
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/value.GetKid'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Buscar filho
+      tags:
+      - Kids
+  /kids/{cpf}:
+    get:
+      consumes:
+      - application/json
+      description: Lista todos os filhos de um responsável
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.ListKid'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Listar filhos
+      tags:
+      - Kids
   /responsible:
     post:
       consumes:
