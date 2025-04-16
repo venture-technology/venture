@@ -1,0 +1,5 @@
+BEGIN;
+
+ALTER TABLE drivers ADD COLUMN seats_version BIGINT NOT NULL DEFAULT 0;
+
+COMMIT;

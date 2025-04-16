@@ -152,6 +152,7 @@ CREATE TABLE public.drivers (
     biography character varying(1000) DEFAULT ''::character varying,
     descriptions character varying(550) DEFAULT ''::character varying,
     neighborhood character varying(255) DEFAULT ''::character varying NOT NULL
+    seats_version bigint DEFAULT 0 NOT NULL
 );
 
 
