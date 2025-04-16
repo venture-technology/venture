@@ -17,6 +17,9 @@ import (
 func main() {
 	setup.NewSetup()
 
+	version := viper.GetInt("MIGRATE_VERSION")
+	fmt.Println(fmt.Sprintf("Migrating to version %d\n", version))
+
 	DBURL := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		viper.GetString("DB_USER"),
@@ -31,7 +34,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := m.Down(); err != nil {
+	if err := m.Force(version); err != nil {
 		if fmt.Sprintf("%s", err) != "no change" {
 			log.Fatal(err)
 		}

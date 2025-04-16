@@ -31,8 +31,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	version := viper.GetInt("MIGRATE_VERSION")
-	if err := m.Force(version); err != nil {
+	if err := m.Down(); err != nil {
 		if fmt.Sprintf("%s", err) != "no change" {
 			log.Fatal(err)
 		}
