@@ -4,7 +4,6 @@ import (
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type GetSchoolUseCase struct {
@@ -28,19 +27,12 @@ func (gsuc *GetSchoolUseCase) GetSchool(cnpj string) (value.GetSchool, error) {
 		return value.GetSchool{}, err
 	}
 	return value.GetSchool{
-		ID:    school.ID,
-		Name:  school.Name,
-		Email: school.Email,
-		Phone: school.Phone,
-		Address: utils.BuildAddress(
-			school.Address.Street,
-			school.Address.Number,
-			school.Address.Complement,
-			school.Address.Zip,
-		),
+		ID:           school.ID,
+		Name:         school.Name,
+		Email:        school.Email,
+		Phone:        school.Phone,
+		Address:      school.Address.GetFullAddress(),
 		ProfileImage: school.ProfileImage,
 		CreatedAt:    school.CreatedAt,
-		States:       school.States,
-		City:         school.City,
 	}, nil
 }

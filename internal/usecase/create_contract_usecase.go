@@ -130,18 +130,8 @@ func (ccuc *CreateContractUseCase) SetContractProperty(
 	}
 
 	distance, err := ccuc.adapters.AddressService.GetDistance(
-		utils.BuildAddress(
-			responsible.Address.Street,
-			responsible.Address.Number,
-			responsible.Address.Complement,
-			responsible.Address.Zip,
-		),
-		utils.BuildAddress(
-			school.Address.Street,
-			school.Address.Number,
-			school.Address.Complement,
-			school.Address.Zip,
-		),
+		responsible.Address.GetFullAddress(),
+		school.Address.GetFullAddress(),
 	)
 	if err != nil {
 		return entity.ContractProperty{}, err

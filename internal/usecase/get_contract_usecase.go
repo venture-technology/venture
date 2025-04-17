@@ -6,7 +6,6 @@ import (
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type GetContractUseCase struct {
@@ -53,15 +52,10 @@ func (gcuc *GetContractUseCase) GetContract(uuid uuid.UUID) (value.GetContract, 
 				ProfileImage: contract.Driver.ProfileImage,
 			},
 			Responsible: value.GetParentContract{
-				ID:    contract.Responsible.ID,
-				Name:  contract.Responsible.Name,
-				Email: contract.Responsible.Email,
-				Address: utils.BuildAddress(
-					contract.Responsible.Address.Street,
-					contract.Responsible.Address.Number,
-					contract.Responsible.Address.Complement,
-					contract.Responsible.Address.Zip,
-				),
+				ID:           contract.Responsible.ID,
+				Name:         contract.Responsible.Name,
+				Email:        contract.Responsible.Email,
+				Address:      contract.Responsible.Address.GetFullAddress(),
 				Phone:        contract.Responsible.Phone,
 				ProfileImage: contract.Responsible.ProfileImage,
 			},
@@ -72,14 +66,9 @@ func (gcuc *GetContractUseCase) GetContract(uuid uuid.UUID) (value.GetContract, 
 				ProfileImage: contract.Kid.ProfileImage,
 			},
 			School: value.GetSchoolContract{
-				ID:   contract.School.ID,
-				Name: contract.School.Name,
-				Address: utils.BuildAddress(
-					contract.School.Address.Street,
-					contract.School.Address.Number,
-					contract.School.Address.Complement,
-					contract.School.Address.Zip,
-				),
+				ID:           contract.School.ID,
+				Name:         contract.School.Name,
+				Address:      contract.School.Address.GetFullAddress(),
 				Phone:        contract.School.Phone,
 				ProfileImage: contract.School.ProfileImage,
 			},

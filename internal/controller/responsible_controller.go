@@ -10,7 +10,6 @@ import (
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/infra"
 	"github.com/venture-technology/venture/internal/usecase"
-	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
@@ -47,7 +46,7 @@ func (rh *ResponsibleController) PostV1CreateResponsible(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, value.MapResponsibleEntityToResponse(requestParams))
+	c.JSON(http.StatusCreated, http.NoBody)
 }
 
 func (rh *ResponsibleController) GetV1GetResponsible(c *gin.Context) {

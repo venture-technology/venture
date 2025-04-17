@@ -41,7 +41,8 @@ type Contract struct {
 	Amount               float64 `json:"amount" validate:"required"`
 	AnualAmount          float64 `json:"anual_amount"`
 
-	// Relações
+	// Relations
+
 	Driver      Driver      `gorm:"foreignKey:DriverCNH;references:CNH" json:"driver"`
 	School      School      `gorm:"foreignKey:SchoolCNPJ;references:CNPJ" json:"school"`
 	Kid         Kid         `gorm:"foreignKey:KidRG;references:RG" json:"kid"`

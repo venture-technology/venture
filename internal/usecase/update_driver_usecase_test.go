@@ -67,8 +67,8 @@ func TestUpdateDriverUsecase_UpdateDriver(t *testing.T) {
 		driverRepository.On("Get", mock.Anything).Return(&entity.Driver{}, errors.New("get driver error"))
 
 		err := usecase.UpdateDriver("123", map[string]interface{}{
-			"states": "BA",
-			"phone":  "123",
+			"state": "BA",
+			"phone": "123",
 		})
 
 		assert.EqualError(t, err, "get driver error")
@@ -91,8 +91,8 @@ func TestUpdateDriverUsecase_UpdateDriver(t *testing.T) {
 		contractRepository.On("DriverHasEnableContract", mock.Anything).Return(false, errors.New("get driver enable contract error"))
 
 		err := usecase.UpdateDriver("123", map[string]interface{}{
-			"states": "BA",
-			"phone":  "123",
+			"state": "BA",
+			"phone": "123",
 		})
 
 		assert.EqualError(t, err, "get driver enable contract error")
@@ -116,8 +116,8 @@ func TestUpdateDriverUsecase_UpdateDriver(t *testing.T) {
 		contractRepository.On("DriverHasEnableContract", mock.Anything).Return(true, nil)
 
 		err := usecase.UpdateDriver("123", map[string]interface{}{
-			"states": "BA",
-			"phone":  "123",
+			"state": "BA",
+			"phone": "123",
 		})
 
 		assert.EqualError(t, err, "impossible change provincy when has enable contract")
@@ -141,8 +141,8 @@ func TestUpdateDriverUsecase_UpdateDriver(t *testing.T) {
 		driverRepository.On("Update", mock.Anything, mock.Anything).Return(errors.New("update driver error"))
 
 		err := usecase.UpdateDriver("123", map[string]interface{}{
-			"states": "BA",
-			"phone":  "123",
+			"state": "BA",
+			"phone": "123",
 		})
 
 		assert.EqualError(t, err, "update driver error")
@@ -166,8 +166,8 @@ func TestUpdateDriverUsecase_UpdateDriver(t *testing.T) {
 		driverRepository.On("Update", mock.Anything, mock.Anything).Return(nil)
 
 		err := usecase.UpdateDriver("123", map[string]interface{}{
-			"states": "BA",
-			"phone":  "123",
+			"state": "BA",
+			"phone": "123",
 		})
 
 		assert.NoError(t, err)

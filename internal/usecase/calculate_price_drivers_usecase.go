@@ -46,18 +46,8 @@ func (cpuc *CalculatePriceDriversUseCase) CalculatePrice(
 	}
 
 	distance, err := cpuc.adapters.AddressService.GetDistance(
-		utils.BuildAddress(
-			responsible.Address.Street,
-			responsible.Address.Number,
-			responsible.Address.Complement,
-			responsible.Address.Zip,
-		),
-		utils.BuildAddress(
-			school.Address.Street,
-			school.Address.Number,
-			school.Address.Complement,
-			school.Address.Zip,
-		),
+		responsible.Address.GetFullAddress(),
+		school.Address.GetFullAddress(),
 	)
 
 	drivers, err := cpuc.repositories.PartnerRepository.GetBySchool(schoolCNPJ)
