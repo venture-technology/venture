@@ -111,6 +111,78 @@ definitions:
     - street
     - zip
     type: object
+  entity.Car:
+    properties:
+      capacity:
+        type: integer
+      name:
+        type: string
+      year:
+        type: string
+    required:
+    - capacity
+    - name
+    - year
+    type: object
+  entity.Driver:
+    properties:
+      accessibility:
+        type: boolean
+      address:
+        $ref: '#/definitions/entity.Address'
+      amount:
+        type: number
+      biography:
+        type: string
+      car:
+        $ref: '#/definitions/entity.Car'
+      city:
+        type: string
+      cnh:
+        type: string
+      cpf:
+        type: string
+      created_at:
+        type: string
+      descriptions:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      municipal_record:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        example: +55 11 123456789
+        type: string
+      pix_key:
+        type: string
+      profile_image:
+        type: string
+      qrcode:
+        type: string
+      schedule:
+        type: string
+      seats:
+        $ref: '#/definitions/entity.Seats'
+      states:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - address
+    - amount
+    - car
+    - cnh
+    - email
+    - municipal_record
+    - name
+    - phone
+    type: object
   entity.InvoiceInfo:
     properties:
       amount:
@@ -239,6 +311,17 @@ definitions:
     - password
     - phone
     type: object
+  entity.Seats:
+    properties:
+      afternoon:
+        type: integer
+      morning:
+        type: integer
+      night:
+        type: integer
+      remaining:
+        type: integer
+    type: object
   value.CreateContractRequestParams:
     properties:
       driver_cnh:
@@ -303,6 +386,41 @@ definitions:
       subscription_id:
         type: string
       uuid:
+        type: string
+    type: object
+  value.GetDriver:
+    properties:
+      accessibility:
+        type: boolean
+      amount:
+        type: number
+      biography:
+        type: string
+      car:
+        type: string
+      city:
+        type: string
+      created_at:
+        type: string
+      descriptions:
+        type: string
+      email:
+        type: string
+      gallery:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+      qrcode:
+        type: string
+      states:
         type: string
     type: object
   value.GetDriverContract:
@@ -688,6 +806,159 @@ paths:
       summary: Lista contratos de uma escola
       tags:
       - Contracts
+  /driver:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Dados do motorista
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Driver'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/value.GetDriver'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria um novo motorista
+      tags:
+      - Drivers
+  /driver/{cnh}:
+    delete:
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Deleta motorista
+      tags:
+      - Drivers
+    get:
+      description: Retorna os dados de um motorista pelo CNH
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/value.GetDriver'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca motorista
+      tags:
+      - Drivers
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      - description: Campos a serem atualizados
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualiza dados do motorista
+      tags:
+      - Drivers
+  /driver/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Credenciais de login (email e senha)
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Driver'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login de motorista
+      tags:
+      - Drivers
   /kid/{cpf}:
     post:
       consumes:

@@ -274,6 +274,240 @@ const docTemplate = `{
                 }
             }
         },
+        "/driver": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Cria um novo motorista",
+                "parameters": [
+                    {
+                        "description": "Dados do motorista",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Driver"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/value.GetDriver"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/driver/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Login de motorista",
+                "parameters": [
+                    {
+                        "description": "Credenciais de login (email e senha)",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Driver"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/driver/{cnh}": {
+            "get": {
+                "description": "Retorna os dados de um motorista pelo CNH",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Busca motorista",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNH do motorista",
+                        "name": "cnh",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/value.GetDriver"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Deleta motorista",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNH do motorista",
+                        "name": "cnh",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Atualiza dados do motorista",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNH do motorista",
+                        "name": "cnh",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Campos a serem atualizados",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/kid/{cpf}": {
             "post": {
                 "description": "Cria um novo filho vinculado ao CPF do responsável",
@@ -1314,6 +1548,110 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.Car": {
+            "type": "object",
+            "required": [
+                "capacity",
+                "name",
+                "year"
+            ],
+            "properties": {
+                "capacity": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.Driver": {
+            "type": "object",
+            "required": [
+                "address",
+                "amount",
+                "car",
+                "cnh",
+                "email",
+                "municipal_record",
+                "name",
+                "phone"
+            ],
+            "properties": {
+                "accessibility": {
+                    "type": "boolean"
+                },
+                "address": {
+                    "$ref": "#/definitions/entity.Address"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "biography": {
+                    "type": "string"
+                },
+                "car": {
+                    "$ref": "#/definitions/entity.Car"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "cnh": {
+                    "type": "string"
+                },
+                "cpf": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "descriptions": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "municipal_record": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "+55 11 123456789"
+                },
+                "pix_key": {
+                    "type": "string"
+                },
+                "profile_image": {
+                    "type": "string"
+                },
+                "qrcode": {
+                    "type": "string"
+                },
+                "schedule": {
+                    "type": "string"
+                },
+                "seats": {
+                    "$ref": "#/definitions/entity.Seats"
+                },
+                "states": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.InvoiceInfo": {
             "type": "object",
             "properties": {
@@ -1498,6 +1836,23 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.Seats": {
+            "type": "object",
+            "properties": {
+                "afternoon": {
+                    "type": "integer"
+                },
+                "morning": {
+                    "type": "integer"
+                },
+                "night": {
+                    "type": "integer"
+                },
+                "remaining": {
+                    "type": "integer"
+                }
+            }
+        },
         "value.CreateContractRequestParams": {
             "type": "object",
             "properties": {
@@ -1595,6 +1950,59 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.GetDriver": {
+            "type": "object",
+            "properties": {
+                "accessibility": {
+                    "type": "boolean"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "biography": {
+                    "type": "string"
+                },
+                "car": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "descriptions": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "gallery": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "profile_image": {
+                    "type": "string"
+                },
+                "qrcode": {
+                    "type": "string"
+                },
+                "states": {
                     "type": "string"
                 }
             }
