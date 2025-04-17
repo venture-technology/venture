@@ -571,6 +571,27 @@ definitions:
       uuid:
         type: string
     type: object
+  value.ListDriverToCalcPrice:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      price_total:
+        description: this field is used to calculate the total price of the driver
+          getting distance from responsible and school
+        type: number
+      profile_image:
+        type: string
+    type: object
   value.ListKid:
     properties:
       id:
@@ -1119,6 +1140,36 @@ paths:
       summary: Listar filhos
       tags:
       - Kids
+  /price/{cpf}/{cnpj}:
+    get:
+      description: Retorna os preços estimados com base no responsável e na escola
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/value.ListDriverToCalcPrice'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Calcula o preço dos motoristas
+      tags:
+      - Prices
   /responsible:
     post:
       consumes:
