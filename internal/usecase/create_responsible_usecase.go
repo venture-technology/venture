@@ -5,6 +5,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type CreateResponsibleUseCase struct {
@@ -28,6 +29,11 @@ func NewCreateResponsibleUseCase(
 func (cruc *CreateResponsibleUseCase) CreateResponsible(responsible *entity.Responsible) error {
 	var err error
 	responsible.CustomerId, err = cruc.adapters.PaymentsService.CreateCustomer(responsible)
+	if err != nil {
+		return err
+	}
+
+	err = utils.ValidadeZip(responsible.Address.Zip)
 	if err != nil {
 		return err
 	}

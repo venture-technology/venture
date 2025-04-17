@@ -37,6 +37,11 @@ func (uduc *UpdateDriverUseCase) UpdateDriver(cnh string, attributes map[string]
 		return err
 	}
 
+	err = utils.ValidadeZip(attributes["zip"].(string))
+	if err != nil {
+		return err
+	}
+
 	driver, err := uduc.repositories.DriverRepository.Get(cnh)
 	if err != nil {
 		return err

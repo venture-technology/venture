@@ -36,6 +36,11 @@ func (uruc *UpdateResponsibleUseCase) UpdateResponsible(cpf string, attributes m
 		return err
 	}
 
+	err = utils.ValidadeZip(attributes["zip"].(string))
+	if err != nil {
+		return err
+	}
+
 	if utils.KeysExist(attributes, fields) {
 		exists, err := uruc.repositories.ContractRepository.ResponsibleHasEnableContract(cpf)
 		if err != nil {

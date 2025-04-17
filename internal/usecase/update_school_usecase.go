@@ -28,5 +28,10 @@ func (usuc *UpdateSchoolUseCase) UpdateSchool(cnpj string, attributes map[string
 		return err
 	}
 
+	err = utils.ValidadeZip(attributes["zip"].(string))
+	if err != nil {
+		return err
+	}
+
 	return usuc.repositories.SchoolRepository.Update(cnpj, attributes)
 }

@@ -1,6 +1,9 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+)
 
 func BuildAddress(street, number, complement, zip string) string {
 	if complement == "" {
@@ -18,4 +21,15 @@ func BuildAddress(street, number, complement, zip string) string {
 		complement,
 		zip,
 	)
+}
+
+func ValidadeZip(zip string) error {
+	rule := regexp.MustCompile(`^\d{8}$`)
+	status := rule.MatchString(zip)
+
+	if !status {
+		return fmt.Errorf("invalid zip")
+	}
+
+	return nil
 }
