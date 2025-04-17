@@ -19,6 +19,18 @@ func NewKidController() *KidController {
 	return &KidController{}
 }
 
+// PostV1CreateKid godoc
+// @Summary      Criar novo filho
+// @Description  Cria um novo filho vinculado ao CPF do responsável
+// @Tags         Kids
+// @Accept       json
+// @Produce      json
+// @Param        cpf   path      string       true  "CPF do responsável"
+// @Param        body  body      entity.Kid   true  "Dados do filho"
+// @Success 201 {object} value.GetKid
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /kid/{cpf} [post]
 func (ch *KidController) PostV1CreateKid(c *gin.Context) {
 	cpf := c.Param("cpf")
 	middleware := middleware.NewResponsibleMiddleware(
@@ -59,6 +71,16 @@ func (ch *KidController) PostV1CreateKid(c *gin.Context) {
 	c.JSON(http.StatusCreated, http.NoBody)
 }
 
+// GetV1GetKid godoc
+// @Summary      Buscar filho
+// @Description  Busca um filho pelo RG
+// @Tags         Kids
+// @Accept       json
+// @Produce      json
+// @Param        rg   path      string       true  "RG do filho"
+// @Success      200  {object}  value.GetKid
+// @Failure      400  {object}  map[string]interface{}
+// @Router       /kid/{rg} [get]
 func (ch *KidController) GetV1GetKid(c *gin.Context) {
 	rg := c.Param("rg")
 
@@ -77,6 +99,16 @@ func (ch *KidController) GetV1GetKid(c *gin.Context) {
 	c.JSON(http.StatusOK, kid)
 }
 
+// GetV1ListKids godoc
+// @Summary      Listar filhos
+// @Description  Lista todos os filhos de um responsável
+// @Tags         Kids
+// @Accept       json
+// @Produce      json
+// @Param        cpf   path      string       true  "CPF do responsável"
+// @Success 200 {array} []value.ListKid
+// @Failure 400 {object} map[string]string
+// @Router       /kids/{cpf} [get]
 func (ch *KidController) GetV1ListKids(c *gin.Context) {
 	cpf := c.Param("cpf")
 
@@ -110,6 +142,18 @@ func (ch *KidController) GetV1ListKids(c *gin.Context) {
 	c.JSON(http.StatusOK, kids)
 }
 
+// PatchV1UpdateController godoc
+// @Summary      Atualizar filho
+// @Description  Atualiza os dados de um filho específico
+// @Tags         Kids
+// @Accept       json
+// @Produce      json
+// @Param        cpf   path      string                true  "CPF do responsável"
+// @Param        rg    path      string                true  "RG do filho"
+// @Param        body  body      map[string]interface{} true "Campos para atualizar"
+// @Success      204   {object}  nil
+// @Failure      400   {object}  map[string]interface{}
+// @Router       /kid/{cpf}/{rg} [patch]
 func (ch *KidController) PatchV1UpdateController(c *gin.Context) {
 	cpf := c.Param("cpf")
 	middleware := middleware.NewResponsibleMiddleware(
@@ -148,6 +192,17 @@ func (ch *KidController) PatchV1UpdateController(c *gin.Context) {
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
 
+// DeleteV1DeleteKid godoc
+// @Summary      Deletar filho
+// @Description  Remove um filho vinculado ao CPF do responsável
+// @Tags         Kids
+// @Accept       json
+// @Produce      json
+// @Param        cpf   path      string  true  "CPF do responsável"
+// @Param        rg    path      string  true  "RG do filho"
+// @Success      204   {object}  nil
+// @Failure      400   {object}  map[string]interface{}
+// @Router       /kid/{cpf}/{rg} [delete]
 func (ch *KidController) DeleteV1DeleteKid(c *gin.Context) {
 	cpf := c.Param("cpf")
 	middleware := middleware.NewResponsibleMiddleware(

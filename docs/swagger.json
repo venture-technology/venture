@@ -268,6 +268,245 @@
                 }
             }
         },
+        "/kid/{cpf}": {
+            "post": {
+                "description": "Cria um novo filho vinculado ao CPF do responsável",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Kids"
+                ],
+                "summary": "Criar novo filho",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CPF do responsável",
+                        "name": "cpf",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados do filho",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Kid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/value.GetKid"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/kid/{cpf}/{rg}": {
+            "delete": {
+                "description": "Remove um filho vinculado ao CPF do responsável",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Kids"
+                ],
+                "summary": "Deletar filho",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CPF do responsável",
+                        "name": "cpf",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RG do filho",
+                        "name": "rg",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Atualiza os dados de um filho específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Kids"
+                ],
+                "summary": "Atualizar filho",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CPF do responsável",
+                        "name": "cpf",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RG do filho",
+                        "name": "rg",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Campos para atualizar",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/kid/{rg}": {
+            "get": {
+                "description": "Busca um filho pelo RG",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Kids"
+                ],
+                "summary": "Buscar filho",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "RG do filho",
+                        "name": "rg",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/value.GetKid"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/kids/{cpf}": {
+            "get": {
+                "description": "Lista todos os filhos de um responsável",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Kids"
+                ],
+                "summary": "Listar filhos",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CPF do responsável",
+                        "name": "cpf",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/value.ListKid"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/responsible": {
             "post": {
                 "description": "Cria um novo responsável com os dados fornecidos",
@@ -1092,6 +1331,54 @@
                 }
             }
         },
+        "entity.Kid": {
+            "type": "object",
+            "required": [
+                "name",
+                "rg"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "profile_image": {
+                    "type": "string"
+                },
+                "responsible": {
+                    "description": "Chave estrangeira corretamente configurada",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.Responsible"
+                        }
+                    ]
+                },
+                "responsible_id": {
+                    "description": "responsible_id field exists to not have conflict with the responsible entity",
+                    "type": "string"
+                },
+                "rg": {
+                    "type": "string",
+                    "example": "559378847"
+                },
+                "shift": {
+                    "type": "string",
+                    "enum": [
+                        "matutino",
+                        "vespertino",
+                        "noturno"
+                    ]
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.Responsible": {
             "type": "object",
             "required": [
@@ -1326,6 +1613,32 @@
                 }
             }
         },
+        "value.GetKid": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "profile_image": {
+                    "type": "string"
+                },
+                "responsible_name": {
+                    "type": "string"
+                },
+                "rg": {
+                    "type": "string"
+                }
+            }
+        },
         "value.GetKidContract": {
             "type": "object",
             "properties": {
@@ -1500,6 +1813,23 @@
                     "type": "string"
                 },
                 "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.ListKid": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "profile_image": {
                     "type": "string"
                 }
             }
