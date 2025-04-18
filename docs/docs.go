@@ -325,6 +325,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/driver/invites/{cnh}": {
+            "get": {
+                "description": "Retorna todos os convites enviados para o motorista",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Invites"
+                ],
+                "summary": "Lista convites do motorista",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNH do motorista",
+                        "name": "cnh",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/value.DriverListInvite"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/driver/login": {
             "post": {
                 "consumes": [
@@ -495,6 +539,116 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/invite": {
+            "post": {
+                "description": "Cria um convite entre escola e motorista",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Invites"
+                ],
+                "summary": "Envia um convite",
+                "parameters": [
+                    {
+                        "description": "Dados do convite",
+                        "name": "invite",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Invite"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/invite/{id}/accept": {
+            "patch": {
+                "description": "Aceita um convite existente",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Invites"
+                ],
+                "summary": "Aceita convite",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID do convite",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/invite/{id}/decline": {
+            "delete": {
+                "description": "Recusa e deleta um convite existente",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Invites"
+                ],
+                "summary": "Recusa convite",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID do convite",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -1067,6 +1221,50 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/school/invites/{cnpj}": {
+            "get": {
+                "description": "Retorna todos os convites enviados pela escola",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Invites"
+                ],
+                "summary": "Lista convites da escola",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNPJ da escola",
+                        "name": "cnpj",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/value.SchoolListInvite"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -1697,6 +1895,38 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.Invite": {
+            "type": "object",
+            "properties": {
+                "accepted_at": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "driver": {
+                    "$ref": "#/definitions/entity.Driver"
+                },
+                "driver_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "school": {
+                    "$ref": "#/definitions/entity.School"
+                },
+                "school_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.InvoiceInfo": {
             "type": "object",
             "properties": {
@@ -1943,6 +2173,26 @@ const docTemplate = `{
                     "$ref": "#/definitions/value.GetSchoolContract"
                 },
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.DriverListInvite": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "profile_image": {
                     "type": "string"
                 }
             }
@@ -2389,6 +2639,26 @@ const docTemplate = `{
                     "$ref": "#/definitions/value.GetParentContract"
                 },
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.SchoolListInvite": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "profile_image": {
                     "type": "string"
                 }
             }

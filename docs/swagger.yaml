@@ -183,6 +183,27 @@ definitions:
     - name
     - phone
     type: object
+  entity.Invite:
+    properties:
+      accepted_at:
+        type: string
+      created_at:
+        type: string
+      driver:
+        $ref: '#/definitions/entity.Driver'
+      driver_id:
+        type: string
+      id:
+        type: integer
+      school:
+        $ref: '#/definitions/entity.School'
+      school_id:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
   entity.InvoiceInfo:
     properties:
       amount:
@@ -352,6 +373,19 @@ definitions:
       school:
         $ref: '#/definitions/value.GetSchoolContract'
       status:
+        type: string
+    type: object
+  value.DriverListInvite:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
         type: string
     type: object
   value.GetContract:
@@ -649,6 +683,19 @@ definitions:
       status:
         type: string
     type: object
+  value.SchoolListInvite:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+    type: object
 host: localhost:9999
 info:
   contact: {}
@@ -939,6 +986,35 @@ paths:
       summary: Atualiza dados do motorista
       tags:
       - Drivers
+  /driver/invites/{cnh}:
+    get:
+      description: Retorna todos os convites enviados para o motorista
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.DriverListInvite'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista convites do motorista
+      tags:
+      - Invites
   /driver/login:
     post:
       consumes:
@@ -980,6 +1056,78 @@ paths:
       summary: Login de motorista
       tags:
       - Drivers
+  /invite:
+    post:
+      consumes:
+      - application/json
+      description: Cria um convite entre escola e motorista
+      parameters:
+      - description: Dados do convite
+        in: body
+        name: invite
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Invite'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Envia um convite
+      tags:
+      - Invites
+  /invite/{id}/accept:
+    patch:
+      description: Aceita um convite existente
+      parameters:
+      - description: ID do convite
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Aceita convite
+      tags:
+      - Invites
+  /invite/{id}/decline:
+    delete:
+      description: Recusa e deleta um convite existente
+      parameters:
+      - description: ID do convite
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Recusa convite
+      tags:
+      - Invites
   /kid/{cpf}:
     post:
       consumes:
@@ -1436,6 +1584,35 @@ paths:
       summary: Atualiza uma escola
       tags:
       - Schools
+  /school/invites/{cnpj}:
+    get:
+      description: Retorna todos os convites enviados pela escola
+      parameters:
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.SchoolListInvite'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista convites da escola
+      tags:
+      - Invites
   /school/login:
     post:
       consumes:
