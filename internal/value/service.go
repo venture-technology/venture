@@ -3,6 +3,7 @@ package value
 import (
 	"time"
 
+	"github.com/spf13/viper"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/pkg/utils"
 )
@@ -32,6 +33,26 @@ const (
 	InviteAccepted = "accepted"
 	InvitePending  = "pending"
 )
+
+func GetJWTSecret() string {
+	return viper.GetString("JWT_SECRET")
+}
+
+func GetBucketGallery() string {
+	return viper.GetString("AWS_BUCKET_GALLERY")
+}
+
+func GetBucketQRCode() string {
+	return viper.GetString("AWS_BUCKET_QRCODE")
+}
+
+func GetBucketContract() string {
+	return viper.GetString("AWS_BUCKET_CONTRACTS")
+}
+
+func GetPathHTML() string {
+	return "internal/domain/service/agreements/template/agreement.html"
+}
 
 type GetResponsible struct {
 	ID              int       `json:"id"`

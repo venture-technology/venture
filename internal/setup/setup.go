@@ -2,6 +2,7 @@ package setup
 
 import (
 	"log"
+	"os"
 
 	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/domain/service/addresses"
@@ -18,30 +19,29 @@ import (
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
 
+const (
+	ServiceName = "venture"
+)
+
 type Setup struct {
 	app          *infra.Application
 	repositories *persistence.PostgresRepositories
 }
 
 func NewSetup() Setup {
-	Config, err := config.Load("../../../config/config.yaml")
+	err := config.LoadServerEnvironmentVars(ServiceName, os.Getenv(config.ServerEnvironment))
 	if err != nil {
-		Config, err = config.Load("config/config.yaml")
-		if err != nil {
-			log.Fatal(err)
-		}
+		log.Fatal(err)
 	}
 
 	return Setup{
-		app: &infra.Application{
-			Config: *Config,
-		},
+		app:          &infra.Application{},
 		repositories: &persistence.PostgresRepositories{},
 	}
 }
 
 func (s Setup) Postgres() {
-	s.app.Postgres, _ = database.NewPGGORMImpl(s.app.Config)
+	s.app.Postgres, _ = database.NewPGGORMImpl()
 }
 
 func (s Setup) Repositories() {
@@ -59,15 +59,15 @@ func (s Setup) Repositories() {
 //
 // Because, how we used cache like decorator with Repository, Repository cant receive a null instance of cache
 func (s Setup) Cache() {
-	s.app.Cache = cache.NewCacheImpl(s.app.Config)
+	s.app.Cache = cache.NewCacheImpl()
 }
 
 func (s Setup) Bucket() {
-	s.app.Bucket = bucket.NewS3Impl(s.app.Config)
+	s.app.Bucket = bucket.NewS3Impl()
 }
 
 func (s Setup) Email() {
-	s.app.Email = email.NewSesImpl(s.app.Config)
+	s.app.Email = email.NewSesImpl()
 }
 
 func (s Setup) Logger(taskname string) {
@@ -80,11 +80,11 @@ func (s Setup) Finish() {
 
 func (s Setup) Adapters() {
 	s.app.Adapters.AddressService = decorator.AddressDecorator{
-		AddressAdapter: addresses.NewGoogleAdapter(s.app.Config),
+		AddressAdapter: addresses.NewGoogleAdapter(),
 		Cache:          s.app.Cache,
 	}
-	s.app.Adapters.PaymentsService = payments.NewStripeAdapter(s.app.Config)
-	s.app.Adapters.AgreementService = agreements.NewAgreementService(s.app.Config, s.app.Logger, &s.app.Repositories)
+	s.app.Adapters.PaymentsService = payments.NewStripeAdapter()
+	s.app.Adapters.AgreementService = agreements.NewAgreementService(s.app.Logger, &s.app.Repositories)
 }
 
 func (s Setup) Converters() {

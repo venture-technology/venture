@@ -8,6 +8,7 @@ import (
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/value"
+	"github.com/venture-technology/venture/pkg/realtime"
 )
 
 type TempContractRepositoryImpl struct {
@@ -57,17 +58,18 @@ func (tcr TempContractRepositoryImpl) GetByEveryone(tempContract *entity.TempCon
 	return count > 0, nil
 }
 
-func (tcr TempContractRepositoryImpl) Expire(uuid uuid.UUID) error {
+func (tcr TempContractRepositoryImpl) Expire(uuids []uuid.UUID) error {
+	if len(uuids) == 0 {
+		return nil
+	}
+
 	err := tcr.Postgres.Client().
 		Model(&entity.TempContract{}).
-		Where("uuid = ?", uuid).
+		Where("uuid IN (?)", uuids).
 		Update("status", value.TempContractExpired).
 		Error
 
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func (tcr TempContractRepositoryImpl) Cancel(uuid uuid.UUID) error {
@@ -137,4 +139,15 @@ func (tcr TempContractRepositoryImpl) Update(
 		Error
 
 	return err
+}
+
+func (tcr TempContractRepositoryImpl) GetExpiredContracts() ([]entity.TempContract, error) {
+	var tempContracts []entity.TempContract
+
+	now := realtime.Now().Unix()
+
+	if err := tcr.Postgres.Client().Where("expired_at < ? AND status = ?", now, value.TempContractPending).Find(&tempContracts).Error; err != nil {
+		return nil, err
+	}
+	return tempContracts, nil
 }

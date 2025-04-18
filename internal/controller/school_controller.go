@@ -130,9 +130,7 @@ func (sh *SchoolController) PatchV1UpdateSchool(httpContext *gin.Context) {
 		return
 	}
 
-	middleware := middleware.NewSchoolMiddleware(
-		infra.App.Config,
-	)
+	middleware := middleware.NewSchoolMiddleware()
 
 	middlewareResponse, err := middleware.GetSchoolFromMiddleware(httpContext)
 	if err != nil {
@@ -170,9 +168,7 @@ func (sh *SchoolController) PatchV1UpdateSchool(httpContext *gin.Context) {
 func (sh *SchoolController) DeleteV1DeleteSchool(httpContext *gin.Context) {
 	cnpj := httpContext.Param("cnpj")
 
-	middleware := middleware.NewSchoolMiddleware(
-		infra.App.Config,
-	)
+	middleware := middleware.NewSchoolMiddleware()
 
 	middlewareResponse, err := middleware.GetSchoolFromMiddleware(httpContext)
 	if err != nil {
@@ -228,7 +224,6 @@ func (sh *SchoolController) PostV1LoginSchool(httpContext *gin.Context) {
 	usecase := usecase.NewSchoolLoginUsecase(
 		&infra.App.Repositories,
 		infra.App.Logger,
-		infra.App.Config,
 	)
 
 	token, err := usecase.LoginSchool(requestParams.Email, requestParams.Password)

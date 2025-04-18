@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/spf13/viper"
 	"github.com/stripe/stripe-go/v79"
 	"github.com/stripe/stripe-go/v79/customer"
 	"github.com/stripe/stripe-go/v79/invoice"
@@ -13,26 +14,20 @@ import (
 	"github.com/stripe/stripe-go/v79/price"
 	"github.com/stripe/stripe-go/v79/product"
 	"github.com/stripe/stripe-go/v79/subscription"
-	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/entity"
 )
 
 type StripeAdapter struct {
-	config config.Config
 }
 
-func NewStripeAdapter(
-	config config.Config,
-) *StripeAdapter {
-	return &StripeAdapter{
-		config: config,
-	}
+func NewStripeAdapter() *StripeAdapter {
+	return &StripeAdapter{}
 }
 
 func (su *StripeAdapter) CreateProduct(
 	contract *entity.Contract,
 ) (*stripe.Product, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 
 	params := &stripe.ProductParams{
 		Name: stripe.String(fmt.Sprintf("Assinatura %s - %s - %s - %s",
@@ -55,7 +50,7 @@ func (su *StripeAdapter) CreatePrice(
 	stripeProductID string,
 	amount float64,
 ) (*stripe.Price, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 
 	params := &stripe.PriceParams{
 		Currency: stripe.String(string("brl")),
@@ -78,7 +73,7 @@ func (su *StripeAdapter) CreateSubscription(
 	customerID,
 	stripePriceID string,
 ) (*stripe.Subscription, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 
 	params := &stripe.SubscriptionParams{
 		CancelAt: stripe.Int64(time.Now().AddDate(0, 12, 0).Unix()),
@@ -99,7 +94,7 @@ func (su *StripeAdapter) CreateSubscription(
 }
 
 func (su *StripeAdapter) GetSubscription(subscriptionId string) (*stripe.Subscription, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 	subscription, err := subscription.Get(subscriptionId, nil)
 	if err != nil {
 		return nil, err
@@ -108,7 +103,7 @@ func (su *StripeAdapter) GetSubscription(subscriptionId string) (*stripe.Subscri
 }
 
 func (su *StripeAdapter) ListSubscriptions(responsible *entity.Responsible) ([]entity.SubscriptionInfo, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 
 	params := &stripe.SubscriptionListParams{
 		Customer: stripe.String(responsible.CustomerId),
@@ -133,7 +128,7 @@ func (su *StripeAdapter) ListSubscriptions(responsible *entity.Responsible) ([]e
 }
 
 func (su *StripeAdapter) DeleteSubscription(contract *entity.Contract) (*stripe.Subscription, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 	deletedSub, err := subscription.Cancel(contract.StripeSubscriptionID, nil)
 	if err != nil {
 		return nil, err
@@ -142,7 +137,7 @@ func (su *StripeAdapter) DeleteSubscription(contract *entity.Contract) (*stripe.
 }
 
 func (su *StripeAdapter) GetInvoice(invoiceId string) (*stripe.Invoice, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 	inv, err := invoice.Get(invoiceId, nil)
 	if err != nil {
 		return nil, err
@@ -151,7 +146,7 @@ func (su *StripeAdapter) GetInvoice(invoiceId string) (*stripe.Invoice, error) {
 }
 
 func (su *StripeAdapter) ListInvoices(contractId string) (map[string]entity.InvoiceInfo, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 
 	params := &stripe.InvoiceListParams{
 		Subscription: stripe.String(contractId),
@@ -202,7 +197,7 @@ func (su *StripeAdapter) FineResponsible(
 	paymentMethodId string,
 	amountFine int64,
 ) (*stripe.PaymentIntent, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 
 	params := &stripe.PaymentIntentParams{
 		Customer:      stripe.String(customerId),
@@ -224,7 +219,7 @@ func (su *StripeAdapter) FineResponsible(
 func (su *StripeAdapter) CreateCustomer(
 	responsible *entity.Responsible,
 ) (string, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 
 	params := &stripe.CustomerParams{
 		Name:  stripe.String(responsible.Name),
@@ -243,7 +238,7 @@ func (su *StripeAdapter) CreateCustomer(
 func (su *StripeAdapter) CreatePaymentMethod(
 	token string,
 ) (*stripe.PaymentMethod, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 
 	params := &stripe.PaymentMethodParams{
 		Type: stripe.String(string(stripe.PaymentMethodTypeCard)),
@@ -265,7 +260,7 @@ func (su *StripeAdapter) AttachCardToResponsible(
 	customerID,
 	paymentMethodID string,
 ) (*stripe.PaymentMethod, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 
 	params := &stripe.PaymentMethodAttachParams{
 		Customer: &customerID,
@@ -290,7 +285,7 @@ func (su *StripeAdapter) AttachCardToResponsible(
 }
 
 func (su *StripeAdapter) DeleteStripeUser(customerId string) (*stripe.Customer, error) {
-	stripe.Key = su.config.StripeEnv.SecretKey
+	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 
 	c, err := customer.Del(customerId, nil)
 	if err != nil {

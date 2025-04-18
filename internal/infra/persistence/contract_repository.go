@@ -44,34 +44,75 @@ func (cr ContractRepositoryImpl) Accept(contract *entity.Contract) error {
 		return err
 	}
 
-	// update of driver's seats
+	// valida seats > 0
+	if driver.Seats.Remaining <= 0 {
+		return fmt.Errorf("driver %s has no remaining seats", driver.CNH)
+	}
+
+	// update de acordo com o turno
 	createSeats := map[string]func(driver entity.Driver) error{
 		value.MorningShift: func(driver entity.Driver) error {
-			attributes := make(map[string]interface{})
-			attributes["updated_at"] = realtime.Now().UTC()
-			attributes["seats_remaining"] = driver.Seats.Remaining - 1
-			attributes["seats_morning"] = driver.Seats.Morning - 1
-			return tx.Model(&entity.Driver{}).
-				Where("cnh = ?", contract.DriverCNH).
-				UpdateColumns(attributes).Error
+			if driver.Seats.Morning <= 0 {
+				return fmt.Errorf("no morning seats available for driver %s", driver.CNH)
+			}
+			attributes := map[string]interface{}{
+				"updated_at":      realtime.Now().UTC(),
+				"seats_remaining": driver.Seats.Remaining - 1,
+				"seats_morning":   driver.Seats.Morning - 1,
+				"seats_version":   driver.Seats.Version + 1,
+			}
+			result := tx.Model(&entity.Driver{}).
+				Where("cnh = ? AND seats_version = ?", contract.DriverCNH, driver.Seats.Version).
+				UpdateColumns(attributes)
+			if result.Error != nil {
+				return result.Error
+			}
+			if result.RowsAffected == 0 {
+				return fmt.Errorf("seats_version mismatch: possible concurrent update")
+			}
+			return nil
 		},
 		value.AfternoonShift: func(driver entity.Driver) error {
-			attributes := make(map[string]interface{})
-			attributes["updated_at"] = realtime.Now().UTC()
-			attributes["seats_remaining"] = driver.Seats.Remaining - 1
-			attributes["seats_afternoon"] = driver.Seats.Afternoon - 1
-			return tx.Model(&entity.Driver{}).
-				Where("cnh = ?", contract.DriverCNH).
-				UpdateColumns(attributes).Error
+			if driver.Seats.Afternoon <= 0 {
+				return fmt.Errorf("no afternoon seats available for driver %s", driver.CNH)
+			}
+			attributes := map[string]interface{}{
+				"updated_at":      realtime.Now().UTC(),
+				"seats_remaining": driver.Seats.Remaining - 1,
+				"seats_afternoon": driver.Seats.Afternoon - 1,
+				"seats_version":   driver.Seats.Version + 1,
+			}
+			result := tx.Model(&entity.Driver{}).
+				Where("cnh = ? AND seats_version = ?", contract.DriverCNH, driver.Seats.Version).
+				UpdateColumns(attributes)
+			if result.Error != nil {
+				return result.Error
+			}
+			if result.RowsAffected == 0 {
+				return fmt.Errorf("seats_version mismatch: possible concurrent update")
+			}
+			return nil
 		},
 		value.NightShift: func(driver entity.Driver) error {
-			attributes := make(map[string]interface{})
-			attributes["updated_at"] = realtime.Now().UTC()
-			attributes["seats_remaining"] = driver.Seats.Remaining - 1
-			attributes["seats_night"] = driver.Seats.Night - 1
-			return tx.Model(&entity.Driver{}).
-				Where("cnh = ?", contract.DriverCNH).
-				UpdateColumns(attributes).Error
+			if driver.Seats.Night <= 0 {
+				return fmt.Errorf("no night seats available for driver %s", driver.CNH)
+			}
+			attributes := map[string]interface{}{
+				"updated_at":      realtime.Now().UTC(),
+				"seats_remaining": driver.Seats.Remaining - 1,
+				"seats_night":     driver.Seats.Night - 1,
+				"seats_version":   driver.Seats.Version + 1,
+			}
+			result := tx.Model(&entity.Driver{}).
+				Where("cnh = ? AND seats_version = ?", contract.DriverCNH, driver.Seats.Version).
+				UpdateColumns(attributes)
+			if result.Error != nil {
+				return result.Error
+			}
+			if result.RowsAffected == 0 {
+				return fmt.Errorf("seats_version mismatch: possible concurrent update")
+			}
+			return nil
 		},
 	}
 

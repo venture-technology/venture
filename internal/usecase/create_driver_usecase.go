@@ -34,6 +34,11 @@ func (cduc *CreateDriverUseCase) CreateDriver(driver *entity.Driver) error {
 		return err
 	}
 
+	err = driver.ValidateCapacity()
+	if err != nil {
+		return err
+	}
+
 	driver, err = fillSeatCapacity(driver)
 	if err != nil {
 		return fmt.Errorf("error filling seat capacity: %w", err)
@@ -51,7 +56,7 @@ func (cduc *CreateDriverUseCase) CreateDriver(driver *entity.Driver) error {
 		return err
 	}
 
-	url, err := cduc.S3.Save(driver.CNH, "qrcode", qrCode)
+	url, err := cduc.S3.Save(value.GetBucketQRCode(), driver.CNH, "qrcode", qrCode)
 	if err != nil {
 		return err
 	}

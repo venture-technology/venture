@@ -34,7 +34,7 @@ func (gduc *GetDriverUseCase) GetDriver(cnh string) (value.GetDriver, error) {
 
 	gallery := make(map[int]string)
 
-	images, err := gduc.S3.List(fmt.Sprintf("%s/gallery", cnh))
+	images, err := gduc.S3.List(value.GetBucketGallery(), fmt.Sprintf("%s/gallery", cnh))
 	for idx, image := range images {
 		gallery[idx] = image
 	}

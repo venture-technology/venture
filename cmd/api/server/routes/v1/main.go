@@ -2,10 +2,8 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/controller"
 	"github.com/venture-technology/venture/internal/domain/service/middleware"
-	"github.com/venture-technology/venture/internal/infra"
 )
 
 type V1Controllers struct {
@@ -39,7 +37,7 @@ func NewV1Controller() *V1Controllers {
 func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	// middlewares
 	// responsible, driver, school
-	rm, dm, sm := middlewares(infra.App.Config)
+	rm, dm, sm := middlewares()
 
 	// responsible
 	group.POST("/responsible", route.Responsible.PostV1CreateResponsible)
@@ -103,14 +101,12 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.POST("/temporary-contract/cancel/:uuid", rm.Middleware(), route.TemporaryContract.PostV1CancelTempContracts)
 }
 
-func middlewares(
-	config config.Config,
-) (
+func middlewares() (
 	*middleware.ResponsibleMiddleware,
 	*middleware.DriverMiddleware,
 	*middleware.SchoolMiddleware,
 ) {
-	return middleware.NewResponsibleMiddleware(config),
-		middleware.NewDriverMiddleware(config),
-		middleware.NewSchoolMiddleware(config)
+	return middleware.NewResponsibleMiddleware(),
+		middleware.NewDriverMiddleware(),
+		middleware.NewSchoolMiddleware()
 }

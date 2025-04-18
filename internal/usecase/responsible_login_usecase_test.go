@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/venture-technology/venture/config"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/mocks"
@@ -29,11 +28,6 @@ func TestResponsibleLoginUsecase_LoginResponsible(t *testing.T) {
 				ResponsibleRepository: rr,
 			},
 			logger,
-			config.Config{
-				Server: config.Server{
-					Secret: "teste",
-				},
-			},
 		)
 
 		rr.On("GetByEmail", mock.Anything).Return(&entity.Responsible{}, errors.New("user not found"))
@@ -52,11 +46,6 @@ func TestResponsibleLoginUsecase_LoginResponsible(t *testing.T) {
 				ResponsibleRepository: rr,
 			},
 			logger,
-			config.Config{
-				Server: config.Server{
-					Secret: "teste",
-				},
-			},
 		)
 
 		rr.On("GetByEmail", mock.Anything).Return(&entity.Responsible{
@@ -77,11 +66,6 @@ func TestResponsibleLoginUsecase_LoginResponsible(t *testing.T) {
 				ResponsibleRepository: rr,
 			},
 			logger,
-			config.Config{
-				Server: config.Server{
-					Secret: "teste",
-				},
-			},
 		)
 
 		rr.On("GetByEmail", mock.Anything).Return(&entity.Responsible{
