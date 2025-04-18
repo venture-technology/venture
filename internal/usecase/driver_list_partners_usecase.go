@@ -5,7 +5,6 @@ import (
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type DriverListPartnersUseCase struct {
@@ -37,16 +36,11 @@ func (dlpuc *DriverListPartnersUseCase) DriverListPartners(cnh string) ([]value.
 
 func buildDriverListPartner(partners entity.Partner) value.DriverListPartners {
 	return value.DriverListPartners{
-		ID:    partners.ID,
-		Name:  partners.School.Name,
-		Email: partners.School.Email,
-		Phone: partners.School.Phone,
-		Address: utils.BuildAddress(
-			partners.School.Address.Street,
-			partners.School.Address.Number,
-			partners.School.Address.Complement,
-			partners.School.Address.Zip,
-		),
+		ID:           partners.ID,
+		Name:         partners.School.Name,
+		Email:        partners.School.Email,
+		Phone:        partners.School.Phone,
+		Address:      partners.School.Address.GetFullAddress(),
 		ProfileImage: partners.School.ProfileImage,
 		CreatedAt:    partners.CreatedAt,
 	}

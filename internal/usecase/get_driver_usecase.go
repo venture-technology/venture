@@ -55,7 +55,5 @@ func (gduc *GetDriverUseCase) GetDriver(cnh string) (value.GetDriver, error) {
 		CreatedAt:     driver.CreatedAt,
 		Gallery:       gallery,
 		Accessibility: driver.Accessibility,
-		States:        driver.States,
-		City:          driver.City,
 	}, nil
 }

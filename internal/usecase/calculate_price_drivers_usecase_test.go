@@ -4,8 +4,6 @@ import (
 	"errors"
 	"testing"
 
-	"fmt"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
@@ -18,34 +16,30 @@ func TestCalculatePrice_ResponsibleRepoError(t *testing.T) {
 	responsible := &entity.Responsible{
 		CPF: "12345678900",
 		Address: entity.Address{
-			Street:     "Rua 1",
-			Number:     "100",
-			Complement: "Apto 101",
-			Zip:        "12345-678",
+			Street:       "Rua 1",
+			Number:       "100",
+			Complement:   "Apto 101",
+			City:         "São Paulo",
+			State:        "SP",
+			Neighborhood: "Sé",
+			Zip:          "12345-678",
 		},
 	}
 	school := &entity.School{
 		CNPJ: "98765432000100",
 		Address: entity.Address{
-			Street:     "Rua 2",
-			Number:     "200",
-			Complement: "Bloco B",
-			Zip:        "23456-789",
+			Street:       "Rua 2",
+			Number:       "200",
+			Complement:   "Bloco B",
+			City:         "São Paulo",
+			State:        "SP",
+			Neighborhood: "Parelheiros",
+			Zip:          "23456-789",
 		},
 	}
 
-	responsibleAddress := fmt.Sprintf("%s, %s, %s, %s",
-		responsible.Address.Street,
-		responsible.Address.Number,
-		responsible.Address.Complement,
-		responsible.Address.Zip,
-	)
-	schoolAddress := fmt.Sprintf("%s, %s, %s, %s",
-		school.Address.Street,
-		school.Address.Number,
-		school.Address.Complement,
-		school.Address.Zip,
-	)
+	responsibleAddress := responsible.Address.GetFullAddress()
+	schoolAddress := school.Address.GetFullAddress()
 	t.Run("if responsible repository returns error", func(t *testing.T) {
 		logger := mocks.NewLogger(t)
 		rr := mocks.NewResponsibleRepository(t)

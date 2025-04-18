@@ -42,7 +42,5 @@ func buildListDriver(partner entity.Partner) value.ListDriver {
 		Phone:         partner.Driver.Phone,
 		ProfileImage:  partner.Driver.ProfileImage,
 		Accessibility: partner.Driver.Accessibility,
-		States:        partner.Driver.States,
-		City:          partner.Driver.City,
 	}
 }

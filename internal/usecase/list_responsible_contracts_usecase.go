@@ -5,7 +5,6 @@ import (
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type ListResponsibleContractsUseCase struct {
@@ -46,14 +45,9 @@ func buildResponsibleListContracts(contracts *entity.Contract) value.Responsible
 		CreatedAt: contracts.CreatedAt,
 		ExpireAt:  contracts.ExpireAt,
 		School: value.GetSchoolContract{
-			ID:   contracts.School.ID,
-			Name: contracts.School.Name,
-			Address: utils.BuildAddress(
-				contracts.School.Address.Street,
-				contracts.School.Address.Number,
-				contracts.School.Address.Complement,
-				contracts.School.Address.Zip,
-			),
+			ID:           contracts.School.ID,
+			Name:         contracts.School.Name,
+			Address:      contracts.School.Address.GetFullAddress(),
 			Phone:        contracts.School.Phone,
 			ProfileImage: contracts.School.ProfileImage,
 		},

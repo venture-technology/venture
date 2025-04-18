@@ -17,7 +17,6 @@ import (
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/realtime"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type AgreementService struct {
@@ -141,30 +140,20 @@ func (as *AgreementService) MappingContractInfo(contract entity.ContractProperty
 				AnualContractValue float64   `json:"anual_contract_value"`
 				Time               time.Time `json:"time"`
 			}{
-				UUID:             contract.UUID,
-				DriverID:         contract.ContractParams.Driver.CNH,
-				DriverName:       contract.ContractParams.Driver.Name,
-				ResponsibleID:    contract.ContractParams.Kid.Responsible.CPF,
-				ResponsibleName:  contract.ContractParams.Kid.Responsible.Name,
-				ResponsibleCPF:   contract.ContractParams.Kid.Responsible.CPF,
-				ResponsibleEmail: contract.ContractParams.Kid.Responsible.Email,
-				ResponsiblePhone: contract.ContractParams.Kid.Responsible.Phone,
-				ResponsibleAddr: utils.BuildAddress(
-					contract.ContractParams.Kid.Responsible.Address.Street,
-					contract.ContractParams.Kid.Responsible.Address.Number,
-					contract.ContractParams.Kid.Responsible.Address.Complement,
-					contract.ContractParams.Kid.Responsible.Address.Zip,
-				),
-				KidID:      contract.ContractParams.Kid.RG,
-				KidName:    contract.ContractParams.Kid.Name,
-				SchoolID:   contract.ContractParams.School.CNPJ,
-				SchoolName: contract.ContractParams.School.Name,
-				SchoolAddr: utils.BuildAddress(
-					contract.ContractParams.School.Address.Street,
-					contract.ContractParams.School.Address.Number,
-					contract.ContractParams.School.Address.Complement,
-					contract.ContractParams.School.Address.Zip,
-				),
+				UUID:               contract.UUID,
+				DriverID:           contract.ContractParams.Driver.CNH,
+				DriverName:         contract.ContractParams.Driver.Name,
+				ResponsibleID:      contract.ContractParams.Kid.Responsible.CPF,
+				ResponsibleName:    contract.ContractParams.Kid.Responsible.Name,
+				ResponsibleCPF:     contract.ContractParams.Kid.Responsible.CPF,
+				ResponsibleEmail:   contract.ContractParams.Kid.Responsible.Email,
+				ResponsiblePhone:   contract.ContractParams.Kid.Responsible.Phone,
+				ResponsibleAddr:    contract.ContractParams.Kid.Responsible.Address.GetFullAddress(),
+				KidID:              contract.ContractParams.Kid.RG,
+				KidName:            contract.ContractParams.Kid.Name,
+				SchoolID:           contract.ContractParams.School.CNPJ,
+				SchoolName:         contract.ContractParams.School.Name,
+				SchoolAddr:         contract.ContractParams.School.Address.GetFullAddress(),
 				DateTime:           contract.Time.Format("02/01/2006"),
 				AmountContract:     contract.ContractParams.Amount,
 				AnualContractValue: contract.ContractParams.Amount * 12,

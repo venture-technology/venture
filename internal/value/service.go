@@ -5,7 +5,6 @@ import (
 
 	"github.com/spf13/viper"
 	"github.com/venture-technology/venture/internal/entity"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 const (
@@ -64,8 +63,6 @@ type GetResponsible struct {
 	ProfileImage    string    `json:"profile_image"`
 	PaymentMethodId string    `json:"payment_method_id"`
 	CreatedAt       time.Time `json:"created_at"`
-	City            string    `json:"city"`
-	States          string    `json:"states"`
 }
 
 type GetKid struct {
@@ -93,8 +90,6 @@ type GetSchool struct {
 	Phone        string    `json:"phone"`
 	ProfileImage string    `json:"profile_image"`
 	CreatedAt    time.Time `json:"created_at"`
-	City         string    `json:"city"`
-	States       string    `json:"states"`
 }
 
 type ListSchool struct {
@@ -105,8 +100,6 @@ type ListSchool struct {
 	Phone        string    `json:"phone"`
 	ProfileImage string    `json:"profile_image"`
 	CreatedAt    time.Time `json:"created_at"`
-	City         string    `json:"city"`
-	States       string    `json:"states"`
 }
 
 type GetDriver struct {
@@ -121,8 +114,6 @@ type GetDriver struct {
 	CreatedAt     time.Time      `json:"created_at"`
 	Gallery       map[int]string `json:"gallery"`
 	Accessibility bool           `json:"accessibility"`
-	City          string         `json:"city"`
-	States        string         `json:"states"`
 	Descriptions  string         `json:"descriptions"`
 	Biography     string         `json:"biography"`
 }
@@ -138,8 +129,6 @@ type ListDriver struct {
 	ProfileImage  string    `json:"profile_image"`
 	CreatedAt     time.Time `json:"created_at"`
 	Accessibility bool      `json:"accessibility"`
-	City          string    `json:"city"`
-	States        string    `json:"states"`
 }
 
 type ListDriverToCalcPrice struct {
@@ -305,7 +294,7 @@ var ResponsibleAllowedKeys = map[string]bool{
 	"complement":    true,
 	"phone":         true,
 	"city":          true,
-	"states":        true,
+	"state":         true,
 	"profile_image": true,
 }
 
@@ -320,7 +309,7 @@ var DriverAllowedKeys = map[string]bool{
 	"complement":    true,
 	"phone":         true,
 	"city":          true,
-	"states":        true,
+	"state":         true,
 	"pix_key":       true,
 	"amount":        true,
 	"profile_image": true,
@@ -394,8 +383,6 @@ type CreateDriver struct {
 	Schedule        string       `json:"schedule,omitempty"`
 	Seats           entity.Seats `json:"seats,omitempty"`
 	Accessibility   bool         `json:"accessibility"`
-	City            string       `json:"city"`
-	States          string       `json:"states"`
 }
 
 type CreateResponse struct {
@@ -408,8 +395,6 @@ type CreateResponse struct {
 	ProfileImage string    `json:"profile_image,omitempty"`
 	CreatedAt    time.Time `json:"created_at,omitempty"`
 	UpdatedAt    time.Time `json:"updated_at,omitempty"`
-	City         string    `json:"city"`
-	States       string    `json:"states"`
 }
 
 type CreateSchool struct {
@@ -422,72 +407,4 @@ type CreateSchool struct {
 	ProfileImage string    `json:"profile_image,omitempty"`
 	CreatedAt    time.Time `json:"created_at,omitempty"`
 	UpdatedAt    time.Time `json:"updated_at,omitempty"`
-	City         string    `json:"city"`
-	States       string    `json:"states"`
-}
-
-func MapSchoolEntityToResponse(school entity.School) CreateSchool {
-	return CreateSchool{
-		ID:    school.ID,
-		Name:  school.Name,
-		CNPJ:  school.CNPJ,
-		Email: school.Email,
-		Address: utils.BuildAddress(
-			school.Address.Street,
-			school.Address.Number,
-			school.Address.Complement,
-			school.Address.Zip,
-		),
-		Phone:        school.Phone,
-		ProfileImage: school.ProfileImage,
-		City:         school.City,
-		States:       school.States,
-	}
-}
-
-func MapResponsibleEntityToResponse(responsible entity.Responsible) CreateResponse {
-	return CreateResponse{
-		ID:    responsible.ID,
-		Name:  responsible.Name,
-		Email: responsible.Email,
-		CPF:   responsible.CPF,
-		Address: utils.BuildAddress(
-			responsible.Address.Street,
-			responsible.Address.Number,
-			responsible.Address.Complement,
-			responsible.Address.Zip,
-		),
-		Phone:        responsible.Phone,
-		ProfileImage: responsible.ProfileImage,
-		City:         responsible.City,
-		States:       responsible.States,
-	}
-}
-
-func MapDriverEntityToResponse(driver entity.Driver) CreateDriver {
-	return CreateDriver{
-		ID:     driver.ID,
-		Name:   driver.Name,
-		Email:  driver.Email,
-		CNH:    driver.CNH,
-		QrCode: driver.QrCode,
-		Address: utils.BuildAddress(
-			driver.Address.Street,
-			driver.Address.Number,
-			driver.Address.Complement,
-			driver.Address.Zip,
-		),
-		Amount:          driver.Amount,
-		Phone:           driver.Phone,
-		MunicipalRecord: driver.MunicipalRecord,
-		Car:             driver.Car,
-		ProfileImage:    driver.ProfileImage,
-		CreatedAt:       driver.CreatedAt,
-		UpdatedAt:       driver.UpdatedAt,
-		Schedule:        driver.Schedule,
-		Seats:           driver.Seats,
-		Accessibility:   driver.Accessibility,
-		City:            driver.City,
-		States:          driver.States,
-	}
 }

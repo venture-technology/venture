@@ -10,7 +10,6 @@ import (
 	"github.com/venture-technology/venture/internal/exceptions"
 	"github.com/venture-technology/venture/internal/infra"
 	"github.com/venture-technology/venture/internal/usecase"
-	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
@@ -57,7 +56,7 @@ func (dh *DriverController) PostV1Create(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, value.MapDriverEntityToResponse(requestParams))
+	c.JSON(http.StatusCreated, http.NoBody)
 }
 
 // @Summary Busca motorista
