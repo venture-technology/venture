@@ -15,6 +15,14 @@ func NewPartnerController() *PartnerController {
 	return &PartnerController{}
 }
 
+// @Summary Lista parceiros do motorista
+// @Description Retorna todos os parceiros vinculados ao motorista
+// @Tags Partners
+// @Produce json
+// @Param cnh path string true "CNH do motorista"
+// @Success 200 {array} []value.DriverListPartners
+// @Failure 400 {object} map[string]string
+// @Router /driver/partners/{cnh} [get]
 func (ph *PartnerController) GetV1DriverListPartners(c *gin.Context) {
 	cnh := c.Param("cnh")
 
@@ -32,6 +40,14 @@ func (ph *PartnerController) GetV1DriverListPartners(c *gin.Context) {
 	c.JSON(http.StatusOK, partners)
 }
 
+// @Summary Lista parceiros da escola
+// @Description Retorna todos os parceiros vinculados à escola
+// @Tags Partners
+// @Produce json
+// @Param cnpj path string true "CNPJ da escola"
+// @Success 200 {array} []value.SchoolListPartners
+// @Failure 400 {object} map[string]string
+// @Router /school/partners/{cnpj} [get]
 func (ph *PartnerController) GetV1SchoolListPartners(c *gin.Context) {
 	cnpj := c.Param("cnpj")
 
@@ -49,6 +65,14 @@ func (ph *PartnerController) GetV1SchoolListPartners(c *gin.Context) {
 	c.JSON(http.StatusOK, partners)
 }
 
+// @Summary Deleta parceria
+// @Description Remove uma parceria entre motorista e escola
+// @Tags Partners
+// @Produce json
+// @Param id path string true "ID da parceria"
+// @Success 204 {object} nil
+// @Failure 400 {object} map[string]string
+// @Router /partner/{id} [delete]
 func (ph *PartnerController) DeleteV1DeletePartner(c *gin.Context) {
 	id := c.Param("id")
 
