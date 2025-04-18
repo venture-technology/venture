@@ -15,6 +15,15 @@ func NewPriceController() *PriceController {
 	return &PriceController{}
 }
 
+// @Summary Calcula o preço dos motoristas
+// @Description Retorna os preços estimados com base no responsável e na escola
+// @Tags Prices
+// @Produce json
+// @Param cpf path string true "CPF do responsável"
+// @Param cnpj path string true "CNPJ da escola"
+// @Success 200 {object} value.ListDriverToCalcPrice
+// @Failure 400 {object} map[string]string
+// @Router /price/{cpf}/{cnpj} [get]
 func (pc *PriceController) GetV1PriceDriver(c *gin.Context) {
 	responsible := c.Param("cpf")
 	school := c.Param("cnpj")

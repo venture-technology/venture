@@ -747,6 +747,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/price/{cpf}/{cnpj}": {
+            "get": {
+                "description": "Retorna os preços estimados com base no responsável e na escola",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Prices"
+                ],
+                "summary": "Calcula o preço dos motoristas",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CPF do responsável",
+                        "name": "cpf",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "CNPJ da escola",
+                        "name": "cnpj",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/value.ListDriverToCalcPrice"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/responsible": {
             "post": {
                 "description": "Cria um novo responsável com os dados fornecidos",
@@ -2227,6 +2272,36 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.ListDriverToCalcPrice": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "price_total": {
+                    "description": "this field is used to calculate the total price of the driver getting distance from responsible and school",
+                    "type": "number"
+                },
+                "profile_image": {
                     "type": "string"
                 }
             }
