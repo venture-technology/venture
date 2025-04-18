@@ -56,7 +56,7 @@ func (rh *ResponsibleController) PostV1CreateResponsible(httpContext *gin.Contex
 		return
 	}
 
-	c.JSON(http.StatusCreated, http.NoBody)
+	httpContext.JSON(http.StatusCreated, http.NoBody)
 }
 
 // @Summary Busca responsável

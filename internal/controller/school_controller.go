@@ -61,7 +61,7 @@ func (sh *SchoolController) PostV1CreateSchool(httpContext *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, http.NoBody)
+	httpContext.JSON(http.StatusCreated, http.NoBody)
 }
 
 // @Summary Busca escola
