@@ -1,5 +1,5 @@
 # Stage 1: Build the Go binary
-FROM golang:1.22.5-alpine AS builder
+FROM golang:1.24.2-alpine AS builder
 
 ENV CGO_ENABLED=1
 ENV GOOS=linux
