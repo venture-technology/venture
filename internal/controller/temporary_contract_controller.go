@@ -16,8 +16,16 @@ func NewTemporaryContractController() *TemporaryContractController {
 	return &TemporaryContractController{}
 }
 
-func (tc *TemporaryContractController) GetV1ResponsibleTempContracts(c *gin.Context) {
-	cpf := c.Param("cpf")
+// @Summary Busca contratos temporários de um responsável
+// @Description Retorna todos os contratos temporários associados ao CPF do responsável
+// @Tags Temporary Contracts
+// @Produce json
+// @Param cpf path string true "CPF do responsável"
+// @Success 200 {array} []value.GetTempContracts
+// @Failure 500 {object} map[string]string
+// @Router /temporary-contract/responsible/{cpf} [get]
+func (tc *TemporaryContractController) GetV1ResponsibleTempContracts(httpContext *gin.Context) {
+	cpf := httpContext.Param("cpf")
 
 	usecase := usecase.NewGetTempContractsResponsibleUseCase(
 		&infra.App.Repositories,
@@ -26,15 +34,23 @@ func (tc *TemporaryContractController) GetV1ResponsibleTempContracts(c *gin.Cont
 
 	contracts, err := usecase.GetResponsibleTempContracts(cpf)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao buscar contratos"})
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao buscar contratos"})
 		return
 	}
 
-	c.JSON(http.StatusOK, contracts)
+	httpContext.JSON(http.StatusOK, contracts)
 }
 
-func (tc *TemporaryContractController) GetV1DriverTempContracts(c *gin.Context) {
-	cnh := c.Param("cnh")
+// @Summary Busca contratos temporários de um motorista
+// @Description Retorna todos os contratos temporários associados ao CNH do motorista
+// @Tags Temporary Contracts
+// @Produce json
+// @Param cnh path string true "CNH do motorista"
+// @Success 200 {array} []value.GetTempContracts
+// @Failure 500 {object} map[string]string
+// @Router /temporary-contract/driver/{cnh} [get]
+func (tc *TemporaryContractController) GetV1DriverTempContracts(httpContext *gin.Context) {
+	cnh := httpContext.Param("cnh")
 
 	usecase := usecase.NewGetTempContractsDriverUseCase(
 		&infra.App.Repositories,
@@ -43,13 +59,22 @@ func (tc *TemporaryContractController) GetV1DriverTempContracts(c *gin.Context) 
 
 	contracts, err := usecase.GetDriverTempContracts(cnh)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao buscar contratos"})
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "erro ao buscar contratos"})
 		return
 	}
 
-	c.JSON(http.StatusOK, contracts)
+	httpContext.JSON(http.StatusOK, contracts)
 }
 
+// @Summary Cancela um contrato temporário
+// @Description Cancela um contrato temporário pelo UUID
+// @Tags Temporary Contracts
+// @Produce json
+// @Param uuid path string true "UUID do contrato temporário"
+// @Success 200
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /temporary-contract/{uuid} [post]
 func (tc *TemporaryContractController) PostV1CancelTempContracts(httpContext *gin.Context) {
 	uuid, err := uuid.Parse(httpContext.Param("uuid"))
 	if err != nil {

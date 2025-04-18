@@ -55,7 +55,7 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 
 	// school
 	group.POST("/school", route.School.PostV1CreateSchool)
-	group.GET("/school", route.School.GetV1ListSchool)
+	group.GET("/schools", route.School.GetV1ListSchool)
 	group.GET("/school/:cnpj", route.School.GetV1GetSchool)
 	group.PATCH("/school/:cnpj", sm.Middleware(), route.School.PatchV1UpdateSchool)
 	group.DELETE("/school/:cnpj", sm.Middleware(), route.School.DeleteV1DeleteSchool)
@@ -70,22 +70,22 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 
 	// invite
 	group.POST("/invite", sm.Middleware(), route.Invite.PostV1SendInvite)
-	group.GET("/driver/invite/:cnh", dm.Middleware(), route.Invite.GetV1DriverListInvite)
-	group.GET("/school/invite/:cnpj", sm.Middleware(), route.Invite.GetV1SchoolListInvite)
+	group.GET("/driver/invites/:cnh", dm.Middleware(), route.Invite.GetV1DriverListInvite)
+	group.GET("/school/invites/:cnpj", sm.Middleware(), route.Invite.GetV1SchoolListInvite)
 	group.PATCH("/invite/:id/accept", dm.Middleware(), route.Invite.PatchV1AcceptInvite)
 	group.DELETE("/invite/:id/decline", dm.Middleware(), route.Invite.DeleteV1DeclineInvite)
 
 	// partner
-	group.GET("/driver/partner/:cnh", dm.Middleware(), route.Partner.GetV1DriverListPartners)
-	group.GET("/school/partner/:cnpj", sm.Middleware(), route.Partner.GetV1SchoolListPartners)
+	group.GET("/driver/partners/:cnh", dm.Middleware(), route.Partner.GetV1DriverListPartners)
+	group.GET("/school/partners/:cnpj", sm.Middleware(), route.Partner.GetV1SchoolListPartners)
 	group.DELETE("/partner/:id", sm.Middleware(), route.Partner.DeleteV1DeletePartner)
 
 	// contract
 	group.POST("/contract", rm.Middleware(), route.Contract.PostV1CreateContract)
 	group.GET("/contract/:id", route.Contract.GetV1GetContract)
-	group.GET("/driver/contract/:cnh", dm.Middleware(), route.Contract.GetV1ListDriverContract)
-	group.GET("/school/contract/:cnpj", sm.Middleware(), route.Contract.GetV1ListContractSchool)
-	group.GET("/responsible/contract/:cpf", rm.Middleware(), route.Contract.GetV1ListResponsibleContract)
+	group.GET("/driver/contracts/:cnh", dm.Middleware(), route.Contract.GetV1ListDriverContract)
+	group.GET("/school/contracts/:cnpj", sm.Middleware(), route.Contract.GetV1ListContractSchool)
+	group.GET("/responsible/contracts/:cpf", rm.Middleware(), route.Contract.GetV1ListResponsibleContract)
 	group.POST("/contract/:id/cancel", rm.Middleware(), route.Contract.PostV1CancelContract)
 
 	// webhook
@@ -96,9 +96,9 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.GET("/price/:cpf/:cnpj", rm.Middleware(), route.Price.GetV1PriceDriver)
 
 	// temporary contract
-	group.GET("/temp_contracts/responsible/:cpf", rm.Middleware(), route.TemporaryContract.GetV1ResponsibleTempContracts)
-	group.GET("/temp_contracts/driver/:cnh", dm.Middleware(), route.TemporaryContract.GetV1DriverTempContracts)
-	group.POST("/temp_contracts/cancel/:uuid", rm.Middleware(), route.TemporaryContract.PostV1CancelTempContracts)
+	group.GET("/temporary-contract/responsible/:cpf", rm.Middleware(), route.TemporaryContract.GetV1ResponsibleTempContracts)
+	group.GET("/temporary-contract/driver/:cnh", dm.Middleware(), route.TemporaryContract.GetV1DriverTempContracts)
+	group.POST("/temporary-contract/cancel/:uuid", rm.Middleware(), route.TemporaryContract.PostV1CancelTempContracts)
 }
 
 func middlewares() (

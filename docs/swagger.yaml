@@ -1,0 +1,1883 @@
+basePath: /api/v1/
+definitions:
+  agreements.ContractRequest:
+    properties:
+      cc_email_addresses:
+        items:
+          type: string
+        type: array
+      expires_at:
+        type: integer
+      field_options:
+        properties:
+          date_format:
+            type: string
+        type: object
+      file_urls:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+      metadata:
+        $ref: '#/definitions/agreements.Metadata'
+      signers:
+        items:
+          $ref: '#/definitions/agreements.Signer'
+        type: array
+      signing_options:
+        properties:
+          default_type:
+            type: string
+          draw:
+            type: boolean
+          phone:
+            type: boolean
+          type:
+            type: boolean
+          upload:
+            type: boolean
+        type: object
+      subject:
+        type: string
+      test_mode:
+        type: boolean
+      title:
+        type: string
+    type: object
+  agreements.Metadata:
+    properties:
+      custom_id:
+        type: string
+      keys:
+        properties:
+          amount_contract:
+            type: number
+          anual_contract_value:
+            type: number
+          date_time:
+            type: string
+          driver_id:
+            type: string
+          driver_name:
+            type: string
+          kid_id:
+            type: string
+          kid_name:
+            type: string
+          responsible_addr:
+            type: string
+          responsible_cpf:
+            type: string
+          responsible_email:
+            type: string
+          responsible_id:
+            type: string
+          responsible_name:
+            type: string
+          responsible_phone:
+            type: string
+          school_addr:
+            type: string
+          school_id:
+            type: string
+          school_name:
+            type: string
+          time:
+            type: string
+          uuid:
+            type: string
+        type: object
+    type: object
+  agreements.Signer:
+    properties:
+      email_address:
+        type: string
+      name:
+        type: string
+    type: object
+  entity.Address:
+    properties:
+      complement:
+        type: string
+      number:
+        type: string
+      street:
+        type: string
+      zip:
+        type: string
+    required:
+    - number
+    - street
+    - zip
+    type: object
+  entity.Car:
+    properties:
+      capacity:
+        type: integer
+      name:
+        type: string
+      year:
+        type: string
+    required:
+    - capacity
+    - name
+    - year
+    type: object
+  entity.Driver:
+    properties:
+      accessibility:
+        type: boolean
+      address:
+        $ref: '#/definitions/entity.Address'
+      amount:
+        type: number
+      biography:
+        type: string
+      car:
+        $ref: '#/definitions/entity.Car'
+      city:
+        type: string
+      cnh:
+        type: string
+      cpf:
+        type: string
+      created_at:
+        type: string
+      descriptions:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      municipal_record:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        example: +55 11 123456789
+        type: string
+      pix_key:
+        type: string
+      profile_image:
+        type: string
+      qrcode:
+        type: string
+      schedule:
+        type: string
+      seats:
+        $ref: '#/definitions/entity.Seats'
+      states:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - address
+    - amount
+    - car
+    - cnh
+    - email
+    - municipal_record
+    - name
+    - phone
+    type: object
+  entity.Invite:
+    properties:
+      accepted_at:
+        type: string
+      created_at:
+        type: string
+      driver:
+        $ref: '#/definitions/entity.Driver'
+      driver_id:
+        type: string
+      id:
+        type: integer
+      school:
+        $ref: '#/definitions/entity.School'
+      school_id:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  entity.InvoiceInfo:
+    properties:
+      amount:
+        type: number
+      amount_cents:
+        type: integer
+      date:
+        type: string
+      id:
+        type: string
+      month:
+        type: string
+      status:
+        type: string
+    type: object
+  entity.Kid:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      profile_image:
+        type: string
+      responsible:
+        allOf:
+        - $ref: '#/definitions/entity.Responsible'
+        description: Chave estrangeira corretamente configurada
+      responsible_id:
+        description: responsible_id field exists to not have conflict with the responsible
+          entity
+        type: string
+      rg:
+        example: "559378847"
+        type: string
+      shift:
+        enum:
+        - matutino
+        - vespertino
+        - noturno
+        type: string
+      updated_at:
+        type: string
+    required:
+    - name
+    - rg
+    type: object
+  entity.Responsible:
+    properties:
+      address:
+        $ref: '#/definitions/entity.Address'
+      card_token:
+        description: credit card token on create responsible
+        type: string
+      city:
+        type: string
+      cpf:
+        description: sem pontuação
+        example: "44000000000"
+        type: string
+      created_at:
+        type: string
+      customer_id:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      payment_method_id:
+        type: string
+      phone:
+        description: o telefone deve seguir este mesmo formato
+        example: +55 11 123456789
+        type: string
+      profile_image:
+        type: string
+      states:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - address
+    - cpf
+    - email
+    - name
+    - password
+    - phone
+    type: object
+  entity.School:
+    properties:
+      address:
+        $ref: '#/definitions/entity.Address'
+      city:
+        type: string
+      cnpj:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        example: +55 11 123456789
+        type: string
+      profile_image:
+        type: string
+      states:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - address
+    - cnpj
+    - email
+    - name
+    - password
+    - phone
+    type: object
+  entity.Seats:
+    properties:
+      afternoon:
+        type: integer
+      morning:
+        type: integer
+      night:
+        type: integer
+      remaining:
+        type: integer
+    type: object
+  value.CreateContractRequestParams:
+    properties:
+      driver_cnh:
+        type: string
+      kid_rg:
+        type: string
+      responsible_cpf:
+        type: string
+      school_cnpj:
+        type: string
+    type: object
+  value.DriverListContracts:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: integer
+      expire_at:
+        type: integer
+      id:
+        type: integer
+      kid:
+        $ref: '#/definitions/value.GetKidContract'
+      record:
+        type: string
+      responsible:
+        $ref: '#/definitions/value.GetParentContract'
+      school:
+        $ref: '#/definitions/value.GetSchoolContract'
+      status:
+        type: string
+    type: object
+  value.DriverListInvite:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+    type: object
+  value.DriverListPartners:
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+    type: object
+  value.GetContract:
+    properties:
+      contract:
+        $ref: '#/definitions/value.GetContractOutput'
+      invoices:
+        additionalProperties:
+          $ref: '#/definitions/entity.InvoiceInfo'
+        type: object
+    type: object
+  value.GetContractOutput:
+    properties:
+      created_at:
+        type: integer
+      driver:
+        $ref: '#/definitions/value.GetDriverContract'
+      expired_at:
+        type: integer
+      id:
+        type: integer
+      kid:
+        $ref: '#/definitions/value.GetKidContract'
+      responsible:
+        $ref: '#/definitions/value.GetParentContract'
+      school:
+        $ref: '#/definitions/value.GetSchoolContract'
+      signing_url:
+        type: string
+      status:
+        type: string
+      subscription_id:
+        type: string
+      uuid:
+        type: string
+    type: object
+  value.GetDriver:
+    properties:
+      accessibility:
+        type: boolean
+      amount:
+        type: number
+      biography:
+        type: string
+      car:
+        type: string
+      city:
+        type: string
+      created_at:
+        type: string
+      descriptions:
+        type: string
+      email:
+        type: string
+      gallery:
+        additionalProperties:
+          type: string
+        type: object
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+      qrcode:
+        type: string
+      states:
+        type: string
+    type: object
+  value.GetDriverContract:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+    type: object
+  value.GetKid:
+    properties:
+      address:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      period:
+        type: string
+      profile_image:
+        type: string
+      responsible_name:
+        type: string
+      rg:
+        type: string
+    type: object
+  value.GetKidContract:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      period:
+        type: string
+      profile_image:
+        type: string
+    type: object
+  value.GetParentContract:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+    type: object
+  value.GetResponsible:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      created_at:
+        type: string
+      customer_id:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      payment_method_id:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+      states:
+        type: string
+    type: object
+  value.GetSchool:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+      states:
+        type: string
+    type: object
+  value.GetSchoolContract:
+    properties:
+      address:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+    type: object
+  value.GetTempContracts:
+    properties:
+      created_at:
+        description: epoch time
+        type: integer
+      driver_assigned_at:
+        description: epoch time
+        type: integer
+      driver_cnh:
+        type: string
+      expires_at:
+        description: epoch time
+        type: integer
+      id:
+        type: integer
+      kid_rg:
+        type: string
+      responsible_cpf:
+        type: string
+      responsibles_assigned_at:
+        description: epoch time
+        type: integer
+      school_cnpj:
+        type: string
+      signature_request_id:
+        type: string
+      signing_url:
+        type: string
+      status:
+        type: string
+      uuid:
+        type: string
+    type: object
+  value.ListDriverToCalcPrice:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      price_total:
+        description: this field is used to calculate the total price of the driver
+          getting distance from responsible and school
+        type: number
+      profile_image:
+        type: string
+    type: object
+  value.ListKid:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      period:
+        type: string
+      profile_image:
+        type: string
+    type: object
+  value.ResponsibleListContracts:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: integer
+      driver:
+        $ref: '#/definitions/value.GetDriverContract'
+      expire_at:
+        type: integer
+      id:
+        type: integer
+      kid_name:
+        type: string
+      period:
+        type: string
+      record:
+        type: string
+      school:
+        $ref: '#/definitions/value.GetSchoolContract'
+      status:
+        type: string
+    type: object
+  value.SchoolListContracts:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: integer
+      driver:
+        $ref: '#/definitions/value.GetDriverContract'
+      expire_at:
+        type: integer
+      id:
+        type: integer
+      kid_name:
+        type: string
+      period:
+        type: string
+      record:
+        type: string
+      responsible:
+        $ref: '#/definitions/value.GetParentContract'
+      status:
+        type: string
+    type: object
+  value.SchoolListInvite:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+    type: object
+  value.SchoolListPartners:
+    properties:
+      car:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+      qrcode:
+        type: string
+    type: object
+host: localhost:9999
+info:
+  contact: {}
+  description: Venture Backend Major API
+  termsOfService: http://swagger.io/terms/
+  title: Venture API
+  version: "0.1"
+paths:
+  /contract:
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo contrato com os dados fornecidos
+      parameters:
+      - description: Dados do contrato
+        in: body
+        name: contract
+        required: true
+        schema:
+          $ref: '#/definitions/value.CreateContractRequestParams'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/agreements.ContractRequest'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria um novo contrato
+      tags:
+      - Contracts
+  /contract/{id}:
+    get:
+      description: Retorna um contrato pelo seu UUID
+      parameters:
+      - description: UUID do contrato
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/value.GetContract'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca um contrato
+      tags:
+      - Contracts
+    post:
+      description: Cancela um contrato pelo UUID
+      parameters:
+      - description: UUID do contrato
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: contrato cancelado com sucesso
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cancela um contrato
+      tags:
+      - Contracts
+  /contract/driver/{cnh}:
+    get:
+      description: Retorna todos os contratos associados ao CNH do motorista
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.DriverListContracts'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista contratos de um motorista
+      tags:
+      - Contracts
+  /contract/responsible/{cpf}:
+    get:
+      description: Retorna todos os contratos associados ao CPF do responsável
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.ResponsibleListContracts'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista contratos de um responsável
+      tags:
+      - Contracts
+  /contract/school/{cnpj}:
+    get:
+      description: Retorna todos os contratos associados ao CNPJ da escola
+      parameters:
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.SchoolListContracts'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista contratos de uma escola
+      tags:
+      - Contracts
+  /driver:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Dados do motorista
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Driver'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/value.GetDriver'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria um novo motorista
+      tags:
+      - Drivers
+  /driver/{cnh}:
+    delete:
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Deleta motorista
+      tags:
+      - Drivers
+    get:
+      description: Retorna os dados de um motorista pelo CNH
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/value.GetDriver'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca motorista
+      tags:
+      - Drivers
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      - description: Campos a serem atualizados
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualiza dados do motorista
+      tags:
+      - Drivers
+  /driver/invites/{cnh}:
+    get:
+      description: Retorna todos os convites enviados para o motorista
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.DriverListInvite'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista convites do motorista
+      tags:
+      - Invites
+  /driver/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Credenciais de login (email e senha)
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Driver'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login de motorista
+      tags:
+      - Drivers
+  /driver/partners/{cnh}:
+    get:
+      description: Retorna todos os parceiros vinculados ao motorista
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.DriverListPartners'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista parceiros do motorista
+      tags:
+      - Partners
+  /invite:
+    post:
+      consumes:
+      - application/json
+      description: Cria um convite entre escola e motorista
+      parameters:
+      - description: Dados do convite
+        in: body
+        name: invite
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Invite'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Envia um convite
+      tags:
+      - Invites
+  /invite/{id}/accept:
+    patch:
+      description: Aceita um convite existente
+      parameters:
+      - description: ID do convite
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Aceita convite
+      tags:
+      - Invites
+  /invite/{id}/decline:
+    delete:
+      description: Recusa e deleta um convite existente
+      parameters:
+      - description: ID do convite
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Recusa convite
+      tags:
+      - Invites
+  /kid/{cpf}:
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo filho vinculado ao CPF do responsável
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      - description: Dados do filho
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Kid'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/value.GetKid'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Criar novo filho
+      tags:
+      - Kids
+  /kid/{cpf}/{rg}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove um filho vinculado ao CPF do responsável
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      - description: RG do filho
+        in: path
+        name: rg
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Deletar filho
+      tags:
+      - Kids
+    patch:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um filho específico
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      - description: RG do filho
+        in: path
+        name: rg
+        required: true
+        type: string
+      - description: Campos para atualizar
+        in: body
+        name: body
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualizar filho
+      tags:
+      - Kids
+  /kid/{rg}:
+    get:
+      consumes:
+      - application/json
+      description: Busca um filho pelo RG
+      parameters:
+      - description: RG do filho
+        in: path
+        name: rg
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/value.GetKid'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Buscar filho
+      tags:
+      - Kids
+  /kids/{cpf}:
+    get:
+      consumes:
+      - application/json
+      description: Lista todos os filhos de um responsável
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.ListKid'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Listar filhos
+      tags:
+      - Kids
+  /partner/{id}:
+    delete:
+      description: Remove uma parceria entre motorista e escola
+      parameters:
+      - description: ID da parceria
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Deleta parceria
+      tags:
+      - Partners
+  /price/{cpf}/{cnpj}:
+    get:
+      description: Retorna os preços estimados com base no responsável e na escola
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/value.ListDriverToCalcPrice'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Calcula o preço dos motoristas
+      tags:
+      - Prices
+  /responsible:
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo responsável com os dados fornecidos
+      parameters:
+      - description: Dados do responsável
+        in: body
+        name: responsible
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Responsible'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/value.GetResponsible'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria um novo responsável
+      tags:
+      - Responsibles
+  /responsible/{cpf}:
+    delete:
+      description: Deleta um responsável pelo CPF
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Deleta um responsável
+      tags:
+      - Responsibles
+    get:
+      description: Retorna o responsável buscado pelo seu CPF
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/value.GetResponsible'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca responsável
+      tags:
+      - Responsibles
+    patch:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um responsável pelo CPF
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      - description: Dados a serem atualizados
+        in: body
+        name: data
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualiza um responsável
+      tags:
+      - Responsibles
+  /responsible/login:
+    post:
+      consumes:
+      - application/json
+      description: Realiza o login de um responsável com email e senha
+      parameters:
+      - description: Credenciais do responsável (email e senha)
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Responsible'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login de responsável
+      tags:
+      - Responsibles
+  /school:
+    post:
+      consumes:
+      - application/json
+      description: Cria uma nova escola com os dados fornecidos
+      parameters:
+      - description: Dados da escola
+        in: body
+        name: school
+        required: true
+        schema:
+          $ref: '#/definitions/entity.School'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/value.GetSchool'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria uma nova escola
+      tags:
+      - Schools
+  /school/{cnpj}:
+    delete:
+      description: Deleta uma escola pelo CNPJ
+      parameters:
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Deleta uma escola
+      tags:
+      - Schools
+    get:
+      description: Retorna a escola buscada pelo seu documento principal
+      parameters:
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/value.GetSchool'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca escola
+      tags:
+      - Schools
+    patch:
+      consumes:
+      - application/json
+      description: Atualiza os dados de uma escola pelo CNPJ
+      parameters:
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      - description: Dados a serem atualizados
+        in: body
+        name: data
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualiza uma escola
+      tags:
+      - Schools
+  /school/invites/{cnpj}:
+    get:
+      description: Retorna todos os convites enviados pela escola
+      parameters:
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.SchoolListInvite'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista convites da escola
+      tags:
+      - Invites
+  /school/login:
+    post:
+      consumes:
+      - application/json
+      description: Realiza o login de uma escola com email e senha
+      parameters:
+      - description: Credenciais da escola (email e senha)
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/entity.School'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login de escola
+      tags:
+      - Schools
+  /school/partners/{cnpj}:
+    get:
+      description: Retorna todos os parceiros vinculados à escola
+      parameters:
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.SchoolListPartners'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista parceiros da escola
+      tags:
+      - Partners
+  /schools:
+    get:
+      description: Retorna uma lista de todas as escolas cadastradas
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/value.GetSchool'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista todas as escolas
+      tags:
+      - Schools
+  /temporary-contract/{uuid}:
+    post:
+      description: Cancela um contrato temporário pelo UUID
+      parameters:
+      - description: UUID do contrato temporário
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cancela um contrato temporário
+      tags:
+      - Temporary Contracts
+  /temporary-contract/driver/{cnh}:
+    get:
+      description: Retorna todos os contratos temporários associados ao CNH do motorista
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.GetTempContracts'
+              type: array
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca contratos temporários de um motorista
+      tags:
+      - Temporary Contracts
+  /temporary-contract/responsible/{cpf}:
+    get:
+      description: Retorna todos os contratos temporários associados ao CPF do responsável
+      parameters:
+      - description: CPF do responsável
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.GetTempContracts'
+              type: array
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca contratos temporários de um responsável
+      tags:
+      - Temporary Contracts
+swagger: "2.0"

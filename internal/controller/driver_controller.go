@@ -20,6 +20,15 @@ func NewDriverController() *DriverController {
 	return &DriverController{}
 }
 
+// @Summary Cria um novo motorista
+// @Tags Drivers
+// @Accept json
+// @Produce json
+// @Param body body entity.Driver true "Dados do motorista"
+// @Success 201 {object} value.GetDriver
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /driver [post]
 func (dh *DriverController) PostV1Create(c *gin.Context) {
 	var requestParams entity.Driver
 	if err := c.BindJSON(&requestParams); err != nil {
@@ -50,6 +59,14 @@ func (dh *DriverController) PostV1Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, http.NoBody)
 }
 
+// @Summary Busca motorista
+// @Description Retorna os dados de um motorista pelo CNH
+// @Tags Drivers
+// @Produce json
+// @Param cnh path string true "CNH do motorista"
+// @Success 200 {object} value.GetDriver
+// @Failure 400 {object} map[string]string
+// @Router /driver/{cnh} [get]
 func (dh *DriverController) GetV1GetDriver(c *gin.Context) {
 	cnh := c.Param("cnh")
 
@@ -68,6 +85,15 @@ func (dh *DriverController) GetV1GetDriver(c *gin.Context) {
 	c.JSON(http.StatusOK, driver)
 }
 
+// @Summary Atualiza dados do motorista
+// @Tags Drivers
+// @Accept json
+// @Produce json
+// @Param cnh path string true "CNH do motorista"
+// @Param body body object true "Campos a serem atualizados"
+// @Success 204 {string} string "No Content"
+// @Failure 400 {object} map[string]string
+// @Router /driver/{cnh} [patch]
 func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
 	cnh := c.Param("cnh")
 	var data map[string]interface{}
@@ -103,6 +129,13 @@ func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
 
+// @Summary Deleta motorista
+// @Tags Drivers
+// @Produce json
+// @Param cnh path string true "CNH do motorista"
+// @Success 204 {string} string "No Content"
+// @Failure 400 {object} map[string]string
+// @Router /driver/{cnh} [delete]
 func (dh *DriverController) DeleteV1DeleteDriver(c *gin.Context) {
 	cnh := c.Param("cnh")
 
@@ -134,6 +167,16 @@ func (dh *DriverController) DeleteV1DeleteDriver(c *gin.Context) {
 	c.JSON(http.StatusNoContent, http.NoBody)
 }
 
+// @Summary Login de motorista
+// @Tags Drivers
+// @Accept json
+// @Produce json
+// @Param body body entity.Driver true "Credenciais de login (email e senha)"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /driver/login [post]
 func (dh *DriverController) PostV1LoginDriver(httpContext *gin.Context) {
 	var requestParams entity.Driver
 	if err := httpContext.BindJSON(&requestParams); err != nil {
