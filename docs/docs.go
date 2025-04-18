@@ -432,6 +432,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/driver/partners/{cnh}": {
+            "get": {
+                "description": "Retorna todos os parceiros vinculados ao motorista",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Partners"
+                ],
+                "summary": "Lista parceiros do motorista",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNH do motorista",
+                        "name": "cnh",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/value.DriverListPartners"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/driver/{cnh}": {
             "get": {
                 "description": "Retorna os dados de um motorista pelo CNH",
@@ -901,6 +945,41 @@ const docTemplate = `{
                 }
             }
         },
+        "/partner/{id}": {
+            "delete": {
+                "description": "Remove uma parceria entre motorista e escola",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Partners"
+                ],
+                "summary": "Deleta parceria",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID da parceria",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/price/{cpf}/{cnpj}": {
             "get": {
                 "description": "Retorna os preços estimados com base no responsável e na escola",
@@ -1329,6 +1408,50 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/school/partners/{cnpj}": {
+            "get": {
+                "description": "Retorna todos os parceiros vinculados à escola",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Partners"
+                ],
+                "summary": "Lista parceiros da escola",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNPJ da escola",
+                        "name": "cnpj",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/value.SchoolListPartners"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -2197,6 +2320,32 @@ const docTemplate = `{
                 }
             }
         },
+        "value.DriverListPartners": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "profile_image": {
+                    "type": "string"
+                }
+            }
+        },
         "value.GetContract": {
             "type": "object",
             "properties": {
@@ -2659,6 +2808,35 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "profile_image": {
+                    "type": "string"
+                }
+            }
+        },
+        "value.SchoolListPartners": {
+            "type": "object",
+            "properties": {
+                "car": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "profile_image": {
+                    "type": "string"
+                },
+                "qrcode": {
                     "type": "string"
                 }
             }

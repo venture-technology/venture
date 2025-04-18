@@ -388,6 +388,23 @@ definitions:
       profile_image:
         type: string
     type: object
+  value.DriverListPartners:
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+    type: object
   value.GetContract:
     properties:
       contract:
@@ -694,6 +711,25 @@ definitions:
       phone:
         type: string
       profile_image:
+        type: string
+    type: object
+  value.SchoolListPartners:
+    properties:
+      car:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profile_image:
+        type: string
+      qrcode:
         type: string
     type: object
 host: localhost:9999
@@ -1056,6 +1092,35 @@ paths:
       summary: Login de motorista
       tags:
       - Drivers
+  /driver/partners/{cnh}:
+    get:
+      description: Retorna todos os parceiros vinculados ao motorista
+      parameters:
+      - description: CNH do motorista
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.DriverListPartners'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista parceiros do motorista
+      tags:
+      - Partners
   /invite:
     post:
       consumes:
@@ -1288,6 +1353,29 @@ paths:
       summary: Listar filhos
       tags:
       - Kids
+  /partner/{id}:
+    delete:
+      description: Remove uma parceria entre motorista e escola
+      parameters:
+      - description: ID da parceria
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Deleta parceria
+      tags:
+      - Partners
   /price/{cpf}/{cnpj}:
     get:
       description: Retorna os preços estimados com base no responsável e na escola
@@ -1655,6 +1743,35 @@ paths:
       summary: Login de escola
       tags:
       - Schools
+  /school/partners/{cnpj}:
+    get:
+      description: Retorna todos os parceiros vinculados à escola
+      parameters:
+      - description: CNPJ da escola
+        in: path
+        name: cnpj
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/value.SchoolListPartners'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista parceiros da escola
+      tags:
+      - Partners
   /schools:
     get:
       description: Retorna uma lista de todas as escolas cadastradas
