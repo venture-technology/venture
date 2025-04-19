@@ -9,20 +9,22 @@ WORKDIR /app
 
 RUN apk add --no-cache gcc musl-dev
 
+COPY go.mod go.sum ./
+
+RUN go mod download
+
 COPY . .
 
-# Build the binary from the specific main.go path
-RUN go mod download && go build -o main ./cmd/api/server
+RUN go build -o main ./cmd/api/server
 
-# Stage 2: Run the application
 FROM alpine:latest
 
 WORKDIR /app
 
-# Copy the pre-built binary from the previous stage
 COPY --from=builder /app/main .
 
-# Create directories for config and database
+COPY --from=builder /app ./
+
 RUN mkdir -p /app/config /app/database
 
 EXPOSE 9999
