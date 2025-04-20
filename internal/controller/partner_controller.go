@@ -23,8 +23,8 @@ func NewPartnerController() *PartnerController {
 // @Success 200 {array} []value.DriverListPartners
 // @Failure 400 {object} map[string]string
 // @Router /driver/partners/{cnh} [get]
-func (ph *PartnerController) GetV1DriverListPartners(c *gin.Context) {
-	cnh := c.Param("cnh")
+func (ph *PartnerController) GetV1DriverListPartners(httpContext *gin.Context) {
+	cnh := httpContext.Param("cnh")
 
 	usecase := usecase.NewDriverListPartnersUseCase(
 		&infra.App.Repositories,
@@ -33,11 +33,11 @@ func (ph *PartnerController) GetV1DriverListPartners(c *gin.Context) {
 
 	partners, err := usecase.DriverListPartners(cnh)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, partners)
+	httpContext.JSON(http.StatusOK, partners)
 }
 
 // @Summary Lista parceiros da escola
@@ -48,8 +48,8 @@ func (ph *PartnerController) GetV1DriverListPartners(c *gin.Context) {
 // @Success 200 {array} []value.SchoolListPartners
 // @Failure 400 {object} map[string]string
 // @Router /school/partners/{cnpj} [get]
-func (ph *PartnerController) GetV1SchoolListPartners(c *gin.Context) {
-	cnpj := c.Param("cnpj")
+func (ph *PartnerController) GetV1SchoolListPartners(httpContext *gin.Context) {
+	cnpj := httpContext.Param("cnpj")
 
 	usecase := usecase.NewSchoolListPartnersUseCase(
 		&infra.App.Repositories,
@@ -58,11 +58,11 @@ func (ph *PartnerController) GetV1SchoolListPartners(c *gin.Context) {
 
 	partners, err := usecase.SchoolListPartners(cnpj)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, partners)
+	httpContext.JSON(http.StatusOK, partners)
 }
 
 // @Summary Deleta parceria
@@ -73,8 +73,8 @@ func (ph *PartnerController) GetV1SchoolListPartners(c *gin.Context) {
 // @Success 204 {object} nil
 // @Failure 400 {object} map[string]string
 // @Router /partner/{id} [delete]
-func (ph *PartnerController) DeleteV1DeletePartner(c *gin.Context) {
-	id := c.Param("id")
+func (ph *PartnerController) DeleteV1DeletePartner(httpContext *gin.Context) {
+	id := httpContext.Param("id")
 
 	usecase := usecase.NewDeletePartnerUseCase(
 		&infra.App.Repositories,
@@ -83,9 +83,9 @@ func (ph *PartnerController) DeleteV1DeletePartner(c *gin.Context) {
 
 	err := usecase.DeletePartner(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusNoContent, http.NoBody)
+	httpContext.JSON(http.StatusNoContent, http.NoBody)
 }

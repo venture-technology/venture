@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"fmt"
+
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
@@ -26,6 +28,20 @@ func (usuc *UpdateSchoolUseCase) UpdateSchool(cnpj string, attributes map[string
 	err := utils.ValidateUpdate(attributes, value.SchoollAllowedKeys)
 	if err != nil {
 		return err
+	}
+
+	if _, exists := attributes["password"]; exists {
+		ok, errors := utils.ValidatePassword(attributes["password"].(string))
+		if !ok {
+			return fmt.Errorf(errors)
+		}
+
+		hash, err := utils.MakeHash(attributes["password"].(string))
+		if err != nil {
+			return fmt.Errorf("error hashing password: %w", err)
+		}
+
+		attributes["password"] = hash
 	}
 
 	return usuc.repositories.SchoolRepository.Update(cnpj, attributes)

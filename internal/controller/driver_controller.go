@@ -29,17 +29,23 @@ func NewDriverController() *DriverController {
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /driver [post]
-func (dh *DriverController) PostV1Create(c *gin.Context) {
+func (dh *DriverController) PostV1Create(httpContext *gin.Context) {
 	var requestParams entity.Driver
-	if err := c.BindJSON(&requestParams); err != nil {
+	if err := httpContext.BindJSON(&requestParams); err != nil {
 		infra.App.Logger.Errorf(fmt.Sprintf("error on bind json: %v", err))
-		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+		return
+	}
+
+	ok, errors := utils.ValidatePassword(requestParams.Password)
+	if !ok {
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": errors})
 		return
 	}
 
 	hash, err := utils.MakeHash(requestParams.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	requestParams.Password = hash
@@ -52,11 +58,11 @@ func (dh *DriverController) PostV1Create(c *gin.Context) {
 
 	err = usecase.CreateDriver(&requestParams)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		httpContext.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusCreated, http.NoBody)
+	httpContext.JSON(http.StatusCreated, http.NoBody)
 }
 
 // @Summary Busca motorista
@@ -67,8 +73,8 @@ func (dh *DriverController) PostV1Create(c *gin.Context) {
 // @Success 200 {object} value.GetDriver
 // @Failure 400 {object} map[string]string
 // @Router /driver/{cnh} [get]
-func (dh *DriverController) GetV1GetDriver(c *gin.Context) {
-	cnh := c.Param("cnh")
+func (dh *DriverController) GetV1GetDriver(httpContext *gin.Context) {
+	cnh := httpContext.Param("cnh")
 
 	usecase := usecase.NewGetDriverUseCase(
 		&infra.App.Repositories,
@@ -78,11 +84,11 @@ func (dh *DriverController) GetV1GetDriver(c *gin.Context) {
 
 	driver, err := usecase.GetDriver(cnh)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "motorista não encontrado"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "motorista não encontrado"))
 		return
 	}
 
-	c.JSON(http.StatusOK, driver)
+	httpContext.JSON(http.StatusOK, driver)
 }
 
 // @Summary Atualiza dados do motorista
@@ -94,24 +100,24 @@ func (dh *DriverController) GetV1GetDriver(c *gin.Context) {
 // @Success 204 {string} string "No Content"
 // @Failure 400 {object} map[string]string
 // @Router /driver/{cnh} [patch]
-func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
-	cnh := c.Param("cnh")
+func (dh *DriverController) PatchV1UpdateDriver(httpContext *gin.Context) {
+	cnh := httpContext.Param("cnh")
 	var data map[string]interface{}
-	if err := c.BindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
+	if err := httpContext.BindJSON(&data); err != nil {
+		httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
 	middleware := middleware.NewDriverMiddleware()
 
-	middlewareResponse, err := middleware.GetDriverFromMiddleware(c)
+	middlewareResponse, err := middleware.GetDriverFromMiddleware(httpContext)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
 		return
 	}
 
 	if middlewareResponse.Driver.CNH != cnh {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
 		return
 	}
 
@@ -122,11 +128,11 @@ func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
 
 	err = usecase.UpdateDriver(cnh, data)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao realizar atualização das informações do motorista"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao realizar atualização das informações do motorista"))
 		return
 	}
 
-	c.JSON(http.StatusNoContent, http.NoBody)
+	httpContext.JSON(http.StatusNoContent, http.NoBody)
 }
 
 // @Summary Deleta motorista
@@ -136,19 +142,19 @@ func (dh *DriverController) PatchV1UpdateDriver(c *gin.Context) {
 // @Success 204 {string} string "No Content"
 // @Failure 400 {object} map[string]string
 // @Router /driver/{cnh} [delete]
-func (dh *DriverController) DeleteV1DeleteDriver(c *gin.Context) {
-	cnh := c.Param("cnh")
+func (dh *DriverController) DeleteV1DeleteDriver(httpContext *gin.Context) {
+	cnh := httpContext.Param("cnh")
 
 	middleware := middleware.NewDriverMiddleware()
 
-	middlewareResponse, err := middleware.GetDriverFromMiddleware(c)
+	middlewareResponse, err := middleware.GetDriverFromMiddleware(httpContext)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
+		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar buscar o responsável do middleware"))
 		return
 	}
 
 	if middlewareResponse.Driver.CNH != cnh {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "access denied"})
 		return
 	}
 
@@ -159,12 +165,12 @@ func (dh *DriverController) DeleteV1DeleteDriver(c *gin.Context) {
 
 	err = usecase.DeleteDriver(cnh)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar motorista"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "erro ao deletar motorista"})
 		return
 	}
 
-	c.SetCookie("token", "", -1, "/", c.Request.Host, false, true)
-	c.JSON(http.StatusNoContent, http.NoBody)
+	httpContext.SetCookie("token", "", -1, "/", httpContext.Request.Host, false, true)
+	httpContext.JSON(http.StatusNoContent, http.NoBody)
 }
 
 // @Summary Login de motorista

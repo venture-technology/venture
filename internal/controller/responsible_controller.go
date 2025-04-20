@@ -43,6 +43,12 @@ func (rh *ResponsibleController) PostV1CreateResponsible(httpContext *gin.Contex
 		infra.App.Adapters,
 	)
 
+	ok, errors := utils.ValidatePassword(requestParams.Password)
+	if !ok {
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": errors})
+		return
+	}
+
 	hash, err := utils.MakeHash(requestParams.Password)
 	if err != nil {
 		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
