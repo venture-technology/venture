@@ -31,6 +31,20 @@ func (uduc *UpdateDriverUseCase) UpdateDriver(cnh string, attributes map[string]
 		return err
 	}
 
+	if _, exists := attributes["password"]; exists {
+		ok, errors := utils.ValidatePassword(attributes["password"].(string))
+		if !ok {
+			return fmt.Errorf(errors)
+		}
+
+		hash, err := utils.MakeHash(attributes["password"].(string))
+		if err != nil {
+			return fmt.Errorf("error hashing password: %w", err)
+		}
+
+		attributes["password"] = hash
+	}
+
 	fields := []string{"street", "number", "complement", "zip"}
 	err = utils.ValidateRequiredGroup(attributes, fields)
 	if err != nil {
@@ -50,6 +64,7 @@ func (uduc *UpdateDriverUseCase) UpdateDriver(cnh string, attributes map[string]
 	return uduc.repositories.DriverRepository.Update(cnh, attributes)
 }
 
+// this function verifies if the driver can change your provincy
 func (uduc *UpdateDriverUseCase) validateProvincy(driver *entity.Driver, attrs map[string]interface{}) error {
 	_, exists := attrs["state"]
 	if exists {

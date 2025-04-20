@@ -30,6 +30,20 @@ func (uruc *UpdateResponsibleUseCase) UpdateResponsible(cpf string, attributes m
 		return err
 	}
 
+	if _, exists := attributes["password"]; exists {
+		ok, errors := utils.ValidatePassword(attributes["password"].(string))
+		if !ok {
+			return fmt.Errorf(errors)
+		}
+
+		hash, err := utils.MakeHash(attributes["password"].(string))
+		if err != nil {
+			return fmt.Errorf("error hashing password: %w", err)
+		}
+
+		attributes["password"] = hash
+	}
+
 	fields := []string{"street", "number", "complement", "zip"}
 	err = utils.ValidateRequiredGroup(attributes, fields)
 	if err != nil {
