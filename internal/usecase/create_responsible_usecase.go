@@ -1,13 +1,10 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type CreateResponsibleUseCase struct {
@@ -29,11 +26,6 @@ func NewCreateResponsibleUseCase(
 }
 
 func (cruc *CreateResponsibleUseCase) CreateResponsible(responsible *entity.Responsible) error {
-	ok, errors := utils.ValidatePassword(responsible.Password)
-	if !ok {
-		return fmt.Errorf(errors)
-	}
-
 	var err error
 	responsible.CustomerId, err = cruc.adapters.PaymentsService.CreateCustomer(responsible)
 	if err != nil {
