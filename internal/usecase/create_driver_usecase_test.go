@@ -19,7 +19,9 @@ func TestCreateDriverUsecase_CreateDriver(t *testing.T) {
 		Car: entity.Car{
 			Capacity: 60,
 		},
+		Password: "123Teste@",
 	}
+
 	t.Run("if s3 returns error", func(t *testing.T) {
 		repository := mocks.NewDriverRepository(t)
 		logger := mocks.NewLogger(t)

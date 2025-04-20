@@ -25,10 +25,10 @@ func NewInviteController() *InviteController {
 // @Success 201 {object} nil
 // @Failure 400 {object} map[string]string
 // @Router /invite [post]
-func (ih *InviteController) PostV1SendInvite(c *gin.Context) {
+func (ih *InviteController) PostV1SendInvite(httpContext *gin.Context) {
 	var requestParams entity.Invite
-	if err := c.BindJSON(&requestParams); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
+	if err := httpContext.BindJSON(&requestParams); err != nil {
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "conteúdo do body inválido"})
 		return
 	}
 
@@ -39,11 +39,11 @@ func (ih *InviteController) PostV1SendInvite(c *gin.Context) {
 
 	err := usecase.SendInvite(&requestParams)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno no servidor"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"message": "erro interno no servidor"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, http.NoBody)
+	httpContext.JSON(http.StatusCreated, http.NoBody)
 }
 
 // @Summary Lista convites do motorista
@@ -54,8 +54,8 @@ func (ih *InviteController) PostV1SendInvite(c *gin.Context) {
 // @Success 200 {array} []value.DriverListInvite
 // @Failure 400 {object} map[string]string
 // @Router /driver/invites/{cnh} [get]
-func (ih *InviteController) GetV1DriverListInvite(c *gin.Context) {
-	cnh := c.Param("cnh")
+func (ih *InviteController) GetV1DriverListInvite(httpContext *gin.Context) {
+	cnh := httpContext.Param("cnh")
 
 	usecase := usecase.NewListDriverInvitesUseCase(
 		&infra.App.Repositories,
@@ -64,11 +64,11 @@ func (ih *InviteController) GetV1DriverListInvite(c *gin.Context) {
 
 	invites, err := usecase.ListDriverInvites(cnh)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno no servidor"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"message": "erro interno no servidor"})
 		return
 	}
 
-	c.JSON(http.StatusOK, invites)
+	httpContext.JSON(http.StatusOK, invites)
 }
 
 // @Summary Lista convites da escola
@@ -79,8 +79,8 @@ func (ih *InviteController) GetV1DriverListInvite(c *gin.Context) {
 // @Success 200 {array} []value.SchoolListInvite
 // @Failure 400 {object} map[string]string
 // @Router /school/invites/{cnpj} [get]
-func (ih *InviteController) GetV1SchoolListInvite(c *gin.Context) {
-	cnpj := c.Param("cnpj")
+func (ih *InviteController) GetV1SchoolListInvite(httpContext *gin.Context) {
+	cnpj := httpContext.Param("cnpj")
 
 	usecase := usecase.NewListSchoolInvitesUseCase(
 		&infra.App.Repositories,
@@ -89,11 +89,11 @@ func (ih *InviteController) GetV1SchoolListInvite(c *gin.Context) {
 
 	invites, err := usecase.ListSchoolInvites(cnpj)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "erro interno no servidor"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"message": "erro interno no servidor"})
 		return
 	}
 
-	c.JSON(http.StatusOK, invites)
+	httpContext.JSON(http.StatusOK, invites)
 }
 
 // @Summary Aceita convite
@@ -104,8 +104,8 @@ func (ih *InviteController) GetV1SchoolListInvite(c *gin.Context) {
 // @Success 200 {object} nil
 // @Failure 400 {object} map[string]string
 // @Router /invite/{id}/accept [patch]
-func (ih *InviteController) PatchV1AcceptInvite(c *gin.Context) {
-	id := c.Param("id")
+func (ih *InviteController) PatchV1AcceptInvite(httpContext *gin.Context) {
+	id := httpContext.Param("id")
 
 	usecase := usecase.NewAcceptInviteUseCase(
 		&infra.App.Repositories,
@@ -115,11 +115,11 @@ func (ih *InviteController) PatchV1AcceptInvite(c *gin.Context) {
 	err := usecase.AcceptInvite(id)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "erro interno no servidor ao tentar aceitar convite"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "erro interno no servidor ao tentar aceitar convite"})
 		return
 	}
 
-	c.JSON(http.StatusOK, http.NoBody)
+	httpContext.JSON(http.StatusOK, http.NoBody)
 }
 
 // @Summary Recusa convite
@@ -130,8 +130,8 @@ func (ih *InviteController) PatchV1AcceptInvite(c *gin.Context) {
 // @Success 204 {object} nil
 // @Failure 400 {object} map[string]string
 // @Router /invite/{id}/decline [delete]
-func (ih *InviteController) DeleteV1DeclineInvite(c *gin.Context) {
-	id := c.Param("id")
+func (ih *InviteController) DeleteV1DeclineInvite(httpContext *gin.Context) {
+	id := httpContext.Param("id")
 
 	usecase := usecase.NewDeclineInviteUseCase(
 		&infra.App.Repositories,
@@ -140,9 +140,9 @@ func (ih *InviteController) DeleteV1DeclineInvite(c *gin.Context) {
 
 	err := usecase.DeclineInvite(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "erro interno no servidor ao tentar deletar convite"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "erro interno no servidor ao tentar deletar convite"})
 		return
 	}
 
-	c.JSON(http.StatusNoContent, http.NoBody)
+	httpContext.JSON(http.StatusNoContent, http.NoBody)
 }

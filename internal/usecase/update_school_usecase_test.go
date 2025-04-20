@@ -45,7 +45,7 @@ func TestUpdateSchoolUsecase_UpdateSchool(t *testing.T) {
 		err := usecase.UpdateSchool("123", map[string]interface{}{
 			"name":     "123",
 			"email":    "amostradinho@gmail.com",
-			"password": "17",
+			"password": "17TesteCorreto!",
 		})
 
 		assert.EqualError(t, err, "database error")

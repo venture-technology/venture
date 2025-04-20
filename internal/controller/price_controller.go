@@ -24,9 +24,9 @@ func NewPriceController() *PriceController {
 // @Success 200 {object} value.ListDriverToCalcPrice
 // @Failure 400 {object} map[string]string
 // @Router /price/{cpf}/{cnpj} [get]
-func (pc *PriceController) GetV1PriceDriver(c *gin.Context) {
-	responsible := c.Param("cpf")
-	school := c.Param("cnpj")
+func (pc *PriceController) GetV1PriceDriver(httpContext *gin.Context) {
+	responsible := httpContext.Param("cpf")
+	school := httpContext.Param("cnpj")
 
 	usecase := usecase.NewCalculatePriceDriversUseCase(
 		&infra.App.Repositories,
@@ -36,9 +36,9 @@ func (pc *PriceController) GetV1PriceDriver(c *gin.Context) {
 
 	response, err := usecase.CalculatePrice(responsible, school)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "calculate pricing error"})
+		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "calculate pricing error"})
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	httpContext.JSON(http.StatusOK, response)
 }
