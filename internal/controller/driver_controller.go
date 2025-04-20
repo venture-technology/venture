@@ -52,7 +52,7 @@ func (dh *DriverController) PostV1Create(c *gin.Context) {
 
 	err = usecase.CreateDriver(&requestParams)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realziar a criação do qrcode"))
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
