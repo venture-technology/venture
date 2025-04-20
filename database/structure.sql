@@ -711,6 +711,14 @@ ALTER TABLE ONLY public.responsibles
 
 
 --
+-- Name: drivers unique_drivers_email; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.drivers
+    ADD CONSTRAINT unique_drivers_email UNIQUE (email);
+
+
+--
 -- Name: invites unique_invite; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -732,6 +740,22 @@ ALTER TABLE ONLY public.kids
 
 ALTER TABLE ONLY public.partners
     ADD CONSTRAINT unique_partner UNIQUE (driver_cnh, school_cnpj);
+
+
+--
+-- Name: responsibles unique_responsibles_email; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.responsibles
+    ADD CONSTRAINT unique_responsibles_email UNIQUE (email);
+
+
+--
+-- Name: schools unique_schools_email; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.schools
+    ADD CONSTRAINT unique_schools_email UNIQUE (email);
 
 
 --
