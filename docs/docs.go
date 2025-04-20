@@ -1895,15 +1895,27 @@ const docTemplate = `{
         "entity.Address": {
             "type": "object",
             "required": [
+                "city",
+                "neighborhood",
                 "number",
+                "state",
                 "street",
                 "zip"
             ],
             "properties": {
+                "city": {
+                    "type": "string"
+                },
                 "complement": {
                     "type": "string"
                 },
+                "neighborhood": {
+                    "type": "string"
+                },
                 "number": {
+                    "type": "string"
+                },
+                "state": {
                     "type": "string"
                 },
                 "street": {
@@ -1961,9 +1973,6 @@ const docTemplate = `{
                 "car": {
                     "$ref": "#/definitions/entity.Car"
                 },
-                "city": {
-                    "type": "string"
-                },
                 "cnh": {
                     "type": "string"
                 },
@@ -2009,9 +2018,6 @@ const docTemplate = `{
                 },
                 "seats": {
                     "$ref": "#/definitions/entity.Seats"
-                },
-                "states": {
-                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
@@ -2139,9 +2145,6 @@ const docTemplate = `{
                     "description": "credit card token on create responsible",
                     "type": "string"
                 },
-                "city": {
-                    "type": "string"
-                },
                 "cpf": {
                     "description": "sem pontuação",
                     "type": "string",
@@ -2176,9 +2179,6 @@ const docTemplate = `{
                 "profile_image": {
                     "type": "string"
                 },
-                "states": {
-                    "type": "string"
-                },
                 "updated_at": {
                     "type": "string"
                 }
@@ -2197,9 +2197,6 @@ const docTemplate = `{
             "properties": {
                 "address": {
                     "$ref": "#/definitions/entity.Address"
-                },
-                "city": {
-                    "type": "string"
                 },
                 "cnpj": {
                     "type": "string"
@@ -2226,9 +2223,6 @@ const docTemplate = `{
                 "profile_image": {
                     "type": "string"
                 },
-                "states": {
-                    "type": "string"
-                },
                 "updated_at": {
                     "type": "string"
                 }
@@ -2247,6 +2241,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "remaining": {
+                    "type": "integer"
+                },
+                "version": {
                     "type": "integer"
                 }
             }
@@ -2413,9 +2410,6 @@ const docTemplate = `{
                 "car": {
                     "type": "string"
                 },
-                "city": {
-                    "type": "string"
-                },
                 "created_at": {
                     "type": "string"
                 },
@@ -2444,9 +2438,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "qrcode": {
-                    "type": "string"
-                },
-                "states": {
                     "type": "string"
                 }
             }
@@ -2543,9 +2534,6 @@ const docTemplate = `{
                 "address": {
                     "type": "string"
                 },
-                "city": {
-                    "type": "string"
-                },
                 "created_at": {
                     "type": "string"
                 },
@@ -2569,9 +2557,6 @@ const docTemplate = `{
                 },
                 "profile_image": {
                     "type": "string"
-                },
-                "states": {
-                    "type": "string"
                 }
             }
         },
@@ -2579,9 +2564,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string"
-                },
-                "city": {
                     "type": "string"
                 },
                 "created_at": {
@@ -2600,9 +2582,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "profile_image": {
-                    "type": "string"
-                },
-                "states": {
                     "type": "string"
                 }
             }
