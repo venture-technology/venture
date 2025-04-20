@@ -98,16 +98,25 @@ definitions:
     type: object
   entity.Address:
     properties:
+      city:
+        type: string
       complement:
         type: string
+      neighborhood:
+        type: string
       number:
+        type: string
+      state:
         type: string
       street:
         type: string
       zip:
         type: string
     required:
+    - city
+    - neighborhood
     - number
+    - state
     - street
     - zip
     type: object
@@ -136,8 +145,6 @@ definitions:
         type: string
       car:
         $ref: '#/definitions/entity.Car'
-      city:
-        type: string
       cnh:
         type: string
       cpf:
@@ -169,8 +176,6 @@ definitions:
         type: string
       seats:
         $ref: '#/definitions/entity.Seats'
-      states:
-        type: string
       updated_at:
         type: string
     required:
@@ -259,8 +264,6 @@ definitions:
       card_token:
         description: credit card token on create responsible
         type: string
-      city:
-        type: string
       cpf:
         description: sem pontuação
         example: "44000000000"
@@ -285,8 +288,6 @@ definitions:
         type: string
       profile_image:
         type: string
-      states:
-        type: string
       updated_at:
         type: string
     required:
@@ -301,8 +302,6 @@ definitions:
     properties:
       address:
         $ref: '#/definitions/entity.Address'
-      city:
-        type: string
       cnpj:
         type: string
       created_at:
@@ -319,8 +318,6 @@ definitions:
         example: +55 11 123456789
         type: string
       profile_image:
-        type: string
-      states:
         type: string
       updated_at:
         type: string
@@ -341,6 +338,8 @@ definitions:
       night:
         type: integer
       remaining:
+        type: integer
+      version:
         type: integer
     type: object
   value.CreateContractRequestParams:
@@ -449,8 +448,6 @@ definitions:
         type: string
       car:
         type: string
-      city:
-        type: string
       created_at:
         type: string
       descriptions:
@@ -470,8 +467,6 @@ definitions:
       profile_image:
         type: string
       qrcode:
-        type: string
-      states:
         type: string
     type: object
   value.GetDriverContract:
@@ -534,8 +529,6 @@ definitions:
     properties:
       address:
         type: string
-      city:
-        type: string
       created_at:
         type: string
       customer_id:
@@ -552,14 +545,10 @@ definitions:
         type: string
       profile_image:
         type: string
-      states:
-        type: string
     type: object
   value.GetSchool:
     properties:
       address:
-        type: string
-      city:
         type: string
       created_at:
         type: string
@@ -572,8 +561,6 @@ definitions:
       phone:
         type: string
       profile_image:
-        type: string
-      states:
         type: string
     type: object
   value.GetSchoolContract:
