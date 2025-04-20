@@ -8,6 +8,7 @@ import (
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
+	"github.com/venture-technology/venture/pkg/utils"
 )
 
 type CreateDriverUseCase struct {
@@ -29,6 +30,11 @@ func NewCreateDriverUseCase(
 }
 
 func (cduc *CreateDriverUseCase) CreateDriver(driver *entity.Driver) error {
+	ok, errors := utils.ValidatePassword(driver.Password)
+	if !ok {
+		return fmt.Errorf(errors)
+	}
+
 	err := driver.ValidateCnh()
 	if err != nil {
 		return err
