@@ -1,0 +1,7 @@
+BEGIN;
+
+ALTER TABLE drivers ALTER COLUMN complement TYPE VARCHAR(10);
+ALTER TABLE schools ALTER COLUMN complement TYPE VARCHAR(10);
+ALTER TABLE responsibles ALTER COLUMN complement TYPE TEXT;
+
+COMMIT;

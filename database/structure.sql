@@ -130,7 +130,7 @@ CREATE TABLE public.drivers (
     amount numeric(10,2) NOT NULL,
     street character varying(100) NOT NULL,
     number character varying(10) NOT NULL,
-    complement character varying(10),
+    complement character varying(100),
     zip character varying(8) NOT NULL,
     phone text NOT NULL,
     pix_key character varying(100),
@@ -150,8 +150,8 @@ CREATE TABLE public.drivers (
     city character varying(100) DEFAULT ''::character varying NOT NULL,
     accessibility boolean DEFAULT false,
     biography character varying(1000) DEFAULT ''::character varying,
-    descriptions character varying(550) DEFAULT ''::character varying,
-    neighborhood character varying(255) DEFAULT ''::character varying NOT NULL
+    description character varying(550) DEFAULT ''::character varying,
+    neighborhood character varying(255) DEFAULT ''::character varying NOT NULL,
     seats_version bigint DEFAULT 0 NOT NULL
 );
 
@@ -346,7 +346,7 @@ CREATE TABLE public.responsibles (
     password character varying(100) NOT NULL,
     street character varying(100) NOT NULL,
     number text NOT NULL,
-    complement text,
+    complement character varying(100),
     zip character varying(8) NOT NULL,
     card_token text NOT NULL,
     payment_method_id text,
@@ -432,7 +432,7 @@ CREATE TABLE public.schools (
     number character varying(10) NOT NULL,
     zip character varying(8) NOT NULL,
     email character varying(100) NOT NULL,
-    complement character varying(10),
+    complement character varying(100),
     phone text NOT NULL,
     profile_image text DEFAULT 'null'::text,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
