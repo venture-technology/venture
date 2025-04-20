@@ -1889,15 +1889,27 @@
         "entity.Address": {
             "type": "object",
             "required": [
+                "city",
+                "neighborhood",
                 "number",
+                "state",
                 "street",
                 "zip"
             ],
             "properties": {
+                "city": {
+                    "type": "string"
+                },
                 "complement": {
                     "type": "string"
                 },
+                "neighborhood": {
+                    "type": "string"
+                },
                 "number": {
+                    "type": "string"
+                },
+                "state": {
                     "type": "string"
                 },
                 "street": {
@@ -1955,9 +1967,6 @@
                 "car": {
                     "$ref": "#/definitions/entity.Car"
                 },
-                "city": {
-                    "type": "string"
-                },
                 "cnh": {
                     "type": "string"
                 },
@@ -2003,9 +2012,6 @@
                 },
                 "seats": {
                     "$ref": "#/definitions/entity.Seats"
-                },
-                "states": {
-                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
@@ -2133,9 +2139,6 @@
                     "description": "credit card token on create responsible",
                     "type": "string"
                 },
-                "city": {
-                    "type": "string"
-                },
                 "cpf": {
                     "description": "sem pontuação",
                     "type": "string",
@@ -2170,9 +2173,6 @@
                 "profile_image": {
                     "type": "string"
                 },
-                "states": {
-                    "type": "string"
-                },
                 "updated_at": {
                     "type": "string"
                 }
@@ -2191,9 +2191,6 @@
             "properties": {
                 "address": {
                     "$ref": "#/definitions/entity.Address"
-                },
-                "city": {
-                    "type": "string"
                 },
                 "cnpj": {
                     "type": "string"
@@ -2220,9 +2217,6 @@
                 "profile_image": {
                     "type": "string"
                 },
-                "states": {
-                    "type": "string"
-                },
                 "updated_at": {
                     "type": "string"
                 }
@@ -2241,6 +2235,9 @@
                     "type": "integer"
                 },
                 "remaining": {
+                    "type": "integer"
+                },
+                "version": {
                     "type": "integer"
                 }
             }
@@ -2407,9 +2404,6 @@
                 "car": {
                     "type": "string"
                 },
-                "city": {
-                    "type": "string"
-                },
                 "created_at": {
                     "type": "string"
                 },
@@ -2438,9 +2432,6 @@
                     "type": "string"
                 },
                 "qrcode": {
-                    "type": "string"
-                },
-                "states": {
                     "type": "string"
                 }
             }
@@ -2537,9 +2528,6 @@
                 "address": {
                     "type": "string"
                 },
-                "city": {
-                    "type": "string"
-                },
                 "created_at": {
                     "type": "string"
                 },
@@ -2563,9 +2551,6 @@
                 },
                 "profile_image": {
                     "type": "string"
-                },
-                "states": {
-                    "type": "string"
                 }
             }
         },
@@ -2573,9 +2558,6 @@
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string"
-                },
-                "city": {
                     "type": "string"
                 },
                 "created_at": {
@@ -2594,9 +2576,6 @@
                     "type": "string"
                 },
                 "profile_image": {
-                    "type": "string"
-                },
-                "states": {
                     "type": "string"
                 }
             }
