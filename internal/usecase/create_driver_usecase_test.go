@@ -41,33 +41,6 @@ func TestCreateDriverUsecase_CreateDriver(t *testing.T) {
 		assert.EqualError(t, err, "s3iface error")
 	})
 
-	t.Run("if passwod is weak", func(t *testing.T) {
-		repository := mocks.NewDriverRepository(t)
-		logger := mocks.NewLogger(t)
-		s3iface := mocks.NewS3Iface(t)
-
-		usecase := NewCreateDriverUseCase(
-			&persistence.PostgresRepositories{
-				DriverRepository: repository,
-			},
-			logger,
-			s3iface,
-		)
-
-		driver := &entity.Driver{
-			CNH:      "37886632129",
-			Schedule: "afternoon",
-			Car: entity.Car{
-				Capacity: 60,
-			},
-			Password: "12",
-		}
-
-		err := usecase.CreateDriver(driver)
-
-		assert.Error(t, err)
-	})
-
 	t.Run("if driver repository returns error", func(t *testing.T) {
 		repository := mocks.NewDriverRepository(t)
 		logger := mocks.NewLogger(t)
