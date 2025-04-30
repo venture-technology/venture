@@ -408,3 +408,9 @@ type CreateSchool struct {
 	CreatedAt    time.Time `json:"created_at,omitempty"`
 	UpdatedAt    time.Time `json:"updated_at,omitempty"`
 }
+
+type CreateMessage struct {
+	QueueURL      string
+	ReceiptHandle string
+	Body          string
+}
