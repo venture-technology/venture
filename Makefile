@@ -57,7 +57,7 @@ migrateforce:
 	go run cmd/db/migrate_force/main.go
 
 send-config-json:
-	rsync config/development.json root@$(HOST_REMOTE_SERVER_IP):~/config
+	rsync config/development.json root@$(HOST_REMOTE_SERVER_IP):~/infrastructure/apis/venture
 
 api:
 	go run cmd/api/server/main.go
