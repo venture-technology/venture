@@ -54,7 +54,7 @@ func getStatus(c *gin.Context) {
 	c.Header("Content-Type", "application/json; charset=utf-8")
 	c.Header("charset", "utf-8")
 	c.Header("app_version", "2025.01.07 02:38")
-	c.String(http.StatusOK, "ok, latest version working! =D")
+	c.String(http.StatusOK, "ok, version management working! =D")
 }
 
 func configHeaders() gin.HandlerFunc {

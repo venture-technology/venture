@@ -30,15 +30,8 @@ deploy-nginx: send-nginx-config deploy-http-server
 
 prod-deploy-docker:
 	ssh -t root@$(HOST_REMOTE_SERVER_IP) '\
-		docker pull $(IMAGE_NAME):latest \
-		&& (docker stop venture-api || true) \
-		&& (docker rm venture-api || true) \
-		&& docker run -d \
-			--name venture-api \
-			--restart always \
-			-v ~/config:/app/config \
-			-p 9999:9999 \
-			$(IMAGE_NAME):latest \
+		cd infrastructure \
+		docker compose up --build -d \
 	'
 
 qa-deploy-docker:
@@ -64,7 +57,7 @@ migrateforce:
 	go run cmd/db/migrate_force/main.go
 
 send-config-json:
-	rsync config/development.json root@$(HOST_REMOTE_SERVER_IP):~/config
+	rsync config/development.json root@$(HOST_REMOTE_SERVER_IP):~/infrastructure/apis/venture
 
 api:
 	go run cmd/api/server/main.go
