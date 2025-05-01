@@ -26,7 +26,6 @@ type Metadata struct {
 		DriverName         string    `json:"driver_name"`
 		ResponsibleID      string    `json:"responsible_id"`
 		ResponsibleName    string    `json:"responsible_name"`
-		ResponsibleCPF     string    `json:"responsible_cpf"`
 		ResponsibleEmail   string    `json:"responsible_email"`
 		ResponsiblePhone   string    `json:"responsible_phone"`
 		ResponsibleAddr    string    `json:"responsible_addr"`

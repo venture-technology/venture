@@ -126,7 +126,6 @@ func (as *AgreementService) MappingContractInfo(contract entity.ContractProperty
 				DriverName         string    `json:"driver_name"`
 				ResponsibleID      string    `json:"responsible_id"`
 				ResponsibleName    string    `json:"responsible_name"`
-				ResponsibleCPF     string    `json:"responsible_cpf"`
 				ResponsibleEmail   string    `json:"responsible_email"`
 				ResponsiblePhone   string    `json:"responsible_phone"`
 				ResponsibleAddr    string    `json:"responsible_addr"`
@@ -145,7 +144,6 @@ func (as *AgreementService) MappingContractInfo(contract entity.ContractProperty
 				DriverName:         contract.ContractParams.Driver.Name,
 				ResponsibleID:      contract.ContractParams.Kid.Responsible.CPF,
 				ResponsibleName:    contract.ContractParams.Kid.Responsible.Name,
-				ResponsibleCPF:     contract.ContractParams.Kid.Responsible.CPF,
 				ResponsibleEmail:   contract.ContractParams.Kid.Responsible.Email,
 				ResponsiblePhone:   contract.ContractParams.Kid.Responsible.Phone,
 				ResponsibleAddr:    contract.ContractParams.Kid.Responsible.Address.GetFullAddress(),
