@@ -43,10 +43,11 @@ func (ga *GoogleAdapter) GetDistance(origin, destination string) (*float64, erro
 
 	distance := data.Rows[0].Elements[0].Distance.Text
 	distance = strings.TrimSpace(strings.Replace(distance, "km", "", 1))
+	distance = strings.ReplaceAll(distance, ",", ".") // <- necessário
 	kmFloat, err := strconv.ParseFloat(distance, 64)
 	if err != nil {
 		return nil, err
 	}
 
-	return &kmFloat, err
+	return &kmFloat, nil
 }
