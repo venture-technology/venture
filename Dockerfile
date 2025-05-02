@@ -27,6 +27,4 @@ COPY --from=builder /app ./
 
 RUN mkdir -p /app/config /app/database
 
-EXPOSE 9999
-
 CMD ["/app/main"]
