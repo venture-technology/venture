@@ -35,17 +35,11 @@ prod-deploy-docker:
 		&& docker compose up --build -d \
 	'
 
-qa-deploy-docker:
+staging-deploy-docker:
 	ssh -t root@$(HOST_REMOTE_SERVER_IP) '\
-		docker pull $(IMAGE_NAME):latest \
-		&& (docker stop venture-api-staging || true) \
-		&& (docker rm venture-api-staging || true) \
-		&& docker run -d \
-			--name venture-api-staging \
-			--restart always \
-			-v ~/config:/app/config \
-			-p 9998:9998 \
-			$(IMAGE_NAME):latest \
+		cd ~/infrastructure \
+		&& docker compose pull \
+		&& docker compose up --build -d \
 	'
 
 migrateup:
