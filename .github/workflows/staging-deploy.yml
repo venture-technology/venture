@@ -1,8 +1,10 @@
-name: QADeploy
+name: StagingDeploy
 
 on:
-  repository-dispatch:
-    types: [deploy-command]
+  push:
+    branches:
+      - qa
+  workflow_dispatch:
 
 env:
   REGISTRY: docker.io
@@ -49,5 +51,5 @@ jobs:
           HOST_REMOTE_SERVER_IP: ${{ secrets.HOST_REMOTE_SERVER_IP }}
           IMAGE_NAME: ghcr.io/venture-technology/venture-staging
         run: |
-          make prod-deploy-docker
+          make staging-deploy-docker
 
