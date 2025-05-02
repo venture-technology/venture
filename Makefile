@@ -30,8 +30,9 @@ deploy-nginx: send-nginx-config deploy-http-server
 
 prod-deploy-docker:
 	ssh -t root@$(HOST_REMOTE_SERVER_IP) '\
-		cd infrastructure \
-		docker compose up --build -d \
+		cd ~/infrastructure \
+		&& docker compose pull \
+		&& docker compose up --build -d \
 	'
 
 qa-deploy-docker:
