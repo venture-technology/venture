@@ -5,6 +5,10 @@ on:
     branches:
       - qa
   workflow_dispatch:
+    inputs:
+      deploy_id:
+        description: 'Deploy ID'
+        required: false
 
 env:
   REGISTRY: docker.io
