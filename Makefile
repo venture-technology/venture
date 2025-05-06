@@ -32,14 +32,14 @@ prod-deploy-docker:
 	ssh -t root@$(HOST_REMOTE_SERVER_IP) '\
 		cd ~/infrastructure \
 		&& docker compose pull venture-server \
-		&& docker compose up --build -d \
+		&& docker compose up --build -d venture-server \
 	'
 
 staging-deploy-docker:
 	ssh -t root@$(HOST_REMOTE_SERVER_IP) '\
 		cd ~/infrastructure \
 		&& docker compose pull venture-server-staging \
-		&& docker compose up --build -d \
+		&& docker compose up --build -d venture-server-staging \
 	'
 
 migrateup:
