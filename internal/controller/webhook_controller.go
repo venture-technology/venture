@@ -23,7 +23,7 @@ func NewWebhookController() *WebhookController {
 func (wh *WebhookController) PostV1WebhookSignatureEvents(httpContext *gin.Context) {
 	bodyBytes, err := io.ReadAll(httpContext.Request.Body)
 	if err != nil {
-		httpContext.JSON(http.StatusBadRequest, gin.H{"error": "Erro ao ler o corpo da requisição"})
+		httpContext.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao ler o corpo da requisição"})
 		return
 	}
 	httpContext.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
