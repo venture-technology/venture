@@ -46,7 +46,7 @@ func (wh *WebhookController) PostV1WebhookSignatureEvents(httpContext *gin.Conte
 
 	_, err = usecase.Execute(httpContext, eventWrapper)
 	if err != nil {
-		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "error handling webhook event"))
+		httpContext.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "error handling webhook event"))
 		return
 	}
 
