@@ -1,8 +1,6 @@
 package agreements
 
 import (
-	"time"
-
 	"github.com/venture-technology/venture/internal/entity"
 )
 
@@ -21,23 +19,13 @@ type Signer struct {
 type Metadata struct {
 	CustomID string `json:"custom_id"`
 	Keys     struct {
-		UUID               string    `json:"uuid"`
-		DriverID           string    `json:"driver_id"`
-		DriverName         string    `json:"driver_name"`
-		ResponsibleID      string    `json:"responsible_id"`
-		ResponsibleName    string    `json:"responsible_name"`
-		ResponsibleEmail   string    `json:"responsible_email"`
-		ResponsiblePhone   string    `json:"responsible_phone"`
-		ResponsibleAddr    string    `json:"responsible_addr"`
-		KidID              string    `json:"kid_id"`
-		KidName            string    `json:"kid_name"`
-		SchoolID           string    `json:"school_id"`
-		SchoolName         string    `json:"school_name"`
-		SchoolAddr         string    `json:"school_addr"`
-		DateTime           string    `json:"date_time"`
-		AmountContract     float64   `json:"amount_contract"`
-		AnualContractValue float64   `json:"anual_contract_value"`
-		Time               time.Time `json:"time"`
+		UUID               string  `json:"uuid"`
+		DriverID           string  `json:"driver_id"`
+		ResponsibleID      string  `json:"responsible_id"`
+		KidID              string  `json:"kid_id"`
+		SchoolID           string  `json:"school_id"`
+		AmountContract     float64 `json:"amount_contract"`
+		AnualContractValue float64 `json:"anual_contract_value"`
 	} `json:"keys"`
 }
 

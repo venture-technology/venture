@@ -121,41 +121,21 @@ func (as *AgreementService) MappingContractInfo(contract entity.ContractProperty
 		Metadata: Metadata{
 			CustomID: contract.UUID,
 			Keys: struct {
-				UUID               string    `json:"uuid"`
-				DriverID           string    `json:"driver_id"`
-				DriverName         string    `json:"driver_name"`
-				ResponsibleID      string    `json:"responsible_id"`
-				ResponsibleName    string    `json:"responsible_name"`
-				ResponsibleEmail   string    `json:"responsible_email"`
-				ResponsiblePhone   string    `json:"responsible_phone"`
-				ResponsibleAddr    string    `json:"responsible_addr"`
-				KidID              string    `json:"kid_id"`
-				KidName            string    `json:"kid_name"`
-				SchoolID           string    `json:"school_id"`
-				SchoolName         string    `json:"school_name"`
-				SchoolAddr         string    `json:"school_addr"`
-				DateTime           string    `json:"date_time"`
-				AmountContract     float64   `json:"amount_contract"`
-				AnualContractValue float64   `json:"anual_contract_value"`
-				Time               time.Time `json:"time"`
+				UUID               string  `json:"uuid"`
+				DriverID           string  `json:"driver_id"`
+				ResponsibleID      string  `json:"responsible_id"`
+				KidID              string  `json:"kid_id"`
+				SchoolID           string  `json:"school_id"`
+				AmountContract     float64 `json:"amount_contract"`
+				AnualContractValue float64 `json:"anual_contract_value"`
 			}{
 				UUID:               contract.UUID,
 				DriverID:           contract.ContractParams.Driver.CNH,
-				DriverName:         contract.ContractParams.Driver.Name,
 				ResponsibleID:      contract.ContractParams.Kid.Responsible.CPF,
-				ResponsibleName:    contract.ContractParams.Kid.Responsible.Name,
-				ResponsibleEmail:   contract.ContractParams.Kid.Responsible.Email,
-				ResponsiblePhone:   contract.ContractParams.Kid.Responsible.Phone,
-				ResponsibleAddr:    contract.ContractParams.Kid.Responsible.Address.GetFullAddress(),
 				KidID:              contract.ContractParams.Kid.RG,
-				KidName:            contract.ContractParams.Kid.Name,
 				SchoolID:           contract.ContractParams.School.CNPJ,
-				SchoolName:         contract.ContractParams.School.Name,
-				SchoolAddr:         contract.ContractParams.School.Address.GetFullAddress(),
-				DateTime:           contract.Time.Format("02/01/2006"),
 				AmountContract:     contract.ContractParams.Amount,
 				AnualContractValue: contract.ContractParams.Amount * 12,
-				Time:               contract.Time,
 			},
 		},
 		SigningOptions: struct {
