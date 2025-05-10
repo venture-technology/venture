@@ -9,24 +9,6 @@ type S3Iface struct {
 	mock.Mock
 }
 
-// HTML provides a mock function with no fields
-func (_m *S3Iface) HTML() string {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for HTML")
-	}
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	return r0
-}
-
 // List provides a mock function with given fields: bucket, path
 func (_m *S3Iface) List(bucket string, path string) ([]string, error) {
 	ret := _m.Called(bucket, path)
@@ -57,76 +39,12 @@ func (_m *S3Iface) List(bucket string, path string) ([]string, error) {
 	return r0, r1
 }
 
-// PDF provides a mock function with no fields
-func (_m *S3Iface) PDF() string {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for PDF")
-	}
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	return r0
-}
-
-// PNG provides a mock function with no fields
-func (_m *S3Iface) PNG() string {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for PNG")
-	}
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	return r0
-}
-
-// Save provides a mock function with given fields: bucket, path, filename, file
-func (_m *S3Iface) Save(bucket string, path string, filename string, file []byte) (string, error) {
-	ret := _m.Called(bucket, path, filename, file)
-
-	if len(ret) == 0 {
-		panic("no return value specified for Save")
-	}
-
-	var r0 string
-	var r1 error
-	if rf, ok := ret.Get(0).(func(string, string, string, []byte) (string, error)); ok {
-		return rf(bucket, path, filename, file)
-	}
-	if rf, ok := ret.Get(0).(func(string, string, string, []byte) string); ok {
-		r0 = rf(bucket, path, filename, file)
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	if rf, ok := ret.Get(1).(func(string, string, string, []byte) error); ok {
-		r1 = rf(bucket, path, filename, file)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// SaveWithType provides a mock function with given fields: bucket, path, filaneme, file, contentType
-func (_m *S3Iface) SaveWithType(bucket string, path string, filaneme string, file []byte, contentType string) (string, error) {
+// Save provides a mock function with given fields: bucket, path, filaneme, file, contentType
+func (_m *S3Iface) Save(bucket string, path string, filaneme string, file []byte, contentType string) (string, error) {
 	ret := _m.Called(bucket, path, filaneme, file, contentType)
 
 	if len(ret) == 0 {
-		panic("no return value specified for SaveWithType")
+		panic("no return value specified for Save")
 	}
 
 	var r0 string
