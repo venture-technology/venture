@@ -28,6 +28,7 @@ func main() {
 	setup.Repositories()
 	setup.Bucket()
 	setup.Email()
+	setup.Queue()
 	setup.Adapters()
 	setup.Converters()
 

@@ -1,0 +1,6 @@
+name: CreateLabelContractDeployQA
+
+on:
+  repository-dispatch:
+    types: [deploy-command]
+

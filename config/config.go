@@ -24,12 +24,12 @@ func LoadServerEnvironmentVars(service, serverEnv string) error {
 		viper.SetConfigType("json")
 		viper.SetConfigName(viper.GetString(ServerEnvironment)) // development
 
-		projectRoot, err := utils.FindGoModRoot()
+		path, err := utils.GetAbsPath()
 		if err != nil {
 			return err
 		}
 
-		viper.AddConfigPath(filepath.Join(projectRoot, "config"))
+		viper.AddConfigPath(path)
 
 		if err := viper.ReadInConfig(); err != nil {
 			fmt.Println("Failed to read config file:", err)

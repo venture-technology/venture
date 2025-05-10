@@ -64,7 +64,7 @@ type Queue interface {
 	SendMessage(queue, message string) error
 
 	// Gets the messages from the queue, need the CreateMessage format.
-	PullMessages(queue string) ([]value.CreateMessage, error)
+	PullMessages(queue string) ([]*value.CreateMessage, error)
 
 	// Delete a specific message of queue by identifier
 	DeleteMessage(queue, identifier string) error

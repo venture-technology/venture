@@ -49,10 +49,6 @@ func GetBucketContract() string {
 	return viper.GetString("AWS_BUCKET_CONTRACTS")
 }
 
-func GetPathHTML() string {
-	return "internal/domain/service/agreements/template/agreement.html"
-}
-
 type GetResponsible struct {
 	ID              int       `json:"id"`
 	Name            string    `json:"name"`
@@ -398,7 +394,7 @@ type CreateResponse struct {
 }
 
 type CreateSchool struct {
-	ID           int       `json:"id,omitempty"`
+	ID           int       `json:"id,ozmitempty"`
 	Name         string    `json:"name,omitempty" validate:"required"`
 	CNPJ         string    `json:"cnpj,omitempty" validate:"required"`
 	Email        string    `json:"email,omitempty" validate:"required"`
@@ -413,4 +409,11 @@ type CreateMessage struct {
 	QueueURL      string
 	ReceiptHandle string
 	Body          string
+}
+
+type CreateContractInput struct {
+	Responsible entity.Responsible
+	Kid         entity.Kid
+	Driver      entity.Driver
+	AmountCents int
 }

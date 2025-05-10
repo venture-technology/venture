@@ -12,6 +12,7 @@ type Application struct {
 	Cache        contracts.Cacher
 	Bucket       contracts.S3Iface
 	Email        contracts.SESIface
+	Queue        contracts.Queue
 	Logger       contracts.Logger
 	Adapters     adapters.Adapters
 	Converters   contracts.Converters
