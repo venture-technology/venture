@@ -158,10 +158,14 @@ func (ccuc *CreateContractUseCase) SetContractProperty(
 }
 
 func getHtmlPath() (string, error) {
-	root, err := utils.FindGoModRoot()
+	path, err := utils.GetAbsPath()
 	if err != nil {
 		return "", err
 	}
 
-	return filepath.Join(root, value.GetPathHTML()), nil
+	return filepath.Join(path, pathAgreement()), nil
+}
+
+func pathAgreement() string {
+	return "../domain/service/agreements/template/agreement.html"
 }
