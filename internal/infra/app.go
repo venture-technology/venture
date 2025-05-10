@@ -15,6 +15,7 @@ type Application struct {
 	Logger       contracts.Logger
 	Adapters     adapters.Adapters
 	Converters   contracts.Converters
+	Queue        contracts.Queue
 }
 
 var App Application

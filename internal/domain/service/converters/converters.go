@@ -5,7 +5,6 @@ import (
 	"html/template"
 
 	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
-	"github.com/venture-technology/venture/internal/entity"
 )
 
 type Converter struct {
@@ -15,7 +14,7 @@ func NewConverter() *Converter {
 	return &Converter{}
 }
 
-func (c *Converter) ConvertPDFtoHTML(htmlFile []byte, contractProperty entity.ContractProperty) ([]byte, error) {
+func (c *Converter) ConvertHTMLtoPDF(htmlFile []byte, contractProperty any) ([]byte, error) {
 	tmpl, err := template.New("webpage").Parse(string(htmlFile))
 	if err != nil {
 		return nil, err

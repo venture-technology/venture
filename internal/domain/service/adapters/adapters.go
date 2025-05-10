@@ -44,7 +44,7 @@ type AgreementService interface {
 	SignatureRequest(contract entity.ContractProperty) (agreements.ContractRequest, error)
 	// this function is used to get the html file of the agreement
 	// the param is variable because can be used to get the html file from different applications
-	GetAgreementHtml(path string) ([]byte, error)
+	BuildContract(path string) ([]byte, error)
 	HandleCallbackVerification() (any, error)
 	SignatureRequestAllSigned(*gin.Context) (agreements.ASRASOutput, error)
 }

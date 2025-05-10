@@ -31,6 +31,12 @@ const (
 
 	InviteAccepted = "accepted"
 	InvitePending  = "pending"
+
+	// s3 formats
+
+	PDF  = "application/pdf"
+	HTML = "text/html"
+	PNG  = "image/png"
 )
 
 func GetJWTSecret() string {
@@ -413,4 +419,33 @@ type CreateMessage struct {
 	QueueURL      string
 	ReceiptHandle string
 	Body          string
+}
+
+type SQSCreateLabelContractParams struct {
+	AmountCents      int    `json:"amount_cents"`
+	AmountAnualCents int    `json:"amount_anual_cents"`
+	UUID             string `json:"uuid"`
+	ResponsibleCPF   string `json:"responsible_cpf`
+	ResponsibleAddr  string `json:"responsible_addr`
+	ResponsibleEmail string `json:"responsible_email`
+	ResponsiblePhone string `json:"responsible_phone`
+	KidRG            string `json:"kid_rg"`
+	KidName          string `json:"kid_name`
+	KidShift         string `json:"kid_shift`
+	DriverName       string `json:"driver_name`
+	DriverCPF        string `json:"driver_cpf`
+	SchoolCNPJ       string `json:"school_cnpj"`
+	SchoolName       string `json:"school_name`
+	SchoolAddr       string `json:"school_addr`
+}
+
+type SQSCreateContractParams struct {
+	AmountCents      int    `json:"amount_cents"`
+	AmountAnualCents int    `json:"amount_anual_cents"`
+	UUID             string `json:"uuid"`
+	DriverID         string `json:"driver_id"`
+	ResponsibleID    string `json:"responsible_id"`
+	KidID            string `json:"kid_id"`
+	SchoolID         string `json:"school_id"`
+	FileURL          string `json:"file_url"`
 }

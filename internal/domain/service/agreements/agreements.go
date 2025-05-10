@@ -92,7 +92,7 @@ func (as *AgreementService) SignatureRequest(contract entity.ContractProperty) (
 	return signatureContract, nil
 }
 
-func (as *AgreementService) GetAgreementHtml(path string) ([]byte, error) {
+func (as *AgreementService) BuildContract(path string) ([]byte, error) {
 	htmlFile, err := os.ReadFile(path)
 	if err != nil {
 		as.logger.Infof(fmt.Sprintf("error reading html file: %v", err))
