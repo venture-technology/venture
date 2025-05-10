@@ -7,7 +7,6 @@ import (
 	"runtime"
 
 	"github.com/spf13/viper"
-	"github.com/venture-technology/venture/pkg/stringcommon"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
@@ -16,7 +15,7 @@ const (
 )
 
 func LoadServerEnvironmentVars(service, serverEnv string) error {
-	if stringcommon.Empty(serverEnv) || serverEnv == "development" {
+	if serverEnv == "development" {
 		viper.SetDefault(ServerEnvironment, "development")
 	}
 
@@ -24,12 +23,12 @@ func LoadServerEnvironmentVars(service, serverEnv string) error {
 		viper.SetConfigType("json")
 		viper.SetConfigName(viper.GetString(ServerEnvironment)) // development
 
-		projectRoot, err := utils.FindGoModRoot()
+		path, err := utils.GetAbsPath()
 		if err != nil {
 			return err
 		}
 
-		viper.AddConfigPath(filepath.Join(projectRoot, "config"))
+		viper.AddConfigPath(path)
 
 		if err := viper.ReadInConfig(); err != nil {
 			fmt.Println("Failed to read config file:", err)
