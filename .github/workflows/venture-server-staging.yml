@@ -1,4 +1,4 @@
-name: StagingDeploy
+name: VentureServerStagingDeploy
 
 on:
   push:
@@ -17,6 +17,7 @@ env:
 
 jobs:
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -56,4 +57,3 @@ jobs:
           IMAGE_NAME: ghcr.io/venture-technology/venture-staging
         run: |
           make staging-deploy-docker
-

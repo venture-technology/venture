@@ -35,7 +35,7 @@ func (tcr TempContractRepositoryImpl) Get(uuid uuid.UUID) (*entity.TempContract,
 	return &tempContract, nil
 }
 
-func (tcr TempContractRepositoryImpl) GetByEveryone(tempContract *entity.TempContract) (bool, error) {
+func (tcr TempContractRepositoryImpl) HasTemporaryContract(tempContract *entity.TempContract) (bool, error) {
 	var count int64
 	now := time.Now().Unix()
 	oneYearAgo := now - (365 * 24 * 60 * 60)

@@ -31,30 +31,30 @@
 
     <div class="contract-section">
         <h2>1. Partes</h2>
-        <p><strong>Contratante (Responsável):</strong> {{.ContractParams.Responsible.Name}}, CPF: {{.ContractParams.Responsible.Name}}, residente em {{.ContractParams.Responsible.Address.Street}}, {{.ContractParams.Responsible.Address.Number}}, CEP: {{.ContractParams.Responsible.Address.Zip}}, telefone: {{.ContractParams.Responsible.Phone}}, email: {{.ContractParams.Responsible.Email}}</p>
-        <p><strong>Contratado (Motorista):</strong> {{.ContractParams.Driver.Name}}, CPF: {{.ContractParams.Driver.CPF}}</p>
+        <p><strong>Contratante (Responsável):</strong> {{.ResponsibleName}}, CPF: {{.ResponsibleCPF}}, residente em {{.ResponsibleAddr}}, telefone: {{.ResponsiblePhone}}, email: {{.ResponsibleEmail}}</p>
+        <p><strong>Contratado (Motorista):</strong> {{.DriverName}}, CPF: {{.DriverCNH}}</p>
     </div>
 
     <div class="contract-section">
         <h2>2. Objeto</h2>
-        <p>O presente contrato tem por objetivo a prestação de serviço de transporte escolar, onde o motorista <span class="highlight">{{.ContractParams.Driver.Name}}</span> compromete-se a transportar o estudante <span class="highlight">{{.ContractParams.Kid.Name}}</span> do endereço do responspavel </span> até a escola <span class="highlight">{{.ContractParams.School.Name}}</span> situada em <span class="highlight">{{.ContractParams.School.Address.Street}}, {{.ContractParams.School.Address.Number}}, CEP: {{.ContractParams.School.Address.Zip}}</span>, todos os dias letivos.</p>
+        <p>O presente contrato tem por objetivo a prestação de serviço de transporte escolar, onde o motorista <span class="highlight">{{.DriverName}}</span> compromete-se a transportar o estudante <span class="highlight">{{.KidName}}</span> do endereço do responsável até a escola <span class="highlight">{{.SchoolName}}</span> situada em <span class="highlight">{{.SchoolAddr}}</span>, todos os dias letivos, no período escolar: {{.KidShift}}.</p>
     </div>
 
     <div class="contract-section">
         <h2>3. Pagamento</h2>
-        <p>O valor mensal do serviço é de <span class="highlight">R$ {{printf "%.2f" .ContractParams.Amount}}</span>, totalizando um montante anual de <span class="highlight">R$ {{printf "%.2f" .ContractParams.AnualAmount}}</span> pagos em 12 parcelas.</p>
+        <p>O valor mensal do serviço é de <span class="highlight">R$ {{printf "%.2f" (centsToReais .AmountCents)}}</span>, totalizando um montante anual de <span class="highlight">R$ {{printf "%.2f" (centsToReais .AmountAnualCents)}}</span> pagos em 12 parcelas.</p>
     </div>
 
     <div class="contract-section">
         <h2>4. Vigência</h2>
-        <p>O presente contrato terá duração de 12 meses, a contar da data de assinatura. A quebra deste é possível apenas pelo Responsável e caso tal fato, venha a acontecer. O mesmo sofrerá uma multa de 40% dos valores restantes da parcela</p>
+        <p>O presente contrato terá duração de 12 meses, a contar da data de assinatura. A quebra deste é possível apenas pelo Responsável e caso tal fato venha a acontecer, o mesmo sofrerá uma multa de 40% dos valores restantes da parcela.</p>
     </div>
 
     <div class="contract-section">
         <h2>5. Assinaturas</h2>
         <p>O presente contrato é firmado pelas partes abaixo:</p>
-        <p><strong>Responsável:</strong> {{.ContractParams.Responsible.Name}}</p>
-        <p><strong>Motorista:</strong> {{.ContractParams.Driver.Name}}</p>
+        <p><strong>Responsável:</strong> {{.ResponsibleName}}</p>
+        <p><strong>Motorista:</strong> {{.DriverName}}</p>
         <p><strong>Testemunha:</strong> __________________________</p>
     </div>
 </body>

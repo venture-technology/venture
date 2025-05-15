@@ -1,4 +1,4 @@
-name: ProdDeploy
+name: VentureServerProdDeploy
 
 on:
   push:
@@ -51,4 +51,3 @@ jobs:
           IMAGE_NAME: ghcr.io/venture-technology/venture
         run: |
           make prod-deploy-docker
-
