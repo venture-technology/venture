@@ -36,7 +36,6 @@ func main() {
 			sqs.DeleteMessage(viper.GetString("CREATE_LABEL_CONTRACT_QUEUE"), msg.ReceiptHandle)
 		}
 	}
-
 }
 
 func handler(msg string) error {
