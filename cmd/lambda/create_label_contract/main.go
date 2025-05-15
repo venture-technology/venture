@@ -41,7 +41,6 @@ func main() {
 
 func handler(msg string) error {
 	uc := usecase.NewCreateLabelContractUsecase(
-		&infra.App.Repositories,
 		infra.App.Logger,
 		infra.App.Adapters,
 		infra.App.Bucket,
