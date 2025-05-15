@@ -34,7 +34,7 @@ func NewAgreementService(
 	}
 }
 
-func (as *AgreementService) SignatureRequest(contract entity.ContractProperty) (ContractRequest, error) {
+func (as *AgreementService) SignatureRequest(contract value.CreateContractParams) (ContractRequest, error) {
 	url := viper.GetString("DROPBOX_API_URL")
 	apiKey := viper.GetString("DROPBOX_SECRET_KEY")
 
@@ -52,7 +52,6 @@ func (as *AgreementService) SignatureRequest(contract entity.ContractProperty) (
 	}
 
 	auth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:", apiKey)))
-
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", auth))
 
@@ -82,7 +81,6 @@ func (as *AgreementService) SignatureRequest(contract entity.ContractProperty) (
 	}
 
 	tempContract := as.buildTemporaryContract(signatureResponse)
-
 	err = as.repositories.TempContractRepository.Create(tempContract)
 	if err != nil {
 		as.logger.Infof(fmt.Sprintf("error creating temporary contract: %v", err))
@@ -101,63 +99,42 @@ func (as *AgreementService) BuildContract(path string) ([]byte, error) {
 	return htmlFile, nil
 }
 
-func (as *AgreementService) MappingContractInfo(contract entity.ContractProperty) ContractRequest {
+// return json to send dropbox
+func (as *AgreementService) MappingContractInfo(contract value.CreateContractParams) ContractRequest {
 	return ContractRequest{
 		Title:   "Contrato de Prestação de Serviço",
 		Subject: "Assinatura Anual - Venture",
 		Message: "Por favor, reveja o contrato para assinatura e utilização dos serviços prestados pelo motorista",
 		Signers: []Signer{
 			{
-				EmailAddress: contract.ContractParams.Driver.Email,
-				Name:         contract.ContractParams.Driver.Name,
+				EmailAddress: contract.DriverEmail,
+				Name:         contract.DriverName,
 			},
 			{
-				EmailAddress: contract.ContractParams.Kid.Responsible.Email,
-				Name:         contract.ContractParams.Kid.Responsible.Name,
+				EmailAddress: contract.ResponsibleEmail,
+				Name:         contract.ResponsibleName,
 			},
 		},
 		CCEmailAddresses: []string{viper.GetString("DROPBOX_CC_EMAIL")},
-		FileUrls:         []string{contract.URL},
+		FileUrls:         []string{contract.FileURL},
 		Metadata: Metadata{
 			CustomID: contract.UUID,
 			Keys: struct {
-				UUID               string    `json:"uuid"`
-				DriverID           string    `json:"driver_id"`
-				DriverName         string    `json:"driver_name"`
-				ResponsibleID      string    `json:"responsible_id"`
-				ResponsibleName    string    `json:"responsible_name"`
-				ResponsibleCPF     string    `json:"responsible_cpf"`
-				ResponsibleEmail   string    `json:"responsible_email"`
-				ResponsiblePhone   string    `json:"responsible_phone"`
-				ResponsibleAddr    string    `json:"responsible_addr"`
-				KidID              string    `json:"kid_id"`
-				KidName            string    `json:"kid_name"`
-				SchoolID           string    `json:"school_id"`
-				SchoolName         string    `json:"school_name"`
-				SchoolAddr         string    `json:"school_addr"`
-				DateTime           string    `json:"date_time"`
-				AmountContract     float64   `json:"amount_contract"`
-				AnualContractValue float64   `json:"anual_contract_value"`
-				Time               time.Time `json:"time"`
+				UUID               string `json:"uuid"`
+				DriverCNH          string `json:"driver_cnh"`
+				ResponsibleCPF     string `json:"responsible_cpf"`
+				KidRG              string `json:"kid_rg"`
+				SchoolCNPJ         string `json:"school_cnpj"`
+				AmountContract     int64  `json:"amount_contract"`
+				AnualContractValue int64  `json:"anual_contract_value"`
 			}{
 				UUID:               contract.UUID,
-				DriverID:           contract.ContractParams.Driver.CNH,
-				DriverName:         contract.ContractParams.Driver.Name,
-				ResponsibleID:      contract.ContractParams.Kid.Responsible.CPF,
-				ResponsibleName:    contract.ContractParams.Kid.Responsible.Name,
-				ResponsibleCPF:     contract.ContractParams.Kid.Responsible.CPF,
-				ResponsibleEmail:   contract.ContractParams.Kid.Responsible.Email,
-				ResponsiblePhone:   contract.ContractParams.Kid.Responsible.Phone,
-				ResponsibleAddr:    contract.ContractParams.Kid.Responsible.Address.GetFullAddress(),
-				KidID:              contract.ContractParams.Kid.RG,
-				KidName:            contract.ContractParams.Kid.Name,
-				SchoolID:           contract.ContractParams.School.CNPJ,
-				SchoolName:         contract.ContractParams.School.Name,
-				SchoolAddr:         contract.ContractParams.School.Address.GetFullAddress(),
-				DateTime:           contract.Time.Format("02/01/2006"),
-				AmountContract:     contract.ContractParams.Amount,
-				AnualContractValue: contract.ContractParams.Amount * 12,
-				Time:               contract.Time,
+				DriverCNH:          contract.DriverCNH,
+				ResponsibleCPF:     contract.ResponsibleCPF,
+				KidRG:              contract.KidRG,
+				SchoolCNPJ:         contract.SchoolCNPJ,
+				AmountContract:     contract.AmountCents,
+				AnualContractValue: contract.AmountCents * 12,
 			},
 		},
 		SigningOptions: struct {
@@ -194,10 +171,10 @@ func (as *AgreementService) buildTemporaryContract(signatureResponse SignatureRe
 		CreatedAt:          signatureResponse.SignatureRequest.CreatedAt,
 		ExpiredAt:          as.GetExpireTime(),
 		Status:             TemporaryContractPending,
-		DriverCNH:          signatureResponse.SignatureRequest.Metadata.Keys.DriverID,
-		ResponsibleCPF:     signatureResponse.SignatureRequest.Metadata.Keys.ResponsibleID,
-		KidRG:              signatureResponse.SignatureRequest.Metadata.Keys.KidID,
-		SchoolCNPJ:         signatureResponse.SignatureRequest.Metadata.Keys.SchoolID,
+		DriverCNH:          signatureResponse.SignatureRequest.Metadata.Keys.DriverCNH,
+		ResponsibleCPF:     signatureResponse.SignatureRequest.Metadata.Keys.ResponsibleCPF,
+		KidRG:              signatureResponse.SignatureRequest.Metadata.Keys.KidRG,
+		SchoolCNPJ:         signatureResponse.SignatureRequest.Metadata.Keys.SchoolCNPJ,
 		UUID:               signatureResponse.SignatureRequest.Metadata.Keys.UUID,
 	}
 }
@@ -224,10 +201,10 @@ func (as *AgreementService) SignatureRequestAllSigned(httpContext *gin.Context) 
 			UUID:           requestParams.SignatureRequest.Metadata.Keys.UUID,
 			Status:         value.ContractCurrently,
 			SigningURL:     requestParams.SignatureRequest.SigningURL,
-			DriverCNH:      requestParams.SignatureRequest.Metadata.Keys.DriverID,
-			SchoolCNPJ:     requestParams.SignatureRequest.Metadata.Keys.SchoolID,
-			KidRG:          requestParams.SignatureRequest.Metadata.Keys.KidID,
-			ResponsibleCPF: requestParams.SignatureRequest.Metadata.Keys.ResponsibleID,
+			DriverCNH:      requestParams.SignatureRequest.Metadata.Keys.DriverCNH,
+			SchoolCNPJ:     requestParams.SignatureRequest.Metadata.Keys.SchoolCNPJ,
+			KidRG:          requestParams.SignatureRequest.Metadata.Keys.KidRG,
+			ResponsibleCPF: requestParams.SignatureRequest.Metadata.Keys.ResponsibleCPF,
 			CreatedAt:      requestParams.SignatureRequest.CreatedAt,
 			ExpireAt:       realtime.Now().Add(365 * 24 * time.Hour).Unix(),
 			Amount:         requestParams.SignatureRequest.Metadata.Keys.AmountContract,

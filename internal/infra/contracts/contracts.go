@@ -15,7 +15,7 @@ type S3Iface interface {
 	List(bucket, path string) ([]string, error)
 
 	// Save a file like anytype file
-	Save(bucket, path, filaneme string, file []byte, contentType string) (string, error)
+	Save(bucket, path, filename string, file []byte, contentType string) (string, error)
 }
 
 // Interface to use Simple Email Service
@@ -43,7 +43,7 @@ type Logger interface {
 
 // Interface to convert files
 type Converters interface {
-	ConvertHTMLtoPDF(htmlFile []byte, contractProperty any) ([]byte, error)
+	ConvertHTMLtoPDF(htmlFile []byte, contractProperty value.CreateContractParams) ([]byte, error)
 }
 
 // Interface to use Simple Queue Service

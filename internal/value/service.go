@@ -75,6 +75,7 @@ type GetKid struct {
 	ID              int    `json:"id"`
 	Name            string `json:"name"`
 	RG              string `json:"rg"`
+	ResponsibleCPF  string `json:"cpf"`
 	ResponsibleName string `json:"responsible_name"`
 	Address         string `json:"address"`
 	Period          string `json:"period"`
@@ -110,10 +111,10 @@ type ListSchool struct {
 
 type GetDriver struct {
 	ID            int            `json:"id"`
+	Amount        int64          `json:"amount"`
 	Name          string         `json:"name"`
 	Email         string         `json:"email"`
 	QrCode        string         `json:"qrcode"`
-	Amount        float64        `json:"amount"`
 	Phone         string         `json:"phone"`
 	Car           string         `json:"car"`
 	ProfileImage  string         `json:"profile_image"`
@@ -126,10 +127,10 @@ type GetDriver struct {
 
 type ListDriver struct {
 	ID            int       `json:"id"`
+	Amount        int64     `json:"amount"`
 	Name          string    `json:"name"`
 	Email         string    `json:"email"`
 	QrCode        string    `json:"qrcode"`
-	Amount        float64   `json:"amount"`
 	Phone         string    `json:"phone"`
 	Car           string    `json:"car"`
 	ProfileImage  string    `json:"profile_image"`
@@ -139,13 +140,13 @@ type ListDriver struct {
 
 type ListDriverToCalcPrice struct {
 	ID           int       `json:"id"`
+	Amount       int64     `json:"amount"`
 	Name         string    `json:"name"`
 	Email        string    `json:"email"`
-	Amount       float64   `json:"amount"`
 	Phone        string    `json:"phone"`
 	ProfileImage string    `json:"profile_image"`
 	CreatedAt    time.Time `json:"created_at"`
-	PriceTotal   float64   `json:"price_total"` // this field is used to calculate the total price of the driver getting distance from responsible and school
+	PriceTotal   int64     `json:"price_total"` // this field is used to calculate the total price of the driver getting distance from responsible and school
 }
 
 type SchoolListInvite struct {
@@ -206,9 +207,9 @@ type GetContract struct {
 
 type DriverListContracts struct {
 	ID          int               `json:"id"`
+	Amount      int64             `json:"amount"`
 	UUID        string            `json:"record"`
 	Status      string            `json:"status"`
-	Amount      float64           `json:"amount"`
 	School      GetSchoolContract `json:"school"`
 	Responsible GetParentContract `json:"responsible"`
 	Kid         GetKidContract    `json:"kid"`
@@ -218,11 +219,11 @@ type DriverListContracts struct {
 
 type SchoolListContracts struct {
 	ID          int               `json:"id"`
+	Amount      int64             `json:"amount"`
 	Status      string            `json:"status"`
 	KidName     string            `json:"kid_name"`
 	Period      string            `json:"period"`
 	UUID        string            `json:"record"`
-	Amount      float64           `json:"amount"`
 	CreatedAt   int64             `json:"created_at"`
 	ExpireAt    int64             `json:"expire_at"`
 	Driver      GetDriverContract `json:"driver"`
@@ -235,7 +236,7 @@ type ResponsibleListContracts struct {
 	KidName   string            `json:"kid_name"`
 	Period    string            `json:"period"`
 	UUID      string            `json:"record"`
-	Amount    float64           `json:"amount"`
+	Amount    int64             `json:"amount"`
 	CreatedAt int64             `json:"created_at"`
 	ExpireAt  int64             `json:"expire_at"`
 	Driver    GetDriverContract `json:"driver"`
@@ -373,13 +374,13 @@ type GetTempContracts struct {
 
 type CreateDriver struct {
 	ID              int          `json:"id"`
+	Amount          int64        `json:"amount,omitempty" validate:"required"`
 	Name            string       `json:"name,omitempty" validate:"required"`
 	Email           string       `json:"email,omitempty" validate:"required"`
 	CNH             string       `json:"cnh,omitempty" validate:"required"`
 	QrCode          string       `json:"qrcode,omitempty"`
 	PixKey          string       `json:"pix_key,omitempty"`
 	Address         string       `json:"address,omitempty" validate:"required"`
-	Amount          float64      `json:"amount,omitempty" validate:"required"`
 	Phone           string       `json:"phone,omitempty" validate:"required" example:"+55 11 123456789"`
 	MunicipalRecord string       `json:"municipal_record,omitempty" validate:"required"`
 	Car             entity.Car   `json:"car,omitempty" validate:"required"`
@@ -421,31 +422,26 @@ type CreateMessage struct {
 	Body          string
 }
 
-type SQSCreateLabelContractParams struct {
-	AmountCents      int    `json:"amount_cents"`
-	AmountAnualCents int    `json:"amount_anual_cents"`
-	UUID             string `json:"uuid"`
-	ResponsibleCPF   string `json:"responsible_cpf`
-	ResponsibleAddr  string `json:"responsible_addr`
-	ResponsibleEmail string `json:"responsible_email`
-	ResponsiblePhone string `json:"responsible_phone`
-	KidRG            string `json:"kid_rg"`
-	KidName          string `json:"kid_name`
-	KidShift         string `json:"kid_shift`
-	DriverName       string `json:"driver_name`
-	DriverCPF        string `json:"driver_cpf`
-	SchoolCNPJ       string `json:"school_cnpj"`
-	SchoolName       string `json:"school_name`
-	SchoolAddr       string `json:"school_addr`
-}
-
-type SQSCreateContractParams struct {
-	AmountCents      int    `json:"amount_cents"`
-	AmountAnualCents int    `json:"amount_anual_cents"`
-	UUID             string `json:"uuid"`
-	DriverID         string `json:"driver_id"`
-	ResponsibleID    string `json:"responsible_id"`
-	KidID            string `json:"kid_id"`
-	SchoolID         string `json:"school_id"`
-	FileURL          string `json:"file_url"`
+type CreateContractParams struct {
+	AmountCents      int64     `json:"amount_cents"`
+	AmountAnualCents int64     `json:"amount_anual_cents"`
+	DriverAmount     int64     `json:"driver_amount"`
+	UUID             string    `json:"uuid"`
+	ResponsibleCPF   string    `json:"responsible_cpf`
+	ResponsibleName  string    `json:"responsible_name`
+	ResponsibleAddr  string    `json:"responsible_addr`
+	ResponsibleEmail string    `json:"responsible_email`
+	ResponsiblePhone string    `json:"responsible_phone`
+	KidRG            string    `json:"kid_rg"`
+	KidName          string    `json:"kid_name`
+	KidShift         string    `json:"kid_shift`
+	DriverName       string    `json:"driver_name`
+	DriverEmail      string    `json:"driver_email"`
+	DriverCNH        string    `json:"driver_cnh`
+	SchoolCNPJ       string    `json:"school_cnpj"`
+	SchoolName       string    `json:"school_name`
+	SchoolAddr       string    `json:"school_addr`
+	FileURL          string    `json:"file_url"`
+	Time             time.Time `json:"time"`
+	DateTime         string    `json:"date_time"`
 }

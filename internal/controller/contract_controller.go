@@ -38,21 +38,24 @@ func (coh *ContractController) PostV1CreateContract(httpContext *gin.Context) {
 
 	infra.App.Logger.Infof(fmt.Sprintf("requestParams: %v", requestParams))
 
-	usecase := usecase.NewCreateContractUseCase(
+	usecase := usecase.NewTriggerContractUsecase(
 		&infra.App.Repositories,
 		infra.App.Logger,
 		infra.App.Adapters,
 		infra.App.Bucket,
+		infra.App.Queue,
 		infra.App.Converters,
 	)
 
-	response, err := usecase.CreateContract(&requestParams)
+	err := usecase.TriggerExecute(&requestParams)
 	if err != nil {
-		httpContext.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"))
-		return
+		httpContext.JSON(
+			http.StatusInternalServerError,
+			exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"),
+		)
 	}
 
-	httpContext.JSON(http.StatusCreated, response)
+	httpContext.JSON(http.StatusCreated, http.NoBody)
 }
 
 // @Summary Busca um contrato

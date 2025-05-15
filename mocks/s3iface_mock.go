@@ -39,9 +39,9 @@ func (_m *S3Iface) List(bucket string, path string) ([]string, error) {
 	return r0, r1
 }
 
-// Save provides a mock function with given fields: bucket, path, filaneme, file, contentType
-func (_m *S3Iface) Save(bucket string, path string, filaneme string, file []byte, contentType string) (string, error) {
-	ret := _m.Called(bucket, path, filaneme, file, contentType)
+// Save provides a mock function with given fields: bucket, path, filename, file, contentType
+func (_m *S3Iface) Save(bucket string, path string, filename string, file []byte, contentType string) (string, error) {
+	ret := _m.Called(bucket, path, filename, file, contentType)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Save")
@@ -50,16 +50,16 @@ func (_m *S3Iface) Save(bucket string, path string, filaneme string, file []byte
 	var r0 string
 	var r1 error
 	if rf, ok := ret.Get(0).(func(string, string, string, []byte, string) (string, error)); ok {
-		return rf(bucket, path, filaneme, file, contentType)
+		return rf(bucket, path, filename, file, contentType)
 	}
 	if rf, ok := ret.Get(0).(func(string, string, string, []byte, string) string); ok {
-		r0 = rf(bucket, path, filaneme, file, contentType)
+		r0 = rf(bucket, path, filename, file, contentType)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
 	if rf, ok := ret.Get(1).(func(string, string, string, []byte, string) error); ok {
-		r1 = rf(bucket, path, filaneme, file, contentType)
+		r1 = rf(bucket, path, filename, file, contentType)
 	} else {
 		r1 = ret.Error(1)
 	}
