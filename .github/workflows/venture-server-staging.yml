@@ -1,8 +1,14 @@
-name: QADeploy
+name: VentureServerStagingDeploy
 
 on:
-  repository-dispatch:
-    types: [deploy-command]
+  push:
+    branches:
+      - qa
+  workflow_dispatch:
+    inputs:
+      deploy_id:
+        description: 'Deploy ID'
+        required: false
 
 env:
   REGISTRY: docker.io
@@ -11,6 +17,7 @@ env:
 
 jobs:
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -49,5 +56,4 @@ jobs:
           HOST_REMOTE_SERVER_IP: ${{ secrets.HOST_REMOTE_SERVER_IP }}
           IMAGE_NAME: ghcr.io/venture-technology/venture-staging
         run: |
-          make prod-deploy-docker
-
+          make staging-deploy-docker

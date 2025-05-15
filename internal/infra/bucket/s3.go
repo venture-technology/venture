@@ -34,26 +34,6 @@ func NewS3Impl() *S3Impl {
 	}
 }
 
-// Given path without "/" and filename to create a complete path.
-func (s3Impl *S3Impl) Save(bucket, path, filename string, file []byte) (string, error) {
-	filename = fmt.Sprintf("%s/%s.png", path, filename)
-
-	_, err := s3Impl.bucket.PutObject(&s3.PutObjectInput{
-		Bucket:      aws.String(bucket),
-		Key:         aws.String(filename), // Maintain the same filename in the bucket
-		Body:        bytes.NewReader(file),
-		ACL:         aws.String("public-read"),
-		ContentType: aws.String("image/png"),
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", bucket, filename)
-	return url, nil
-}
-
 func (s3Impl *S3Impl) List(bucket, path string) ([]string, error) {
 	input := &s3.ListObjectsV2Input{
 		Bucket: aws.String(bucket),
@@ -80,7 +60,7 @@ func (s3Impl *S3Impl) List(bucket, path string) ([]string, error) {
 	return links[1:], nil
 }
 
-func (s3Impl *S3Impl) SaveWithType(bucket, path, filaneme string, file []byte, contentType string) (string, error) {
+func (s3Impl *S3Impl) Save(bucket, path, filaneme string, file []byte, contentType string) (string, error) {
 	filename := fmt.Sprintf("%s/%s", path, filaneme)
 
 	_, err := s3Impl.bucket.PutObject(&s3.PutObjectInput{
@@ -97,16 +77,4 @@ func (s3Impl *S3Impl) SaveWithType(bucket, path, filaneme string, file []byte, c
 
 	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", bucket, filename)
 	return url, nil
-}
-
-func (s3Impl *S3Impl) PDF() string {
-	return "application/pdf"
-}
-
-func (s3Impl *S3Impl) HTML() string {
-	return "text/html"
-}
-
-func (s3Impl *S3Impl) PNG() string {
-	return "image/png"
 }

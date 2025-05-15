@@ -17,6 +17,7 @@ import (
 	"github.com/venture-technology/venture/internal/infra/email"
 	"github.com/venture-technology/venture/internal/infra/logger"
 	"github.com/venture-technology/venture/internal/infra/persistence"
+	"github.com/venture-technology/venture/internal/infra/queue"
 )
 
 const (
@@ -89,4 +90,8 @@ func (s Setup) Adapters() {
 
 func (s Setup) Converters() {
 	s.app.Converters = converters.NewConverter()
+}
+
+func (s Setup) Queue() {
+	s.app.Queue = queue.NewSQSQueue()
 }

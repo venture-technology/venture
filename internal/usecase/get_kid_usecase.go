@@ -30,6 +30,7 @@ func (gcuc *GetKidUseCase) GetKid(rg *string) (value.GetKid, error) {
 		ID:              kid.ID,
 		Name:            kid.Name,
 		RG:              kid.RG,
+		ResponsibleCPF:  kid.Responsible.CPF,
 		ResponsibleName: kid.Responsible.Name,
 		Address:         kid.Responsible.Address.GetFullAddress(),
 		Period:          kid.Shift,

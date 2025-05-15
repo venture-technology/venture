@@ -34,7 +34,7 @@ func TestCreateDriverUsecase_CreateDriver(t *testing.T) {
 			logger,
 			s3iface,
 		)
-		s3iface.On("Save", mock.Anything, driver.CNH, "qrcode", mock.Anything).Return("", errors.New("s3iface error"))
+		s3iface.On("Save", mock.Anything, driver.CNH, "qrcode", mock.Anything, mock.Anything).Return("", errors.New("s3iface error"))
 
 		err := usecase.CreateDriver(driver)
 
@@ -53,7 +53,7 @@ func TestCreateDriverUsecase_CreateDriver(t *testing.T) {
 			logger,
 			s3iface,
 		)
-		s3iface.On("Save", mock.Anything, driver.CNH, "qrcode", mock.Anything).Return("links3", nil)
+		s3iface.On("Save", mock.Anything, driver.CNH, "qrcode", mock.Anything, mock.Anything).Return("links3", nil)
 		repository.On("Create", mock.Anything).Return(errors.New("failed driver repository"))
 
 		driver.Schedule = "afternoon"
@@ -75,7 +75,7 @@ func TestCreateDriverUsecase_CreateDriver(t *testing.T) {
 			logger,
 			s3iface,
 		)
-		s3iface.On("Save", mock.Anything, driver.CNH, "qrcode", mock.Anything).Return("link3", nil)
+		s3iface.On("Save", mock.Anything, driver.CNH, "qrcode", mock.Anything, mock.Anything).Return("link3", nil)
 		repository.On("Create", mock.Anything).Return(nil)
 
 		driver.Schedule = "afternoon"

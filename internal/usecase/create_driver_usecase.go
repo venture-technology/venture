@@ -56,7 +56,7 @@ func (cduc *CreateDriverUseCase) CreateDriver(driver *entity.Driver) error {
 		return err
 	}
 
-	url, err := cduc.S3.Save(value.GetBucketQRCode(), driver.CNH, "qrcode", qrCode)
+	url, err := cduc.S3.Save(value.GetBucketQRCode(), driver.CNH, "qrcode", qrCode, value.PDF)
 	if err != nil {
 		return err
 	}

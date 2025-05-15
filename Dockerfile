@@ -19,6 +19,8 @@ RUN go build -o main ./cmd/api/server
 
 FROM alpine:latest
 
+RUN apk add --no-cache wkhtmltopdf ttf-freefont
+
 WORKDIR /app
 
 COPY --from=builder /app/main .

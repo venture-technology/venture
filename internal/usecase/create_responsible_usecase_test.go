@@ -15,7 +15,6 @@ import (
 
 func TestCreateResponsibleUsecase_CreateResponsible(t *testing.T) {
 	responsible := entity.Responsible{}
-
 	t.Run("if create customer fails", func(t *testing.T) {
 		repository := mocks.NewResponsibleRepository(t)
 		payments := mocks.NewPaymentsService(t)
