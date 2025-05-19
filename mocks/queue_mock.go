@@ -60,6 +60,24 @@ func (_m *Queue) PullMessages(queue string) ([]*value.CreateMessage, error) {
 	return r0, r1
 }
 
+// SendFifoMessage provides a mock function with given fields: queue, message, group
+func (_m *Queue) SendFifoMessage(queue string, message string, group string) error {
+	ret := _m.Called(queue, message, group)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SendFifoMessage")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string, string) error); ok {
+		r0 = rf(queue, message, group)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // SendMessage provides a mock function with given fields: queue, message
 func (_m *Queue) SendMessage(queue string, message string) error {
 	ret := _m.Called(queue, message)

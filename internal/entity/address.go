@@ -1,6 +1,9 @@
 package entity
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Address struct {
 	Street       string `json:"street,omitempty" validate:"required"`
@@ -13,26 +16,35 @@ type Address struct {
 }
 
 func (a Address) GetFullAddress() string {
-	if a.Complement == "" {
-		return fmt.Sprintf(
-			"%s, %s - %s, %s - %s, %s",
-			a.Street,
-			a.Number,
-			a.Neighborhood,
-			a.City,
-			a.State,
-			a.Zip,
-		)
+	parts := []string{}
+
+	if a.Street != "" {
+		parts = append(parts, a.Street)
 	}
 
-	return fmt.Sprintf(
-		"%s, %s - %s, %s (%s) - %s, %s",
-		a.Street,
-		a.Number,
-		a.Complement,
-		a.Neighborhood,
-		a.City,
-		a.State,
-		a.Zip,
-	)
+	if a.Number != "" {
+		parts = append(parts, a.Number)
+	}
+
+	if a.Complement != "" {
+		parts = append(parts, fmt.Sprintf("(%s)", a.Complement))
+	}
+
+	if a.Neighborhood != "" {
+		parts = append(parts, a.Neighborhood)
+	}
+
+	if a.City != "" {
+		parts = append(parts, a.City)
+	}
+
+	if a.State != "" {
+		parts = append(parts, a.State)
+	}
+
+	if a.Zip != "" {
+		parts = append(parts, a.Zip)
+	}
+
+	return strings.Join(parts, ", ")
 }

@@ -18,6 +18,7 @@ import (
 	"github.com/venture-technology/venture/internal/infra/logger"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/infra/queue"
+	"github.com/venture-technology/venture/internal/infra/workers"
 )
 
 const (
@@ -94,4 +95,16 @@ func (s Setup) Converters() {
 
 func (s Setup) Queue() {
 	s.app.Queue = queue.NewSQSQueue()
+}
+
+// workers must be started after logger, database and adapters.
+func (s Setup) Workers() {
+	s.app.Workers = workers.NewWorkerCreateLabel(
+		100,
+		s.app.Logger,
+		s.app.Bucket,
+		s.app.Adapters,
+		s.app.Converters,
+		&s.app.Repositories,
+	)
 }

@@ -55,6 +55,22 @@ func (s SQSImpl) SendMessage(queue, message string) error {
 	return nil
 }
 
+func (s SQSImpl) SendFifoMessage(queue, message, group string) error {
+	sendMessageInput := &sqs.SendMessageInput{
+		MessageBody:    aws.String(message),
+		QueueUrl:       aws.String(queue),
+		MessageGroupId: aws.String(group),
+	}
+
+	_, err := s.Client.SendMessage(sendMessageInput)
+	if err != nil {
+		log.Printf("sqs - failed to send message to queue: %v", err)
+		return err
+	}
+
+	return nil
+}
+
 func (s SQSImpl) PullMessages(queue string) ([]*value.CreateMessage, error) {
 	msgOutput, err := s.Client.ReceiveMessage(&sqs.ReceiveMessageInput{
 		AttributeNames: []*string{

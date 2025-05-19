@@ -35,12 +35,16 @@ func (cr KidRepositoryImpl) FindAll(cpf *string) ([]entity.Kid, error) {
 	return kids, nil
 }
 
-func (cr KidRepositoryImpl) FindByResponsible(cpf *string) (bool, error) {
+func (cr KidRepositoryImpl) FindByResponsible(
+	cpf,
+	rg string,
+) (bool, error) {
 	var count int64
 
 	query := cr.Postgres.Client().
 		Model(&entity.Kid{}).
-		Where("responsible_id = ?", *cpf).
+		Where("responsible_id = ?", cpf).
+		Where("rg = ?", rg).
 		Count(&count).
 		Error
 

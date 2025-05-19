@@ -9,6 +9,36 @@ type S3Iface struct {
 	mock.Mock
 }
 
+// Copy provides a mock function with given fields: bucket, objectKey
+func (_m *S3Iface) Copy(bucket string, objectKey string) ([]byte, error) {
+	ret := _m.Called(bucket, objectKey)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Copy")
+	}
+
+	var r0 []byte
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, string) ([]byte, error)); ok {
+		return rf(bucket, objectKey)
+	}
+	if rf, ok := ret.Get(0).(func(string, string) []byte); ok {
+		r0 = rf(bucket, objectKey)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]byte)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(bucket, objectKey)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // List provides a mock function with given fields: bucket, path
 func (_m *S3Iface) List(bucket string, path string) ([]string, error) {
 	ret := _m.Called(bucket, path)

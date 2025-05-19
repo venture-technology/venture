@@ -78,9 +78,9 @@ func (_m *KidRepository) FindAll(cpf *string) ([]entity.Kid, error) {
 	return r0, r1
 }
 
-// FindByResponsible provides a mock function with given fields: cpf
-func (_m *KidRepository) FindByResponsible(cpf *string) (bool, error) {
-	ret := _m.Called(cpf)
+// FindByResponsible provides a mock function with given fields: cpf, rg
+func (_m *KidRepository) FindByResponsible(cpf string, rg string) (bool, error) {
+	ret := _m.Called(cpf, rg)
 
 	if len(ret) == 0 {
 		panic("no return value specified for FindByResponsible")
@@ -88,17 +88,17 @@ func (_m *KidRepository) FindByResponsible(cpf *string) (bool, error) {
 
 	var r0 bool
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*string) (bool, error)); ok {
-		return rf(cpf)
+	if rf, ok := ret.Get(0).(func(string, string) (bool, error)); ok {
+		return rf(cpf, rg)
 	}
-	if rf, ok := ret.Get(0).(func(*string) bool); ok {
-		r0 = rf(cpf)
+	if rf, ok := ret.Get(0).(func(string, string) bool); ok {
+		r0 = rf(cpf, rg)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
 
-	if rf, ok := ret.Get(1).(func(*string) error); ok {
-		r1 = rf(cpf)
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(cpf, rg)
 	} else {
 		r1 = ret.Error(1)
 	}

@@ -14,6 +14,9 @@ type S3Iface interface {
 	// List files in a bucket
 	List(bucket, path string) ([]string, error)
 
+	// copy a file from a bucket
+	Copy(bucket, objectKey string) ([]byte, error)
+
 	// Save a file like anytype file
 	Save(bucket, path, filename string, file []byte, contentType string) (string, error)
 }
@@ -51,9 +54,16 @@ type Queue interface {
 	// Send message to queue
 	SendMessage(queue, message string) error
 
+	// Send message to fifo queue using message group ID
+	SendFifoMessage(queue, message, group string) error
+
 	// Gets the messages from the queue, need the CreateMessage format.
 	PullMessages(queue string) ([]*value.CreateMessage, error)
 
 	// Delete a specific message of queue by identifier
 	DeleteMessage(queue, identifier string) error
+}
+
+type Workers interface {
+	Enqueue(requestParams *value.CreateContractParams) error
 }

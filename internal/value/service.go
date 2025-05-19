@@ -427,20 +427,20 @@ type CreateContractParams struct {
 	AmountAnualCents int64     `json:"amount_anual_cents"`
 	DriverAmount     int64     `json:"driver_amount"`
 	UUID             string    `json:"uuid"`
-	ResponsibleCPF   string    `json:"responsible_cpf`
-	ResponsibleName  string    `json:"responsible_name`
-	ResponsibleAddr  string    `json:"responsible_addr`
-	ResponsibleEmail string    `json:"responsible_email`
-	ResponsiblePhone string    `json:"responsible_phone`
+	ResponsibleCPF   string    `json:"responsible_cpf"`
+	ResponsibleName  string    `json:"responsible_name"`
+	ResponsibleAddr  string    `json:"responsible_addr"`
+	ResponsibleEmail string    `json:"responsible_email"`
+	ResponsiblePhone string    `json:"responsible_phone"`
 	KidRG            string    `json:"kid_rg"`
-	KidName          string    `json:"kid_name`
-	KidShift         string    `json:"kid_shift`
-	DriverName       string    `json:"driver_name`
+	KidName          string    `json:"kid_name"`
+	KidShift         string    `json:"kid_shift"`
+	DriverName       string    `json:"driver_name"`
 	DriverEmail      string    `json:"driver_email"`
-	DriverCNH        string    `json:"driver_cnh`
+	DriverCNH        string    `json:"driver_cnh"`
 	SchoolCNPJ       string    `json:"school_cnpj"`
-	SchoolName       string    `json:"school_name`
-	SchoolAddr       string    `json:"school_addr`
+	SchoolName       string    `json:"school_name"`
+	SchoolAddr       string    `json:"school_addr"`
 	FileURL          string    `json:"file_url"`
 	Time             time.Time `json:"time"`
 	DateTime         string    `json:"date_time"`

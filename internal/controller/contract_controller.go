@@ -30,29 +30,29 @@ func NewContractController() *ContractController {
 // @Failure 500 {object} map[string]string
 // @Router /contract [post]
 func (coh *ContractController) PostV1CreateContract(httpContext *gin.Context) {
-	var requestParams value.CreateContractRequestParams
+	var requestParams value.CreateContractParams
 	if err := httpContext.BindJSON(&requestParams); err != nil {
 		httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
 	infra.App.Logger.Infof(fmt.Sprintf("requestParams: %v", requestParams))
-
-	usecase := usecase.NewTriggerContractUsecase(
+	usecase := usecase.NewCreateContractUsecase(
 		&infra.App.Repositories,
-		infra.App.Logger,
+		infra.App.Workers,
+		infra.App.Converters,
 		infra.App.Adapters,
 		infra.App.Bucket,
-		infra.App.Queue,
-		infra.App.Converters,
+		infra.App.Logger,
 	)
 
-	err := usecase.TriggerExecute(&requestParams)
+	err := usecase.CreateContract(httpContext, &requestParams)
 	if err != nil {
 		httpContext.JSON(
-			http.StatusInternalServerError,
-			exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"),
+			http.StatusBadRequest,
+			exceptions.InternalServerResponseError(err, "erro ao tentar criar o contrato"),
 		)
+		return
 	}
 
 	httpContext.JSON(http.StatusCreated, http.NoBody)

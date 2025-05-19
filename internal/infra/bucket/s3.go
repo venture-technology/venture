@@ -3,6 +3,7 @@ package bucket
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -77,4 +78,22 @@ func (s3Impl *S3Impl) Save(bucket, path, filaneme string, file []byte, contentTy
 
 	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", bucket, filename)
 	return url, nil
+}
+
+func (s3Impl *S3Impl) Copy(bucket, objectKey string) ([]byte, error) {
+	output, err := s3Impl.bucket.GetObject(&s3.GetObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(objectKey),
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer output.Body.Close()
+
+	contentBytes, err := io.ReadAll(output.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return contentBytes, err
 }
