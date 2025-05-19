@@ -344,13 +344,6 @@ var Shifts = map[string]string{
 	"night":     NightShift,
 }
 
-type CreateContractRequestParams struct {
-	DriverCNH      string `json:"driver_cnh"`
-	KidRG          string `json:"kid_rg"`
-	ResponsibleCPF string `json:"responsible_cpf"`
-	SchoolCNPJ     string `json:"school_cnpj"`
-}
-
 type CalculatePriceDriverOutput struct {
 	Price  float64       `json:"price"`
 	Driver entity.Driver `json:"driver"`

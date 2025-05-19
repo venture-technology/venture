@@ -24,7 +24,7 @@ func NewContractController() *ContractController {
 // @Tags Contracts
 // @Accept json
 // @Produce json
-// @Param contract body value.CreateContractRequestParams true "Dados do contrato"
+// @Param contract body value.CreateContractParams true "Dados do contrato"
 // @Success 201 {object} agreements.ContractRequest
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string

@@ -36,7 +36,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/value.CreateContractRequestParams"
+                            "$ref": "#/definitions/value.CreateContractParams"
                         }
                     }
                 ],
@@ -2248,7 +2248,7 @@ const docTemplate = `{
                 }
             }
         },
-        "value.CreateContractRequestParams": {
+        "value.CreateContractParams": {
             "type": "object",
             "properties": {
                 "driver_cnh": {
