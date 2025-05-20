@@ -16,7 +16,7 @@ import (
 
 type CreateContractUsecase struct {
 	repositories *persistence.PostgresRepositories
-	queueWorker  contracts.Workers
+	queueWorker  contracts.WorkerCreateContract
 	converters   contracts.Converters
 	adapters     adapters.Adapters
 	s3           contracts.S3Iface
@@ -25,7 +25,7 @@ type CreateContractUsecase struct {
 
 func NewCreateContractUsecase(
 	repositories *persistence.PostgresRepositories,
-	queueWorker contracts.Workers,
+	queueWorker contracts.WorkerCreateContract,
 	converters contracts.Converters,
 	adapters adapters.Adapters,
 	s3 contracts.S3Iface,

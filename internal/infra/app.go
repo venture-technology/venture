@@ -7,16 +7,16 @@ import (
 )
 
 type Application struct {
-	Repositories persistence.PostgresRepositories
-	Postgres     contracts.PostgresIface
-	Cache        contracts.Cacher
-	Bucket       contracts.S3Iface
-	Email        contracts.SESIface
-	Logger       contracts.Logger
-	Adapters     adapters.Adapters
-	Converters   contracts.Converters
-	Queue        contracts.Queue
-	Workers      contracts.Workers
+	Repositories         persistence.PostgresRepositories
+	Postgres             contracts.PostgresIface
+	Cache                contracts.Cacher
+	Bucket               contracts.S3Iface
+	Email                contracts.SESIface
+	Logger               contracts.Logger
+	Adapters             adapters.Adapters
+	Converters           contracts.Converters
+	Queue                contracts.Queue
+	WorkerCreateContract contracts.WorkerCreateContract
 }
 
 var App Application

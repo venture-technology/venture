@@ -27,7 +27,7 @@ func NewWorkerCreateLabel(
 	adapters adapters.Adapters,
 	converters contracts.Converters,
 	repositories *persistence.PostgresRepositories,
-) contracts.Workers {
+) contracts.WorkerCreateContract {
 	queue := &workerQueue{
 		ch:           make(chan *value.CreateContractParams, buffer),
 		bucket:       bucket,

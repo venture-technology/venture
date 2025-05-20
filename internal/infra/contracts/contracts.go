@@ -63,7 +63,3 @@ type Queue interface {
 	// Delete a specific message of queue by identifier
 	DeleteMessage(queue, identifier string) error
 }
-
-type Workers interface {
-	Enqueue(requestParams *value.CreateContractParams) error
-}

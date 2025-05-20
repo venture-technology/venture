@@ -30,7 +30,7 @@ func main() {
 	setup.Email()
 	setup.Adapters()
 	setup.Converters()
-	setup.Workers()
+	setup.WorkerCreateContract()
 
 	setup.Finish()
 

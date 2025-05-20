@@ -98,8 +98,8 @@ func (s Setup) Queue() {
 }
 
 // workers must be started after logger, database and adapters.
-func (s Setup) Workers() {
-	s.app.Workers = workers.NewWorkerCreateLabel(
+func (s Setup) WorkerCreateContract() {
+	s.app.WorkerCreateContract = workers.NewWorkerCreateLabel(
 		100,
 		s.app.Logger,
 		s.app.Bucket,
@@ -107,4 +107,10 @@ func (s Setup) Workers() {
 		s.app.Converters,
 		&s.app.Repositories,
 	)
+}
+
+func (s Setup) WorkerAcceptContract() {
+}
+
+func (s Setup) WorkerSendEmail() {
 }

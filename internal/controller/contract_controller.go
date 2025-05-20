@@ -39,7 +39,7 @@ func (coh *ContractController) PostV1CreateContract(httpContext *gin.Context) {
 	infra.App.Logger.Infof(fmt.Sprintf("requestParams: %v", requestParams))
 	usecase := usecase.NewCreateContractUsecase(
 		&infra.App.Repositories,
-		infra.App.Workers,
+		infra.App.WorkerCreateContract,
 		infra.App.Converters,
 		infra.App.Adapters,
 		infra.App.Bucket,
