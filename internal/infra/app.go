@@ -17,6 +17,7 @@ type Application struct {
 	Converters           contracts.Converters
 	Queue                contracts.Queue
 	WorkerCreateContract contracts.WorkerCreateContract
+	WorkerEmail          contracts.WorkerEmail
 }
 
 var App Application

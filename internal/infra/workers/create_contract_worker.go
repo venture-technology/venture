@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/spf13/viper"
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
+	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/utils"
@@ -16,14 +18,16 @@ type WorkerQueue struct {
 	adapters   adapters.Adapters
 	bucket     contracts.S3Iface
 	converters contracts.Converters
+	email      contracts.WorkerEmail
 }
 
-func NewWorkerCreateLabel(
+func NewWorkerCreateContract(
 	buffer int,
 	logger contracts.Logger,
 	bucket contracts.S3Iface,
 	adapters adapters.Adapters,
 	converters contracts.Converters,
+	email contracts.WorkerEmail,
 ) contracts.WorkerCreateContract {
 	queue := &WorkerQueue{
 		ch:         make(chan *value.CreateContractParams, buffer),
@@ -31,6 +35,7 @@ func NewWorkerCreateLabel(
 		logger:     logger,
 		adapters:   adapters,
 		converters: converters,
+		email:      email,
 	}
 
 	go queue.worker()
@@ -46,6 +51,7 @@ func (w *WorkerQueue) worker() {
 	for payload := range w.ch {
 		if payload == nil {
 			w.logger.Infof("payload is nil")
+			w.notify(fmt.Errorf("payload nil"), payload)
 			continue
 		}
 
@@ -53,6 +59,7 @@ func (w *WorkerQueue) worker() {
 		payload, err := w.calcuateAmount(payload)
 		if err != nil {
 			w.logger.Infof(fmt.Sprintf("error calculating amount: %v", err))
+			w.notify(err, payload)
 			continue
 		}
 
@@ -60,6 +67,7 @@ func (w *WorkerQueue) worker() {
 		file, err := w.parseContract(payload)
 		if err != nil {
 			w.logger.Infof(fmt.Sprintf("error parsing contract: %v", err))
+			w.notify(err, payload)
 			continue
 		}
 
@@ -73,6 +81,7 @@ func (w *WorkerQueue) worker() {
 		)
 		if err != nil {
 			w.logger.Infof(fmt.Sprintf("error saving file: %v", err))
+			w.notify(err, payload)
 			continue
 		}
 
@@ -80,6 +89,7 @@ func (w *WorkerQueue) worker() {
 		resp, err := w.adapters.AgreementService.SignatureRequest(*payload)
 		if err != nil {
 			w.logger.Infof(fmt.Sprintf("error creating signature request: %v", err))
+			w.notify(err, payload)
 			continue
 		}
 		w.logger.Infof(
@@ -91,13 +101,15 @@ func (w *WorkerQueue) worker() {
 				resp.Metadata.Keys.SchoolCNPJ,
 			),
 		)
+		w.notify(err, payload)
 	}
 }
 
-func (ccuc *WorkerQueue) calcuateAmount(
+func (w *WorkerQueue) calcuateAmount(
 	params *value.CreateContractParams,
 ) (*value.CreateContractParams, error) {
-	distance, err := ccuc.adapters.AddressService.GetDistance(
+	w.logger.Infof(fmt.Sprintf("%s, %s", params.ResponsibleAddr, params.SchoolAddr))
+	distance, err := w.adapters.AddressService.GetDistance(
 		params.ResponsibleAddr,
 		params.SchoolAddr,
 	)
@@ -112,20 +124,41 @@ func (ccuc *WorkerQueue) calcuateAmount(
 	return params, nil
 }
 
-func (ccuc *WorkerQueue) parseContract(
+func (w *WorkerQueue) parseContract(
 	params *value.CreateContractParams,
 ) ([]byte, error) {
-	html, err := ccuc.getHtmlParsed()
+	html, err := w.getHtmlParsed()
 	if err != nil {
 		return nil, err
 	}
 
-	pdf, err := ccuc.converters.ConvertHTMLtoPDF(html, *params)
+	pdf, err := w.converters.ConvertHTMLtoPDF(html, *params)
 	if err != nil {
 		return nil, err
 	}
 
 	return pdf, nil
+}
+
+func (w *WorkerQueue) notify(err error, payload *value.CreateContractParams) {
+	if err != nil {
+		w.email.Enqueue(&entity.Email{
+			Recipient: payload.ResponsibleEmail,
+			Subject:   "Tivemos problema com a geração do seu contrato. Sentimos muito!",
+			Body: fmt.Sprintf(
+				"Verifique se todas suas informações internas estão corretas ou entre em contrato com a nossa equipe: %s",
+				viper.GetString("AWS_SES_EMAIL_FROM"),
+			),
+		})
+	}
+	w.email.Enqueue(&entity.Email{
+		Recipient: payload.ResponsibleEmail,
+		Subject:   "Seu contrato foi gerado com sucesso!",
+		Body: fmt.Sprintf(
+			"No link abaixo, está seu contrato na Dropbox, por favor assine para que seu filho começe a usufruir do transporte. \n %s",
+			payload.FileURL,
+		),
+	})
 }
 
 func getPath() (string, error) {
@@ -141,13 +174,13 @@ func filePath() string {
 	return "../../internal/domain/service/agreements/template/agreement.html"
 }
 
-func (ccuc *WorkerQueue) getHtmlParsed() ([]byte, error) {
+func (w *WorkerQueue) getHtmlParsed() ([]byte, error) {
 	path, err := getPath()
 	if err != nil {
 		return nil, err
 	}
 
-	content, err := ccuc.adapters.AgreementService.BuildContract(path)
+	content, err := w.adapters.AgreementService.BuildContract(path)
 	if err != nil {
 		return nil, err
 	}

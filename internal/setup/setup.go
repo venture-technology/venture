@@ -97,19 +97,28 @@ func (s Setup) Queue() {
 	s.app.Queue = queue.NewSQSQueue()
 }
 
-// workers must be started after logger, database and adapters.
+// someone worker will be the last one to be started.
+
+func (s Setup) WorkerEmail() {
+	s.app.WorkerEmail = workers.NewWorkerEmail(
+		100,
+		s.app.Email,
+		s.app.Logger,
+	)
+}
+
+// WorkerCreateContract, depends of WorkerEmail, so in main.go
+// you need start WorkerEmail first than WorkerCreateContract
 func (s Setup) WorkerCreateContract() {
-	s.app.WorkerCreateContract = workers.NewWorkerCreateLabel(
+	s.app.WorkerCreateContract = workers.NewWorkerCreateContract(
 		100,
 		s.app.Logger,
 		s.app.Bucket,
 		s.app.Adapters,
 		s.app.Converters,
+		s.app.WorkerEmail,
 	)
 }
 
 func (s Setup) WorkerAcceptContract() {
-}
-
-func (s Setup) WorkerSendEmail() {
 }
