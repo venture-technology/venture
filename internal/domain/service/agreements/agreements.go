@@ -70,7 +70,10 @@ func (as *AgreementService) SignatureRequest(contract value.CreateContractParams
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return ContractRequest{}, fmt.Errorf("unexpected status code from signature platform: %d", resp.StatusCode)
+		return ContractRequest{}, fmt.Errorf(
+			"unexpected status code from signature platform: %d, response: %s",
+			resp.StatusCode, string(body),
+		)
 	}
 
 	var signatureResponse SignatureResponse
