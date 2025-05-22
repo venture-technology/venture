@@ -53,7 +53,7 @@ func (ccuc *CreateContractUsecase) handleParams(
 		results sync.Map
 	)
 
-	wg.Add(5)
+	wg.Add(6)
 	go func() {
 		defer wg.Done()
 		hasParent, err := ccuc.repositories.
@@ -111,6 +111,22 @@ func (ccuc *CreateContractUsecase) handleParams(
 			return
 		}
 		results.Store("responsible", responsible)
+	}()
+
+	go func() {
+		defer wg.Done()
+		result, err := ccuc.repositories.
+			TempContractRepository.HasTemporaryContract(&entity.TempContract{
+			KidRG:          params.KidRG,
+			ResponsibleCPF: params.ResponsibleCPF,
+		})
+		if err != nil {
+			errCh <- err
+			return
+		}
+		if result {
+			errCh <- fmt.Errorf("parents already have temporary contract")
+		}
 	}()
 
 	wg.Wait()

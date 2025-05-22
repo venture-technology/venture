@@ -19,6 +19,7 @@ func TestCreateResponsibleUsecase_CreateResponsible(t *testing.T) {
 		repository := mocks.NewResponsibleRepository(t)
 		payments := mocks.NewPaymentsService(t)
 		logger := mocks.NewLogger(t)
+		worker := mocks.NewWorkerEmail(t)
 
 		usecase := NewCreateResponsibleUseCase(
 			&persistence.PostgresRepositories{
@@ -28,6 +29,7 @@ func TestCreateResponsibleUsecase_CreateResponsible(t *testing.T) {
 			adapters.Adapters{
 				PaymentsService: payments,
 			},
+			worker,
 		)
 
 		payments.On("CreateCustomer", mock.Anything).Return("", errors.New("create customer fails"))
@@ -41,6 +43,7 @@ func TestCreateResponsibleUsecase_CreateResponsible(t *testing.T) {
 		repository := mocks.NewResponsibleRepository(t)
 		payments := mocks.NewPaymentsService(t)
 		logger := mocks.NewLogger(t)
+		worker := mocks.NewWorkerEmail(t)
 
 		usecase := NewCreateResponsibleUseCase(
 			&persistence.PostgresRepositories{
@@ -50,6 +53,7 @@ func TestCreateResponsibleUsecase_CreateResponsible(t *testing.T) {
 			adapters.Adapters{
 				PaymentsService: payments,
 			},
+			worker,
 		)
 
 		payments.On("CreateCustomer", mock.Anything).Return("123", nil)
@@ -64,6 +68,7 @@ func TestCreateResponsibleUsecase_CreateResponsible(t *testing.T) {
 		repository := mocks.NewResponsibleRepository(t)
 		payments := mocks.NewPaymentsService(t)
 		logger := mocks.NewLogger(t)
+		worker := mocks.NewWorkerEmail(t)
 
 		usecase := NewCreateResponsibleUseCase(
 			&persistence.PostgresRepositories{
@@ -73,6 +78,7 @@ func TestCreateResponsibleUsecase_CreateResponsible(t *testing.T) {
 			adapters.Adapters{
 				PaymentsService: payments,
 			},
+			worker,
 		)
 
 		payments.On("CreateCustomer", mock.Anything).Return("123", nil)
@@ -89,6 +95,7 @@ func TestCreateResponsibleUsecase_CreateResponsible(t *testing.T) {
 		repository := mocks.NewResponsibleRepository(t)
 		payments := mocks.NewPaymentsService(t)
 		logger := mocks.NewLogger(t)
+		worker := mocks.NewWorkerEmail(t)
 
 		usecase := NewCreateResponsibleUseCase(
 			&persistence.PostgresRepositories{
@@ -98,6 +105,7 @@ func TestCreateResponsibleUsecase_CreateResponsible(t *testing.T) {
 			adapters.Adapters{
 				PaymentsService: payments,
 			},
+			worker,
 		)
 
 		payments.On("CreateCustomer", mock.Anything).Return("123", nil)

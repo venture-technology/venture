@@ -13,6 +13,6 @@ type WorkerAcceptContract interface {
 	Enqueue(payload *string) error
 }
 
-type WorkerSendEmail interface {
+type WorkerEmail interface {
 	Enqueue(payload *entity.Email) error
 }

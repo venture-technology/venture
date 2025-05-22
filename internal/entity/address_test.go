@@ -18,7 +18,7 @@ func TestGetFullAddress_WithComplement(t *testing.T) {
 		Zip:          "01423-001",
 	}
 
-	expected := "Rua das Flores, 123 - Apto 45, Jardins (São Paulo) - SP, 01423-001"
+	expected := "Rua das Flores, 123, (Apto 45), Jardins, São Paulo, SP, 01423-001"
 	assert.Equal(t, expected, address.GetFullAddress())
 }
 
@@ -33,6 +33,6 @@ func TestGetFullAddress_WithoutComplement(t *testing.T) {
 		Zip:          "01310-000",
 	}
 
-	expected := "Avenida Paulista, 1000 - Bela Vista, São Paulo - SP, 01310-000"
+	expected := "Avenida Paulista, 1000, Bela Vista, São Paulo, SP, 01310-000"
 	assert.Equal(t, expected, address.GetFullAddress())
 }
