@@ -72,14 +72,15 @@ type GetResponsible struct {
 }
 
 type GetKid struct {
-	ID              int    `json:"id"`
-	Name            string `json:"name"`
-	RG              string `json:"rg"`
-	ResponsibleCPF  string `json:"cpf"`
-	ResponsibleName string `json:"responsible_name"`
-	Address         string `json:"address"`
-	Period          string `json:"period"`
-	ProfileImage    string `json:"profile_image"`
+	ID               int    `json:"id"`
+	Name             string `json:"name"`
+	RG               string `json:"rg"`
+	ResponsibleCPF   string `json:"cpf"`
+	ResponsibleName  string `json:"responsible_name"`
+	ResponsiblePhone string `json:"responsible_phone"`
+	Address          string `json:"address"`
+	Period           string `json:"period"`
+	ProfileImage     string `json:"profile_image"`
 }
 
 type ListKid struct {
