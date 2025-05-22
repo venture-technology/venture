@@ -6,18 +6,16 @@ import (
 
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/infra/contracts"
-	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
-type workerQueue struct {
-	ch           chan *value.CreateContractParams
-	logger       contracts.Logger
-	adapters     adapters.Adapters
-	bucket       contracts.S3Iface
-	converters   contracts.Converters
-	repositories *persistence.PostgresRepositories
+type WorkerQueue struct {
+	ch         chan *value.CreateContractParams
+	logger     contracts.Logger
+	adapters   adapters.Adapters
+	bucket     contracts.S3Iface
+	converters contracts.Converters
 }
 
 func NewWorkerCreateLabel(
@@ -26,27 +24,25 @@ func NewWorkerCreateLabel(
 	bucket contracts.S3Iface,
 	adapters adapters.Adapters,
 	converters contracts.Converters,
-	repositories *persistence.PostgresRepositories,
 ) contracts.WorkerCreateContract {
-	queue := &workerQueue{
-		ch:           make(chan *value.CreateContractParams, buffer),
-		bucket:       bucket,
-		logger:       logger,
-		adapters:     adapters,
-		converters:   converters,
-		repositories: repositories,
+	queue := &WorkerQueue{
+		ch:         make(chan *value.CreateContractParams, buffer),
+		bucket:     bucket,
+		logger:     logger,
+		adapters:   adapters,
+		converters: converters,
 	}
 
 	go queue.worker()
 	return queue
 }
 
-func (w *workerQueue) Enqueue(payload *value.CreateContractParams) error {
+func (w *WorkerQueue) Enqueue(payload *value.CreateContractParams) error {
 	w.ch <- payload
 	return nil
 }
 
-func (w *workerQueue) worker() {
+func (w *WorkerQueue) worker() {
 	for payload := range w.ch {
 		if payload == nil {
 			w.logger.Infof("payload is nil")
@@ -98,7 +94,7 @@ func (w *workerQueue) worker() {
 	}
 }
 
-func (ccuc *workerQueue) calcuateAmount(
+func (ccuc *WorkerQueue) calcuateAmount(
 	params *value.CreateContractParams,
 ) (*value.CreateContractParams, error) {
 	distance, err := ccuc.adapters.AddressService.GetDistance(
@@ -116,7 +112,7 @@ func (ccuc *workerQueue) calcuateAmount(
 	return params, nil
 }
 
-func (ccuc *workerQueue) parseContract(
+func (ccuc *WorkerQueue) parseContract(
 	params *value.CreateContractParams,
 ) ([]byte, error) {
 	html, err := ccuc.getHtmlParsed()
@@ -145,7 +141,7 @@ func filePath() string {
 	return "../../internal/domain/service/agreements/template/agreement.html"
 }
 
-func (ccuc *workerQueue) getHtmlParsed() ([]byte, error) {
+func (ccuc *WorkerQueue) getHtmlParsed() ([]byte, error) {
 	path, err := getPath()
 	if err != nil {
 		return nil, err

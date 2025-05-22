@@ -105,7 +105,6 @@ func (s Setup) WorkerCreateContract() {
 		s.app.Bucket,
 		s.app.Adapters,
 		s.app.Converters,
-		&s.app.Repositories,
 	)
 }
 

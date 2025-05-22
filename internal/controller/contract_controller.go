@@ -40,9 +40,6 @@ func (coh *ContractController) PostV1CreateContract(httpContext *gin.Context) {
 	usecase := usecase.NewCreateContractUsecase(
 		&infra.App.Repositories,
 		infra.App.WorkerCreateContract,
-		infra.App.Converters,
-		infra.App.Adapters,
-		infra.App.Bucket,
 		infra.App.Logger,
 	)
 

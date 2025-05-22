@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"github.com/google/uuid"
-	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
@@ -17,26 +16,17 @@ import (
 type CreateContractUsecase struct {
 	repositories *persistence.PostgresRepositories
 	queueWorker  contracts.WorkerCreateContract
-	converters   contracts.Converters
-	adapters     adapters.Adapters
-	s3           contracts.S3Iface
 	logger       contracts.Logger
 }
 
 func NewCreateContractUsecase(
 	repositories *persistence.PostgresRepositories,
 	queueWorker contracts.WorkerCreateContract,
-	converters contracts.Converters,
-	adapters adapters.Adapters,
-	s3 contracts.S3Iface,
 	logger contracts.Logger,
 ) *CreateContractUsecase {
 	return &CreateContractUsecase{
 		repositories: repositories,
 		queueWorker:  queueWorker,
-		converters:   converters,
-		adapters:     adapters,
-		s3:           s3,
 		logger:       logger,
 	}
 }
@@ -45,21 +35,11 @@ func (ccuc *CreateContractUsecase) CreateContract(
 	ctx context.Context,
 	requestParams *value.CreateContractParams,
 ) error {
-	logger := ccuc.logger
-
-	logger.Infof(fmt.Sprintf(
-		"Driver: %s, Responsible: %s, Kid: %s, School: %s",
-		requestParams.DriverCNH,
-		requestParams.ResponsibleCPF,
-		requestParams.KidRG,
-		requestParams.SchoolCNPJ))
-
 	requestParams, err := ccuc.handleParams(ctx, requestParams)
 	if err != nil {
 		return err
 	}
 
-	logger.Infof("sending to queue")
 	return ccuc.queueWorker.Enqueue(requestParams)
 }
 

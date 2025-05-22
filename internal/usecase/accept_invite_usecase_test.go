@@ -16,8 +16,8 @@ func TestAcceptInviteUsecase_Accept_Invite(t *testing.T) {
 	// 		},
 	// 		logger,
 	// 	)
-	// 	repository.On("Accept", mock.Anything).Return(errors.New("database error"))
 
+	// 	repository.On("Accept", mock.Anything).Return(errors.New("database error"))
 	// 	err := usecase.AcceptInvite(id)
 
 	// 	assert.EqualError(t, err, "database error")
@@ -48,7 +48,7 @@ func TestAcceptInviteUsecase_Accept_Invite(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			
+
 		})
 	}
 
