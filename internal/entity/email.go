@@ -2,11 +2,9 @@ package entity
 
 import (
 	"encoding/json"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/segmentio/kafka-go"
 )
 
 type Email struct {
@@ -18,7 +16,7 @@ type Email struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
-func (e *Email) EmailStructToJson() (string, error) {
+func (e *Email) Serialize() (string, error) {
 	json, err := json.Marshal(e)
 
 	if err != nil {
@@ -26,16 +24,4 @@ func (e *Email) EmailStructToJson() (string, error) {
 	}
 
 	return string(json), nil
-}
-
-func (e *Email) Unserialize(msg *kafka.Message) (*Email, error) {
-	var email *Email
-
-	err := json.Unmarshal(msg.Value, &email)
-	if err != nil {
-		log.Fatalf("Erro ao desserializar mensagem JSON: %v", err)
-		return nil, err
-	}
-
-	return email, nil
 }

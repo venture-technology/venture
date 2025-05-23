@@ -1,17 +1,23 @@
-name: ProdDeploy
+name: VentureServerStagingDeploy
 
 on:
   push:
     branches:
-      - master
+      - qa
+  workflow_dispatch:
+    inputs:
+      deploy_id:
+        description: 'Deploy ID'
+        required: false
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: ghcr.io/venture-technology/venture
+  IMAGE_NAME: ghcr.io/venture-technology/venture-staging
   COMMIT_SHA: ${{ github.sha }}
 
 jobs:
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -48,7 +54,6 @@ jobs:
       - name: Deploy
         env:
           HOST_REMOTE_SERVER_IP: ${{ secrets.HOST_REMOTE_SERVER_IP }}
-          IMAGE_NAME: ghcr.io/venture-technology/venture
+          IMAGE_NAME: ghcr.io/venture-technology/venture-staging
         run: |
-          make prod-deploy-docker
-
+          make staging-deploy-docker

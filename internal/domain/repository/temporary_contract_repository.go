@@ -8,10 +8,7 @@ import (
 type TempContractRepository interface {
 	Create(contract *entity.TempContract) error
 	GetByResponsible(cpf *string) ([]entity.TempContract, error)
-	//para verificar se todos os objetos do contrato existem
-	//
-	//{responsible, driver e kid}
-	GetByEveryone(contract *entity.TempContract) (bool, error)
+	HasTemporaryContract(contract *entity.TempContract) (bool, error)
 	GetByDriver(cnh *string) ([]entity.TempContract, error)
 	Cancel(uuid uuid.UUID) error
 	Update(uuid uuid.UUID, attrs map[string]interface{}) error

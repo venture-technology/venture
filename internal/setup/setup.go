@@ -17,6 +17,8 @@ import (
 	"github.com/venture-technology/venture/internal/infra/email"
 	"github.com/venture-technology/venture/internal/infra/logger"
 	"github.com/venture-technology/venture/internal/infra/persistence"
+	"github.com/venture-technology/venture/internal/infra/queue"
+	"github.com/venture-technology/venture/internal/infra/workers"
 )
 
 const (
@@ -89,4 +91,34 @@ func (s Setup) Adapters() {
 
 func (s Setup) Converters() {
 	s.app.Converters = converters.NewConverter()
+}
+
+func (s Setup) Queue() {
+	s.app.Queue = queue.NewSQSQueue()
+}
+
+// someone worker will be the last one to be started.
+
+func (s Setup) WorkerEmail() {
+	s.app.WorkerEmail = workers.NewWorkerEmail(
+		100,
+		s.app.Email,
+		s.app.Logger,
+	)
+}
+
+// WorkerCreateContract, depends of WorkerEmail, so in main.go
+// you need start WorkerEmail first than WorkerCreateContract
+func (s Setup) WorkerCreateContract() {
+	s.app.WorkerCreateContract = workers.NewWorkerCreateContract(
+		100,
+		s.app.Logger,
+		s.app.Bucket,
+		s.app.Adapters,
+		s.app.Converters,
+		s.app.WorkerEmail,
+	)
+}
+
+func (s Setup) WorkerAcceptContract() {
 }

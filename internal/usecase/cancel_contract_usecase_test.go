@@ -70,7 +70,7 @@ func TestCancelContractUsecase_CancelContract(t *testing.T) {
 
 		repository.On("GetByUUID", mock.Anything).Return(&entity.Contract{}, nil)
 		ps.On("ListInvoices", mock.Anything).Return(map[string]entity.InvoiceInfo{}, nil)
-		ps.On("CalculateRemainingValueSubscription", mock.Anything, mock.Anything).Return(float64(0))
+		ps.On("CalculateRemainingValueSubscription", mock.Anything, mock.Anything).Return(int64(0))
 		ps.On("FineResponsible", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New("fine responsible error"))
 
 		uc := NewCancelContractUseCase(
@@ -96,7 +96,7 @@ func TestCancelContractUsecase_CancelContract(t *testing.T) {
 
 		repository.On("GetByUUID", mock.Anything).Return(&entity.Contract{}, nil)
 		ps.On("ListInvoices", mock.Anything).Return(map[string]entity.InvoiceInfo{}, nil)
-		ps.On("CalculateRemainingValueSubscription", mock.Anything, mock.Anything).Return(float64(0))
+		ps.On("CalculateRemainingValueSubscription", mock.Anything, mock.Anything).Return(int64(0))
 		ps.On("FineResponsible", mock.Anything, mock.Anything, mock.Anything).Return(nil, nil)
 		repository.On("Cancel", mock.Anything).Return(errors.New("cancel contract error"))
 
@@ -123,7 +123,7 @@ func TestCancelContractUsecase_CancelContract(t *testing.T) {
 
 		repository.On("GetByUUID", mock.Anything).Return(&entity.Contract{}, nil)
 		ps.On("ListInvoices", mock.Anything).Return(map[string]entity.InvoiceInfo{}, nil)
-		ps.On("CalculateRemainingValueSubscription", mock.Anything, mock.Anything).Return(float64(0))
+		ps.On("CalculateRemainingValueSubscription", mock.Anything, mock.Anything).Return(int64(0))
 		ps.On("FineResponsible", mock.Anything, mock.Anything, mock.Anything).Return(nil, nil)
 		repository.On("Cancel", mock.Anything).Return(nil)
 

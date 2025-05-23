@@ -18,7 +18,7 @@ type Driver struct {
 	QrCode          string    `json:"qrcode,omitempty"`
 	PixKey          string    `json:"pix_key,omitempty"`
 	Address         Address   `gorm:"embedded" json:"address,omitempty" validate:"required"`
-	Amount          float64   `gorm:"type:numeric(10,2)" json:"amount,omitempty" validate:"required"`
+	Amount          int64     `gorm:"type:numeric(10,2)" json:"amount,omitempty" validate:"required"`
 	Phone           string    `json:"phone,omitempty" validate:"required" example:"+55 11 123456789"`
 	MunicipalRecord string    `json:"municipal_record,omitempty" validate:"required"`
 	Car             Car       `gorm:"embedded" json:"car,omitempty" validate:"required"`

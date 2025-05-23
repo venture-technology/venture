@@ -7,16 +7,19 @@ import (
 	"runtime"
 
 	"github.com/spf13/viper"
-	"github.com/venture-technology/venture/pkg/stringcommon"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 const (
 	ServerEnvironment = "ENVIRONMENT"
 )
 
+var (
+	_, b, _, _ = runtime.Caller(0)
+	basepath   = filepath.Dir(b)
+)
+
 func LoadServerEnvironmentVars(service, serverEnv string) error {
-	if stringcommon.Empty(serverEnv) || serverEnv == "development" {
+	if serverEnv == "development" {
 		viper.SetDefault(ServerEnvironment, "development")
 	}
 
@@ -24,12 +27,12 @@ func LoadServerEnvironmentVars(service, serverEnv string) error {
 		viper.SetConfigType("json")
 		viper.SetConfigName(viper.GetString(ServerEnvironment)) // development
 
-		projectRoot, err := utils.FindGoModRoot()
+		path, err := getPath()
 		if err != nil {
 			return err
 		}
 
-		viper.AddConfigPath(filepath.Join(projectRoot, "config"))
+		viper.AddConfigPath(path)
 
 		if err := viper.ReadInConfig(); err != nil {
 			fmt.Println("Failed to read config file:", err)
@@ -55,4 +58,8 @@ func LoadStaticFile(pathToRoot, filename string) ([]byte, error) {
 	_, path, _, _ := runtime.Caller(1)
 	fullPath := filepath.Join(path, pathToRoot, "data", filename)
 	return ioutil.ReadFile(fullPath)
+}
+
+func getPath() (string, error) {
+	return basepath, nil
 }

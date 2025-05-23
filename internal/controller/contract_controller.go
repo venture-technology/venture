@@ -24,35 +24,35 @@ func NewContractController() *ContractController {
 // @Tags Contracts
 // @Accept json
 // @Produce json
-// @Param contract body value.CreateContractRequestParams true "Dados do contrato"
+// @Param contract body value.CreateContractParams true "Dados do contrato"
 // @Success 201 {object} agreements.ContractRequest
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /contract [post]
 func (coh *ContractController) PostV1CreateContract(httpContext *gin.Context) {
-	var requestParams value.CreateContractRequestParams
+	var requestParams value.CreateContractParams
 	if err := httpContext.BindJSON(&requestParams); err != nil {
 		httpContext.JSON(http.StatusBadRequest, exceptions.InvalidBodyContentResponseError(err))
 		return
 	}
 
 	infra.App.Logger.Infof(fmt.Sprintf("requestParams: %v", requestParams))
-
-	usecase := usecase.NewCreateContractUseCase(
+	usecase := usecase.NewCreateContractUsecase(
 		&infra.App.Repositories,
+		infra.App.WorkerCreateContract,
 		infra.App.Logger,
-		infra.App.Adapters,
-		infra.App.Bucket,
-		infra.App.Converters,
 	)
 
-	response, err := usecase.CreateContract(&requestParams)
+	err := usecase.CreateContract(httpContext, &requestParams)
 	if err != nil {
-		httpContext.JSON(http.StatusInternalServerError, exceptions.InternalServerResponseError(err, "erro ao realizar a criação do contrato"))
+		httpContext.JSON(
+			http.StatusBadRequest,
+			exceptions.InternalServerResponseError(err, "erro ao tentar criar o contrato"),
+		)
 		return
 	}
 
-	httpContext.JSON(http.StatusCreated, response)
+	httpContext.JSON(http.StatusCreated, http.NoBody)
 }
 
 // @Summary Busca um contrato

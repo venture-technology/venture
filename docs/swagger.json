@@ -30,7 +30,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/value.CreateContractRequestParams"
+                            "$ref": "#/definitions/value.CreateContractParams"
                         }
                     }
                 ],
@@ -2242,7 +2242,7 @@
                 }
             }
         },
-        "value.CreateContractRequestParams": {
+        "value.CreateContractParams": {
             "type": "object",
             "properties": {
                 "driver_cnh": {

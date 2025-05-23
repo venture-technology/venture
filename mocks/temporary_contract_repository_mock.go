@@ -98,34 +98,6 @@ func (_m *TempContractRepository) GetByDriver(cnh *string) ([]entity.TempContrac
 	return r0, r1
 }
 
-// GetByEveryone provides a mock function with given fields: contract
-func (_m *TempContractRepository) GetByEveryone(contract *entity.TempContract) (bool, error) {
-	ret := _m.Called(contract)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetByEveryone")
-	}
-
-	var r0 bool
-	var r1 error
-	if rf, ok := ret.Get(0).(func(*entity.TempContract) (bool, error)); ok {
-		return rf(contract)
-	}
-	if rf, ok := ret.Get(0).(func(*entity.TempContract) bool); ok {
-		r0 = rf(contract)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-
-	if rf, ok := ret.Get(1).(func(*entity.TempContract) error); ok {
-		r1 = rf(contract)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // GetByResponsible provides a mock function with given fields: cpf
 func (_m *TempContractRepository) GetByResponsible(cpf *string) ([]entity.TempContract, error) {
 	ret := _m.Called(cpf)
@@ -179,6 +151,34 @@ func (_m *TempContractRepository) GetExpiredContracts() ([]entity.TempContract, 
 
 	if rf, ok := ret.Get(1).(func() error); ok {
 		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// HasTemporaryContract provides a mock function with given fields: contract
+func (_m *TempContractRepository) HasTemporaryContract(contract *entity.TempContract) (bool, error) {
+	ret := _m.Called(contract)
+
+	if len(ret) == 0 {
+		panic("no return value specified for HasTemporaryContract")
+	}
+
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(*entity.TempContract) (bool, error)); ok {
+		return rf(contract)
+	}
+	if rf, ok := ret.Get(0).(func(*entity.TempContract) bool); ok {
+		r0 = rf(contract)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	if rf, ok := ret.Get(1).(func(*entity.TempContract) error); ok {
+		r1 = rf(contract)
 	} else {
 		r1 = ret.Error(1)
 	}

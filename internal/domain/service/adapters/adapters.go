@@ -5,6 +5,7 @@ import (
 	"github.com/stripe/stripe-go/v79"
 	"github.com/venture-technology/venture/internal/domain/service/agreements"
 	"github.com/venture-technology/venture/internal/entity"
+	"github.com/venture-technology/venture/internal/value"
 )
 
 type Adapters struct {
@@ -19,10 +20,10 @@ type AddressService interface {
 
 type PaymentsService interface {
 	// this function is used to create price for the driver
-	CreatePrice(stripeProductID string, amount float64) (*stripe.Price, error)
+	CreatePrice(stripeProductID string, amount int64) (*stripe.Price, error)
 	// when driver is created together the product created too for driver work become product
 	CreateProduct(contract *entity.Contract) (*stripe.Product, error)
-	// when responsible hire driver
+	// when responsible hire drive
 	CreateSubscription(customerID, stripePriceID string) (*stripe.Subscription, error)
 	GetSubscription(subscriptionId string) (*stripe.Subscription, error)
 	ListSubscriptions(responsible *entity.Responsible) ([]entity.SubscriptionInfo, error)
@@ -31,7 +32,7 @@ type PaymentsService interface {
 	GetInvoice(invoiceId string) (*stripe.Invoice, error)
 	ListInvoices(contractId string) (map[string]entity.InvoiceInfo, error)
 	// this calc is used to calculate the remaining value of the subscription
-	CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64
+	CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount int64) int64
 	// fine responsible when cancel subcription
 	FineResponsible(customerId, paymentMethodId string, amountFine int64) (*stripe.PaymentIntent, error)
 	CreateCustomer(responsible *entity.Responsible) (string, error)
@@ -41,10 +42,10 @@ type PaymentsService interface {
 }
 
 type AgreementService interface {
-	SignatureRequest(contract entity.ContractProperty) (agreements.ContractRequest, error)
+	SignatureRequest(contract value.CreateContractParams) (agreements.ContractRequest, error)
 	// this function is used to get the html file of the agreement
 	// the param is variable because can be used to get the html file from different applications
-	GetAgreementHtml(path string) ([]byte, error)
+	BuildContract(path string) ([]byte, error)
 	HandleCallbackVerification() (any, error)
 	SignatureRequestAllSigned(*gin.Context) (agreements.ASRASOutput, error)
 }

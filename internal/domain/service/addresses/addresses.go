@@ -36,17 +36,31 @@ func (ga *GoogleAdapter) GetDistance(origin, destination string) (*float64, erro
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
 	var data entity.DistanceMatrixResponse
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return nil, err
 	}
 
-	distance := data.Rows[0].Elements[0].Distance.Text
-	distance = strings.TrimSpace(strings.Replace(distance, "km", "", 1))
-	kmFloat, err := strconv.ParseFloat(distance, 64)
+	kmFloat, err := parseDistanceText(data)
 	if err != nil {
 		return nil, err
 	}
 
-	return &kmFloat, err
+	return &kmFloat, nil
+}
+
+func parseDistanceText(data entity.DistanceMatrixResponse) (float64, error) {
+	if len(data.Rows) == 0 || len(data.Rows[0].Elements) == 0 {
+		return 0, fmt.Errorf("invalid distance data")
+	}
+
+	distance := data.Rows[0].Elements[0].Distance.Text
+	distance = strings.TrimSpace(strings.Replace(distance, "km", "", 1))
+	distance = strings.ReplaceAll(distance, ",", ".")
+
+	return strconv.ParseFloat(distance, 64)
 }

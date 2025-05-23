@@ -42,5 +42,10 @@ func (cruc *CreateResponsibleUseCase) CreateResponsible(responsible *entity.Resp
 	// this err is ignored, because we can be attach later if fail
 	_, err = cruc.adapters.PaymentsService.AttachCardToResponsible(responsible.CustomerId, responsible.PaymentMethodId)
 
-	return cruc.repositories.ResponsibleRepository.Create(responsible)
+	err = cruc.repositories.ResponsibleRepository.Create(responsible)
+	if err != nil {
+		return err
+	}
+
+	return err
 }
