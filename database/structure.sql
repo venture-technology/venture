@@ -85,8 +85,8 @@ CREATE TABLE public.contracts (
     created_at bigint DEFAULT date_part('epoch'::text, now()) NOT NULL,
     updated_at bigint DEFAULT date_part('epoch'::text, now()) NOT NULL,
     expire_at bigint NOT NULL,
-    amount numeric(10,2) NOT NULL,
-    anual_amount numeric(10,2) NOT NULL,
+    amount integer NOT NULL,
+    anual_amount integer NOT NULL,
     CONSTRAINT contracts_status_check CHECK ((status = ANY (ARRAY['currently'::text, 'canceled'::text, 'expired'::text])))
 );
 
@@ -127,7 +127,7 @@ CREATE TABLE public.drivers (
     password character varying(100) NOT NULL,
     cnh character varying(20) NOT NULL,
     qr_code character varying(100) NOT NULL,
-    amount numeric(10,2) NOT NULL,
+    amount integer NOT NULL,
     street character varying(100) NOT NULL,
     number character varying(10) NOT NULL,
     complement character varying(100),
@@ -844,6 +844,182 @@ ALTER TABLE ONLY public.partners
 
 REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 GRANT ALL ON SCHEMA public TO PUBLIC;
+GRANT USAGE ON SCHEMA public TO davi_oliveira;
+GRANT USAGE ON SCHEMA public TO vitor_martins;
+GRANT USAGE ON SCHEMA public TO fabricio_nunes;
+GRANT USAGE ON SCHEMA public TO venture_staging_user;
+GRANT USAGE ON SCHEMA public TO matheus_cardoso;
+
+
+--
+-- Name: TABLE children; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.children TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.children TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.children TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.children TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.children TO matheus_cardoso;
+
+
+--
+-- Name: TABLE contracts; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.contracts TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.contracts TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.contracts TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.contracts TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.contracts TO matheus_cardoso;
+
+
+--
+-- Name: TABLE drivers; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.drivers TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.drivers TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.drivers TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.drivers TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.drivers TO matheus_cardoso;
+
+
+--
+-- Name: TABLE invites; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.invites TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.invites TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.invites TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.invites TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.invites TO matheus_cardoso;
+
+
+--
+-- Name: SEQUENCE invites_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.invites_id_seq TO davi_oliveira;
+
+
+--
+-- Name: TABLE kids; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.kids TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.kids TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.kids TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.kids TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.kids TO matheus_cardoso;
+
+
+--
+-- Name: SEQUENCE kids_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.kids_id_seq TO davi_oliveira;
+
+
+--
+-- Name: TABLE partners; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.partners TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.partners TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.partners TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.partners TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.partners TO matheus_cardoso;
+
+
+--
+-- Name: SEQUENCE partners_record_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.partners_record_seq TO davi_oliveira;
+
+
+--
+-- Name: TABLE payouts; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.payouts TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.payouts TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.payouts TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.payouts TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.payouts TO matheus_cardoso;
+
+
+--
+-- Name: TABLE responsible; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.responsible TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.responsible TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.responsible TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.responsible TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.responsible TO matheus_cardoso;
+
+
+--
+-- Name: TABLE responsibles; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.responsibles TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.responsibles TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.responsibles TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.responsibles TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.responsibles TO matheus_cardoso;
+
+
+--
+-- Name: TABLE schema_migrations; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.schema_migrations TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.schema_migrations TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.schema_migrations TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.schema_migrations TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.schema_migrations TO matheus_cardoso;
+
+
+--
+-- Name: TABLE schools; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.schools TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.schools TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.schools TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.schools TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.schools TO matheus_cardoso;
+
+
+--
+-- Name: TABLE temp_contracts; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.temp_contracts TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.temp_contracts TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.temp_contracts TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.temp_contracts TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.temp_contracts TO matheus_cardoso;
+
+
+--
+-- Name: SEQUENCE temp_contracts_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.temp_contracts_id_seq TO davi_oliveira;
+
+
+--
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: public; Owner: postgres
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT SELECT,INSERT,DELETE,UPDATE ON TABLES TO davi_oliveira;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT SELECT,INSERT,DELETE,UPDATE ON TABLES TO vitor_martins;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT SELECT,INSERT,DELETE,UPDATE ON TABLES TO fabricio_nunes;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT SELECT,INSERT,DELETE,UPDATE ON TABLES TO venture_staging_user;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT SELECT,INSERT,DELETE,UPDATE ON TABLES TO matheus_cardoso;
 
 
 --

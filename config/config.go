@@ -7,11 +7,15 @@ import (
 	"runtime"
 
 	"github.com/spf13/viper"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
 const (
 	ServerEnvironment = "ENVIRONMENT"
+)
+
+var (
+	_, b, _, _ = runtime.Caller(0)
+	basepath   = filepath.Dir(b)
 )
 
 func LoadServerEnvironmentVars(service, serverEnv string) error {
@@ -23,7 +27,7 @@ func LoadServerEnvironmentVars(service, serverEnv string) error {
 		viper.SetConfigType("json")
 		viper.SetConfigName(viper.GetString(ServerEnvironment)) // development
 
-		path, err := utils.GetAbsPath()
+		path, err := getPath()
 		if err != nil {
 			return err
 		}
@@ -54,4 +58,8 @@ func LoadStaticFile(pathToRoot, filename string) ([]byte, error) {
 	_, path, _, _ := runtime.Caller(1)
 	fullPath := filepath.Join(path, pathToRoot, "data", filename)
 	return ioutil.ReadFile(fullPath)
+}
+
+func getPath() (string, error) {
+	return basepath, nil
 }

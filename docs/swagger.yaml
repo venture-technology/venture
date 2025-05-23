@@ -342,7 +342,7 @@ definitions:
       version:
         type: integer
     type: object
-  value.CreateContractRequestParams:
+  value.CreateContractParams:
     properties:
       driver_cnh:
         type: string
@@ -738,7 +738,7 @@ paths:
         name: contract
         required: true
         schema:
-          $ref: '#/definitions/value.CreateContractRequestParams'
+          $ref: '#/definitions/value.CreateContractParams'
       produces:
       - application/json
       responses:

@@ -1,13 +1,12 @@
 package usecase
 
 import (
-	"errors"
+	"context"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/venture-technology/venture/internal/domain/service/adapters"
-	"github.com/venture-technology/venture/internal/domain/service/agreements"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
@@ -15,526 +14,329 @@ import (
 )
 
 func TestCreateContractUsecase_CreateContract(t *testing.T) {
-	var params value.CreateContractRequestParams
-
-	t.Run("repo temp contract get by everyone return error", func(t *testing.T) {
-		tcr := mocks.NewTempContractRepository(t)
-		dr := mocks.NewDriverRepository(t)
-		sc := mocks.NewSchoolRepository(t)
-		kr := mocks.NewKidRepository(t)
-		rr := mocks.NewResponsibleRepository(t)
-		das := mocks.NewAddressService(t)
-		s3 := mocks.NewS3Iface(t)
-		dbs := mocks.NewAgreementService(t)
-		logger := mocks.NewLogger(t)
-		converter := mocks.NewConverters(t)
-
-		tcr.On("GetByEveryone", mock.Anything).Return(false, errors.New("database error"))
-		logger.On("Infof", mock.Anything, mock.Anything).Return(logger)
-
-		uc := NewCreateContractUseCase(
-			&persistence.PostgresRepositories{
-				TempContractRepository: tcr,
-				DriverRepository:       dr,
-				SchoolRepository:       sc,
-				KidRepository:          kr,
-				ResponsibleRepository:  rr,
+	type args struct {
+		ctx     context.Context
+		payload *value.CreateContractParams
+	}
+	type fields struct {
+		repositories *persistence.PostgresRepositories
+	}
+	tests := []struct {
+		name    string
+		setup   func(t *testing.T) *CreateContractUsecase
+		args    args
+		fields  fields
+		wantErr bool
+	}{
+		{
+			name: "there is successfull",
+			args: args{
+				ctx:     context.Background(),
+				payload: &value.CreateContractParams{},
 			},
-			logger,
-			adapters.Adapters{
-				AddressService:   das,
-				AgreementService: dbs,
+			setup: func(t *testing.T) *CreateContractUsecase {
+				kr := mocks.NewKidRepository(t)
+				dr := mocks.NewDriverRepository(t)
+				rr := mocks.NewResponsibleRepository(t)
+				sr := mocks.NewSchoolRepository(t)
+				tr := mocks.NewTempContractRepository(t)
+
+				kr.On("FindByResponsible", mock.Anything, mock.Anything).Return(true, nil)
+				kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
+				dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
+				sr.On("Get", mock.Anything).Return(&entity.School{}, nil)
+				rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
+				tr.On("HasTemporaryContract", mock.Anything).Return(false, nil)
+
+				worker := mocks.NewWorkerCreateContract(t)
+
+				worker.On("Enqueue", mock.Anything).Return(nil)
+
+				logger := mocks.NewLogger(t)
+				return NewCreateContractUsecase(
+					&persistence.PostgresRepositories{
+						KidRepository:          kr,
+						DriverRepository:       dr,
+						SchoolRepository:       sr,
+						ResponsibleRepository:  rr,
+						TempContractRepository: tr,
+					},
+					worker,
+					logger,
+				)
 			},
-			s3,
-			converter,
-		)
-
-		_, err := uc.CreateContract(&params)
-
-		assert.EqualError(t, err, "database error")
-		assert.Error(t, err)
-	})
-
-	t.Run("repo temp contract get by everyone return error", func(t *testing.T) {
-		tcr := mocks.NewTempContractRepository(t)
-		dr := mocks.NewDriverRepository(t)
-		sc := mocks.NewSchoolRepository(t)
-		kr := mocks.NewKidRepository(t)
-		rr := mocks.NewResponsibleRepository(t)
-		das := mocks.NewAddressService(t)
-		s3 := mocks.NewS3Iface(t)
-		dbs := mocks.NewAgreementService(t)
-		logger := mocks.NewLogger(t)
-		converter := mocks.NewConverters(t)
-
-		tcr.On("GetByEveryone", mock.Anything).Return(true, nil)
-		logger.On("Infof", mock.Anything, mock.Anything).Return(logger)
-
-		uc := NewCreateContractUseCase(
-			&persistence.PostgresRepositories{
-				TempContractRepository: tcr,
-				DriverRepository:       dr,
-				SchoolRepository:       sc,
-				KidRepository:          kr,
-				ResponsibleRepository:  rr,
+			wantErr: false,
+		},
+		{
+			name: "there is kid find by responsible error",
+			args: args{
+				ctx:     context.Background(),
+				payload: &value.CreateContractParams{},
 			},
-			logger,
-			adapters.Adapters{
-				AddressService:   das,
-				AgreementService: dbs,
+			setup: func(t *testing.T) *CreateContractUsecase {
+				kr := mocks.NewKidRepository(t)
+				dr := mocks.NewDriverRepository(t)
+				rr := mocks.NewResponsibleRepository(t)
+				sr := mocks.NewSchoolRepository(t)
+				tr := mocks.NewTempContractRepository(t)
+
+				kr.On("FindByResponsible", mock.Anything, mock.Anything).Return(true, fmt.Errorf("database error"))
+				kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
+				dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
+				sr.On("Get", mock.Anything).Return(&entity.School{}, nil)
+				rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
+				tr.On("HasTemporaryContract", mock.Anything).Return(false, nil)
+
+				worker := mocks.NewWorkerCreateContract(t)
+
+				logger := mocks.NewLogger(t)
+				return NewCreateContractUsecase(
+					&persistence.PostgresRepositories{
+						KidRepository:          kr,
+						DriverRepository:       dr,
+						SchoolRepository:       sr,
+						ResponsibleRepository:  rr,
+						TempContractRepository: tr,
+					},
+					worker,
+					logger,
+				)
 			},
-			s3,
-			converter,
-		)
-
-		_, err := uc.CreateContract(&params)
-
-		assert.EqualError(t, err, "temp contract already exists")
-		assert.Error(t, err)
-	})
-
-	t.Run("get agreement html file return error", func(t *testing.T) {
-		tcr := mocks.NewTempContractRepository(t)
-		dr := mocks.NewDriverRepository(t)
-		sc := mocks.NewSchoolRepository(t)
-		kr := mocks.NewKidRepository(t)
-		rr := mocks.NewResponsibleRepository(t)
-		das := mocks.NewAddressService(t)
-		s3 := mocks.NewS3Iface(t)
-		dbs := mocks.NewAgreementService(t)
-		logger := mocks.NewLogger(t)
-		converter := mocks.NewConverters(t)
-
-		tcr.On("GetByEveryone", mock.Anything).Return(false, nil)
-		logger.On("Infof", mock.Anything, mock.Anything).Return(logger)
-		dbs.On("GetAgreementHtml", mock.Anything).Return([]byte{}, errors.New("agreement service error"))
-
-		uc := NewCreateContractUseCase(
-			&persistence.PostgresRepositories{
-				TempContractRepository: tcr,
-				DriverRepository:       dr,
-				SchoolRepository:       sc,
-				KidRepository:          kr,
-				ResponsibleRepository:  rr,
+			wantErr: true,
+		},
+		{
+			name: "there is kid get error",
+			args: args{
+				ctx:     context.Background(),
+				payload: &value.CreateContractParams{},
 			},
-			logger,
-			adapters.Adapters{
-				AddressService:   das,
-				AgreementService: dbs,
+			setup: func(t *testing.T) *CreateContractUsecase {
+				kr := mocks.NewKidRepository(t)
+				dr := mocks.NewDriverRepository(t)
+				rr := mocks.NewResponsibleRepository(t)
+				sr := mocks.NewSchoolRepository(t)
+				tr := mocks.NewTempContractRepository(t)
+
+				kr.On("FindByResponsible", mock.Anything, mock.Anything).Return(true, nil)
+				kr.On("Get", mock.Anything).Return(&entity.Kid{}, fmt.Errorf("database error"))
+				dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
+				sr.On("Get", mock.Anything).Return(&entity.School{}, nil)
+				rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
+				tr.On("HasTemporaryContract", mock.Anything).Return(false, nil)
+
+				worker := mocks.NewWorkerCreateContract(t)
+
+				logger := mocks.NewLogger(t)
+				return NewCreateContractUsecase(
+					&persistence.PostgresRepositories{
+						KidRepository:          kr,
+						DriverRepository:       dr,
+						SchoolRepository:       sr,
+						ResponsibleRepository:  rr,
+						TempContractRepository: tr,
+					},
+					worker,
+					logger,
+				)
 			},
-			s3,
-			converter,
-		)
-
-		_, err := uc.CreateContract(&params)
-
-		assert.EqualError(t, err, "agreement service error")
-		assert.Error(t, err)
-	})
-
-	t.Run("get driver repository return error", func(t *testing.T) {
-		tcr := mocks.NewTempContractRepository(t)
-		dr := mocks.NewDriverRepository(t)
-		sc := mocks.NewSchoolRepository(t)
-		kr := mocks.NewKidRepository(t)
-		rr := mocks.NewResponsibleRepository(t)
-		das := mocks.NewAddressService(t)
-		s3 := mocks.NewS3Iface(t)
-		dbs := mocks.NewAgreementService(t)
-		logger := mocks.NewLogger(t)
-		converter := mocks.NewConverters(t)
-
-		tcr.On("GetByEveryone", mock.Anything).Return(false, nil)
-		dbs.On("GetAgreementHtml", mock.Anything).Return([]byte{}, nil)
-		dr.On("Get", mock.Anything).Return(&entity.Driver{}, errors.New("get driver repository error"))
-		logger.On("Infof", mock.Anything, mock.Anything).Return(logger)
-
-		uc := NewCreateContractUseCase(
-			&persistence.PostgresRepositories{
-				TempContractRepository: tcr,
-				DriverRepository:       dr,
-				SchoolRepository:       sc,
-				KidRepository:          kr,
-				ResponsibleRepository:  rr,
+			wantErr: true,
+		},
+		{
+			name: "there is driver get error",
+			args: args{
+				ctx:     context.Background(),
+				payload: &value.CreateContractParams{},
 			},
-			logger,
-			adapters.Adapters{
-				AddressService:   das,
-				AgreementService: dbs,
+			setup: func(t *testing.T) *CreateContractUsecase {
+				kr := mocks.NewKidRepository(t)
+				dr := mocks.NewDriverRepository(t)
+				rr := mocks.NewResponsibleRepository(t)
+				sr := mocks.NewSchoolRepository(t)
+				tr := mocks.NewTempContractRepository(t)
+
+				kr.On("FindByResponsible", mock.Anything, mock.Anything).Return(true, nil)
+				kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
+				dr.On("Get", mock.Anything).Return(&entity.Driver{}, fmt.Errorf("database error"))
+				sr.On("Get", mock.Anything).Return(&entity.School{}, nil)
+				rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
+				tr.On("HasTemporaryContract", mock.Anything).Return(false, nil)
+				tr.On("HasTemporaryContract", mock.Anything).Return(false, nil)
+
+				worker := mocks.NewWorkerCreateContract(t)
+
+				logger := mocks.NewLogger(t)
+				return NewCreateContractUsecase(
+					&persistence.PostgresRepositories{
+						KidRepository:          kr,
+						DriverRepository:       dr,
+						SchoolRepository:       sr,
+						ResponsibleRepository:  rr,
+						TempContractRepository: tr,
+					},
+					worker,
+					logger,
+				)
 			},
-			s3,
-			converter,
-		)
-
-		_, err := uc.CreateContract(&params)
-
-		assert.EqualError(t, err, "get driver repository error")
-		assert.Error(t, err)
-	})
-
-	t.Run("get school repository return error", func(t *testing.T) {
-		tcr := mocks.NewTempContractRepository(t)
-		dr := mocks.NewDriverRepository(t)
-		sc := mocks.NewSchoolRepository(t)
-		kr := mocks.NewKidRepository(t)
-		rr := mocks.NewResponsibleRepository(t)
-		das := mocks.NewAddressService(t)
-		s3 := mocks.NewS3Iface(t)
-		dbs := mocks.NewAgreementService(t)
-		logger := mocks.NewLogger(t)
-		converter := mocks.NewConverters(t)
-
-		tcr.On("GetByEveryone", mock.Anything).Return(false, nil)
-		dbs.On("GetAgreementHtml", mock.Anything).Return([]byte{}, nil)
-		dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
-		sc.On("Get", mock.Anything).Return(&entity.School{}, errors.New("get school repository error"))
-		logger.On("Infof", mock.Anything, mock.Anything).Return(logger)
-
-		uc := NewCreateContractUseCase(
-			&persistence.PostgresRepositories{
-				TempContractRepository: tcr,
-				DriverRepository:       dr,
-				SchoolRepository:       sc,
-				KidRepository:          kr,
-				ResponsibleRepository:  rr,
+			wantErr: true,
+		},
+		{
+			name: "there is responsible get error",
+			args: args{
+				ctx:     context.Background(),
+				payload: &value.CreateContractParams{},
 			},
-			logger,
-			adapters.Adapters{
-				AddressService:   das,
-				AgreementService: dbs,
+			setup: func(t *testing.T) *CreateContractUsecase {
+				kr := mocks.NewKidRepository(t)
+				dr := mocks.NewDriverRepository(t)
+				rr := mocks.NewResponsibleRepository(t)
+				sr := mocks.NewSchoolRepository(t)
+				tr := mocks.NewTempContractRepository(t)
+
+				kr.On("FindByResponsible", mock.Anything, mock.Anything).Return(true, nil)
+				kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
+				dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
+				sr.On("Get", mock.Anything).Return(&entity.School{}, nil)
+				rr.On("Get", mock.Anything).Return(&entity.Responsible{}, fmt.Errorf("database error"))
+				tr.On("HasTemporaryContract", mock.Anything).Return(false, nil)
+
+				worker := mocks.NewWorkerCreateContract(t)
+
+				logger := mocks.NewLogger(t)
+				return NewCreateContractUsecase(
+					&persistence.PostgresRepositories{
+						KidRepository:          kr,
+						DriverRepository:       dr,
+						SchoolRepository:       sr,
+						ResponsibleRepository:  rr,
+						TempContractRepository: tr,
+					},
+					worker,
+					logger,
+				)
 			},
-			s3,
-			converter,
-		)
-
-		_, err := uc.CreateContract(&params)
-
-		assert.EqualError(t, err, "get school repository error")
-		assert.Error(t, err)
-	})
-
-	t.Run("get kid repository return error", func(t *testing.T) {
-		tcr := mocks.NewTempContractRepository(t)
-		dr := mocks.NewDriverRepository(t)
-		sc := mocks.NewSchoolRepository(t)
-		kr := mocks.NewKidRepository(t)
-		rr := mocks.NewResponsibleRepository(t)
-		das := mocks.NewAddressService(t)
-		s3 := mocks.NewS3Iface(t)
-		dbs := mocks.NewAgreementService(t)
-		logger := mocks.NewLogger(t)
-		converter := mocks.NewConverters(t)
-
-		tcr.On("GetByEveryone", mock.Anything).Return(false, nil)
-		dbs.On("GetAgreementHtml", mock.Anything).Return([]byte{}, nil)
-		dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
-		sc.On("Get", mock.Anything).Return(&entity.School{}, nil)
-		kr.On("Get", mock.Anything).Return(&entity.Kid{}, errors.New("get kid repository error"))
-		logger.On("Infof", mock.Anything, mock.Anything).Return(logger)
-
-		uc := NewCreateContractUseCase(
-			&persistence.PostgresRepositories{
-				TempContractRepository: tcr,
-				DriverRepository:       dr,
-				SchoolRepository:       sc,
-				KidRepository:          kr,
-				ResponsibleRepository:  rr,
+			wantErr: true,
+		},
+		{
+			name: "there is school get error",
+			args: args{
+				ctx:     context.Background(),
+				payload: &value.CreateContractParams{},
 			},
-			logger,
-			adapters.Adapters{
-				AddressService:   das,
-				AgreementService: dbs,
+			setup: func(t *testing.T) *CreateContractUsecase {
+				kr := mocks.NewKidRepository(t)
+				dr := mocks.NewDriverRepository(t)
+				rr := mocks.NewResponsibleRepository(t)
+				sr := mocks.NewSchoolRepository(t)
+				tr := mocks.NewTempContractRepository(t)
+
+				kr.On("FindByResponsible", mock.Anything, mock.Anything).Return(true, nil)
+				kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
+				dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
+				sr.On("Get", mock.Anything).Return(&entity.School{}, fmt.Errorf("database error"))
+				rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
+				tr.On("HasTemporaryContract", mock.Anything).Return(false, nil)
+
+				worker := mocks.NewWorkerCreateContract(t)
+
+				logger := mocks.NewLogger(t)
+				return NewCreateContractUsecase(
+					&persistence.PostgresRepositories{
+						KidRepository:          kr,
+						DriverRepository:       dr,
+						SchoolRepository:       sr,
+						ResponsibleRepository:  rr,
+						TempContractRepository: tr,
+					},
+					worker,
+					logger,
+				)
 			},
-			s3,
-			converter,
-		)
-
-		_, err := uc.CreateContract(&params)
-
-		assert.EqualError(t, err, "get kid repository error")
-		assert.Error(t, err)
-	})
-
-	t.Run("get responsible repository return error", func(t *testing.T) {
-		tcr := mocks.NewTempContractRepository(t)
-		dr := mocks.NewDriverRepository(t)
-		sc := mocks.NewSchoolRepository(t)
-		kr := mocks.NewKidRepository(t)
-		rr := mocks.NewResponsibleRepository(t)
-		das := mocks.NewAddressService(t)
-		s3 := mocks.NewS3Iface(t)
-		dbs := mocks.NewAgreementService(t)
-		logger := mocks.NewLogger(t)
-		converter := mocks.NewConverters(t)
-
-		tcr.On("GetByEveryone", mock.Anything).Return(false, nil)
-		dbs.On("GetAgreementHtml", mock.Anything).Return([]byte{}, nil)
-		dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
-		sc.On("Get", mock.Anything).Return(&entity.School{}, nil)
-		kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
-		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, errors.New("get responsible repository error"))
-		logger.On("Infof", mock.Anything, mock.Anything).Return(logger)
-
-		uc := NewCreateContractUseCase(
-			&persistence.PostgresRepositories{
-				TempContractRepository: tcr,
-				DriverRepository:       dr,
-				SchoolRepository:       sc,
-				KidRepository:          kr,
-				ResponsibleRepository:  rr,
+			wantErr: true,
+		},
+		{
+			name: "there is error returned because responsible and kid arent parents",
+			args: args{
+				ctx:     context.Background(),
+				payload: &value.CreateContractParams{},
 			},
-			logger,
-			adapters.Adapters{
-				AddressService:   das,
-				AgreementService: dbs,
+			setup: func(t *testing.T) *CreateContractUsecase {
+				kr := mocks.NewKidRepository(t)
+				dr := mocks.NewDriverRepository(t)
+				rr := mocks.NewResponsibleRepository(t)
+				sr := mocks.NewSchoolRepository(t)
+				tr := mocks.NewTempContractRepository(t)
+
+				kr.On("FindByResponsible", mock.Anything, mock.Anything).Return(false, nil)
+				kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
+				dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
+				sr.On("Get", mock.Anything).Return(&entity.School{}, fmt.Errorf("parents are false"))
+				rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
+				tr.On("HasTemporaryContract", mock.Anything).Return(false, nil)
+
+				worker := mocks.NewWorkerCreateContract(t)
+
+				logger := mocks.NewLogger(t)
+				return NewCreateContractUsecase(
+					&persistence.PostgresRepositories{
+						KidRepository:          kr,
+						DriverRepository:       dr,
+						SchoolRepository:       sr,
+						ResponsibleRepository:  rr,
+						TempContractRepository: tr,
+					},
+					worker,
+					logger,
+				)
 			},
-			s3,
-			converter,
-		)
-
-		_, err := uc.CreateContract(&params)
-
-		assert.EqualError(t, err, "get responsible repository error")
-		assert.Error(t, err)
-	})
-
-	t.Run("get distance address service return error", func(t *testing.T) {
-		tcr := mocks.NewTempContractRepository(t)
-		dr := mocks.NewDriverRepository(t)
-		sc := mocks.NewSchoolRepository(t)
-		kr := mocks.NewKidRepository(t)
-		rr := mocks.NewResponsibleRepository(t)
-		das := mocks.NewAddressService(t)
-		s3 := mocks.NewS3Iface(t)
-		dbs := mocks.NewAgreementService(t)
-		logger := mocks.NewLogger(t)
-		converter := mocks.NewConverters(t)
-
-		var value float64
-
-		tcr.On("GetByEveryone", mock.Anything).Return(false, nil)
-		dbs.On("GetAgreementHtml", mock.Anything).Return([]byte{}, nil)
-		dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
-		sc.On("Get", mock.Anything).Return(&entity.School{}, nil)
-		kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
-		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
-		das.On("GetDistance", mock.Anything, mock.Anything).Return(&value, errors.New("get distance error"))
-		logger.On("Infof", mock.Anything, mock.Anything).Return(logger)
-
-		uc := NewCreateContractUseCase(
-			&persistence.PostgresRepositories{
-				TempContractRepository: tcr,
-				DriverRepository:       dr,
-				SchoolRepository:       sc,
-				KidRepository:          kr,
-				ResponsibleRepository:  rr,
+			wantErr: true,
+		},
+		{
+			name: "there is error returned because responsible and kid there temp contract",
+			args: args{
+				ctx:     context.Background(),
+				payload: &value.CreateContractParams{},
 			},
-			logger,
-			adapters.Adapters{
-				AddressService:   das,
-				AgreementService: dbs,
+			setup: func(t *testing.T) *CreateContractUsecase {
+				kr := mocks.NewKidRepository(t)
+				dr := mocks.NewDriverRepository(t)
+				rr := mocks.NewResponsibleRepository(t)
+				sr := mocks.NewSchoolRepository(t)
+				tr := mocks.NewTempContractRepository(t)
+
+				kr.On("FindByResponsible", mock.Anything, mock.Anything).Return(false, nil)
+				kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
+				dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
+				sr.On("Get", mock.Anything).Return(&entity.School{}, nil)
+				rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
+				tr.On("HasTemporaryContract", mock.Anything).Return(true, nil)
+
+				worker := mocks.NewWorkerCreateContract(t)
+
+				logger := mocks.NewLogger(t)
+				return NewCreateContractUsecase(
+					&persistence.PostgresRepositories{
+						KidRepository:          kr,
+						DriverRepository:       dr,
+						SchoolRepository:       sr,
+						ResponsibleRepository:  rr,
+						TempContractRepository: tr,
+					},
+					worker,
+					logger,
+				)
 			},
-			s3,
-			converter,
-		)
-
-		_, err := uc.CreateContract(&params)
-
-		assert.EqualError(t, err, "get distance error")
-		assert.Error(t, err)
-	})
-
-	t.Run("convert pdf to html error", func(t *testing.T) {
-		tcr := mocks.NewTempContractRepository(t)
-		dr := mocks.NewDriverRepository(t)
-		sc := mocks.NewSchoolRepository(t)
-		kr := mocks.NewKidRepository(t)
-		rr := mocks.NewResponsibleRepository(t)
-		das := mocks.NewAddressService(t)
-		s3 := mocks.NewS3Iface(t)
-		dbs := mocks.NewAgreementService(t)
-		logger := mocks.NewLogger(t)
-		converter := mocks.NewConverters(t)
-
-		var value float64
-
-		tcr.On("GetByEveryone", mock.Anything).Return(false, nil)
-		dbs.On("GetAgreementHtml", mock.Anything).Return([]byte{}, nil)
-		dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
-		sc.On("Get", mock.Anything).Return(&entity.School{}, nil)
-		kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
-		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
-		das.On("GetDistance", mock.Anything, mock.Anything).Return(&value, nil)
-		converter.On("ConvertPDFtoHTML", mock.Anything, mock.Anything).Return([]byte{}, errors.New("pdf to html error"))
-		logger.On("Infof", mock.Anything, mock.Anything).Return(logger)
-
-		uc := NewCreateContractUseCase(
-			&persistence.PostgresRepositories{
-				TempContractRepository: tcr,
-				DriverRepository:       dr,
-				SchoolRepository:       sc,
-				KidRepository:          kr,
-				ResponsibleRepository:  rr,
-			},
-			logger,
-			adapters.Adapters{
-				AddressService:   das,
-				AgreementService: dbs,
-			},
-			s3,
-			converter,
-		)
-
-		_, err := uc.CreateContract(&params)
-
-		assert.EqualError(t, err, "pdf to html error")
-		assert.Error(t, err)
-	})
-
-	t.Run("save s3 with type return error", func(t *testing.T) {
-		tcr := mocks.NewTempContractRepository(t)
-		dr := mocks.NewDriverRepository(t)
-		sc := mocks.NewSchoolRepository(t)
-		kr := mocks.NewKidRepository(t)
-		rr := mocks.NewResponsibleRepository(t)
-		das := mocks.NewAddressService(t)
-		s3 := mocks.NewS3Iface(t)
-		dbs := mocks.NewAgreementService(t)
-		logger := mocks.NewLogger(t)
-		converter := mocks.NewConverters(t)
-
-		var value float64
-
-		tcr.On("GetByEveryone", mock.Anything).Return(false, nil)
-		dbs.On("GetAgreementHtml", mock.Anything).Return([]byte{}, nil)
-		dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
-		sc.On("Get", mock.Anything).Return(&entity.School{}, nil)
-		kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
-		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
-		das.On("GetDistance", mock.Anything, mock.Anything).Return(&value, nil)
-		converter.On("ConvertPDFtoHTML", mock.Anything, mock.Anything).Return([]byte{}, nil)
-		s3.On("PDF").Return("pdf")
-		s3.On("SaveWithType", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return("", errors.New("save s3 error"))
-
-		uc := NewCreateContractUseCase(
-			&persistence.PostgresRepositories{
-				TempContractRepository: tcr,
-				DriverRepository:       dr,
-				SchoolRepository:       sc,
-				KidRepository:          kr,
-				ResponsibleRepository:  rr,
-			},
-			logger,
-			adapters.Adapters{
-				AddressService:   das,
-				AgreementService: dbs,
-			},
-			s3,
-			converter,
-		)
-
-		_, err := uc.CreateContract(&params)
-
-		assert.EqualError(t, err, "save s3 error")
-		assert.Error(t, err)
-	})
-
-	t.Run("signature request send to dropbox return error", func(t *testing.T) {
-		tcr := mocks.NewTempContractRepository(t)
-		dr := mocks.NewDriverRepository(t)
-		sc := mocks.NewSchoolRepository(t)
-		kr := mocks.NewKidRepository(t)
-		rr := mocks.NewResponsibleRepository(t)
-		das := mocks.NewAddressService(t)
-		s3 := mocks.NewS3Iface(t)
-		dbs := mocks.NewAgreementService(t)
-		logger := mocks.NewLogger(t)
-		converter := mocks.NewConverters(t)
-
-		var value float64
-
-		tcr.On("GetByEveryone", mock.Anything).Return(false, nil)
-		dbs.On("GetAgreementHtml", mock.Anything).Return([]byte{}, nil)
-		dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
-		sc.On("Get", mock.Anything).Return(&entity.School{}, nil)
-		kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
-		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
-		das.On("GetDistance", mock.Anything, mock.Anything).Return(&value, nil)
-		converter.On("ConvertPDFtoHTML", mock.Anything, mock.Anything).Return([]byte{}, nil)
-		s3.On("PDF").Return("pdf")
-		s3.On("SaveWithType", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return("", nil)
-		dbs.On("SignatureRequest", mock.Anything).Return(agreements.ContractRequest{}, errors.New("signature request error"))
-		logger.On("Infof", mock.Anything, mock.Anything).Return(logger)
-
-		uc := NewCreateContractUseCase(
-			&persistence.PostgresRepositories{
-				TempContractRepository: tcr,
-				DriverRepository:       dr,
-				SchoolRepository:       sc,
-				KidRepository:          kr,
-				ResponsibleRepository:  rr,
-			},
-			logger,
-			adapters.Adapters{
-				AddressService:   das,
-				AgreementService: dbs,
-			},
-			s3,
-			converter,
-		)
-
-		_, err := uc.CreateContract(&params)
-
-		assert.EqualError(t, err, "signature request error")
-		assert.Error(t, err)
-	})
-
-	t.Run("create contract usecase return success", func(t *testing.T) {
-		tcr := mocks.NewTempContractRepository(t)
-		dr := mocks.NewDriverRepository(t)
-		sc := mocks.NewSchoolRepository(t)
-		kr := mocks.NewKidRepository(t)
-		rr := mocks.NewResponsibleRepository(t)
-		das := mocks.NewAddressService(t)
-		s3 := mocks.NewS3Iface(t)
-		dbs := mocks.NewAgreementService(t)
-		logger := mocks.NewLogger(t)
-		converter := mocks.NewConverters(t)
-
-		var value float64
-
-		tcr.On("GetByEveryone", mock.Anything).Return(false, nil)
-		dbs.On("GetAgreementHtml", mock.Anything).Return([]byte{}, nil)
-		dr.On("Get", mock.Anything).Return(&entity.Driver{}, nil)
-		sc.On("Get", mock.Anything).Return(&entity.School{}, nil)
-		kr.On("Get", mock.Anything).Return(&entity.Kid{}, nil)
-		rr.On("Get", mock.Anything).Return(&entity.Responsible{}, nil)
-		das.On("GetDistance", mock.Anything, mock.Anything).Return(&value, nil)
-		converter.On("ConvertPDFtoHTML", mock.Anything, mock.Anything).Return([]byte{}, nil)
-		s3.On("PDF").Return("pdf")
-		s3.On("SaveWithType", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return("", nil)
-		dbs.On("SignatureRequest", mock.Anything).Return(agreements.ContractRequest{}, nil)
-
-		uc := NewCreateContractUseCase(
-			&persistence.PostgresRepositories{
-				TempContractRepository: tcr,
-				DriverRepository:       dr,
-				SchoolRepository:       sc,
-				KidRepository:          kr,
-				ResponsibleRepository:  rr,
-			},
-			logger,
-			adapters.Adapters{
-				AddressService:   das,
-				AgreementService: dbs,
-			},
-			s3,
-			converter,
-		)
-
-		_, err := uc.CreateContract(&params)
-
-		assert.NoError(t, err)
-		assert.Nil(t, err)
-	})
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			usecase := tt.setup(t)
+			err := usecase.CreateContract(tt.args.ctx, tt.args.payload)
+			if tt.wantErr {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+		})
+	}
 }

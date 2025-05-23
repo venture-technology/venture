@@ -35,6 +35,26 @@ func (cr KidRepositoryImpl) FindAll(cpf *string) ([]entity.Kid, error) {
 	return kids, nil
 }
 
+func (cr KidRepositoryImpl) FindByResponsible(
+	cpf,
+	rg string,
+) (bool, error) {
+	var count int64
+
+	query := cr.Postgres.Client().
+		Model(&entity.Kid{}).
+		Where("responsible_id = ?", cpf).
+		Where("rg = ?", rg).
+		Count(&count).
+		Error
+
+	if query != nil {
+		return false, query
+	}
+
+	return count > 0, nil
+}
+
 func (cr KidRepositoryImpl) Update(rg string, attributes map[string]interface{}) error {
 	attributes["updated_at"] = realtime.Now().UTC()
 

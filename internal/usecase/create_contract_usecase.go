@@ -1,171 +1,172 @@
 package usecase
 
 import (
+	"context"
 	"fmt"
-	"path/filepath"
+	"sync"
 
 	"github.com/google/uuid"
-	"github.com/venture-technology/venture/internal/domain/service/adapters"
-	"github.com/venture-technology/venture/internal/domain/service/agreements"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/realtime"
-	"github.com/venture-technology/venture/pkg/utils"
 )
 
-type CreateContractUseCase struct {
+type CreateContractUsecase struct {
 	repositories *persistence.PostgresRepositories
+	queueWorker  contracts.WorkerCreateContract
 	logger       contracts.Logger
-	adapters     adapters.Adapters
-	S3           contracts.S3Iface
-	converter    contracts.Converters
 }
 
-func NewCreateContractUseCase(
+func NewCreateContractUsecase(
 	repositories *persistence.PostgresRepositories,
+	queueWorker contracts.WorkerCreateContract,
 	logger contracts.Logger,
-	adapters adapters.Adapters,
-	S3 contracts.S3Iface,
-	converter contracts.Converters,
-) *CreateContractUseCase {
-	return &CreateContractUseCase{
+) *CreateContractUsecase {
+	return &CreateContractUsecase{
 		repositories: repositories,
+		queueWorker:  queueWorker,
 		logger:       logger,
-		adapters:     adapters,
-		S3:           S3,
-		converter:    converter,
 	}
 }
 
-func (ccuc *CreateContractUseCase) CreateContract(
-	requestParams *value.CreateContractRequestParams,
-) (agreements.ContractRequest, error) {
-	tempContractData := entity.TempContract{
-		DriverCNH:      requestParams.DriverCNH,
-		KidRG:          requestParams.KidRG,
-		SchoolCNPJ:     requestParams.SchoolCNPJ,
-		ResponsibleCPF: requestParams.ResponsibleCPF,
-	}
-
-	alreadyExists, err := ccuc.repositories.TempContractRepository.GetByEveryone(&tempContractData)
+func (ccuc *CreateContractUsecase) CreateContract(
+	ctx context.Context,
+	requestParams *value.CreateContractParams,
+) error {
+	requestParams, err := ccuc.handleParams(ctx, requestParams)
 	if err != nil {
-		ccuc.logger.Infof(fmt.Sprintf("error getting temp contract: %v", err.Error()))
-		return agreements.ContractRequest{}, err
+		return err
 	}
 
-	if alreadyExists {
-		ccuc.logger.Infof(fmt.Sprintf("temp contract already exists"))
-		return agreements.ContractRequest{}, fmt.Errorf("temp contract already exists")
-	}
+	return ccuc.queueWorker.Enqueue(requestParams)
+}
 
-	agreementPath, err := getHtmlPath()
-	if err != nil {
-		ccuc.logger.Infof(fmt.Sprintf("error getting html path: %v", err.Error()))
-		return agreements.ContractRequest{}, err
-	}
-
-	htmlFile, err := ccuc.adapters.AgreementService.GetAgreementHtml(
-		agreementPath,
+func (ccuc *CreateContractUsecase) handleParams(
+	ctx context.Context,
+	params *value.CreateContractParams,
+) (*value.CreateContractParams, error) {
+	var (
+		wg      sync.WaitGroup
+		errCh   = make(chan error, 5)
+		results sync.Map
 	)
-	if err != nil {
-		ccuc.logger.Infof(fmt.Sprintf("error getting agreement html file: %v", err.Error()))
-		return agreements.ContractRequest{}, err
+
+	wg.Add(6)
+	go func() {
+		defer wg.Done()
+		hasParent, err := ccuc.repositories.
+			KidRepository.FindByResponsible(params.ResponsibleCPF, params.KidRG)
+		if err != nil {
+			errCh <- err
+			return
+		}
+		if !hasParent {
+			errCh <- fmt.Errorf("parents not found")
+			return
+		}
+		results.Store("hasParent", hasParent)
+	}()
+
+	go func() {
+		defer wg.Done()
+		driver, err := ccuc.repositories.
+			DriverRepository.Get(params.DriverCNH)
+		if err != nil {
+			errCh <- err
+			return
+		}
+		results.Store("driver", driver)
+	}()
+
+	go func() {
+		defer wg.Done()
+		kid, err := ccuc.repositories.
+			KidRepository.Get(&params.KidRG)
+		if err != nil {
+			errCh <- err
+			return
+		}
+		results.Store("kid", kid)
+	}()
+
+	go func() {
+		defer wg.Done()
+		school, err := ccuc.repositories.
+			SchoolRepository.Get(params.SchoolCNPJ)
+		if err != nil {
+			errCh <- err
+			return
+		}
+		results.Store("school", school)
+	}()
+
+	go func() {
+		defer wg.Done()
+		responsible, err := ccuc.repositories.
+			ResponsibleRepository.Get(params.ResponsibleCPF)
+		if err != nil {
+			errCh <- err
+			return
+		}
+		results.Store("responsible", responsible)
+	}()
+
+	go func() {
+		defer wg.Done()
+		result, err := ccuc.repositories.
+			TempContractRepository.HasTemporaryContract(&entity.TempContract{
+			KidRG:          params.KidRG,
+			ResponsibleCPF: params.ResponsibleCPF,
+		})
+		if err != nil {
+			errCh <- err
+			return
+		}
+		if result {
+			errCh <- fmt.Errorf("parents already have temporary contract")
+		}
+	}()
+
+	wg.Wait()
+	close(errCh)
+
+	for err := range errCh {
+		return nil, err
 	}
 
-	contractProperty, err := ccuc.SetContractProperty(*requestParams)
-	if err != nil {
-		ccuc.logger.Infof(fmt.Sprintf("error setting contract property: %v", err))
-		return agreements.ContractRequest{}, err
+	if v, ok := results.Load("driver"); ok {
+		params.DriverName = v.(*entity.Driver).Name
+		params.DriverAmount = v.(*entity.Driver).Amount
+		params.DriverEmail = v.(*entity.Driver).Email
+		params.DriverCNH = v.(*entity.Driver).CNH
 	}
 
-	pdfData, err := ccuc.converter.ConvertPDFtoHTML(htmlFile, contractProperty)
-	if err != nil {
-		ccuc.logger.Infof(fmt.Sprintf("error converting pdf to html: %v", err))
-		return agreements.ContractRequest{}, err
+	if v, ok := results.Load("responsible"); ok {
+		params.ResponsibleName = v.(*entity.Responsible).Name
+		params.ResponsibleEmail = v.(*entity.Responsible).Email
+		params.ResponsibleCPF = v.(*entity.Responsible).CPF
+		params.ResponsibleAddr = v.(*entity.Responsible).Address.GetFullAddress()
+		params.ResponsiblePhone = v.(*entity.Responsible).Phone
 	}
 
-	contractProperty.URL, err = ccuc.S3.SaveWithType(
-		value.GetBucketContract(),
-		"contracts",
-		contractProperty.UUID,
-		pdfData,
-		ccuc.S3.PDF(),
-	)
-	if err != nil {
-		return agreements.ContractRequest{}, err
+	if v, ok := results.Load("kid"); ok {
+		params.KidName = v.(*entity.Kid).Name
+		params.KidRG = v.(*entity.Kid).RG
+		params.KidShift = v.(*entity.Kid).Shift
 	}
 
-	request, err := ccuc.adapters.AgreementService.SignatureRequest(contractProperty)
-	if err != nil {
-		ccuc.logger.Infof(fmt.Sprintf("error sending signature request: %v", err))
-		return agreements.ContractRequest{}, err
+	if v, ok := results.Load("school"); ok {
+		params.SchoolName = v.(*entity.School).Name
+		params.SchoolCNPJ = v.(*entity.School).CNPJ
+		params.SchoolAddr = v.(*entity.School).Address.GetFullAddress()
 	}
 
-	return request, nil
-}
+	time := realtime.Now()
+	params.UUID = uuid.NewString()
+	params.Time = time
+	params.DateTime = time.Format("01/02/2006")
 
-func (ccuc *CreateContractUseCase) SetContractProperty(
-	requestParams value.CreateContractRequestParams,
-) (entity.ContractProperty, error) {
-	driver, err := ccuc.repositories.DriverRepository.Get(requestParams.DriverCNH)
-	if err != nil {
-		return entity.ContractProperty{}, err
-	}
-
-	school, err := ccuc.repositories.SchoolRepository.Get(requestParams.SchoolCNPJ)
-	if err != nil {
-		return entity.ContractProperty{}, err
-	}
-
-	kid, err := ccuc.repositories.KidRepository.Get(&requestParams.KidRG)
-	if err != nil {
-		return entity.ContractProperty{}, err
-	}
-
-	responsible, err := ccuc.repositories.ResponsibleRepository.Get(requestParams.ResponsibleCPF)
-	if err != nil {
-		return entity.ContractProperty{}, err
-	}
-
-	distance, err := ccuc.adapters.AddressService.GetDistance(
-		responsible.Address.GetFullAddress(),
-		school.Address.GetFullAddress(),
-	)
-	if err != nil {
-		return entity.ContractProperty{}, err
-	}
-
-	contractValue := utils.CalculateContract(*distance, driver.Amount)
-	if contractValue == 0 {
-		return entity.ContractProperty{}, fmt.Errorf("invalid contract value")
-	}
-
-	return entity.ContractProperty{
-		UUID: uuid.New().String(),
-		ContractParams: entity.ContractParams{
-			Driver:      *driver,
-			School:      *school,
-			Kid:         *kid,
-			Responsible: *responsible,
-			Amount:      contractValue,
-			AnualAmount: contractValue * 12,
-		},
-		Time:     realtime.Now(),
-		DateTime: realtime.Now().Format("02/01/2006"),
-	}, nil
-}
-
-func getHtmlPath() (string, error) {
-	path, err := utils.GetAbsPath()
-	if err != nil {
-		return "", err
-	}
-
-	return filepath.Join(path, pathAgreement()), nil
-}
-
-func pathAgreement() string {
-	return "../domain/service/agreements/template/agreement.html"
+	return params, nil
 }

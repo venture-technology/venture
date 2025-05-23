@@ -11,23 +11,14 @@ import (
 
 // Interace to communicate with S3 Bucket Services.
 type S3Iface interface {
-	// Save a file like png, to more performance
-	Save(bucket, path, filename string, file []byte) (string, error)
-
 	// List files in a bucket
 	List(bucket, path string) ([]string, error)
 
+	// copy a file from a bucket
+	Copy(bucket, objectKey string) ([]byte, error)
+
 	// Save a file like anytype file
-	SaveWithType(bucket, path, filaneme string, file []byte, contentType string) (string, error)
-
-	// Save file like html
-	HTML() string
-
-	// Save file like pdf
-	PDF() string
-
-	// Save file like png
-	PNG() string
+	Save(bucket, path, filename string, file []byte, contentType string) (string, error)
 }
 
 // Interface to use Simple Email Service
@@ -55,7 +46,7 @@ type Logger interface {
 
 // Interface to convert files
 type Converters interface {
-	ConvertPDFtoHTML(htmlFile []byte, contractProperty entity.ContractProperty) ([]byte, error)
+	ConvertHTMLtoPDF(htmlFile []byte, contractProperty value.CreateContractParams) ([]byte, error)
 }
 
 // Interface to use Simple Queue Service
@@ -63,8 +54,11 @@ type Queue interface {
 	// Send message to queue
 	SendMessage(queue, message string) error
 
+	// Send message to fifo queue using message group ID
+	SendFifoMessage(queue, message, group string) error
+
 	// Gets the messages from the queue, need the CreateMessage format.
-	PullMessages(queue string) ([]value.CreateMessage, error)
+	PullMessages(queue string) ([]*value.CreateMessage, error)
 
 	// Delete a specific message of queue by identifier
 	DeleteMessage(queue, identifier string) error

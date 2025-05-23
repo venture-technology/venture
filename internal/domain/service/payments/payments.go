@@ -48,7 +48,7 @@ func (su *StripeAdapter) CreateProduct(
 
 func (su *StripeAdapter) CreatePrice(
 	stripeProductID string,
-	amount float64,
+	amount int64,
 ) (*stripe.Price, error) {
 	stripe.Key = viper.GetString("STRIPE_SECRET_KEY")
 
@@ -58,7 +58,7 @@ func (su *StripeAdapter) CreatePrice(
 		Recurring: &stripe.PriceRecurringParams{
 			Interval: stripe.String("month"),
 		},
-		UnitAmount: stripe.Int64(int64(amount) * 100),
+		UnitAmount: stripe.Int64(amount),
 	}
 
 	pr, err := price.New(params)
@@ -187,11 +187,13 @@ func (su *StripeAdapter) GetAmountFromInvoice(charge *stripe.Invoice) float64 {
 	return float64(amount) / 100
 }
 
-func (su *StripeAdapter) CalculateRemainingValueSubscription(invoices map[string]entity.InvoiceInfo, amount float64) float64 {
+func (su *StripeAdapter) CalculateRemainingValueSubscription(
+	invoices map[string]entity.InvoiceInfo,
+	amount int64,
+) int64 {
 	quantity := quantityInvoicesPaid(invoices)
-	return (amount * float64(quantity)) * 0.40
+	return (amount * int64(quantity) * 40) / 100
 }
-
 func (su *StripeAdapter) FineResponsible(
 	customerId,
 	paymentMethodId string,
