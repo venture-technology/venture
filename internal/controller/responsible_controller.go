@@ -41,7 +41,6 @@ func (rh *ResponsibleController) PostV1CreateResponsible(httpContext *gin.Contex
 		&infra.App.Repositories,
 		infra.App.Logger,
 		infra.App.Adapters,
-		infra.App.WorkerEmail,
 	)
 
 	ok, errors := utils.ValidatePassword(requestParams.Password)

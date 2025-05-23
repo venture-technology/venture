@@ -1,8 +1,6 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/venture-technology/venture/internal/domain/service/adapters"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
@@ -13,20 +11,17 @@ type CreateResponsibleUseCase struct {
 	repositories *persistence.PostgresRepositories
 	logger       contracts.Logger
 	adapters     adapters.Adapters
-	email        contracts.WorkerEmail
 }
 
 func NewCreateResponsibleUseCase(
 	repositories *persistence.PostgresRepositories,
 	logger contracts.Logger,
 	adapters adapters.Adapters,
-	email contracts.WorkerEmail,
 ) *CreateResponsibleUseCase {
 	return &CreateResponsibleUseCase{
 		repositories: repositories,
 		logger:       logger,
 		adapters:     adapters,
-		email:        email,
 	}
 }
 
@@ -51,12 +46,6 @@ func (cruc *CreateResponsibleUseCase) CreateResponsible(responsible *entity.Resp
 	if err != nil {
 		return err
 	}
-
-	err = cruc.email.Enqueue(&entity.Email{
-		Recipient: responsible.Email,
-		Subject:   fmt.Sprintf("Olá %s, sua conta foi criada no Venture! Estamos felizes em contar com você.", responsible.Name),
-		Body:      "Seja bem-vindo a nossa plataforma, registre seu filho, encontre um motorista, economize tempo e dinheiro.",
-	})
 
 	return err
 }
