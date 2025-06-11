@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contrato de Prestação de Serviço</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            color: #222;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .contract-section {
+            margin-bottom: 25px;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .important {
+            font-weight: bold;
+            color: #d9534f;
+        }
+        p {
+            line-height: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Contrato de Prestação de Serviço</h1>
+    <p><strong>Data:</strong> {{ .DateTime }}</p>
+
+    <div class="contract-section">
+        <h2>1. Partes</h2>
+        <p><strong>Contratante (Responsável):</strong> {{.ResponsibleName}}, CPF: {{.ResponsibleCPF}}, residente em {{.ResponsibleAddr}}, telefone: {{.ResponsiblePhone}}, e-mail: {{.ResponsibleEmail}}</p>
+        <p><strong>Contratado (Motorista):</strong> {{.DriverName}}, CPF: {{.DriverCNH}}</p>
+    </div>
+
+    <div class="contract-section">
+        <h2>2. Objeto</h2>
+        <p>O presente contrato tem por objeto a prestação de serviço de transporte escolar, no qual o motorista <span class="highlight">{{.DriverName}}</span> compromete-se a transportar o estudante <span class="highlight">{{.KidName}}</span> do endereço do responsável até a escola <span class="highlight">{{.SchoolName}}</span>, situada em <span class="highlight">{{.SchoolAddr}}</span>, durante os dias letivos no período escolar: <span class="highlight">{{.KidShift}}</span>.</p>
+    </div>
+
+    <div class="contract-section">
+        <h2>3. Pagamento</h2>
+        <p>O valor mensal do serviço é de <span class="highlight">R$ {{printf "%.2f" (centsToReais .AmountCents)}}</span>, totalizando um montante anual de <span class="highlight">R$ {{printf "%.2f" (centsToReais .AmountAnualCents)}}</span>, pagos em 12 parcelas.</p>
+        <p>O pagamento deverá ser realizado pontualmente até o dia acordado em cada mês, por meio do canal disponibilizado pelo contratado.</p>
+    </div>
+
+    <div class="contract-section">
+        <h2>4. Vigência</h2>
+        <p>Este contrato vigorará pelo período de 12 (doze) meses a contar da data da assinatura, podendo ser rescindido antecipadamente pelo Responsável mediante aviso prévio e pagamento da multa rescisória de 40% (quarenta por cento) sobre os valores restantes das parcelas.</p>
+    </div>
+
+    <div class="contract-section">
+        <h2>5. Inadimplência e Negativação</h2>
+        <p class="important">Em caso de atraso ou inadimplência no pagamento das parcelas acordadas, o Responsável será notificado para regularizar a situação no prazo máximo de 10 (dez) dias corridos.</p>
+        <p>Persistindo a inadimplência após o prazo estipulado, o Contratado poderá iniciar os procedimentos para cobrança da dívida, incluindo, mas não se limitando a:</p>
+        <ul>
+            <li>Registro da dívida em órgãos de proteção ao crédito, tais como SPC, Serasa e Boa Vista;</li>
+            <li>Protesto em cartório;</li>
+            <li>Ações judiciais cabíveis para cobrança do débito.</li>
+        </ul>
+        <p class="important">O Responsável declara estar ciente e concorda que a negativação poderá impactar seu crédito, bem como sua reputação perante instituições financeiras e comerciais.</p>
+    </div>
+
+    <div class="contract-section">
+        <h2>6. Assinaturas</h2>
+        <p>Este contrato é firmado pelas partes abaixo, que declaram ler, compreender e aceitar todos os seus termos e condições.</p>
+        <p><strong>Responsável:</strong> {{.ResponsibleName}}</p>
+        <p><strong>Motorista:</strong> {{.DriverName}}</p>
+        <p><strong>Testemunha:</strong> __________________________</p>
+    </div>
+</body>
+</html>
