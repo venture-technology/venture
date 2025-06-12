@@ -1,7 +1,9 @@
 package infra
 
 import (
-	"github.com/venture-technology/venture/internal/domain/service/adapters"
+	"github.com/venture-technology/venture/internal/domain/service/address"
+	"github.com/venture-technology/venture/internal/domain/service/payments"
+	"github.com/venture-technology/venture/internal/domain/service/signatures"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -13,7 +15,9 @@ type Application struct {
 	Bucket               contracts.S3Iface
 	Email                contracts.SESIface
 	Logger               contracts.Logger
-	Adapters             adapters.Adapters
+	Address              address.Address
+	Payments             payments.Payments
+	Signature            signatures.Signature
 	Converters           contracts.Converters
 	Queue                contracts.Queue
 	WorkerCreateContract contracts.WorkerCreateContract
