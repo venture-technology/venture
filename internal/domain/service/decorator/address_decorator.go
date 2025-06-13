@@ -4,32 +4,32 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/venture-technology/venture/internal/domain/service/adapters"
+	"github.com/venture-technology/venture/internal/domain/service/address"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 )
 
 type AddressDecorator struct {
-	AddressAdapter adapters.AddressService
-	Cache          contracts.Cacher
+	Address address.Address
+	Cache   contracts.Cacher
 }
 
-func NewAddressDecorator(addressAdapter adapters.AddressService, cache contracts.Cacher) AddressDecorator {
+func NewAddressDecorator(address address.Address, cache contracts.Cacher) AddressDecorator {
 	return AddressDecorator{
-		AddressAdapter: addressAdapter,
-		Cache:          cache,
+		Address: address,
+		Cache:   cache,
 	}
 }
 
-func (d AddressDecorator) GetDistance(origin, destination string) (*float64, error) {
-	price, err := d.getDistanceCache(origin, destination)
+func (d AddressDecorator) Distance(origin, destination string) (*float64, error) {
+	price, err := d.distanceWithCache(origin, destination)
 	if err != nil {
-		return d.getDistanceAdapter(origin, destination)
+		return d.distanceWithoutCache(origin, destination)
 	}
 
 	return price, nil
 }
 
-func (d AddressDecorator) getDistanceCache(origin, destination string) (*float64, error) {
+func (d AddressDecorator) distanceWithCache(origin, destination string) (*float64, error) {
 	priceStr, err := d.Cache.Get(fmt.Sprintf("%s:%s", origin, destination))
 	if err != nil {
 		return nil, err
@@ -43,8 +43,8 @@ func (d AddressDecorator) getDistanceCache(origin, destination string) (*float64
 	return &price, nil
 }
 
-func (d AddressDecorator) getDistanceAdapter(origin, destination string) (*float64, error) {
-	price, err := d.AddressAdapter.GetDistance(origin, destination)
+func (d AddressDecorator) distanceWithoutCache(origin, destination string) (*float64, error) {
+	price, err := d.Address.Distance(origin, destination)
 	if err != nil {
 		return nil, err
 	}
