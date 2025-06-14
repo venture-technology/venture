@@ -15,7 +15,6 @@ type V1Controllers struct {
 	Partner           *controller.PartnerController
 	Contract          *controller.ContractController
 	Price             *controller.PriceController
-	Webhook           *controller.WebhookController
 	TemporaryContract *controller.TemporaryContractController
 }
 
@@ -29,7 +28,6 @@ func NewV1Controller() *V1Controllers {
 		Partner:           controller.NewPartnerController(),
 		Contract:          controller.NewContractController(),
 		Price:             controller.NewPriceController(),
-		Webhook:           controller.NewWebhookController(),
 		TemporaryContract: controller.NewTemporaryContractController(),
 	}
 }
@@ -87,10 +85,6 @@ func (route *V1Controllers) V1Routes(group *gin.RouterGroup) {
 	group.GET("/school/contracts/:cnpj", sm.Middleware(), route.Contract.GetV1ListContractSchool)
 	group.GET("/responsible/contracts/:cpf", rm.Middleware(), route.Contract.GetV1ListResponsibleContract)
 	group.POST("/contract/:id/cancel", rm.Middleware(), route.Contract.PostV1CancelContract)
-
-	// webhook
-	group.POST("/webhook/signature/events", route.Webhook.PostV1WebhookSignatureEvents)
-	group.POST("/webhook/payments/events", route.Webhook.PostV1WebhookPaymentsEvents)
 
 	// price
 	group.GET("/price/:cpf/:cnpj", rm.Middleware(), route.Price.GetV1PriceDriver)

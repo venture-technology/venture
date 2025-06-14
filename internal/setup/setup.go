@@ -4,12 +4,15 @@ import (
 	"log"
 	"os"
 
+	mpconfig "github.com/mercadopago/sdk-go/pkg/config"
+	"github.com/mercadopago/sdk-go/pkg/preapproval"
+	"github.com/spf13/viper"
 	"github.com/venture-technology/venture/config"
-	"github.com/venture-technology/venture/internal/domain/service/addresses"
-	"github.com/venture-technology/venture/internal/domain/service/agreements"
+	"github.com/venture-technology/venture/internal/domain/service/address"
 	"github.com/venture-technology/venture/internal/domain/service/converters"
 	"github.com/venture-technology/venture/internal/domain/service/decorator"
 	"github.com/venture-technology/venture/internal/domain/service/payments"
+	"github.com/venture-technology/venture/internal/domain/service/signatures"
 	"github.com/venture-technology/venture/internal/infra"
 	"github.com/venture-technology/venture/internal/infra/bucket"
 	"github.com/venture-technology/venture/internal/infra/cache"
@@ -80,13 +83,25 @@ func (s Setup) Finish() {
 	infra.App = *s.app
 }
 
-func (s Setup) Adapters() {
-	s.app.Adapters.AddressService = decorator.AddressDecorator{
-		AddressAdapter: addresses.NewGoogleAdapter(),
-		Cache:          s.app.Cache,
+func (s Setup) Address() {
+	s.app.Address = decorator.AddressDecorator{
+		Address: address.NewAddress(viper.GetString("GOOGLE_CLOUD_SECRET_KEY")),
+		Cache:   s.app.Cache,
 	}
-	s.app.Adapters.PaymentsService = payments.NewStripeAdapter()
-	s.app.Adapters.AgreementService = agreements.NewAgreementService(s.app.Logger, &s.app.Repositories)
+}
+
+func (s Setup) Payments() {
+	s.app.Payments = payments.NewPayment(preapproval.NewClient(&mpconfig.Config{
+		AccessToken: viper.GetString("MERCADO_PAGO_ACCESS_TOKEN"),
+	}))
+}
+
+func (s Setup) Signature() {
+	s.app.Signature = signatures.NewSignature(
+		viper.GetString("DROPBOX_SECRET_KEY"),
+		s.app.Logger,
+		&s.app.Repositories,
+	)
 }
 
 func (s Setup) Converters() {
@@ -114,7 +129,8 @@ func (s Setup) WorkerCreateContract() {
 		100,
 		s.app.Logger,
 		s.app.Bucket,
-		s.app.Adapters,
+		s.app.Signature,
+		s.app.Address,
 		s.app.Converters,
 		s.app.WorkerEmail,
 	)

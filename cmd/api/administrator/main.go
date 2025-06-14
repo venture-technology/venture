@@ -27,7 +27,9 @@ func main() {
 	setup.Repositories()
 	setup.Bucket()
 	setup.Email()
-	setup.Adapters()
+	setup.Address()
+	setup.Payments()
+	setup.Signature()
 	setup.Converters()
 
 	setup.Finish()
