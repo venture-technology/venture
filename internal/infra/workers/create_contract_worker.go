@@ -2,20 +2,27 @@ package workers
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/spf13/viper"
-	"github.com/venture-technology/venture/internal/domain/service/adapters"
+	"github.com/venture-technology/venture/internal/domain/service/address"
+	"github.com/venture-technology/venture/internal/domain/service/signatures"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/value"
 	"github.com/venture-technology/venture/pkg/utils"
 )
 
+const (
+	fpath = "../../internal/domain/service/agreements/template/agreement.html"
+)
+
 type WorkerQueue struct {
 	ch         chan *value.CreateContractParams
 	logger     contracts.Logger
-	adapters   adapters.Adapters
+	signatures signatures.Signature
+	address    address.Address
 	bucket     contracts.S3Iface
 	converters contracts.Converters
 	email      contracts.WorkerEmail
@@ -25,7 +32,8 @@ func NewWorkerCreateContract(
 	buffer int,
 	logger contracts.Logger,
 	bucket contracts.S3Iface,
-	adapters adapters.Adapters,
+	signatures signatures.Signature,
+	address address.Address,
 	converters contracts.Converters,
 	email contracts.WorkerEmail,
 ) contracts.WorkerCreateContract {
@@ -33,7 +41,8 @@ func NewWorkerCreateContract(
 		ch:         make(chan *value.CreateContractParams, buffer),
 		bucket:     bucket,
 		logger:     logger,
-		adapters:   adapters,
+		signatures: signatures,
+		address:    address,
 		converters: converters,
 		email:      email,
 	}
@@ -63,8 +72,7 @@ func (w *WorkerQueue) worker() {
 			continue
 		}
 
-		w.logger.Infof("worker - parsing contract")
-		file, err := w.parseContract(payload)
+		file, err := w.createFileContract(payload)
 		if err != nil {
 			w.logger.Infof(fmt.Sprintf("error parsing contract: %v", err))
 			w.notify(err, payload)
@@ -86,7 +94,7 @@ func (w *WorkerQueue) worker() {
 		}
 
 		w.logger.Infof("worker - sending contract")
-		resp, err := w.adapters.AgreementService.SignatureRequest(*payload)
+		resp, err := w.signatures.Create(*payload)
 		if err != nil {
 			w.logger.Infof(fmt.Sprintf("error creating signature request: %v", err))
 			w.notify(err, payload)
@@ -109,7 +117,7 @@ func (w *WorkerQueue) calcuateAmount(
 	params *value.CreateContractParams,
 ) (*value.CreateContractParams, error) {
 	w.logger.Infof(fmt.Sprintf("%s, %s", params.ResponsibleAddr, params.SchoolAddr))
-	distance, err := w.adapters.AddressService.GetDistance(
+	distance, err := w.address.Distance(
 		params.ResponsibleAddr,
 		params.SchoolAddr,
 	)
@@ -124,10 +132,10 @@ func (w *WorkerQueue) calcuateAmount(
 	return params, nil
 }
 
-func (w *WorkerQueue) parseContract(
+func (w *WorkerQueue) createFileContract(
 	params *value.CreateContractParams,
 ) ([]byte, error) {
-	html, err := w.getHtmlParsed()
+	html, err := w.file()
 	if err != nil {
 		return nil, err
 	}
@@ -161,29 +169,11 @@ func (w *WorkerQueue) notify(err error, payload *value.CreateContractParams) {
 	})
 }
 
-func getPath() (string, error) {
+func (w *WorkerQueue) file() ([]byte, error) {
 	path, err := utils.GetAbsPath()
 	if err != nil {
-		return "", err
-	}
-
-	return filepath.Join(path, filePath()), nil
-}
-
-func filePath() string {
-	return "../../internal/domain/service/agreements/template/agreement.html"
-}
-
-func (w *WorkerQueue) getHtmlParsed() ([]byte, error) {
-	path, err := getPath()
-	if err != nil {
 		return nil, err
 	}
 
-	content, err := w.adapters.AgreementService.BuildContract(path)
-	if err != nil {
-		return nil, err
-	}
-
-	return content, nil
+	return os.ReadFile(filepath.Join(path, fpath))
 }

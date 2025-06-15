@@ -1,8 +1,10 @@
 package usecase
 
 import (
+	"context"
+
 	"github.com/google/uuid"
-	"github.com/venture-technology/venture/internal/domain/service/adapters"
+	"github.com/venture-technology/venture/internal/domain/service/payments"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
 )
@@ -10,35 +12,28 @@ import (
 type CancelContractUseCase struct {
 	repositories *persistence.PostgresRepositories
 	logger       contracts.Logger
-	adapters     adapters.Adapters
+	payments     payments.Payments
 }
 
 func NewCancelContractUseCase(
 	repositories *persistence.PostgresRepositories,
 	logger contracts.Logger,
-	adapters adapters.Adapters,
+	payments payments.Payments,
 ) *CancelContractUseCase {
 	return &CancelContractUseCase{
 		repositories: repositories,
 		logger:       logger,
-		adapters:     adapters,
+		payments:     payments,
 	}
 }
 
-func (ccuc *CancelContractUseCase) CancelContract(uuid uuid.UUID) error {
+func (ccuc *CancelContractUseCase) CancelContract(ctx context.Context, uuid uuid.UUID) error {
 	contract, err := ccuc.repositories.ContractRepository.GetByUUID(uuid)
 	if err != nil {
 		return err
 	}
 
-	invoices, err := ccuc.adapters.PaymentsService.ListInvoices(contract.StripeSubscriptionID)
-	if err != nil {
-		return err
-	}
-
-	fine := ccuc.adapters.PaymentsService.CalculateRemainingValueSubscription(invoices, contract.Amount)
-
-	_, err = ccuc.adapters.PaymentsService.FineResponsible(contract.Responsible.CustomerId, contract.Responsible.PaymentMethodId, int64(fine))
+	err = ccuc.payments.CancelPreApproval(ctx, contract.PreApprovalID)
 	if err != nil {
 		return err
 	}

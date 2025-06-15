@@ -3,7 +3,7 @@ package usecase
 import (
 	"fmt"
 
-	"github.com/venture-technology/venture/internal/domain/service/adapters"
+	"github.com/venture-technology/venture/internal/domain/service/address"
 	"github.com/venture-technology/venture/internal/entity"
 	"github.com/venture-technology/venture/internal/infra/contracts"
 	"github.com/venture-technology/venture/internal/infra/persistence"
@@ -14,18 +14,18 @@ import (
 type CalculatePriceDriversUseCase struct {
 	repositories *persistence.PostgresRepositories
 	logger       contracts.Logger
-	adapters     adapters.Adapters
+	address      address.Address
 }
 
 func NewCalculatePriceDriversUseCase(
 	repositories *persistence.PostgresRepositories,
 	logger contracts.Logger,
-	adapters adapters.Adapters,
+	address address.Address,
 ) *CalculatePriceDriversUseCase {
 	return &CalculatePriceDriversUseCase{
 		repositories: repositories,
 		logger:       logger,
-		adapters:     adapters,
+		address:      address,
 	}
 }
 
@@ -45,7 +45,7 @@ func (cpuc *CalculatePriceDriversUseCase) CalculatePrice(
 		return nil, err
 	}
 
-	distance, err := cpuc.adapters.AddressService.GetDistance(
+	distance, err := cpuc.address.Distance(
 		responsible.Address.GetFullAddress(),
 		school.Address.GetFullAddress(),
 	)
