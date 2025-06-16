@@ -31,7 +31,7 @@ func (pc *PriceController) GetV1PriceDriver(httpContext *gin.Context) {
 	usecase := usecase.NewCalculatePriceDriversUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
-		infra.App.Adapters,
+		infra.App.Address,
 	)
 
 	response, err := usecase.CalculatePrice(responsible, school)

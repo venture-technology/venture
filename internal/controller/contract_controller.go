@@ -74,7 +74,6 @@ func (coh *ContractController) GetV1GetContract(httpContext *gin.Context) {
 	usecase := usecase.NewGetContractUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
-		infra.App.Adapters,
 	)
 
 	contract, err := usecase.GetContract(uuid)
@@ -181,14 +180,14 @@ func (coh *ContractController) PostV1CancelContract(httpContext *gin.Context) {
 	usecase := usecase.NewCancelContractUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
-		infra.App.Adapters,
+		infra.App.Payments,
 	)
 
-	err = usecase.CancelContract(uuid)
+	err = usecase.CancelContract(httpContext, uuid)
 	if err != nil {
 		httpContext.JSON(http.StatusBadRequest, exceptions.InternalServerResponseError(err, "erro ao tentar cancelar o contrato"))
 		return
 	}
 
-	httpContext.JSON(http.StatusOK, "contrato cancelado com sucesso")
+	httpContext.JSON(http.StatusOK, "contract canceled successfully")
 }

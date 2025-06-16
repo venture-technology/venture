@@ -40,7 +40,6 @@ func (rh *ResponsibleController) PostV1CreateResponsible(httpContext *gin.Contex
 	usecase := usecase.NewCreateResponsibleUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
-		infra.App.Adapters,
 	)
 
 	ok, errors := utils.ValidatePassword(requestParams.Password)
@@ -162,7 +161,6 @@ func (rh *ResponsibleController) DeleteV1DeleteResponsbile(httpContext *gin.Cont
 	usecase := usecase.NewDeleteResponsibleUseCase(
 		&infra.App.Repositories,
 		infra.App.Logger,
-		infra.App.Adapters,
 	)
 
 	err = usecase.DeleteResponsible(cpf)
