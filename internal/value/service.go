@@ -201,11 +201,6 @@ type GetContractOutput struct {
 	School               GetSchoolContract `json:"school"`
 }
 
-type GetContract struct {
-	Contract GetContractOutput             `json:"contract"`
-	Invoices map[string]entity.InvoiceInfo `json:"invoices"`
-}
-
 type DriverListContracts struct {
 	ID          int               `json:"id"`
 	Amount      int64             `json:"amount"`
@@ -417,25 +412,28 @@ type CreateMessage struct {
 }
 
 type CreateContractParams struct {
-	AmountCents      int64     `json:"amount_cents"`
-	AmountAnualCents int64     `json:"amount_anual_cents"`
-	DriverAmount     int64     `json:"driver_amount"`
-	UUID             string    `json:"uuid"`
-	ResponsibleCPF   string    `json:"responsible_cpf"`
-	ResponsibleName  string    `json:"responsible_name"`
-	ResponsibleAddr  string    `json:"responsible_addr"`
-	ResponsibleEmail string    `json:"responsible_email"`
-	ResponsiblePhone string    `json:"responsible_phone"`
-	KidRG            string    `json:"kid_rg"`
-	KidName          string    `json:"kid_name"`
-	KidShift         string    `json:"kid_shift"`
-	DriverName       string    `json:"driver_name"`
-	DriverEmail      string    `json:"driver_email"`
-	DriverCNH        string    `json:"driver_cnh"`
-	SchoolCNPJ       string    `json:"school_cnpj"`
-	SchoolName       string    `json:"school_name"`
-	SchoolAddr       string    `json:"school_addr"`
-	FileURL          string    `json:"file_url"`
-	Time             time.Time `json:"time"`
-	DateTime         string    `json:"date_time"`
+	CreatedAt              *time.Time `json:"created_at"`
+	ExpiredAt              *time.Time `json:"expired_at"`
+	AmountCents            int64      `json:"amount_cents"`
+	AmountAnualCents       int64      `json:"amount_anual_cents"`
+	DriverAmount           int64      `json:"driver_amount"`
+	UUID                   string     `json:"uuid"`
+	ResponsibleCPF         string     `json:"responsible_cpf"`
+	ResponsibleName        string     `json:"responsible_name"`
+	ResponsibleAddr        string     `json:"responsible_addr"`
+	ResponsibleEmail       string     `json:"responsible_email"`
+	ResponsiblePhone       string     `json:"responsible_phone"`
+	ResponsibleCardTokenID string     `json:"responsible_card_token_id"`
+	KidRG                  string     `json:"kid_rg"`
+	KidName                string     `json:"kid_name"`
+	KidShift               string     `json:"kid_shift"`
+	DriverName             string     `json:"driver_name"`
+	DriverEmail            string     `json:"driver_email"`
+	DriverCNH              string     `json:"driver_cnh"`
+	SchoolCNPJ             string     `json:"school_cnpj"`
+	SchoolName             string     `json:"school_name"`
+	SchoolAddr             string     `json:"school_addr"`
+	FileURL                string     `json:"file_url"`
+	Time                   time.Time  `json:"time"`
+	DateTime               string     `json:"date_time"`
 }

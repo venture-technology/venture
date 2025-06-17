@@ -31,6 +31,7 @@ type SchoolCP struct {
 type Contract struct {
 	ID                   int    `gorm:"primary_key;auto_increment" json:"id"`
 	UUID                 string `json:"record,omitempty"`
+	PreApprovalID        string `json:"pre_approval_id" validate:"required"`
 	Status               string `json:"status" validate:"oneof='currently' 'canceled' 'expired'"`
 	StripeSubscriptionID string `json:"stripe_subscription_id"`
 	StripePriceID        string `json:"stripe_price_id"`
@@ -52,15 +53,6 @@ type Contract struct {
 	School      School      `gorm:"foreignKey:SchoolCNPJ;references:CNPJ" json:"school"`
 	Kid         Kid         `gorm:"foreignKey:KidRG;references:RG" json:"kid"`
 	Responsible Responsible `gorm:"foreignKey:ResponsibleCPF;references:CPF" json:"responsible"`
-}
-
-type InvoiceInfo struct {
-	ID          string  `json:"id"`
-	Status      string  `json:"status"`
-	Amount      float64 `json:"amount"`
-	AmountCents int64   `json:"amount_cents"`
-	Month       string  `json:"month"`
-	Date        string  `json:"date"`
 }
 
 type SubscriptionInfo struct {
