@@ -30,6 +30,43 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: admins; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.admins (
+    id integer NOT NULL,
+    uuid character varying(36) NOT NULL,
+    name character varying(100) NOT NULL,
+    email character varying(100) NOT NULL,
+    password character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.admins OWNER TO postgres;
+
+--
+-- Name: admins_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.admins_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.admins_id_seq OWNER TO postgres;
+
+--
+-- Name: admins_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.admins_id_seq OWNED BY public.admins.id;
+
+
+--
 -- Name: children; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -178,6 +215,77 @@ ALTER SEQUENCE public.drivers_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE public.drivers_id_seq OWNED BY public.drivers.id;
+
+
+--
+-- Name: events; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.events (
+    id integer NOT NULL,
+    uuid character varying(36) NOT NULL,
+    name character varying(100) NOT NULL,
+    integrator_uuid character varying(36) NOT NULL
+);
+
+
+ALTER TABLE public.events OWNER TO postgres;
+
+--
+-- Name: events_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.events_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.events_id_seq OWNER TO postgres;
+
+--
+-- Name: events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.events_id_seq OWNED BY public.events.id;
+
+
+--
+-- Name: integrators; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.integrators (
+    id integer NOT NULL,
+    uuid character varying(36) NOT NULL,
+    name character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.integrators OWNER TO postgres;
+
+--
+-- Name: integrators_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.integrators_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.integrators_id_seq OWNER TO postgres;
+
+--
+-- Name: integrators_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.integrators_id_seq OWNED BY public.integrators.id;
 
 
 --
@@ -513,6 +621,13 @@ ALTER SEQUENCE public.temp_contracts_id_seq OWNED BY public.temp_contracts.id;
 
 
 --
+-- Name: admins id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admins ALTER COLUMN id SET DEFAULT nextval('public.admins_id_seq'::regclass);
+
+
+--
 -- Name: children id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -531,6 +646,20 @@ ALTER TABLE ONLY public.contracts ALTER COLUMN id SET DEFAULT nextval('public.co
 --
 
 ALTER TABLE ONLY public.drivers ALTER COLUMN id SET DEFAULT nextval('public.drivers_id_seq'::regclass);
+
+
+--
+-- Name: events id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.events ALTER COLUMN id SET DEFAULT nextval('public.events_id_seq'::regclass);
+
+
+--
+-- Name: integrators id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.integrators ALTER COLUMN id SET DEFAULT nextval('public.integrators_id_seq'::regclass);
 
 
 --
@@ -583,6 +712,22 @@ ALTER TABLE ONLY public.temp_contracts ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
+-- Name: admins admins_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admins
+    ADD CONSTRAINT admins_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admins admins_uuid_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.admins
+    ADD CONSTRAINT admins_uuid_key UNIQUE (uuid);
+
+
+--
 -- Name: children children_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -612,6 +757,38 @@ ALTER TABLE ONLY public.contracts
 
 ALTER TABLE ONLY public.drivers
     ADD CONSTRAINT drivers_pkey PRIMARY KEY (cnh);
+
+
+--
+-- Name: events events_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.events
+    ADD CONSTRAINT events_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: events events_uuid_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.events
+    ADD CONSTRAINT events_uuid_key UNIQUE (uuid);
+
+
+--
+-- Name: integrators integrators_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.integrators
+    ADD CONSTRAINT integrators_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: integrators integrators_uuid_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.integrators
+    ADD CONSTRAINT integrators_uuid_key UNIQUE (uuid);
 
 
 --
@@ -775,6 +952,14 @@ ALTER TABLE ONLY public.contracts
 
 
 --
+-- Name: events fk_integrator_uuid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.events
+    ADD CONSTRAINT fk_integrator_uuid FOREIGN KEY (integrator_uuid) REFERENCES public.integrators(uuid) ON DELETE CASCADE;
+
+
+--
 -- Name: contracts fk_kid; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -852,6 +1037,17 @@ GRANT USAGE ON SCHEMA public TO matheus_cardoso;
 
 
 --
+-- Name: TABLE admins; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.admins TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.admins TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.admins TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.admins TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.admins TO matheus_cardoso;
+
+
+--
 -- Name: TABLE children; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -882,6 +1078,28 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.drivers TO vitor_martins;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.drivers TO fabricio_nunes;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.drivers TO venture_staging_user;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.drivers TO matheus_cardoso;
+
+
+--
+-- Name: TABLE events; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.events TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.events TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.events TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.events TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.events TO matheus_cardoso;
+
+
+--
+-- Name: TABLE integrators; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.integrators TO davi_oliveira;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.integrators TO vitor_martins;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.integrators TO fabricio_nunes;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.integrators TO venture_staging_user;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.integrators TO matheus_cardoso;
 
 
 --
