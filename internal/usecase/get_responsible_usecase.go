@@ -27,14 +27,12 @@ func (gruc *GetResponsibleUseCase) GetResponsible(cpf string) (value.GetResponsi
 		return value.GetResponsible{}, err
 	}
 	return value.GetResponsible{
-		ID:              responsible.ID,
-		Name:            responsible.Name,
-		Email:           responsible.Email,
-		Phone:           responsible.Phone,
-		Address:         responsible.Address.GetFullAddress(),
-		CustomerId:      responsible.CustomerId,
-		ProfileImage:    responsible.ProfileImage,
-		PaymentMethodId: responsible.PaymentMethodId,
-		CreatedAt:       responsible.CreatedAt,
+		ID:           responsible.ID,
+		Name:         responsible.Name,
+		Email:        responsible.Email,
+		Phone:        responsible.Phone,
+		Address:      responsible.Address.GetFullAddress(),
+		ProfileImage: responsible.ProfileImage,
+		CreatedAt:    responsible.CreatedAt,
 	}, nil
 }
